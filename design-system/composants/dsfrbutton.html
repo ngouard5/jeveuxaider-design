@@ -78,6 +78,10 @@ h4{font-size:.8rem;text-transform:uppercase;letter-spacing:.04em;color:var(--mut
 .tabs{display:flex;gap:1.75rem;border-bottom:2px solid var(--border);margin:1.5rem 0 1.75rem;flex-wrap:wrap}
 .fr-tabs__panel{display:none!important;position:static!important;left:auto!important;flex:none!important;margin:0!important;visibility:visible!important;height:auto!important;overflow:visible!important;width:auto!important}
 .fr-tabs__panel--selected{display:block!important}
+.fr-tabs__tab{padding:.65rem 1.25rem;box-shadow:none;background-image:none;border-bottom:3px solid transparent}
+.fr-tabs__tab:not([aria-selected="true"]):hover{background-color:var(--background-action-low-blue-france-hover)}
+.fr-tabs__tab[aria-selected="true"]{border-bottom-color:var(--border-active-blue-france)}
+.fr-tabs__tab[aria-selected="true"]:hover{background-color:var(--background-default-grey-hover)}
 
 /* ---------- component meta ---------- */
 .badge{display:inline-block;font-size:.72rem;padding:.1rem .5rem;border-radius:99px;font-weight:600}

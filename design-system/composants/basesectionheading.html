@@ -178,6 +178,7 @@ table.migration th{background:var(--code-bg)}
       <span class="path-line small"><code>components/base/SectionHeading.vue</code></span>
     </div>
     <p class="subtitle">En-tête de section avec titre, tags et actions ; très utilisé en tête de blocs de contenu.</p>
+    <div class="dsfr-link-box">🔗 Cible DSFR : <strong>Pas d'équivalent DSFR 1:1</strong><br><span class="muted">Composite (titre + tags + actions, 5 slots) : à repenser en s'appuyant sur DsfrHeading + DsfrTagsGroup plutôt qu'à migrer tel quel, 74 usages.</span></div>
 
     <div class="tabs" role="tablist">
       <button class="tab-btn active" data-tab="presentation" role="tab" aria-selected="true">Présentation</button>
@@ -206,7 +207,6 @@ table.migration th{background:var(--code-bg)}
       <h4>Props principales</h4>
       <table class="props"><thead><tr><th>Prop</th><th>Type</th><th>Défaut</th></tr></thead><tbody><tr><td><code>title</code> <span class="req">*</span></td><td><code>string</code></td><td><code>—</code></td></tr><tr><td><code>loading</code></td><td><code>boolean</code></td><td><code>—</code></td></tr><tr><td><code>ariaLive</code></td><td><code>string</code></td><td><code>—</code></td></tr><tr><td><code>as</code></td><td><code>string</code></td><td><code>—</code></td></tr></tbody></table>
       <h4>Slots</h4><p><code>secondary-title</code>, <code>tags</code>, <code>secondary-title-bottom</code>, <code>action</code>, <code>bottom</code></p>
-      <div class="dsfr-link-box">🔗 Cible DSFR : <strong>Pas d'équivalent DSFR 1:1</strong><br><span class="muted">Composite (titre + tags + actions, 5 slots) : à repenser en s'appuyant sur DsfrHeading + DsfrTagsGroup plutôt qu'à migrer tel quel, 74 usages.</span></div>
     </div>
 
     <div class="tab-panel" data-panel="code">

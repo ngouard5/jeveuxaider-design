@@ -178,6 +178,7 @@ table.migration th{background:var(--code-bg)}
       <span class="path-line small"><code>components/base/Table.vue</code></span>
     </div>
     <p class="subtitle">Conteneur de tableau custom (avec légende). Famille de composants de tableau utilisée massivement en admin (27 usages), sans équivalent DSFR encore implémenté dans le projet.</p>
+    <div class="dsfr-link-box">🔗 Cible DSFR : <strong>Aucun wrapper DSFR encore implémenté dans le projet</strong><br><span class="muted">27 usages ; nécessite de construire toute la famille de composants tableau DSFR avant de pouvoir migrer (voir aussi TableBody/Head/HeadCell/Row/RowCell).</span></div>
 
     <div class="tabs" role="tablist">
       <button class="tab-btn active" data-tab="presentation" role="tab" aria-selected="true">Présentation</button>
@@ -206,7 +207,6 @@ table.migration th{background:var(--code-bg)}
       <h4>Props principales</h4>
       <table class="props"><thead><tr><th>Prop</th><th>Type</th><th>Défaut</th></tr></thead><tbody><tr><td><code>caption</code></td><td><code>String</code></td><td><code>null</code></td></tr></tbody></table>
       <h4>Slots</h4><p><code>default</code></p>
-      <div class="dsfr-link-box">🔗 Cible DSFR : <strong>Aucun wrapper DSFR encore implémenté dans le projet</strong> — <a href="https://www.systeme-de-design.gouv.fr/version-courante/fr/composants/tableau" target="_blank" rel="noopener">Tableau</a><br><span class="muted">27 usages ; nécessite de construire toute la famille de composants tableau DSFR avant de pouvoir migrer (voir aussi TableBody/Head/HeadCell/Row/RowCell).</span></div>
     </div>
 
     <div class="tab-panel" data-panel="code">

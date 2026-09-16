@@ -178,6 +178,7 @@ table.migration th{background:var(--code-bg)}
       <span class="path-line small"><code>components/base/Button.vue</code></span>
     </div>
     <p class="subtitle">Bouton custom historique (couleurs « jva-* »), variantes primary/secondary/white/red et état loading. Coexiste avec DsfrButton et n'est presque plus utilisé.</p>
+    <div class="dsfr-link-box">🔗 Cible DSFR : <strong><a href="dsfrbutton.html">DsfrButton</a></strong><br><span class="muted">Doublon quasi-abandonné (5 usages) du bouton principal ; migration = suppression après bascule des 5 appelants.</span></div>
 
     <div class="tabs" role="tablist">
       <button class="tab-btn active" data-tab="presentation" role="tab" aria-selected="true">Présentation</button>
@@ -206,7 +207,6 @@ table.migration th{background:var(--code-bg)}
       <h4>Props principales</h4>
       <table class="props"><thead><tr><th>Prop</th><th>Type</th><th>Défaut</th></tr></thead><tbody><tr><td><code>variant</code></td><td><code>String</code></td><td><code>'primary'</code></td></tr><tr><td><code>size</code></td><td><code>String</code></td><td><code>'md'</code></td></tr><tr><td><code>type</code></td><td><code>String</code></td><td><code>'button'</code></td></tr><tr><td><code>rounded</code></td><td><code>Boolean</code></td><td><code>false</code></td></tr><tr><td><code>icon</code></td><td><code>String</code></td><td><code>null</code></td></tr><tr><td><code>loading</code></td><td><code>Boolean</code></td><td><code>false</code></td></tr><tr><td><code>full</code></td><td><code>Boolean</code></td><td><code>false</code></td></tr></tbody></table>
       <h4>Slots</h4><p><code>default</code></p>
-      <div class="dsfr-link-box">🔗 Cible DSFR : <strong>DsfrButton</strong> — <a href="https://www.systeme-de-design.gouv.fr/version-courante/fr/composants/bouton" target="_blank" rel="noopener">Bouton</a><br><span class="muted">Doublon quasi-abandonné (5 usages) du bouton principal ; migration = suppression après bascule des 5 appelants.</span></div>
     </div>
 
     <div class="tab-panel" data-panel="code">

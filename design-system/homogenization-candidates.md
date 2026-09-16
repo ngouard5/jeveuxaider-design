@@ -252,6 +252,25 @@ des doublons. En revanche, **`base/InputAutocomplete.vue`,
   public — un nommage/emplacement unique avec une prop de visibilité éviterait
   la confusion structurelle en plus de la duplication de code.
 
+## 4. Incohérences valeurs Figma ↔ code (tokens)
+
+- **Couleur du texte désactivé sur `DsfrButton` (`components/dsfr/Button.vue`)** :
+  le composant Figma canonique "Thème clair / Primaire / LG" (node `1850:17578`)
+  utilise le token `Light/Decisions/Text/$text-disabled-grey` = `#929292` pour
+  le texte à l'état désactivé, et ce quel que soit le variant. Le code, lui,
+  câble des valeurs différentes selon le variant : `text-[#656565]` pour
+  `disabled && type === 'primary'` (et `secondary`/`tertiary`), et
+  `text-[#929292]` uniquement pour `disabled && type === 'tertiary-no-outline'`.
+  Repéré en reproduisant l'écran OTP (node `1850:17311`) en prototype statique :
+  le prototype suivait d'abord le code (`#656565`) avant vérification directe du
+  composant Figma, qui a confirmé `#929292` comme valeur de référence.
+  - Fichiers : `components/dsfr/Button.vue`
+  - **Effort : faible** — remplacer les 3 valeurs `#656565` par `#929292` (ou par
+    le token si le projet en a un équivalent Tailwind/CSS var).
+  - **Risque : faible** — changement de couleur seul, pas de logique affectée ;
+    à vérifier visuellement sur les boutons `primary`/`secondary`/`tertiary`
+    désactivés existants avant merge.
+
 ---
 
 ## Méthodologie

@@ -76,6 +76,7 @@ h4{font-size:.8rem;text-transform:uppercase;letter-spacing:.04em;color:var(--mut
 
 /* ---------- tabs ---------- */
 .tabs{display:flex;gap:1.75rem;border-bottom:2px solid var(--border);margin:1.5rem 0 1.75rem;flex-wrap:wrap}
+.fr-tabs__list{border-bottom:1px solid var(--border)}
 .fr-tabs__panel{display:none!important;position:static!important;left:auto!important;flex:none!important;margin:0!important;visibility:visible!important;height:auto!important;overflow:visible!important;width:auto!important}
 .fr-tabs__panel--selected{display:block!important}
 
@@ -84,6 +85,7 @@ h4{font-size:.8rem;text-transform:uppercase;letter-spacing:.04em;color:var(--mut
 .badge-dsfr{background:var(--badge-dsfr-bg);color:var(--badge-dsfr-fg)}
 .badge-custom{background:var(--badge-custom-bg);color:var(--badge-custom-fg)}
 .usages-badge{font-weight:normal;font-size:.75rem;color:var(--muted);border:1px solid var(--border);border-radius:99px;padding:.15rem .6rem}
+.fr-badge{padding:.2rem .7rem}
 .meta-row{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;margin:.5rem 0 1rem}
 .path-line{color:var(--muted)}
 
@@ -94,6 +96,8 @@ table.props th{background:var(--code-bg)}
 pre{background:var(--code-bg);border:1px solid var(--border);border-radius:6px;padding:.85rem 1.1rem;overflow-x:auto;font-size:.82rem;margin:0}
 .src{color:var(--muted);font-size:.78rem;margin:.4rem 0 0}
 .dsfr-link-box{font-size:.85rem;margin:1rem 0;background:var(--badge-dsfr-bg);color:var(--badge-dsfr-fg);border-radius:6px;padding:.65rem .9rem}
+.dsfr-link-box a{background-image:linear-gradient(0deg,currentColor,currentColor),linear-gradient(0deg,currentColor,currentColor);background-position:0 100%,0 calc(100% - .0625em);background-repeat:no-repeat,no-repeat;background-size:0 .125em,100% .0625em}
+.dsfr-link-box a:hover{background-size:100% .125em,100% .0625em}
 .playground{border:1px solid var(--border);border-radius:8px;padding:1rem 1.25rem 1.25rem;margin:1rem 0 1.5rem;background:var(--card)}
 .playground h4{margin-top:0}
 .playground-grid{display:grid;grid-template-columns:200px 1fr;gap:1.25rem;align-items:start}

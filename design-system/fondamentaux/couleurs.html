@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<title>Couleurs — Fondamentaux — Composants JeVeuxAider</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../compiled.css">
+<link rel="stylesheet" href="../dsfr-components.css">
+<style>
+  @font-face { font-family: Marianne; src: url('../fonts/Marianne-Light.woff2') format('woff2'); font-weight: 300; font-style: normal; font-display: swap; }
+  @font-face { font-family: Marianne; src: url('../fonts/Marianne-Regular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: Marianne; src: url('../fonts/Marianne-Medium.woff2') format('woff2'); font-weight: 500; font-style: normal; font-display: swap; }
+  @font-face { font-family: Marianne; src: url('../fonts/Marianne-Bold.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
+  .dsfr-link{text-rendering:optimizeLegibility;background-image:linear-gradient(0deg,currentColor,currentColor),linear-gradient(0deg,currentColor,currentColor);background-position:0 100%,0 calc(100% - .0625em);background-repeat:no-repeat,no-repeat;background-size:0 .125em,100% .0625em}
+  .dsfr-link:hover{background-size:100% .125em,100% .0625em}
+  .dsfr-link:active{background-color:#ededed}
+</style>
+<style>
+:root{
+  --bg:#fff; --fg:#1b1b1b; --muted:#666; --border:#e2e2e2; --card:#fafafa;
+  --code-bg:#f4f4f7; --link:#000091; --badge-dsfr-bg:#e3e3fd; --badge-dsfr-fg:#000091;
+  --badge-custom-bg:#f0f0f0; --badge-custom-fg:#444; --sidebar-bg:#f6f6f9;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#15151a; --fg:#eaeaea; --muted:#a0a0a8; --border:#33333d; --card:#1d1d24;
+    --code-bg:#0f0f14; --link:#9aa6ff; --badge-dsfr-bg:#26265c; --badge-dsfr-fg:#c7cdff;
+    --badge-custom-bg:#2a2a33; --badge-custom-fg:#ccc; --sidebar-bg:#101014; }
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--fg); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  line-height:1.5; display:flex; min-height:100vh; align-items:stretch;
+}
+a{color:var(--link)}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.85em}
+h1{font-size:1.75rem;margin:0 0 .5rem}
+h2{font-size:1.4rem;margin:2.5rem 0 1rem;padding-bottom:.4rem;border-bottom:2px solid var(--border);scroll-margin-top:1rem}
+h3{font-size:1.1rem;margin:1.5rem 0 .5rem}
+h4{font-size:.8rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin:1.3rem 0 .4rem}
+
+/* ---------- sidebar ---------- */
+.sidebar{
+  width:290px; flex:none; background:var(--sidebar-bg); border-right:1px solid var(--border);
+  height:100vh; position:sticky; top:0; overflow-y:auto; padding-bottom:2rem;
+}
+.sidebar-brand{padding:1.1rem 1.25rem;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--sidebar-bg);z-index:2}
+.sidebar-brand a{color:var(--fg);text-decoration:none;font-weight:700;font-size:.95rem;display:block}
+.sidebar-brand .tag{display:block;color:var(--muted);font-weight:400;font-size:.72rem;margin-top:.15rem}
+.sidebar nav{padding:.5rem 0}
+.sidebar ul{list-style:none;margin:0;padding:0}
+.cat-title{font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:1rem 1.25rem .3rem;font-weight:700}
+.sidebar a.item{
+  display:block;padding:.3rem 1.25rem;text-decoration:none;color:var(--fg);font-size:.86rem;
+  border-left:3px solid transparent;
+}
+.sidebar a.item:hover{background:rgba(0,0,145,.07)}
+.sidebar a.item.active{border-left-color:var(--link);color:var(--link);font-weight:700;background:rgba(0,0,145,.07)}
+.sidebar-foot{border-top:1px solid var(--border);margin-top:.5rem;padding-top:.25rem}
+
+/* ---------- main content ---------- */
+.main{flex:1;min-width:0;padding:2rem 3rem 6rem}
+.wrap{max-width:900px}
+.crumb{font-size:.82rem;color:var(--muted);margin-bottom:1.1rem}
+.crumb a{color:var(--muted);text-decoration:none}
+.crumb a:hover{text-decoration:underline}
+.subtitle{color:var(--muted);font-size:1.02rem;margin:0 0 1.5rem;max-width:65ch}
+
+/* ---------- tabs ---------- */
+.tabs{display:flex;gap:1.75rem;border-bottom:2px solid var(--border);margin:1.5rem 0 1.75rem;flex-wrap:wrap}
+.tab-btn{background:none;border:none;font:inherit;font-size:.95rem;padding:.6rem 0;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-2px}
+.tab-btn:hover{color:var(--fg)}
+.tab-btn.active{color:var(--link);border-bottom-color:var(--link);font-weight:700}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* ---------- component meta ---------- */
+.badge{display:inline-block;font-size:.72rem;padding:.1rem .5rem;border-radius:99px;font-weight:600}
+.badge-dsfr{background:var(--badge-dsfr-bg);color:var(--badge-dsfr-fg)}
+.badge-custom{background:var(--badge-custom-bg);color:var(--badge-custom-fg)}
+.usages-badge{font-weight:normal;font-size:.75rem;color:var(--muted);border:1px solid var(--border);border-radius:99px;padding:.15rem .6rem}
+.meta-row{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;margin:.5rem 0 1rem}
+.path-line{color:var(--muted)}
+
+table.props{border-collapse:collapse;width:100%;font-size:.85rem}
+table.props th,table.props td{border:1px solid var(--border);padding:.4rem .65rem;text-align:left;vertical-align:top}
+table.props th{background:var(--code-bg)}
+.req{color:#c0392b}
+pre{background:var(--code-bg);border:1px solid var(--border);border-radius:6px;padding:.85rem 1.1rem;overflow-x:auto;font-size:.82rem;margin:0}
+.src{color:var(--muted);font-size:.78rem;margin:.4rem 0 0}
+.swatch{display:inline-block;width:1.1rem;height:1.1rem;border-radius:4px;border:1px solid var(--border);vertical-align:middle;margin-right:.4rem}
+.fond-table{border-collapse:collapse;width:100%;font-size:.85rem;margin:.75rem 0 1.5rem}
+.fond-table th,.fond-table td{border:1px solid var(--border);padding:.4rem .65rem;text-align:left;vertical-align:middle}
+.fond-table th{background:var(--code-bg)}
+.dsfr-link-box{font-size:.85rem;margin:1rem 0;background:var(--badge-dsfr-bg);color:var(--badge-dsfr-fg);border-radius:6px;padding:.65rem .9rem}
+.playground{border:1px solid var(--border);border-radius:8px;padding:1rem 1.25rem 1.25rem;margin:1rem 0 1.5rem;background:var(--card)}
+.playground h4{margin-top:0}
+.playground-grid{display:grid;grid-template-columns:200px 1fr;gap:1.25rem;align-items:start}
+@media (max-width:700px){.playground-grid{grid-template-columns:1fr}}
+.playground-controls{display:flex;flex-direction:column;gap:.6rem}
+.pg-control{display:flex;flex-direction:column;gap:.25rem;font-size:.8rem}
+.pg-control span{color:var(--muted);text-transform:uppercase;font-size:.68rem;letter-spacing:.03em}
+.pg-control select,.pg-control input[type="text"]{font:inherit;font-size:.85rem;padding:.3rem .5rem;border:1px solid var(--border);border-radius:4px;background:var(--bg);color:var(--fg)}
+.pg-control select{-webkit-appearance:menulist;-moz-appearance:menulist;appearance:menulist}
+.pg-control input[type="checkbox"]{width:1.1rem;height:1.1rem;align-self:flex-start}
+.playground-preview{min-height:70px;display:flex;align-items:center}
+.playground-code-box{margin-top:.75rem;background:var(--code-bg);border:1px solid var(--border);border-radius:6px;padding:.6rem .85rem;font-size:.78rem;overflow-x:auto}
+.usages-list{list-style:none;margin:0;padding:0;max-height:520px;overflow-y:auto;border:1px solid var(--border);border-radius:6px;background:var(--code-bg)}
+.usages-list li{padding:.4rem .75rem;border-bottom:1px solid var(--border);font-size:.83rem}
+.usages-list li:last-child{border-bottom:none}
+.usages-list li:nth-child(odd){background:rgba(0,0,0,.015)}
+.demo{border:1px dashed var(--border);border-radius:8px;padding:1.5rem;background:#F9F6F2;color:#161616;overflow-x:auto;font-family:Marianne,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;-webkit-font-smoothing:antialiased}
+.demo-placeholder{color:var(--muted);font-size:.85rem;font-style:italic;border-style:dashed}
+.muted{color:var(--muted)}
+.small{font-size:.75rem}
+.methodo{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1rem 1.5rem;font-size:.85rem;color:var(--muted);margin-bottom:2rem}
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.5rem;margin-top:1.5rem}
+.cat-card{border:1px solid var(--border);border-radius:8px;padding:1.1rem 1.3rem;background:var(--card)}
+.cat-card h3{margin-top:0}
+.cat-card ul{list-style:none;padding:0;margin:.5rem 0 0;columns:1}
+.cat-card li{margin:.15rem 0}
+.cat-card a{font-size:.88rem;text-decoration:none}
+.cat-card a:hover{text-decoration:underline}
+.homog h3{margin-top:2rem}
+.homog .group{border:1px solid var(--border);border-radius:8px;padding:1rem 1.25rem;margin-bottom:1rem;background:var(--card)}
+.homog .files{font-size:.82rem;color:var(--muted)}
+.tag-effort-faible{background:#dff5e1;color:#1c6b2e}
+.tag-effort-moyen{background:#fff2cf;color:#8a6100}
+.tag-effort-eleve{background:#fde0e0;color:#a3231f}
+@media (prefers-color-scheme: dark){
+  .tag-effort-faible{background:#123c1c;color:#7be08f}
+  .tag-effort-moyen{background:#463a10;color:#f5cf6b}
+  .tag-effort-eleve{background:#4a1d1d;color:#f59a97}
+}
+.homog .tag{display:inline-block;font-size:.7rem;font-weight:600;padding:.1rem .5rem;border-radius:99px;margin-right:.3rem}
+table.migration{border-collapse:collapse;width:100%;font-size:.85rem;margin-top:1rem}
+table.migration th,table.migration td{border:1px solid var(--border);padding:.5rem .7rem;text-align:left;vertical-align:top}
+table.migration th{background:var(--code-bg)}
+.effort{display:inline-block;font-size:.72rem;font-weight:700;padding:.1rem .55rem;border-radius:99px}
+.effort-faible{background:#dff5e1;color:#1c6b2e}
+.effort-moyen{background:#fff2cf;color:#8a6100}
+.effort-eleve{background:#fde0e0;color:#a3231f}
+@media (prefers-color-scheme: dark){
+  .effort-faible{background:#123c1c;color:#7be08f}
+  .effort-moyen{background:#463a10;color:#f5cf6b}
+  .effort-eleve{background:#4a1d1d;color:#f59a97}
+}
+@media (max-width: 900px){
+  body{flex-direction:column}
+  .sidebar{position:static;height:auto;width:auto;border-right:none;border-bottom:1px solid var(--border)}
+  .main{padding:1.5rem 1.25rem 4rem}
+}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <a href="../index.html">Composants JeVeuxAider<span class="tag">164 composants réutilisables</span></a>
+  </div>
+  <nav>
+    <ul>
+      <li><a class="item" href="../index.html">Vue d'ensemble</a></li>
+    </ul><div class="cat-title">Fondamentaux</div><ul><li><a class="item active" href="../fondamentaux/couleurs.html">Couleurs</a></li><li><a class="item" href="../fondamentaux/typographie.html">Typographie</a></li><li><a class="item" href="../fondamentaux/ombres.html">Ombres &amp; élévation</a></li><li><a class="item" href="../fondamentaux/grille.html">Grille &amp; points de rupture</a></li><li><a class="item" href="../fondamentaux/espacements.html">Espacements</a></li><li><a class="item" href="../fondamentaux/ratio-medias.html">Ratios médias</a></li><li><a class="item" href="../fondamentaux/icones.html">Icônes</a></li></ul>
+    <div class="cat-title">Boutons (7)</div><ul><li><a class="item" href="../composants/basebutton.html">BaseButton</a></li><li><a class="item" href="../composants/buttoncreateuseralert.html">ButtonCreateUserAlert</a></li><li><a class="item" href="../composants/custombuttonmissionfavorite.html">CustomButtonMissionFavorite</a></li><li><a class="item" href="../composants/customfiltersstatisticsbutton.html">CustomFiltersStatisticsButton</a></li><li><a class="item" href="../composants/dsfrbutton.html">DsfrButton</a></li><li><a class="item" href="../composants/dsfriconbutton.html">DsfrIconButton</a></li><li><a class="item" href="../composants/uibuttonlink.html">UiButtonLink</a></li></ul><div class="cat-title">Formulaires (52)</div><ul><li><a class="item" href="../composants/algoliainputautocomplete.html">AlgoliaInputAutocomplete</a></li><li><a class="item" href="../composants/basefilterselectadvanced.html">BaseFilterSelectAdvanced</a></li><li><a class="item" href="../composants/baseformcontrol.html">BaseFormControl</a></li><li><a class="item" href="../composants/baseformerror.html">BaseFormError</a></li><li><a class="item" href="../composants/baseformhelpertext.html">BaseFormHelperText</a></li><li><a class="item" href="../composants/baseforminfo.html">BaseFormInfo</a></li><li><a class="item" href="../composants/baseformlabel.html">BaseFormLabel</a></li><li><a class="item" href="../composants/baseformsuccess.html">BaseFormSuccess</a></li><li><a class="item" href="../composants/baseimagecrop.html">BaseImageCrop</a></li><li><a class="item" href="../composants/baseimagecropmultiple.html">BaseImageCropMultiple</a></li><li><a class="item" href="../composants/baseinput.html">BaseInput</a></li><li><a class="item" href="../composants/baseinputdatenumeric.html">BaseInputDateNumeric</a></li><li><a class="item" href="../composants/baselistbox.html">BaseListbox</a></li><li><a class="item" href="../composants/basemediapicker.html">BaseMediaPicker</a></li><li><a class="item" href="../composants/baseradiogroup.html">BaseRadioGroup</a></li><li><a class="item" href="../composants/baseroleradiogroup.html">BaseRoleRadioGroup</a></li><li><a class="item" href="../composants/baseselectadvanced.html">BaseSelectAdvanced</a></li><li><a class="item" href="../composants/baseselectwithdescription.html">BaseSelectWithDescription</a></li><li><a class="item" href="../composants/basetextarea.html">BaseTextarea</a></li><li><a class="item" href="../composants/basetoggle.html">BaseToggle</a></li><li><a class="item" href="../composants/baseupload.html">BaseUpload</a></li><li><a class="item" href="../composants/dsfrcheckboxboolean.html">DsfrCheckboxBoolean</a></li><li><a class="item" href="../composants/dsfrcheckboxgroup.html">DsfrCheckboxGroup</a></li><li><a class="item" href="../composants/dsfrcheckboxrichgroup.html">DsfrCheckboxRichGroup</a></li><li><a class="item" href="../composants/dsfrcomboboxpanel.html">DsfrComboboxPanel</a></li><li><a class="item" href="../composants/dsfrformcontrol.html">DsfrFormControl</a></li><li><a class="item" href="../composants/dsfrinput.html">DsfrInput</a></li><li><a class="item" href="../composants/dsfrinputautocomplete.html">DsfrInputAutocomplete</a></li><li><a class="item" href="../composants/dsfrlistboxpanel.html">DsfrListboxPanel</a></li><li><a class="item" href="../composants/dsfrradiogroup.html">DsfrRadioGroup</a></li><li><a class="item" href="../composants/dsfrricheditor.html">DsfrRichEditor</a></li><li><a class="item" href="../composants/dsfrselect.html">DsfrSelect</a></li><li><a class="item" href="../composants/dsfrselectautocomplete.html">DsfrSelectAutocomplete</a></li><li><a class="item" href="../composants/dsfrselectmultiple.html">DsfrSelectMultiple</a></li><li><a class="item" href="../composants/dsfrtextarea.html">DsfrTextarea</a></li><li><a class="item" href="../composants/formactivity.html">FormActivity</a></li><li><a class="item" href="../composants/formaddresponsable.html">FormAddResponsable</a></li><li><a class="item" href="../composants/formdomaine.html">FormDomaine</a></li><li><a class="item" href="../composants/formmessagetemplate.html">FormMessageTemplate</a></li><li><a class="item" href="../composants/formmissiontemplate.html">FormMissionTemplate</a></li><li><a class="item" href="../composants/formmissionwrapper.html">FormMissionWrapper</a></li><li><a class="item" href="../composants/formparticipationdecline.html">FormParticipationDecline</a></li><li><a class="item" href="../composants/formrequiredmessage.html">FormRequiredMessage</a></li><li><a class="item" href="../composants/formreseau.html">FormReseau</a></li><li><a class="item" href="../composants/formressource.html">FormRessource</a></li><li><a class="item" href="../composants/formrule.html">FormRule</a></li><li><a class="item" href="../composants/formsubformuserdispositifs.html">FormSubFormUserDispositifs</a></li><li><a class="item" href="../composants/formterm.html">FormTerm</a></li><li><a class="item" href="../composants/formterritoire.html">FormTerritoire</a></li><li><a class="item" href="../composants/formuseractivities.html">FormUserActivities</a></li><li><a class="item" href="../composants/searchfilter.html">SearchFilter</a></li><li><a class="item" href="../composants/sectionprofilecommunicationpreferences.html">SectionProfileCommunicationPreferences</a></li></ul><div class="cat-title">Cards (8)</div><ul><li><a class="item" href="../composants/cardalert.html">CardAlert</a></li><li><a class="item" href="../composants/cardmission.html">CardMission</a></li><li><a class="item" href="../composants/cardorganisation.html">CardOrganisation</a></li><li><a class="item" href="../composants/cardparticipation.html">CardParticipation</a></li><li><a class="item" href="../composants/cardstatistic.html">CardStatistic</a></li><li><a class="item" href="../composants/cardtemoignage.html">CardTemoignage</a></li><li><a class="item" href="../composants/cardtestimonial.html">CardTestimonial</a></li><li><a class="item" href="../composants/customoptioncard.html">CustomOptionCard</a></li></ul><div class="cat-title">Badges &amp; tags (8)</div><ul><li><a class="item" href="../composants/badgeonline.html">BadgeOnline</a></li><li><a class="item" href="../composants/baseavatar.html">BaseAvatar</a></li><li><a class="item" href="../composants/customfiltersstatisticsactive.html">CustomFiltersStatisticsActive</a></li><li><a class="item" href="../composants/dsfrbadge.html">DsfrBadge</a></li><li><a class="item" href="../composants/dsfrtag.html">DsfrTag</a></li><li><a class="item" href="../composants/dsfrtaglink.html">DsfrTagLink</a></li><li><a class="item" href="../composants/dsfrtagsgroup.html">DsfrTagsGroup</a></li><li><a class="item" href="../composants/uibadgestate.html">UiBadgeState</a></li></ul><div class="cat-title">Modales &amp; panneaux latéraux (19)</div><ul><li><a class="item" href="../composants/basealertdialog.html">BaseAlertDialog</a></li><li><a class="item" href="../composants/basedrawer.html">BaseDrawer</a></li><li><a class="item" href="../composants/basedrawerleft.html">BaseDrawerLeft</a></li><li><a class="item" href="../composants/basemodal.html">BaseModal</a></li><li><a class="item" href="../composants/baseoverlay.html">BaseOverlay</a></li><li><a class="item" href="../composants/drawermission.html">DrawerMission</a></li><li><a class="item" href="../composants/drawerprofile.html">DrawerProfile</a></li><li><a class="item" href="../composants/dsfrmodal.html">DsfrModal</a></li><li><a class="item" href="../composants/dsfrpanel.html">DsfrPanel</a></li><li><a class="item" href="../composants/modalbulkoperations.html">ModalBulkOperations</a></li><li><a class="item" href="../composants/modalexport.html">ModalExport</a></li><li><a class="item" href="../composants/modalmissiontoggleisactive.html">ModalMissionToggleIsActive</a></li><li><a class="item" href="../composants/modalnote.html">ModalNote</a></li><li><a class="item" href="../composants/modalparticipationdeclinebyresponsable.html">ModalParticipationDeclineByResponsable</a></li><li><a class="item" href="../composants/modalromemacrocompetence.html">ModalRomeMacroCompetence</a></li><li><a class="item" href="../composants/modalsendmessage.html">ModalSendMessage</a></li><li><a class="item" href="../composants/uisheet.html">UiSheet</a></li><li><a class="item" href="../composants/uisheetcontent.html">UiSheetContent</a></li><li><a class="item" href="../composants/uisheettrigger.html">UiSheetTrigger</a></li></ul><div class="cat-title">Navigation (15)</div><ul><li><a class="item" href="../composants/baselink.html">BaseLink</a></li><li><a class="item" href="../composants/basetabs.html">BaseTabs</a></li><li><a class="item" href="../composants/customdropdownuser.html">CustomDropdownUser</a></li><li><a class="item" href="../composants/dsfrbreadcrumb.html">DsfrBreadcrumb</a></li><li><a class="item" href="../composants/dsfrlink.html">DsfrLink</a></li><li><a class="item" href="../composants/dsfrnavitemdsfrnavitem.html">DsfrNavItemDsfrNavItem</a></li><li><a class="item" href="../composants/dsfrpagination.html">DsfrPagination</a></li><li><a class="item" href="../composants/dsfrtabs.html">DsfrTabs</a></li><li><a class="item" href="../composants/organisationbreadcrumb.html">OrganisationBreadcrumb</a></li><li><a class="item" href="../composants/skiplinks.html">SkipLinks</a></li><li><a class="item" href="../composants/uidropdownmenu.html">UiDropdownMenu</a></li><li><a class="item" href="../composants/uidropdownmenucontent.html">UiDropdownMenuContent</a></li><li><a class="item" href="../composants/uidropdownmenuitem.html">UiDropdownMenuItem</a></li><li><a class="item" href="../composants/uidropdownmenuseparator.html">UiDropdownMenuSeparator</a></li><li><a class="item" href="../composants/uidropdownmenutrigger.html">UiDropdownMenuTrigger</a></li></ul><div class="cat-title">Feedback &amp; alertes (16)</div><ul><li><a class="item" href="../composants/basealert.html">BaseAlert</a></li><li><a class="item" href="../composants/basebanner.html">BaseBanner</a></li><li><a class="item" href="../composants/basegauge.html">BaseGauge</a></li><li><a class="item" href="../composants/customemptystate.html">CustomEmptyState</a></li><li><a class="item" href="../composants/custominforecommendation.html">CustomInfoRecommendation</a></li><li><a class="item" href="../composants/customloadingindicator.html">CustomLoadingIndicator</a></li><li><a class="item" href="../composants/customtips.html">CustomTips</a></li><li><a class="item" href="../composants/dsfralert.html">DsfrAlert</a></li><li><a class="item" href="../composants/dsfrcallout.html">DsfrCallout</a></li><li><a class="item" href="../composants/sectionterritoirenoticecrise.html">SectionTerritoireNoticeCrise</a></li><li><a class="item" href="../composants/uiloadingindicator.html">UiLoadingIndicator</a></li><li><a class="item" href="../composants/uiskeleton.html">UiSkeleton</a></li><li><a class="item" href="../composants/uitooltip.html">UiTooltip</a></li><li><a class="item" href="../composants/uitooltipcontent.html">UiTooltipContent</a></li><li><a class="item" href="../composants/uitooltipprovider.html">UiTooltipProvider</a></li><li><a class="item" href="../composants/uitooltiptrigger.html">UiTooltipTrigger</a></li></ul><div class="cat-title">Mise en page (24)</div><ul><li><a class="item" href="../composants/basebox.html">BaseBox</a></li><li><a class="item" href="../composants/basecontainer2cols.html">BaseContainer2Cols</a></li><li><a class="item" href="../composants/basecontainerscrollable.html">BaseContainerScrollable</a></li><li><a class="item" href="../composants/basedisclosure.html">BaseDisclosure</a></li><li><a class="item" href="../composants/baseheading.html">BaseHeading</a></li><li><a class="item" href="../composants/basehrtitle.html">BaseHrTitle</a></li><li><a class="item" href="../composants/baseparagraph.html">BaseParagraph</a></li><li><a class="item" href="../composants/basesectionheading.html">BaseSectionHeading</a></li><li><a class="item" href="../composants/baseslideshow.html">BaseSlideshow</a></li><li><a class="item" href="../composants/basetextformatted.html">BaseTextFormatted</a></li><li><a class="item" href="../composants/customdraweritem.html">CustomDrawerItem</a></li><li><a class="item" href="../composants/dsfraccordion.html">DsfrAccordion</a></li><li><a class="item" href="../composants/dsfraccordionsgroup.html">DsfrAccordionsGroup</a></li><li><a class="item" href="../composants/dsfrheading.html">DsfrHeading</a></li><li><a class="item" href="../composants/dsfrseparator.html">DsfrSeparator</a></li><li><a class="item" href="../composants/layoutfooter.html">LayoutFooter</a></li><li><a class="item" href="../composants/layoutheader.html">LayoutHeader</a></li><li><a class="item" href="../composants/sectiondonation.html">SectionDonation</a></li><li><a class="item" href="../composants/sectionnewsletter.html">SectionNewsletter</a></li><li><a class="item" href="../composants/sectiontemoignages.html">SectionTemoignages</a></li><li><a class="item" href="../composants/seoparagraphs.html">SeoParagraphs</a></li><li><a class="item" href="../composants/seorecruit.html">SeoRecruit</a></li><li><a class="item" href="../composants/strapipage.html">StrapiPage</a></li><li><a class="item" href="../composants/uibox.html">UiBox</a></li></ul><div class="cat-title">Tableaux &amp; listes (13)</div><ul><li><a class="item" href="../composants/basedescriptionlist.html">BaseDescriptionList</a></li><li><a class="item" href="../composants/basedescriptionlistitem.html">BaseDescriptionListItem</a></li><li><a class="item" href="../composants/basedescriptionlistitemgauge.html">BaseDescriptionListItemGauge</a></li><li><a class="item" href="../composants/basestackedlist.html">BaseStackedList</a></li><li><a class="item" href="../composants/basestackedlistitem.html">BaseStackedListItem</a></li><li><a class="item" href="../composants/basetable.html">BaseTable</a></li><li><a class="item" href="../composants/basetablebody.html">BaseTableBody</a></li><li><a class="item" href="../composants/basetablehead.html">BaseTableHead</a></li><li><a class="item" href="../composants/basetableheadcell.html">BaseTableHeadCell</a></li><li><a class="item" href="../composants/basetablerow.html">BaseTableRow</a></li><li><a class="item" href="../composants/basetablerowcell.html">BaseTableRowCell</a></li><li><a class="item" href="../composants/chartdatalist.html">ChartDataList</a></li><li><a class="item" href="../composants/customstatisticsrankedlist.html">CustomStatisticsRankedList</a></li></ul><div class="cat-title">Autres / utilitaires (2)</div><ul><li><a class="item" href="../composants/focusanchor.html">FocusAnchor</a></li><li><a class="item" href="../composants/focusloop.html">FocusLoop</a></li></ul>
+    <div class="sidebar-foot">
+      <div class="cat-title">Ressources</div>
+      <ul>
+        <li><a class="item" href="../homogenisation.html">À homogénéiser</a></li>
+        <li><a class="item" href="../migration-dsfr.html">Candidats migration DSFR</a></li>
+      </ul>
+    </div>
+  </nav>
+</aside>
+<main class="main">
+  <div class="wrap">
+    <p class="crumb"><a href="../index.html">Accueil</a> &rsaquo; Couleurs</p>
+
+  <h1>Couleurs</h1>
+  <p class="subtitle">Palette DSFR : tokens sémantiques (light/dark) à utiliser dans les maquettes, et palette de référence sous-jacente. Source : Figma « DSFR - v1.15.0 - Fondamentaux » (page Couleurs) — même nomenclature que les variables CSS officielles du DSFR (<code>--text-default-grey</code>, <code>--background-action-high-blue-france</code>, etc.).</p>
+
+  <div class="dsfr-link-box">🔗 Documentation officielle DSFR : <a href="https://www.systeme-de-design.gouv.fr/version-courante/fr/fondamentaux/couleurs" target="_blank" rel="noopener">Couleurs</a></div>
+
+  <div class="methodo"><strong>À utiliser dans les maquettes :</strong> toujours les tokens sémantiques (« Decisions ») ci-dessous — jamais une couleur de la palette brute directement. Un token donné change de valeur hexadécimale entre thème clair et thème sombre ; c'est voulu, c'est lui qui porte le sens (ex. <code>--text-disabled-grey</code>), pas la couleur.</div>
+
+  <h2>Tokens sémantiques — Text</h2>
+  <table class="fond-table"><thead><tr><th>Token</th><th>Light</th><th>Dark</th></tr></thead><tbody>
+<tr><td><code>--text-action-high-blue-france</code></td><td><span class="swatch" style="background:#000091"></span><code class="small">#000091</code></td><td><span class="muted small">—</span></td></tr>
+<tr><td><code>--text-default-grey</code></td><td><span class="swatch" style="background:#3A3A3A"></span><code class="small">#3A3A3A</code></td><td><span class="swatch" style="background:#CECECE"></span><code class="small">#CECECE</code></td></tr>
+<tr><td><code>--text-mention-grey</code></td><td><span class="swatch" style="background:#666666"></span><code class="small">#666666</code></td><td><span class="swatch" style="background:#929292"></span><code class="small">#929292</code></td></tr>
+<tr><td><code>--text-action-high-error</code></td><td><span class="swatch" style="background:#CE0500"></span><code class="small">#CE0500</code></td><td><span class="swatch" style="background:#FF5655"></span><code class="small">#FF5655</code></td></tr>
+<tr><td><code>--text-action-high-grey</code></td><td><span class="swatch" style="background:#161616"></span><code class="small">#161616</code></td><td><span class="swatch" style="background:#FFFFFF"></span><code class="small">#FFFFFF</code></td></tr>
+<tr><td><code>--text-action-high-info</code></td><td><span class="swatch" style="background:#0063CB"></span><code class="small">#0063CB</code></td><td><span class="swatch" style="background:#518FFF"></span><code class="small">#518FFF</code></td></tr>
+<tr><td><code>--text-action-high-warning</code></td><td><span class="swatch" style="background:#B34000"></span><code class="small">#B34000</code></td><td><span class="swatch" style="background:#FC5D00"></span><code class="small">#FC5D00</code></td></tr>
+<tr><td><code>--text-active-blue-france</code></td><td><span class="swatch" style="background:#000091"></span><code class="small">#000091</code></td><td><span class="swatch" style="background:#8585F6"></span><code class="small">#8585F6</code></td></tr>
+<tr><td><code>--text-active-grey</code></td><td><span class="swatch" style="background:#161616"></span><code class="small">#161616</code></td><td><span class="swatch" style="background:#FFFFFF"></span><code class="small">#FFFFFF</code></td></tr>
+<tr><td><code>--text-default-error</code></td><td><span class="swatch" style="background:#CE0500"></span><code class="small">#CE0500</code></td><td><span class="swatch" style="background:#FF5655"></span><code class="small">#FF5655</code></td></tr>
+<tr><td><code>--text-default-info</code></td><td><span class="swatch" style="background:#0063CB"></span><code class="small">#0063CB</code></td><td><span class="swatch" style="background:#518FFF"></span><code class="small">#518FFF</code></td></tr>
+<tr><td><code>--text-default-success</code></td><td><span class="swatch" style="background:#18753C"></span><code class="small">#18753C</code></td><td><span class="swatch" style="background:#27A658"></span><code class="small">#27A658</code></td></tr>
+<tr><td><code>--text-default-warning</code></td><td><span class="swatch" style="background:#B34000"></span><code class="small">#B34000</code></td><td><span class="swatch" style="background:#FC5D00"></span><code class="small">#FC5D00</code></td></tr>
+<tr><td><code>--text-disabled-grey</code></td><td><span class="swatch" style="background:#929292"></span><code class="small">#929292</code></td><td><span class="swatch" style="background:#666666"></span><code class="small">#666666</code></td></tr>
+<tr><td><code>--text-inverted-blue-france</code></td><td><span class="swatch" style="background:#F5F5FE"></span><code class="small">#F5F5FE</code></td><td><span class="swatch" style="background:#000091"></span><code class="small">#000091</code></td></tr>
+<tr><td><code>--text-inverted-grey</code></td><td><span class="swatch" style="background:#FFFFFF"></span><code class="small">#FFFFFF</code></td><td><span class="swatch" style="background:#161616"></span><code class="small">#161616</code></td></tr>
+<tr><td><code>--text-label-grey</code></td><td><span class="swatch" style="background:#161616"></span><code class="small">#161616</code></td><td><span class="swatch" style="background:#FFFFFF"></span><code class="small">#FFFFFF</code></td></tr>
+<tr><td><code>--text-title-blue-france</code></td><td><span class="swatch" style="background:#000091"></span><code class="small">#000091</code></td><td><span class="swatch" style="background:#8585F6"></span><code class="small">#8585F6</code></td></tr>
+<tr><td><code>--text-title-grey</code></td><td><span class="swatch" style="background:#161616"></span><code class="small">#161616</code></td><td><span class="swatch" style="background:#FFFFFF"></span><code class="small">#FFFFFF</code></td></tr>
+  </tbody></table>
+
+  <h2>Tokens sémantiques — Background</h2>
+  <table class="fond-table"><thead><tr><th>Token</th><th>Light</th><th>Dark</th></tr></thead><tbody>
+<tr><td><code>--background-action-low-blue-france</code></td><td><span class="swatch" style="background:#E3E3FD"></span><code class="small">#E3E3FD</code></td><td><span class="muted small">—</span></td></tr>
+<tr><td><code>--background-alt-blue-france</code></td><td><span class="swatch" style="background:#F5F5FE"></span><code class="small">#F5F5FE</code></td><td><span class="muted small">—</span></td></tr>
+<tr><td><code>--background-action-high-blue-france</code></td><td><span class="swatch" style="background:#000091"></span><code class="small">#000091</code></td><td><span class="swatch" style="background:#8585F6"></span><code class="small">#8585F6</code></td></tr>
+<tr><td><code>--background-action-high-blue-france-active</code></td><td><span class="swatch" style="background:#2323FF"></span><code class="small">#2323FF</code></td><td><span class="swatch" style="background:#C6C6FB"></span><code class="small">#C6C6FB</code></td></tr>
+<tr><td><code>--background-action-high-blue-france-hover</code></td><td><span class="swatch" style="background:#1212FF"></span><code class="small">#1212FF</code></td><td><span class="swatch" style="background:#B1B1F9"></span><code class="small">#B1B1F9</code></td></tr>
+<tr><td><code>--background-action-high-error</code></td><td><span class="swatch" style="background:#CE0500"></span><code class="small">#CE0500</code></td><td><span class="swatch" style="background:#FF5655"></span><code class="small">#FF5655</code></td></tr>
+<tr><td><code>--background-action-high-info</code></td><td><span class="swatch" style="background:#0063CB"></span><code class="small">#0063CB</code></td><td><span class="swatch" style="background:#518FFF"></span><code class="small">#518FFF</code></td></tr>
+<tr><td><code>--background-action-high-success</code></td><td><span class="swatch" style="background:#18753C"></span><code class="small">#18753C</code></td><td><span class="swatch" style="background:#27A658"></span><code class="small">#27A658</code></td></tr>
+<tr><td><code>--background-action-high-warning</code></td><td><span class="swatch" style="background:#B34000"></span><code class="small">#B34000</code></td><td><span class="swatch" style="background:#FC5D00"></span><code class="small">#FC5D00</code></td></tr>
+<tr><td><code>--background-action-low-blue-france-active</code></td><td><span class="swatch" style="background:#ADADF9"></span><code class="small">#ADADF9</code></td><td><span class="swatch" style="background:#5E5E90"></span><code class="small">#5E5E90</code></td></tr>
+<tr><td><code>--background-action-low-blue-france-hover</code></td><td><span class="swatch" style="background:#C1C1FB"></span><code class="small">#C1C1FB</code></td><td><span class="swatch" style="background:#4A4A7D"></span><code class="small">#4A4A7D</code></td></tr>
+<tr><td><code>--background-active-blue-france</code></td><td><span class="swatch" style="background:#000091"></span><code class="small">#000091</code></td><td><span class="swatch" style="background:#8585F6"></span><code class="small">#8585F6</code></td></tr>
+<tr><td><code>--background-alt-grey</code></td><td><span class="swatch" style="background:#F6F6F6"></span><code class="small">#F6F6F6</code></td><td><span class="swatch" style="background:#1E1E1E"></span><code class="small">#1E1E1E</code></td></tr>
+<tr><td><code>--background-alt-grey-active</code></td><td><span class="swatch" style="background:#CFCFCF"></span><code class="small">#CFCFCF</code></td><td><span class="swatch" style="background:#525252"></span><code class="small">#525252</code></td></tr>
+<tr><td><code>--background-alt-grey-hover</code></td><td><span class="swatch" style="background:#DFDFDF"></span><code class="small">#DFDFDF</code></td><td><span class="swatch" style="background:#3F3F3F"></span><code class="small">#3F3F3F</code></td></tr>
+<tr><td><code>--background-alt-overlap-grey</code></td><td><span class="swatch" style="background:#F6F6F6"></span><code class="small">#F6F6F6</code></td><td><span class="swatch" style="background:#2A2A2A"></span><code class="small">#2A2A2A</code></td></tr>
+<tr><td><code>--background-alt-raised-grey</code></td><td><span class="swatch" style="background:#F6F6F6"></span><code class="small">#F6F6F6</code></td><td><span class="swatch" style="background:#242424"></span><code class="small">#242424</code></td></tr>
+<tr><td><code>--background-contrast-blue-france</code></td><td><span class="swatch" style="background:#ECECFE"></span><code class="small">#ECECFE</code></td><td><span class="swatch" style="background:#21213F"></span><code class="small">#21213F</code></td></tr>
+<tr><td><code>--background-contrast-error</code></td><td><span class="swatch" style="background:#FFE9E9"></span><code class="small">#FFE9E9</code></td><td><span class="swatch" style="background:#391C1C"></span><code class="small">#391C1C</code></td></tr>
+<tr><td><code>--background-contrast-grey</code></td><td><span class="swatch" style="background:#EEEEEE"></span><code class="small">#EEEEEE</code></td><td><span class="swatch" style="background:#242424"></span><code class="small">#242424</code></td></tr>
+<tr><td><code>--background-contrast-info</code></td><td><span class="swatch" style="background:#E8EDFF"></span><code class="small">#E8EDFF</code></td><td><span class="swatch" style="background:#1D2437"></span><code class="small">#1D2437</code></td></tr>
+<tr><td><code>--background-contrast-overlap-grey</code></td><td><span class="swatch" style="background:#EEEEEE"></span><code class="small">#EEEEEE</code></td><td><span class="swatch" style="background:#2F2F2F"></span><code class="small">#2F2F2F</code></td></tr>
+<tr><td><code>--background-contrast-raised-grey</code></td><td><span class="swatch" style="background:#EEEEEE"></span><code class="small">#EEEEEE</code></td><td><span class="swatch" style="background:#2A2A2A"></span><code class="small">#2A2A2A</code></td></tr>
+<tr><td><code>--background-contrast-success</code></td><td><span class="swatch" style="background:#B8FEC9"></span><code class="small">#B8FEC9</code></td><td><span class="swatch" style="background:#19271D"></span><code class="small">#19271D</code></td></tr>
+<tr><td><code>--background-contrast-warning</code></td><td><span class="swatch" style="background:#FFE9E6"></span><code class="small">#FFE9E6</code></td><td><span class="swatch" style="background:#361E19"></span><code class="small">#361E19</code></td></tr>
+<tr><td><code>--background-default-grey</code></td><td><span class="swatch" style="background:#FFFFFF"></span><code class="small">#FFFFFF</code></td><td><span class="swatch" style="background:#161616"></span><code class="small">#161616</code></td></tr>
+<tr><td><code>--background-default-grey-active</code></td><td><span class="swatch" style="background:#EDEDED"></span><code class="small">#EDEDED</code></td><td><span class="swatch" style="background:#474747"></span><code class="small">#474747</code></td></tr>
+<tr><td><code>--background-default-grey-hover</code></td><td><span class="swatch" style="background:#F6F6F6"></span><code class="small">#F6F6F6</code></td><td><span class="swatch" style="background:#343434"></span><code class="small">#343434</code></td></tr>
+<tr><td><code>--background-disabled-grey</code></td><td><span class="swatch" style="background:#E5E5E5"></span><code class="small">#E5E5E5</code></td><td><span class="swatch" style="background:#2A2A2A"></span><code class="small">#2A2A2A</code></td></tr>
+<tr><td><code>--background-flat-error</code></td><td><span class="swatch" style="background:#CE0500"></span><code class="small">#CE0500</code></td><td><span class="swatch" style="background:#FF5655"></span><code class="small">#FF5655</code></td></tr>
+<tr><td><code>--background-flat-grey</code></td><td><span class="swatch" style="background:#3A3A3A"></span><code class="small">#3A3A3A</code></td><td><span class="swatch" style="background:#CECECE"></span><code class="small">#CECECE</code></td></tr>
+<tr><td><code>--background-flat-info</code></td><td><span class="swatch" style="background:#0063CB"></span><code class="small">#0063CB</code></td><td><span class="swatch" style="background:#518FFF"></span><code class="small">#518FFF</code></td></tr>
+<tr><td><code>--background-flat-success</code></td><td><span class="swatch" style="background:#18753C"></span><code class="small">#18753C</code></td><td><span class="swatch" style="background:#27A658"></span><code class="small">#27A658</code></td></tr>
+<tr><td><code>--background-flat-warning</code></td><td><span class="swatch" style="background:#B34000"></span><code class="small">#B34000</code></td><td><span class="swatch" style="background:#FC5D00"></span><code class="small">#FC5D00</code></td></tr>
+<tr><td><code>--background-lifted-grey</code></td><td><span class="swatch" style="background:#FFFFFF"></span><code class="small">#FFFFFF</code></td><td><span class="swatch" style="background:#1E1E1E"></span><code class="small">#1E1E1E</code></td></tr>
+<tr><td><code>--background-open-blue-france</code></td><td><span class="swatch" style="background:#E3E3FD"></span><code class="small">#E3E3FD</code></td><td><span class="swatch" style="background:#272747"></span><code class="small">#272747</code></td></tr>
+<tr><td><code>--background-open-blue-france-active</code></td><td><span class="swatch" style="background:#ADADF9"></span><code class="small">#ADADF9</code></td><td><span class="swatch" style="background:#5E5E90"></span><code class="small">#5E5E90</code></td></tr>
+<tr><td><code>--background-open-blue-france-hover</code></td><td><span class="swatch" style="background:#C1C1FB"></span><code class="small">#C1C1FB</code></td><td><span class="swatch" style="background:#4A4A7D"></span><code class="small">#4A4A7D</code></td></tr>
+<tr><td><code>--background-overlap-grey</code></td><td><span class="swatch" style="background:#FFFFFF"></span><code class="small">#FFFFFF</code></td><td><span class="swatch" style="background:#242424"></span><code class="small">#242424</code></td></tr>
+<tr><td><code>--background-overlay-grey</code></td><td><span class="swatch" style="background:#161616"></span><code class="small">#161616</code></td><td><span class="swatch" style="background:#161616"></span><code class="small">#161616</code></td></tr>
+<tr><td><code>--background-raised-grey</code></td><td><span class="swatch" style="background:#FFFFFF"></span><code class="small">#FFFFFF</code></td><td><span class="swatch" style="background:#1E1E1E"></span><code class="small">#1E1E1E</code></td></tr>
+<tr><td><code>--background-transparent</code></td><td><span class="swatch" style="background:#000000"></span><code class="small">#000000</code></td><td><span class="swatch" style="background:#FFFFFF"></span><code class="small">#FFFFFF</code></td></tr>
+<tr><td><code>--background-transparent-active</code></td><td><span class="swatch" style="background:#000000"></span><code class="small">#000000</code></td><td><span class="swatch" style="background:#FFFFFF"></span><code class="small">#FFFFFF</code></td></tr>
+<tr><td><code>--background-transparent-hover</code></td><td><span class="swatch" style="background:#000000"></span><code class="small">#000000</code></td><td><span class="swatch" style="background:#FFFFFF"></span><code class="small">#FFFFFF</code></td></tr>
+  </tbody></table>
+
+  <h2>Tokens sémantiques — Border</h2>
+  <table class="fond-table"><thead><tr><th>Token</th><th>Light</th><th>Dark</th></tr></thead><tbody>
+<tr><td><code>--border-action-high-blue-france</code></td><td><span class="swatch" style="background:#000091"></span><code class="small">#000091</code></td><td><span class="muted small">—</span></td></tr>
+<tr><td><code>--border-action-high-grey</code></td><td><span class="swatch" style="background:#161616"></span><code class="small">#161616</code></td><td><span class="swatch" style="background:#FFFFFF"></span><code class="small">#FFFFFF</code></td></tr>
+<tr><td><code>--border-action-low-blue-france</code></td><td><span class="swatch" style="background:#CACAFB"></span><code class="small">#CACAFB</code></td><td><span class="swatch" style="background:#313178"></span><code class="small">#313178</code></td></tr>
+<tr><td><code>--border-active-blue-france</code></td><td><span class="swatch" style="background:#000091"></span><code class="small">#000091</code></td><td><span class="swatch" style="background:#8585F6"></span><code class="small">#8585F6</code></td></tr>
+<tr><td><code>--border-default-blue-france</code></td><td><span class="swatch" style="background:#6A6AF4"></span><code class="small">#6A6AF4</code></td><td><span class="swatch" style="background:#6A6AF4"></span><code class="small">#6A6AF4</code></td></tr>
+<tr><td><code>--border-default-grey</code></td><td><span class="swatch" style="background:#DDDDDD"></span><code class="small">#DDDDDD</code></td><td><span class="swatch" style="background:#353535"></span><code class="small">#353535</code></td></tr>
+<tr><td><code>--border-disabled-grey</code></td><td><span class="swatch" style="background:#E5E5E5"></span><code class="small">#E5E5E5</code></td><td><span class="swatch" style="background:#2A2A2A"></span><code class="small">#2A2A2A</code></td></tr>
+<tr><td><code>--border-open-blue-france</code></td><td><span class="swatch" style="background:#E3E3FD"></span><code class="small">#E3E3FD</code></td><td><span class="swatch" style="background:#272747"></span><code class="small">#272747</code></td></tr>
+<tr><td><code>--border-plain-blue-france</code></td><td><span class="swatch" style="background:#000091"></span><code class="small">#000091</code></td><td><span class="swatch" style="background:#8585F6"></span><code class="small">#8585F6</code></td></tr>
+<tr><td><code>--border-plain-error</code></td><td><span class="swatch" style="background:#CE0500"></span><code class="small">#CE0500</code></td><td><span class="swatch" style="background:#FF5655"></span><code class="small">#FF5655</code></td></tr>
+<tr><td><code>--border-plain-grey</code></td><td><span class="swatch" style="background:#3A3A3A"></span><code class="small">#3A3A3A</code></td><td><span class="swatch" style="background:#CECECE"></span><code class="small">#CECECE</code></td></tr>
+<tr><td><code>--border-plain-info</code></td><td><span class="swatch" style="background:#0063CB"></span><code class="small">#0063CB</code></td><td><span class="swatch" style="background:#518FFF"></span><code class="small">#518FFF</code></td></tr>
+<tr><td><code>--border-plain-success</code></td><td><span class="swatch" style="background:#18753C"></span><code class="small">#18753C</code></td><td><span class="muted small">—</span></td></tr>
+<tr><td><code>--border-plain-warning</code></td><td><span class="swatch" style="background:#B34000"></span><code class="small">#B34000</code></td><td><span class="swatch" style="background:#FC5D00"></span><code class="small">#FC5D00</code></td></tr>
+  </tbody></table>
+
+  <h2>Tokens sémantiques — Artwork</h2>
+  <p class="muted small">Utilisés pour les illustrations et pictogrammes décoratifs (pas pour du texte ou des fonds d'UI).</p>
+  <table class="fond-table"><thead><tr><th>Token</th><th>Light</th><th>Dark</th></tr></thead><tbody>
+<tr><td><code>--artwork-decorative-blue-france</code></td><td><span class="swatch" style="background:#ECECFE"></span><code class="small">#ECECFE</code></td><td><span class="swatch" style="background:#21213F"></span><code class="small">#21213F</code></td></tr>
+<tr><td><code>--artwork-major-blue-france</code></td><td><span class="swatch" style="background:#000091"></span><code class="small">#000091</code></td><td><span class="swatch" style="background:#8585F6"></span><code class="small">#8585F6</code></td></tr>
+<tr><td><code>--artwork-minor-blue-france</code></td><td><span class="swatch" style="background:#6A6AF4"></span><code class="small">#6A6AF4</code></td><td><span class="swatch" style="background:#6A6AF4"></span><code class="small">#6A6AF4</code></td></tr>
+<tr><td><code>--artwork-minor-red-marianne</code></td><td><span class="swatch" style="background:#E1000F"></span><code class="small">#E1000F</code></td><td><span class="swatch" style="background:#E1000F"></span><code class="small">#E1000F</code></td></tr>
+  </tbody></table>
+
+  <h2>Palette de référence (Options)</h2>
+  <p class="muted small">Couleurs brutes dont dérivent les tokens sémantiques ci-dessus. Ne pas les utiliser directement dans une maquette — elles n'ont pas de variante dark automatique et ne portent pas de sens fonctionnel.</p>
+
+  <h3>Marque</h3>
+  <table class="fond-table"><thead><tr><th>Nom</th><th>Valeur</th></tr></thead><tbody>
+<tr><td><code>blue-france-sun-113</code></td><td><span class="swatch" style="background:#000091"></span><code class="small">#000091</code></td></tr>
+<tr><td><code>blue-france-main-525</code></td><td><span class="swatch" style="background:#6A6AF4"></span><code class="small">#6A6AF4</code></td></tr>
+<tr><td><code>red-marianne-main-472</code></td><td><span class="swatch" style="background:#E1000F"></span><code class="small">#E1000F</code></td></tr>
+  </tbody></table>
+
+  <h3>Neutre (grey)</h3>
+  <table class="fond-table"><thead><tr><th>Nom</th><th>Valeur</th></tr></thead><tbody>
+<tr><td><code>grey-1000</code></td><td><span class="swatch" style="background:#FFFFFF"></span><code class="small">#FFFFFF</code></td></tr>
+<tr><td><code>grey-975</code></td><td><span class="swatch" style="background:#F5F5F5"></span><code class="small">#F5F5F5</code></td></tr>
+<tr><td><code>grey-950</code></td><td><span class="swatch" style="background:#EEEEEE"></span><code class="small">#EEEEEE</code></td></tr>
+<tr><td><code>grey-925</code></td><td><span class="swatch" style="background:#E6E6E6"></span><code class="small">#E6E6E6</code></td></tr>
+<tr><td><code>grey-900</code></td><td><span class="swatch" style="background:#DDDDDD"></span><code class="small">#DDDDDD</code></td></tr>
+<tr><td><code>grey-850</code></td><td><span class="swatch" style="background:#CECECE"></span><code class="small">#CECECE</code></td></tr>
+<tr><td><code>grey-625</code></td><td><span class="swatch" style="background:#929292"></span><code class="small">#929292</code></td></tr>
+<tr><td><code>grey-425</code></td><td><span class="swatch" style="background:#666666"></span><code class="small">#666666</code></td></tr>
+<tr><td><code>grey-200</code></td><td><span class="swatch" style="background:#3A3A3A"></span><code class="small">#3A3A3A</code></td></tr>
+<tr><td><code>grey-175</code></td><td><span class="swatch" style="background:#353535"></span><code class="small">#353535</code></td></tr>
+<tr><td><code>grey-125</code></td><td><span class="swatch" style="background:#2A2A2A"></span><code class="small">#2A2A2A</code></td></tr>
+<tr><td><code>grey-100</code></td><td><span class="swatch" style="background:#242424"></span><code class="small">#242424</code></td></tr>
+<tr><td><code>grey-75</code></td><td><span class="swatch" style="background:#1E1E1E"></span><code class="small">#1E1E1E</code></td></tr>
+<tr><td><code>grey-50</code></td><td><span class="swatch" style="background:#161616"></span><code class="small">#161616</code></td></tr>
+  </tbody></table>
+
+  <h3>Système (info / succès / alerte / erreur)</h3>
+  <table class="fond-table"><thead><tr><th>Nom</th><th>Valeur</th></tr></thead><tbody>
+<tr><td><code>error-main-525</code></td><td><span class="swatch" style="background:#F50800"></span><code class="small">#F50800</code></td></tr>
+<tr><td><code>info-main-525</code></td><td><span class="swatch" style="background:#007AF5"></span><code class="small">#007AF5</code></td></tr>
+<tr><td><code>success-main-525</code></td><td><span class="swatch" style="background:#1F8E4A"></span><code class="small">#1F8E4A</code></td></tr>
+<tr><td><code>warning-main-525</code></td><td><span class="swatch" style="background:#D64F00"></span><code class="small">#D64F00</code></td></tr>
+<tr><td><code>focus-525</code></td><td><span class="swatch" style="background:#0A76F6"></span><code class="small">#0A76F6</code></td></tr>
+  </tbody></table>
+
+  <h2>Cohérence avec le code</h2>
+  <div class="methodo">
+    <p style="margin-top:0"><strong>Confirmé :</strong> <code>--text-disabled-grey</code> vaut <code>#929292</code> en light dans Figma, ce qui correspond à ce qu'on a tranché pour <a href="../composants/dsfrbutton.html">DsfrButton</a> (le code utilisait <code>#656565</code> par endroits — voir <a href="../homogenisation.html">À homogénéiser</a>).</p>
+    <p style="margin-bottom:0"><strong>Écart :</strong> la palette <code>jva-blue</code> définie dans <code>tailwind.config.ts</code> reprend certaines valeurs DSFR (<code>500: #000091</code> = blue-france-sun-113, <code>800/900</code> = ses états hover/active) mais avec sa propre numérotation Tailwind (50–900), différente de l'échelle DSFR (75–975 + sun/main). Pas un bug, mais à garder en tête : le nom de la classe Tailwind ne renseigne pas sur le token DSFR sémantique correspondant.</p>
+  </div>
+
+  </div>
+</main>
+</body>
+</html>

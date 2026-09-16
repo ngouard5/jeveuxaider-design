@@ -271,6 +271,31 @@ des doublons. En revanche, **`base/InputAutocomplete.vue`,
     à vérifier visuellement sur les boutons `primary`/`secondary`/`tertiary`
     désactivés existants avant merge.
 
+- **Points de rupture Tailwind ≠ points de rupture DSFR** : `tailwind.config.ts`
+  définit `screens: { xxs:375px, xs:425px, sm:640px, md:768px, lg:1024px, xl:1348px }`,
+  alors que la grille DSFR (Figma « Fondamentaux » + doc officielle) définit
+  XS 0–575, SM 576–767, MD 768–991, LG 992–1247, XL ≥1248. Seul `md` coïncide
+  (768px) ; `lg` et `xl` divergent notablement (1024 vs 992, 1348 vs 1248). Une
+  maquette pensée avec les breakpoints DSFR peut donc légèrement casser au
+  moment de l'implémentation Tailwind aux paliers lg/xl.
+  - Fichiers : `frontend/tailwind.config.ts`
+  - **Effort : élevé** — renommer/décaler des breakpoints Tailwind utilisés
+    dans tout le codebase est risqué (impact visuel large, non isolé).
+  - **Risque : élevé** — à ne considérer qu'en connaissance de cause, pas une
+    correction ponctuelle.
+
+- **`@heroicons/vue` et `vue-remix-icons` en marge de `@remixicon/vue`** : le
+  set d'icônes DSFR (Figma « Fondamentaux ») est basé sur Remix Icon, et
+  `@remixicon/vue` est bien la librairie dominante côté code (220 fichiers).
+  Mais `@heroicons/vue` (4 fichiers) et `vue-remix-icons` (1 fichier, package
+  legacy) sont aussi présents dans `package.json` et sortent de cette
+  convention — leurs icônes ne correspondent pas au set DSFR officiel.
+  - Fichiers : `package.json`, + 5 fichiers `.vue` consommateurs
+  - **Effort : faible** — migrer les 5 usages vers `@remixicon/vue`, puis
+    retirer les 2 dépendances.
+  - **Risque : faible** — remplacement d'icône isolé par composant, pas de
+    logique affectée.
+
 ---
 
 ## Méthodologie

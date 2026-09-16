@@ -210,11 +210,11 @@ table.migration th{background:var(--code-bg)}
   <thead><tr><th></th><th><code>design-system/</code></th><th><code>prototypes/</code></th></tr></thead>
   <tbody>
     <tr><td><strong>Rôle</strong></td><td>Documentation de référence : un composant, un token, une règle</td><td>Test visuel d'un parcours utilisateur complet</td></tr>
-    <tr><td><strong>Style</strong></td><td>Partagé (<code>compiled.css</code> + <code>dsfr.min.css</code>), cohérent d'une page à l'autre</td><td>Autonome : CSS et JS embarqués dans chaque fichier, aucune dépendance partagée</td></tr>
-    <tr><td><strong>Exemple de demande</strong></td><td>« Ajoute l'état focus dans la doc de DsfrButton »</td><td>« Dans le prototype d'inscription, ajoute un état d'erreur au champ mot de passe »</td></tr>
+    <tr><td><strong>Style</strong></td><td>Partagé (<code>compiled.css</code> + <code>dsfr.min.css</code>), cohérent d'une page à l'autre</td><td>Les deux mêmes feuilles de style sont liées (<code>../design-system/compiled.css</code> et <code>dsfr.min.css</code>) : les vraies classes DSFR/JVA sont réutilisées, rien n'est recodé. Seuls le CSS de mise en page propre au prototype (ex. la disposition 2 colonnes) et le JS de démo restent embarqués</td></tr>
+    <tr><td><strong>Exemple de demande</strong></td><td>« Ajoute l'état focus dans la doc de DsfrButton »</td><td>« Dans le prototype d'inscription, ajoute un état d'erreur au champ mot de passe, avec les vraies classes du bouton et du champ »</td></tr>
   </tbody>
 </table>
-<p class="muted small">En cas de doute, nomme le fichier ou le dossier exact plutôt que « la page » ou « le prototype » tout court.</p>
+<p class="muted small">En cas de doute, nomme le fichier ou le dossier exact plutôt que « la page » ou « le prototype » tout court. Ça vaut aussi pour un composant qui n'a pas d'équivalent exact en classes réelles (ex. une mise en page inédite) : dans ce cas seulement, du CSS propre au prototype est légitime.</p>
 
 <h2>2. Appuie-toi sur le vrai code, pas sur une supposition</h2>
 <p>Claude a un accès en lecture seule au code réel de l'application (le dossier <code>jeveuxaider</code>) &mdash; jamais modifié, uniquement consulté comme référence. Demande explicitement de vérifier un champ, un libellé, une règle de validation ou une couleur dans le vrai composant plutôt que de laisser deviner, en particulier pour les libellés, les placeholders, les tokens de couleur DSFR et les règles de validation.</p>
@@ -243,7 +243,7 @@ réel avant de le maquetter (placeholder, valeur par défaut, composant utilisé
 <h2>Repères utiles</h2>
 <div class="methodo">
   <p style="margin:0 0 .6rem">Le code réel de l'app (<code>jeveuxaider</code>) est en lecture seule : jamais de modification, uniquement une référence pour les bons champs, tokens et textes.</p>
-  <p style="margin:0 0 .6rem">Les prototypes sont autonomes : pas de feuille de style partagée, CSS et JS embarqués dans chaque fichier &mdash; ce sont des maquettes interactives pour visualiser un parcours, pas du code de production.</p>
+  <p style="margin:0 0 .6rem">Les prototypes lient les vraies feuilles de style (<code>compiled.css</code>, <code>dsfr.min.css</code>) et réutilisent les vraies classes DSFR/JVA ; seuls le CSS de mise en page propre au prototype et le JS de démo restent embarqués &mdash; ce sont des maquettes interactives pour visualiser un parcours, pas du code de production.</p>
   <p style="margin:0">Le design-system documente le composant réel tel qu'il existe ; pour un composant DSFR natif pas encore utilisé dans l'app, il est signalé explicitement comme non implémenté en prod (voir <a href="composants/dsfrstepper.html">DsfrStepper</a>).</p>
 </div>
   </div>

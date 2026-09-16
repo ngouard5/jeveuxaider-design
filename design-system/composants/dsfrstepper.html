@@ -89,12 +89,7 @@ h4{font-size:.8rem;text-transform:uppercase;letter-spacing:.04em;color:var(--mut
 
 .fr-badge.fr-badge--info:before,.fr-badge.fr-badge--success:before,.fr-badge.fr-badge--error:before,.fr-badge.fr-badge--warning:before,.fr-badge.fr-badge--new:before{content:none}
 
-/* ---------- indicateur d'étapes DSFR (fr-stepper) — pas encore utilisé dans l'app ---------- */
-.fr-stepper{display:flex;flex-direction:column;margin-bottom:0}
-.fr-stepper__title{margin:0;color:#161616;font-size:1.125rem;line-height:1.5rem;font-weight:700}
-.fr-stepper__state{display:block;margin-top:.25rem;color:#666;font-size:.875rem;font-weight:400;line-height:1.5rem}
-.fr-stepper__steps{--default-outer:calc((100% + 6px)/var(--steps));--default-inner:calc(var(--default-outer) - 6px);--active-outer:calc((100% + 6px)/var(--current-step));--active-inner:calc(var(--active-outer) - 6px);display:block!important;height:6px;width:100%;margin-top:.75rem;background-repeat:no-repeat;background-position:0 0,0 0;background-image:repeating-linear-gradient(to right,#000091 0,#000091 var(--active-inner),transparent var(--active-inner),transparent var(--active-outer)),repeating-linear-gradient(to right,#eee 0,#eee var(--default-inner),transparent var(--default-inner),transparent var(--default-outer));background-size:calc((100% + 6px)*var(--current-step)/var(--steps) - 6px) 100%,100% 100%}
-.fr-stepper__details{margin:.75rem 0 0;color:#666;font-size:.75rem;line-height:1.25rem}
+
 .wip-tag{display:inline-block;font-size:.72rem;font-weight:700;padding:.15rem .6rem;border-radius:99px;background:#FFF2CF;color:#8A6100;margin-bottom:1rem}
 @media (prefers-color-scheme: dark){ .wip-tag{background:#463A10;color:#F5CF6B} }
 .meta-row{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;margin:.5rem 0 1rem}

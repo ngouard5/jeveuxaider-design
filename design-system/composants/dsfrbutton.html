@@ -76,7 +76,7 @@ h4{font-size:.8rem;text-transform:uppercase;letter-spacing:.04em;color:var(--mut
 
 /* ---------- tabs ---------- */
 .tabs{display:flex;gap:1.75rem;border-bottom:2px solid var(--border);margin:1.5rem 0 1.75rem;flex-wrap:wrap}
-.fr-tabs__list{border-bottom:1px solid var(--border)}
+.fr-tabs__list{border-bottom:1px solid var(--border);padding-bottom:0}
 .fr-tabs__panel{display:none!important;position:static!important;left:auto!important;flex:none!important;margin:0!important;visibility:visible!important;height:auto!important;overflow:visible!important;width:auto!important}
 .fr-tabs__panel--selected{display:block!important}
 
@@ -194,7 +194,7 @@ table.migration th{background:var(--code-bg)}
     <h1>DsfrButton</h1>
     <div class="meta-row">
       <p class="fr-tag">326 usages</p>
-      <p class="fr-badge fr-badge--info">Wrapper DSFR</p>
+      <p class="fr-badge fr-badge--info"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" style="margin-right:.3rem;flex:none"><path d="M19.5,2.5h-15c-1.1,0-2,0.9-2,2v15c0,1.1,0.9,2,2,2h15c1.1,0,2-0.9,2-2v-15C21.5,3.4,20.6,2.5,19.5,2.5z M13,17h-2v-6h2V17z M13,9h-2V7h2V9z"/></svg>Wrapper DSFR</p>
       <span class="path-line small"><code>components/dsfr/Button.vue</code></span>
     </div>
     <p class="subtitle">Bouton principal du design system, rendu en `&lt;button&gt;`, `&lt;a&gt;` ou `&lt;NuxtLink&gt;` selon le contexte, avec icône et état loading. Le composant le plus utilisé du projet.</p>

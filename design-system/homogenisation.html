@@ -5,7 +5,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="compiled.css">
-<link rel="stylesheet" href="dsfr-components.css">
+<link rel="stylesheet" href="dsfr.min.css">
+<script>document.documentElement.setAttribute("data-fr-theme", matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");</script>
 <style>
   @font-face { font-family: Marianne; src: url('fonts/Marianne-Light.woff2') format('woff2'); font-weight: 300; font-style: normal; font-display: swap; }
   @font-face { font-family: Marianne; src: url('fonts/Marianne-Regular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
@@ -17,14 +18,9 @@
 </style>
 <style>
 :root{
-  --bg:#fff; --fg:#1b1b1b; --muted:#666; --border:#e2e2e2; --card:#fafafa;
-  --code-bg:#f4f4f7; --link:#000091; --badge-dsfr-bg:#e3e3fd; --badge-dsfr-fg:#000091;
-  --badge-custom-bg:#f0f0f0; --badge-custom-fg:#444; --sidebar-bg:#f6f6f9;
-}
-@media (prefers-color-scheme: dark){
-  :root{ --bg:#15151a; --fg:#eaeaea; --muted:#a0a0a8; --border:#33333d; --card:#1d1d24;
-    --code-bg:#0f0f14; --link:#9aa6ff; --badge-dsfr-bg:#26265c; --badge-dsfr-fg:#c7cdff;
-    --badge-custom-bg:#2a2a33; --badge-custom-fg:#ccc; --sidebar-bg:#101014; }
+  --bg:var(--background-default-grey); --fg:var(--text-default-grey); --muted:var(--text-mention-grey); --border:var(--border-default-grey); --card:var(--background-alt-grey);
+  --code-bg:var(--background-contrast-grey); --link:var(--text-action-high-blue-france); --badge-dsfr-bg:var(--background-action-low-blue-france); --badge-dsfr-fg:var(--text-action-high-blue-france);
+  --badge-custom-bg:var(--background-contrast-grey); --badge-custom-fg:var(--text-default-grey); --sidebar-bg:var(--background-alt-grey);
 }
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}

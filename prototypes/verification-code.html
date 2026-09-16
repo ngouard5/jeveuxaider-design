@@ -45,6 +45,12 @@
   .otp-box{flex:1;min-width:0;height:64px;text-align:center;font-family:Marianne;font-size:20px;padding:8px 16px;border:none}
   .otp-box:focus{outline:2px solid #000091;outline-offset:2px}
 
+  /* État disabled du vrai DsfrButton primary (components/dsfr/Button.vue) : !bg-[#E5E5E5]
+     text-[#656565] shadow-[inset_0_0_0_1px_#E5E5E5]. Ces classes précises n'existent pas
+     dans notre compiled.css (bundle incomplet), donc les valeurs réelles sont reprises ici
+     à la main, comme pour .dsfr-link plus haut. */
+  #btn-valider:disabled{background:#E5E5E5;color:#656565;box-shadow:inset 0 0 0 1px #E5E5E5}
+
   .error-msg{display:flex;align-items:flex-start;gap:8px;text-align:left;font-size:14px;line-height:20px;color:#CE0500;margin:0}
   .error-msg[hidden],.success-msg[hidden]{display:none}
 
@@ -107,7 +113,7 @@
           Le code de connexion est invalide.
         </p>
 
-        <button type="button" id="btn-valider" disabled class="w-full font-medium transition-extended ease-out inline-flex items-center justify-center cursor-pointer text-white bg-jva-blue-500 hover:bg-jva-blue-800 active:bg-jva-blue-900 disabled:cursor-not-allowed disabled:opacity-25 px-4 py-2 text-base min-h-[48px]">Valider</button>
+        <button type="button" id="btn-valider" disabled class="w-full font-medium transition-extended ease-out inline-flex items-center justify-center cursor-pointer disabled:cursor-not-allowed text-white bg-jva-blue-500 hover:bg-jva-blue-800 active:bg-jva-blue-900 px-6 py-2 text-lg min-h-[3rem]">Valider</button>
 
         <div class="success-msg inline-flex items-center gap-2 rounded px-2.5 py-1.5 text-sm bg-[#B8FEC9] text-[#18753C]" id="success-msg" hidden>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="#18753C" style="flex:none"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-2 15l-5-5 1.4-1.4L10 14.2l7.6-7.6L19 8l-9 9z"/></svg>

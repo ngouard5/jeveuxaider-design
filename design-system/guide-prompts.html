@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="fr">
 <head>
-<title>Candidats migration DSFR — Composants JeVeuxAider</title>
+<title>Bien prompter pour créer une page — Composants JeVeuxAider</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="compiled.css">
@@ -194,186 +194,58 @@ table.migration th{background:var(--code-bg)}
 
     <div class="nav-section sidebar-foot">
       <button class="nav-toggle" type="button" aria-expanded="true" aria-controls="nav-ressources">Ressources <span class="chevron" aria-hidden="true">▸</span></button>
-      <ul class="nav-sublist" id="nav-ressources"><li><a class="item" href="homogenisation.html">À homogénéiser</a></li><li><a class="item active" href="migration-dsfr.html">Candidats migration DSFR</a></li><li><a class="item" href="guide-prompts.html">Bien prompter pour créer une page</a></li></ul>
+      <ul class="nav-sublist" id="nav-ressources"><li><a class="item" href="homogenisation.html">À homogénéiser</a></li><li><a class="item" href="migration-dsfr.html">Candidats migration DSFR</a></li><li><a class="item active" href="guide-prompts.html">Bien prompter pour créer une page</a></li></ul>
     </div>
   </nav>
 </aside>
 <main class="main">
   <div class="wrap">
-    <p class="crumb"><a href="index.html">Accueil</a> &rsaquo; Candidats migration DSFR</p>
-    
-  <h1>Candidats migration DSFR</h1>
-  <p class="muted">Composants réutilisables <em>custom</em> ayant un équivalent DSFR direct, triés par effort de migration croissant. Liste vérifiée manuellement : les composants qui délèguent déjà à un composant <code>Dsfr*</code> en interne ont été exclus, seule la brique partagée non encore migrée est listée.</p>
-  
-<table class="migration">
-  <thead><tr><th>Composant</th><th>Usages</th><th>Effort</th><th>Cible DSFR</th><th>Note</th></tr></thead>
+    <p class="crumb"><a href="index.html">Accueil</a> &rsaquo; Bien prompter pour créer une page</p>
+    <h1>Bien prompter pour créer une page</h1>
+    <div class="methodo">Les pages de ce projet (design-system et prototypes) sont produites avec Claude. Ce guide réunit ce qui, en pratique, évite les allers-retours et les malentendus &mdash; pour que la première version soit la bonne, ou proche.</div>
+
+<h2>1. Précise où ça doit vivre</h2>
+<p>Le projet contient deux types de pages, qui n'ont pas le même rôle. Les confondre a déjà coûté un aller-retour complet : une demande de « redesign de la page OTP » a d'abord donné une page de documentation, alors qu'il s'agissait en réalité de mettre à jour le prototype interactif existant.</p>
+<table class="props">
+  <thead><tr><th></th><th><code>design-system/</code></th><th><code>prototypes/</code></th></tr></thead>
   <tbody>
-    <tr>
-      <td><a href="composants/customfiltersstatisticsbutton.html">CustomFiltersStatisticsButton</a><br><code class="small">components/custom/FiltersStatisticsButton.vue</code></td>
-      <td>21</td>
-      <td><span class="effort effort-faible">Faible</span></td>
-      <td><a href="composants/dsfrbutton.html">DsfrButton</a> + <a href="composants/dsfrbadge.html">DsfrBadge</a> (compteur)<br><span class="small muted">DSFR officiel : <a class="dsfr-link" href="https://www.systeme-de-design.gouv.fr/version-courante/fr/composants/bouton" target="_blank" rel="noopener">Bouton<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:-1px;margin-left:.2rem"><path d="M10 6v2H5v11h11v-5h2v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6Zm11-3v8h-2V6.413l-7.793 7.794-1.414-1.414L17.585 5H13V3h8Z"/></svg></a> · <a class="dsfr-link" href="https://www.systeme-de-design.gouv.fr/version-courante/fr/composants/badge" target="_blank" rel="noopener">Badge<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:-1px;margin-left:.2rem"><path d="M10 6v2H5v11h11v-5h2v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6Zm11-3v8h-2V6.413l-7.793 7.794-1.414-1.414L17.585 5H13V3h8Z"/></svg></a></span></td>
-      <td class="muted">21 usages mais un seul call-site de composition (bouton + badge de comptage).</td>
-    </tr><tr>
-      <td><a href="composants/basetabs.html">BaseTabs</a><br><code class="small">components/base/Tabs.vue</code></td>
-      <td>10</td>
-      <td><span class="effort effort-faible">Faible</span></td>
-      <td><a href="composants/dsfrtabs.html">DsfrTabs</a><br><span class="small muted">DSFR officiel : <a class="dsfr-link" href="https://www.systeme-de-design.gouv.fr/version-courante/fr/composants/onglet" target="_blank" rel="noopener">Onglet<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:-1px;margin-left:.2rem"><path d="M10 6v2H5v11h11v-5h2v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6Zm11-3v8h-2V6.413l-7.793 7.794-1.414-1.414L17.585 5H13V3h8Z"/></svg></a></span></td>
-      <td class="muted">Même prop `tabs` ; DsfrTabs ajoute juste un `name` pour l'a11y.</td>
-    </tr><tr>
-      <td><a href="composants/basealert.html">BaseAlert</a><br><code class="small">components/base/Alert.vue</code></td>
-      <td>8</td>
-      <td><span class="effort effort-faible">Faible</span></td>
-      <td><a href="composants/dsfralert.html">DsfrAlert</a><br><span class="small muted">DSFR officiel : <a class="dsfr-link" href="https://www.systeme-de-design.gouv.fr/version-courante/fr/composants/alerte" target="_blank" rel="noopener">Alerte<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:-1px;margin-left:.2rem"><path d="M10 6v2H5v11h11v-5h2v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6Zm11-3v8h-2V6.413l-7.793 7.794-1.414-1.414L17.585 5H13V3h8Z"/></svg></a></span></td>
-      <td class="muted">Une seule prop (variant) ; mapping quasi 1:1.</td>
-    </tr><tr>
-      <td><a href="composants/basebutton.html">BaseButton</a><br><code class="small">components/base/Button.vue</code></td>
-      <td>5</td>
-      <td><span class="effort effort-faible">Faible</span></td>
-      <td><a href="composants/dsfrbutton.html">DsfrButton</a><br><span class="small muted">DSFR officiel : <a class="dsfr-link" href="https://www.systeme-de-design.gouv.fr/version-courante/fr/composants/bouton" target="_blank" rel="noopener">Bouton<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:-1px;margin-left:.2rem"><path d="M10 6v2H5v11h11v-5h2v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6Zm11-3v8h-2V6.413l-7.793 7.794-1.414-1.414L17.585 5H13V3h8Z"/></svg></a></span></td>
-      <td class="muted">Doublon quasi-abandonné (5 usages) du bouton principal ; migration = suppression après bascule des 5 appelants.</td>
-    </tr><tr>
-      <td><a href="composants/basehrtitle.html">BaseHrTitle</a><br><code class="small">components/base/HrTitle.vue</code></td>
-      <td>5</td>
-      <td><span class="effort effort-faible">Faible</span></td>
-      <td><a href="composants/dsfrseparator.html">DsfrSeparator</a></td>
-      <td class="muted">Pattern identique (trait + libellé centré) déjà implémenté en DSFR sous un autre nom.</td>
-    </tr><tr>
-      <td><a href="composants/basetextarea.html">BaseTextarea</a><br><code class="small">components/base/Textarea.vue</code></td>
-      <td>5</td>
-      <td><span class="effort effort-faible">Faible</span></td>
-      <td><a href="composants/dsfrtextarea.html">DsfrTextarea</a><br><span class="small muted">DSFR officiel : <a class="dsfr-link" href="https://www.systeme-de-design.gouv.fr/version-courante/fr/composants/champ-de-saisie" target="_blank" rel="noopener">Champ de saisie<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:-1px;margin-left:.2rem"><path d="M10 6v2H5v11h11v-5h2v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6Zm11-3v8h-2V6.413l-7.793 7.794-1.414-1.414L17.585 5H13V3h8Z"/></svg></a></span></td>
-      <td class="muted">Même jeu de props à peu de chose près (modelValue, error, rows…).</td>
-    </tr><tr>
-      <td><a href="composants/uibuttonlink.html">UiButtonLink</a><br><code class="small">components/ui/ButtonLink.vue</code></td>
-      <td>3</td>
-      <td><span class="effort effort-faible">Faible</span></td>
-      <td><a href="composants/dsfrbutton.html">DsfrButton</a> (variante tertiaire sans bordure) ou <a href="composants/dsfrlink.html">DsfrLink</a><br><span class="small muted">DSFR officiel : <a class="dsfr-link" href="https://www.systeme-de-design.gouv.fr/version-courante/fr/composants/bouton" target="_blank" rel="noopener">Bouton<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:-1px;margin-left:.2rem"><path d="M10 6v2H5v11h11v-5h2v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6Zm11-3v8h-2V6.413l-7.793 7.794-1.414-1.414L17.585 5H13V3h8Z"/></svg></a> · <a class="dsfr-link" href="https://www.systeme-de-design.gouv.fr/version-courante/fr/composants/lien" target="_blank" rel="noopener">Lien<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:-1px;margin-left:.2rem"><path d="M10 6v2H5v11h11v-5h2v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6Zm11-3v8h-2V6.413l-7.793 7.794-1.414-1.414L17.585 5H13V3h8Z"/></svg></a></span></td>
-      <td class="muted">Bouton HTML custom stylé comme un lien ; remplacement direct.</td>
-    </tr><tr>
-      <td><a href="composants/custombuttonmissionfavorite.html">CustomButtonMissionFavorite</a><br><code class="small">components/custom/ButtonMissionFavorite.vue</code></td>
-      <td>3</td>
-      <td><span class="effort effort-faible">Faible</span></td>
-      <td><a href="composants/dsfriconbutton.html">DsfrIconButton</a><br><span class="small muted">DSFR officiel : <a class="dsfr-link" href="https://www.systeme-de-design.gouv.fr/version-courante/fr/composants/bouton" target="_blank" rel="noopener">Bouton<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:-1px;margin-left:.2rem"><path d="M10 6v2H5v11h11v-5h2v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6Zm11-3v8h-2V6.413l-7.793 7.794-1.414-1.414L17.585 5H13V3h8Z"/></svg></a></span></td>
-      <td class="muted">Bouton icône brut ; l'animation d'échelle au survol est à reproduire via classes custom sur DsfrIconButton.</td>
-    </tr><tr>
-      <td><a href="composants/baselink.html">BaseLink</a><br><code class="small">components/base/Link.vue</code></td>
-      <td>33</td>
-      <td><span class="effort effort-moyen">Moyen</span></td>
-      <td><a href="composants/dsfrlink.html">DsfrLink</a><br><span class="small muted">DSFR officiel : <a class="dsfr-link" href="https://www.systeme-de-design.gouv.fr/version-courante/fr/composants/lien" target="_blank" rel="noopener">Lien<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:-1px;margin-left:.2rem"><path d="M10 6v2H5v11h11v-5h2v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6Zm11-3v8h-2V6.413l-7.793 7.794-1.414-1.414L17.585 5H13V3h8Z"/></svg></a></span></td>
-      <td class="muted">33 points d'usage à vérifier visuellement (icône, cible externe).</td>
-    </tr><tr>
-      <td><a href="composants/basealertdialog.html">BaseAlertDialog</a><br><code class="small">components/base/AlertDialog.vue</code></td>
-      <td>29</td>
-      <td><span class="effort effort-moyen">Moyen</span></td>
-      <td><a href="composants/dsfrmodal.html">DsfrModal</a><br><span class="small muted">DSFR officiel : <a class="dsfr-link" href="https://www.systeme-de-design.gouv.fr/version-courante/fr/composants/modale" target="_blank" rel="noopener">Modale<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:-1px;margin-left:.2rem"><path d="M10 6v2H5v11h11v-5h2v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6Zm11-3v8h-2V6.413l-7.793 7.794-1.414-1.414L17.585 5H13V3h8Z"/></svg></a></span></td>
-      <td class="muted">Construit sur BaseModal ; suit naturellement sa migration.</td>
-    </tr><tr>
-      <td><a href="composants/basemodal.html">BaseModal</a><br><code class="small">components/base/modal/index.vue</code></td>
-      <td>13</td>
-      <td><span class="effort effort-moyen">Moyen</span></td>
-      <td><a href="composants/dsfrmodal.html">DsfrModal</a><br><span class="small muted">DSFR officiel : <a class="dsfr-link" href="https://www.systeme-de-design.gouv.fr/version-courante/fr/composants/modale" target="_blank" rel="noopener">Modale<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:-1px;margin-left:.2rem"><path d="M10 6v2H5v11h11v-5h2v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6Zm11-3v8h-2V6.413l-7.793 7.794-1.414-1.414L17.585 5H13V3h8Z"/></svg></a></span></td>
-      <td class="muted">13 usages directs, mais des dizaines de modales métier en dépendent indirectement (via base/AlertDialog notamment) — migrer ce composant fait gagner tout le reste.</td>
-    </tr><tr>
-      <td><a href="composants/baseformcontrol.html">BaseFormControl</a><br><code class="small">components/base/FormControl.vue</code></td>
-      <td>11</td>
-      <td><span class="effort effort-moyen">Moyen</span></td>
-      <td><a href="composants/dsfrformcontrol.html">DsfrFormControl</a><br><span class="small muted">DSFR officiel : <a class="dsfr-link" href="https://www.systeme-de-design.gouv.fr/version-courante/fr/composants/formulaire" target="_blank" rel="noopener">Formulaire<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:-1px;margin-left:.2rem"><path d="M10 6v2H5v11h11v-5h2v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6Zm11-3v8h-2V6.413l-7.793 7.794-1.414-1.414L17.585 5H13V3h8Z"/></svg></a></span></td>
-      <td class="muted">Même rôle (label/erreur/info/requis) ; vérifier les slots utilisés par les 11 appelants.</td>
-    </tr><tr>
-      <td><a href="composants/basefilterselectadvanced.html">BaseFilterSelectAdvanced</a><br><code class="small">components/base/FilterSelectAdvanced.vue</code></td>
-      <td>8</td>
-      <td><span class="effort effort-moyen">Moyen</span></td>
-      <td><a href="composants/dsfrselectautocomplete.html">DsfrSelectAutocomplete</a> / <a href="composants/dsfrcomboboxpanel.html">DsfrComboboxPanel</a><br><span class="small muted">DSFR officiel : <a class="dsfr-link" href="https://www.systeme-de-design.gouv.fr/version-courante/fr/composants/liste-deroulante-riche" target="_blank" rel="noopener">Liste déroulante riche<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:-1px;margin-left:.2rem"><path d="M10 6v2H5v11h11v-5h2v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6Zm11-3v8h-2V6.413l-7.793 7.794-1.414-1.414L17.585 5H13V3h8Z"/></svg></a></span></td>
-      <td class="muted">13 props, utilisé uniquement dans des filtres de recherche custom.</td>
-    </tr><tr>
-      <td><a href="composants/baseinputdatenumeric.html">BaseInputDateNumeric</a><br><code class="small">components/base/InputDateNumeric.vue</code></td>
-      <td>5</td>
-      <td><span class="effort effort-moyen">Moyen</span></td>
-      <td><a href="composants/dsfrinput.html">DsfrInput</a> (type date / masque de saisie)<br><span class="small muted">DSFR officiel : <a class="dsfr-link" href="https://www.systeme-de-design.gouv.fr/version-courante/fr/composants/champ-de-saisie" target="_blank" rel="noopener">Champ de saisie<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:-1px;margin-left:.2rem"><path d="M10 6v2H5v11h11v-5h2v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6Zm11-3v8h-2V6.413l-7.793 7.794-1.414-1.414L17.585 5H13V3h8Z"/></svg></a></span></td>
-      <td class="muted">Logique de formatage JJ/MM/AAAA à revalider après bascule.</td>
-    </tr><tr>
-      <td><a href="composants/baselistbox.html">BaseListbox</a><br><code class="small">components/base/Listbox.vue</code></td>
-      <td>5</td>
-      <td><span class="effort effort-moyen">Moyen</span></td>
-      <td>Primitives <a href="composants/dsfrlistboxpanel.html">DsfrListboxPanel</a> / <a href="composants/dsfrcomboboxpanel.html">DsfrComboboxPanel</a><br><span class="small muted">DSFR officiel : <a class="dsfr-link" href="https://www.systeme-de-design.gouv.fr/version-courante/fr/composants/liste-deroulante-riche" target="_blank" rel="noopener">Liste déroulante riche<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:-1px;margin-left:.2rem"><path d="M10 6v2H5v11h11v-5h2v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6Zm11-3v8h-2V6.413l-7.793 7.794-1.414-1.414L17.585 5H13V3h8Z"/></svg></a></span></td>
-      <td class="muted">Pas de remplacement direct 1:1, à recomposer à partir des briques bas-niveau DSFR.</td>
-    </tr><tr>
-      <td><a href="composants/baseselectwithdescription.html">BaseSelectWithDescription</a><br><code class="small">components/base/SelectWithDescription.vue</code></td>
-      <td>5</td>
-      <td><span class="effort effort-moyen">Moyen</span></td>
-      <td><a href="composants/dsfrselectautocomplete.html">DsfrSelectAutocomplete</a> ou <a href="composants/dsfrlistboxpanel.html">DsfrListboxPanel</a><br><span class="small muted">DSFR officiel : <a class="dsfr-link" href="https://www.systeme-de-design.gouv.fr/version-courante/fr/composants/liste-deroulante-riche" target="_blank" rel="noopener">Liste déroulante riche<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:-1px;margin-left:.2rem"><path d="M10 6v2H5v11h11v-5h2v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6Zm11-3v8h-2V6.413l-7.793 7.794-1.414-1.414L17.585 5H13V3h8Z"/></svg></a></span></td>
-      <td class="muted">Le pattern « option + description » n'a pas d'équivalent direct, à vérifier avec design.</td>
-    </tr><tr>
-      <td><a href="composants/baseselectadvanced.html">BaseSelectAdvanced</a><br><code class="small">components/base/SelectAdvanced.vue</code></td>
-      <td>5</td>
-      <td><span class="effort effort-moyen">Moyen</span></td>
-      <td>DsfrSelectAutocomplete</td>
-      <td class="muted">17 props à rationaliser lors du passage à l'équivalent DSFR.</td>
-    </tr><tr>
-      <td><a href="composants/basesectionheading.html">BaseSectionHeading</a><br><code class="small">components/base/SectionHeading.vue</code></td>
-      <td>74</td>
-      <td><span class="effort effort-eleve">Élevé</span></td>
-      <td>Pas d'équivalent DSFR 1:1</td>
-      <td class="muted">Composite (titre + tags + actions, 5 slots) : à repenser en s'appuyant sur DsfrHeading + DsfrTagsGroup plutôt qu'à migrer tel quel, 74 usages.</td>
-    </tr><tr>
-      <td><a href="composants/baseheading.html">BaseHeading</a><br><code class="small">components/base/Heading.vue</code></td>
-      <td>68</td>
-      <td><span class="effort effort-eleve">Élevé</span></td>
-      <td><a href="composants/dsfrheading.html">DsfrHeading</a></td>
-      <td class="muted">Composant simple (2 props) mais 68 points d'usage à vérifier visuellement un par un (tailles/couleurs).</td>
-    </tr><tr>
-      <td><a href="composants/basetable.html">BaseTable</a><br><code class="small">components/base/Table.vue</code></td>
-      <td>27</td>
-      <td><span class="effort effort-eleve">Élevé</span></td>
-      <td>Aucun wrapper DSFR encore implémenté dans le projet<br><span class="small muted">DSFR officiel : <a class="dsfr-link" href="https://www.systeme-de-design.gouv.fr/version-courante/fr/composants/tableau" target="_blank" rel="noopener">Tableau<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:-1px;margin-left:.2rem"><path d="M10 6v2H5v11h11v-5h2v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6Zm11-3v8h-2V6.413l-7.793 7.794-1.414-1.414L17.585 5H13V3h8Z"/></svg></a></span></td>
-      <td class="muted">27 usages ; nécessite de construire toute la famille de composants tableau DSFR avant de pouvoir migrer (voir aussi TableBody/Head/HeadCell/Row/RowCell).</td>
-    </tr><tr>
-      <td><a href="composants/basetablebody.html">BaseTableBody</a><br><code class="small">components/base/TableBody.vue</code></td>
-      <td>27</td>
-      <td><span class="effort effort-eleve">Élevé</span></td>
-      <td>Aucun wrapper DSFR encore implémenté dans le projet<br><span class="small muted">DSFR officiel : <a class="dsfr-link" href="https://www.systeme-de-design.gouv.fr/version-courante/fr/composants/tableau" target="_blank" rel="noopener">Tableau<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:-1px;margin-left:.2rem"><path d="M10 6v2H5v11h11v-5h2v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6Zm11-3v8h-2V6.413l-7.793 7.794-1.414-1.414L17.585 5H13V3h8Z"/></svg></a></span></td>
-      <td class="muted">Fait partie de la famille BaseTable, à migrer ensemble.</td>
-    </tr><tr>
-      <td><a href="composants/basetablehead.html">BaseTableHead</a><br><code class="small">components/base/TableHead.vue</code></td>
-      <td>27</td>
-      <td><span class="effort effort-eleve">Élevé</span></td>
-      <td>Aucun wrapper DSFR encore implémenté dans le projet<br><span class="small muted">DSFR officiel : <a class="dsfr-link" href="https://www.systeme-de-design.gouv.fr/version-courante/fr/composants/tableau" target="_blank" rel="noopener">Tableau<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:-1px;margin-left:.2rem"><path d="M10 6v2H5v11h11v-5h2v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6Zm11-3v8h-2V6.413l-7.793 7.794-1.414-1.414L17.585 5H13V3h8Z"/></svg></a></span></td>
-      <td class="muted">Fait partie de la famille BaseTable, à migrer ensemble.</td>
-    </tr><tr>
-      <td><a href="composants/basetableheadcell.html">BaseTableHeadCell</a><br><code class="small">components/base/TableHeadCell.vue</code></td>
-      <td>27</td>
-      <td><span class="effort effort-eleve">Élevé</span></td>
-      <td>Aucun wrapper DSFR encore implémenté dans le projet<br><span class="small muted">DSFR officiel : <a class="dsfr-link" href="https://www.systeme-de-design.gouv.fr/version-courante/fr/composants/tableau" target="_blank" rel="noopener">Tableau<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:-1px;margin-left:.2rem"><path d="M10 6v2H5v11h11v-5h2v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6Zm11-3v8h-2V6.413l-7.793 7.794-1.414-1.414L17.585 5H13V3h8Z"/></svg></a></span></td>
-      <td class="muted">Fait partie de la famille BaseTable, à migrer ensemble.</td>
-    </tr><tr>
-      <td><a href="composants/basetablerow.html">BaseTableRow</a><br><code class="small">components/base/TableRow.vue</code></td>
-      <td>27</td>
-      <td><span class="effort effort-eleve">Élevé</span></td>
-      <td>Aucun wrapper DSFR encore implémenté dans le projet<br><span class="small muted">DSFR officiel : <a class="dsfr-link" href="https://www.systeme-de-design.gouv.fr/version-courante/fr/composants/tableau" target="_blank" rel="noopener">Tableau<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:-1px;margin-left:.2rem"><path d="M10 6v2H5v11h11v-5h2v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6Zm11-3v8h-2V6.413l-7.793 7.794-1.414-1.414L17.585 5H13V3h8Z"/></svg></a></span></td>
-      <td class="muted">Fait partie de la famille BaseTable, à migrer ensemble.</td>
-    </tr><tr>
-      <td><a href="composants/basetablerowcell.html">BaseTableRowCell</a><br><code class="small">components/base/TableRowCell.vue</code></td>
-      <td>27</td>
-      <td><span class="effort effort-eleve">Élevé</span></td>
-      <td>Aucun wrapper DSFR encore implémenté dans le projet<br><span class="small muted">DSFR officiel : <a class="dsfr-link" href="https://www.systeme-de-design.gouv.fr/version-courante/fr/composants/tableau" target="_blank" rel="noopener">Tableau<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:-1px;margin-left:.2rem"><path d="M10 6v2H5v11h11v-5h2v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6Zm11-3v8h-2V6.413l-7.793 7.794-1.414-1.414L17.585 5H13V3h8Z"/></svg></a></span></td>
-      <td class="muted">Fait partie de la famille BaseTable, à migrer ensemble.</td>
-    </tr><tr>
-      <td><a href="composants/basetoggle.html">BaseToggle</a><br><code class="small">components/base/Toggle.vue</code></td>
-      <td>18</td>
-      <td><span class="effort effort-eleve">Élevé</span></td>
-      <td>DsfrToggle<br><span class="small muted">DSFR officiel : <a class="dsfr-link" href="https://www.systeme-de-design.gouv.fr/version-courante/fr/composants/interrupteur" target="_blank" rel="noopener">Interrupteur<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:-1px;margin-left:.2rem"><path d="M10 6v2H5v11h11v-5h2v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6Zm11-3v8h-2V6.413l-7.793 7.794-1.414-1.414L17.585 5H13V3h8Z"/></svg></a></span></td>
-      <td class="muted">14 props, gestion fine de l'accessibilité (aria-label/describedby) à revalider intégralement.</td>
-    </tr><tr>
-      <td><a href="composants/baseinput.html">BaseInput</a><br><code class="small">components/base/Input.vue</code></td>
-      <td>8</td>
-      <td><span class="effort effort-eleve">Élevé</span></td>
-      <td><a href="composants/dsfrinput.html">DsfrInput</a><br><span class="small muted">DSFR officiel : <a class="dsfr-link" href="https://www.systeme-de-design.gouv.fr/version-courante/fr/composants/champ-de-saisie" target="_blank" rel="noopener">Champ de saisie<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:-1px;margin-left:.2rem"><path d="M10 6v2H5v11h11v-5h2v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6Zm11-3v8h-2V6.413l-7.793 7.794-1.414-1.414L17.585 5H13V3h8Z"/></svg></a></span></td>
-      <td class="muted">22 props (le champ le plus riche du projet) ; migration à faire prop par prop, avec tests de non-régression sur les nombreux formulaires qui l'utilisent.</td>
-    </tr>
+    <tr><td><strong>Rôle</strong></td><td>Documentation de référence : un composant, un token, une règle</td><td>Test visuel d'un parcours utilisateur complet</td></tr>
+    <tr><td><strong>Style</strong></td><td>Partagé (<code>compiled.css</code> + <code>dsfr.min.css</code>), cohérent d'une page à l'autre</td><td>Autonome : CSS et JS embarqués dans chaque fichier, aucune dépendance partagée</td></tr>
+    <tr><td><strong>Exemple de demande</strong></td><td>« Ajoute l'état focus dans la doc de DsfrButton »</td><td>« Dans le prototype d'inscription, ajoute un état d'erreur au champ mot de passe »</td></tr>
+  </tbody>
+</table>
+<p class="muted small">En cas de doute, nomme le fichier ou le dossier exact plutôt que « la page » ou « le prototype » tout court.</p>
+
+<h2>2. Appuie-toi sur le vrai code, pas sur une supposition</h2>
+<p>Claude a un accès en lecture seule au code réel de l'application (le dossier <code>jeveuxaider</code>) &mdash; jamais modifié, uniquement consulté comme référence. Demande explicitement de vérifier un champ, un libellé, une règle de validation ou une couleur dans le vrai composant plutôt que de laisser deviner, en particulier pour les libellés, les placeholders, les tokens de couleur DSFR et les règles de validation.</p>
+<pre><code>Vérifie le vrai champ « pays de résidence » dans le formulaire d'inscription
+réel avant de le maquetter (placeholder, valeur par défaut, composant utilisé).</code></pre>
+
+<h2>3. Donne le contexte de l'écran, pas juste l'élément</h2>
+<p>Pour un composant isolé, le nom suffit généralement. Pour un écran ou un état, précise l'étape du parcours, le rôle concerné (bénévole, responsable d'organisation…) et l'état à représenter (erreur, succès, chargement, vide). Une demande du type « ajoute les états d'erreur et de succès à la vérification du code, avec un délai avant de pouvoir le renvoyer » est plus rapide à traiter correctement qu'« améliore la page ».</p>
+
+<h2>4. Un prompt, un objectif</h2>
+<p>Plusieurs prompts ciblés valent mieux qu'un seul prompt qui empile tout : plus faciles à vérifier, plus faciles à revenir en arrière si un point ne convient pas. Regrouper plusieurs correctifs indépendants dans un même message reste utile (« les boutons ont des bords arrondis à corriger, utilise le vrai stepper DSFR, documente-le »), mais chaque point doit rester une instruction autonome et vérifiable séparément.</p>
+
+<h2>5. Pense aux deux bouts : maquette et documentation</h2>
+<p>Un défaut repéré dans un prototype (un hover manquant, une couleur en dur) vient souvent d'un composant documenté ailleurs dans le design-system. Précise si le correctif doit aussi être répercuté dans la doc du composant, pas seulement là où tu l'as remarqué &mdash; sinon la doc et le prototype divergent silencieusement.</p>
+
+<h2>Exemples</h2>
+<table class="props">
+  <thead><tr><th>À préciser</th><th>Plus efficace</th></tr></thead>
+  <tbody>
+    <tr><td>« Redesign la page OTP »</td><td>« Dans <code>prototypes/verification-code.html</code>, ajoute un état d'erreur et un état de succès au code de vérification »</td></tr>
+    <tr><td>« Corrige le hover »</td><td>« Corrige le hover des DsfrButton : utilise <code>--background-action-high-blue-france-hover</code>, pas une couleur en dur »</td></tr>
+    <tr><td>« Fais un stepper »</td><td>« Utilise le vrai <code>fr-stepper</code> du DSFR (voir <code>dsfr.min.css</code>), pas un composant maison »</td></tr>
   </tbody>
 </table>
 
+<h2>Repères utiles</h2>
+<div class="methodo">
+  <p style="margin:0 0 .6rem">Le code réel de l'app (<code>jeveuxaider</code>) est en lecture seule : jamais de modification, uniquement une référence pour les bons champs, tokens et textes.</p>
+  <p style="margin:0 0 .6rem">Les prototypes sont autonomes : pas de feuille de style partagée, CSS et JS embarqués dans chaque fichier &mdash; ce sont des maquettes interactives pour visualiser un parcours, pas du code de production.</p>
+  <p style="margin:0">Le design-system documente le composant réel tel qu'il existe ; pour un composant DSFR natif pas encore utilisé dans l'app, il est signalé explicitement comme non implémenté en prod (voir <a href="composants/dsfrstepper.html">DsfrStepper</a>).</p>
+</div>
   </div>
 </main>
 

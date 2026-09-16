@@ -86,7 +86,7 @@ h4{font-size:.8rem;text-transform:uppercase;letter-spacing:.04em;color:var(--mut
 .badge-custom{background:var(--badge-custom-bg);color:var(--badge-custom-fg)}
 .usages-badge{font-weight:normal;font-size:.75rem;color:var(--muted);border:1px solid var(--border);border-radius:99px;padding:.15rem .6rem}
 .fr-badge{padding:.2rem .7rem}
-.fr-tag--dsfr{background:var(--badge-dsfr-bg);color:var(--badge-dsfr-fg)}
+.dsfr-link-box a[target="_blank"]:after{display:inline-block;vertical-align:middle;content:"";background-image:url(icons/system/external-link-line.svg);background-repeat:no-repeat;background-size:100%;height:.8em;width:.8em;margin-left:.25rem}
 .fr-badge.fr-badge--info:before,.fr-badge.fr-badge--success:before,.fr-badge.fr-badge--error:before,.fr-badge.fr-badge--warning:before,.fr-badge.fr-badge--new:before{content:none}
 .meta-row{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;margin:.5rem 0 1rem}
 .path-line{color:var(--muted)}
@@ -196,7 +196,7 @@ table.migration th{background:var(--code-bg)}
     <h1>DsfrSelectMultiple</h1>
     <div class="meta-row">
       <p class="fr-tag">3 usages</p>
-      <p class="fr-tag fr-tag--dsfr">Wrapper DSFR</p>
+      <p class="fr-tag">Wrapper DSFR</p>
       <span class="path-line small"><code>components/dsfr/SelectMultiple.vue</code></span>
     </div>
     <p class="subtitle">Select DSFR à choix multiples.</p>

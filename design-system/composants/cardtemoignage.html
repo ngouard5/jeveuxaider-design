@@ -187,7 +187,35 @@ table.migration th{background:var(--code-bg)}
 
     <div class="tab-panel active" data-panel="presentation">
       <h4>Démo</h4>
-      <div class="demo"><div class="bg-white shadow-sm border max-w-sm"><div class="border-b p-4"><p class="font-bold">Distribution alimentaire</p><p class="text-gray-500 text-sm mt-1">Les Restos du Cœur</p></div><div class="p-4 flex gap-4 items-center"><span class="component--avatar overflow-hidden rounded-full flex-none flex items-center justify-center w-12 h-12 bg-jva-blue-500 text-white">JD</span><div><p class="font-bold">Jean Dupont</p><p class="text-sm text-gray-600">il y a 2 jours</p></div></div></div></div>
+      <div class="demo"><div style="width:100%;max-width:420px;background:#fff;border:1px solid #E5E5E5">
+  <div style="border-bottom:1px solid #E5E5E5;padding:24px">
+    <p style="margin:0;font-weight:700;color:#161616">Distribution alimentaire</p>
+    <p style="margin:8px 0 0;font-size:14px;color:#6B7280">Les Restos du Cœur</p>
+  </div>
+  <div style="padding:24px">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:32px">
+      <div style="display:flex">
+        <span style="width:48px;height:48px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;background:#000091;color:#fff;font-weight:700;margin-right:16px">JD</span>
+        <div>
+          <p style="margin:0;font-weight:700;color:#161616">Jean Dupont</p>
+          <p style="margin:0;font-size:14px;color:#666">Il y a 2 jours</p>
+        </div>
+      </div>
+      <div style="display:flex;gap:2px;flex:none">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="#EF9F03"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6-5.9-3.3-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="#EF9F03"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6-5.9-3.3-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="#EF9F03"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6-5.9-3.3-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="#EF9F03"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6-5.9-3.3-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="#E0E0E0"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6-5.9-3.3-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg>
+      </div>
+    </div>
+    <div style="margin-top:32px">
+      <p style="margin:0;color:#6B7280;font-size:14px;line-height:20px">“Une très belle expérience humaine, l'équipe était accueillante et le besoin bien réel sur le terrain. Je recommande !”</p>
+    </div>
+  </div>
+</div></div>
+
+      <p class="src">Ajoute la notation en étoiles et le texte du témoignage, éléments centraux du composant absents de l'ancienne démo (qui s'arrêtait à l'en-tête et l'avatar).</p>
 
       <section id="playground-section" class="playground" style="display:none">
         <h4>Tester les props</h4>

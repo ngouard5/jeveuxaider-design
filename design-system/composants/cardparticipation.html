@@ -187,7 +187,53 @@ table.migration th{background:var(--code-bg)}
 
     <div class="tab-panel active" data-panel="presentation">
       <h4>Démo</h4>
-      <div class="demo"><div class="bg-white shadow-sm max-w-lg"><div class="grid grid-cols-2 divide-x divide-[#E5E5E5]"><div class="px-6 py-6"><p class="text-sm text-gray-600 mb-2">📍 Paris (75)</p><p class="font-bold">Distribution alimentaire</p></div><div class="px-6 py-6"><p class="text-sm text-gray-600 mb-2">Bénévole</p><p class="font-bold">Jean Dupont</p></div></div></div></div>
+      <div class="demo"><div style="width:100%;max-width:640px;background:#fff;box-shadow:0 1px 2px 0 rgba(0,0,0,.05)">
+  <div style="display:grid;grid-template-columns:1fr 2fr">
+    <div style="padding:32px 24px;border-right:1px solid #E5E5E5;display:flex;flex-direction:column;justify-content:space-between;gap:24px">
+      <div>
+        <p style="margin:0 0 32px;font-size:14px;color:#666">
+          <span aria-hidden="true">📍 </span><span style="font-weight:600">Lyon</span>
+        </p>
+        <div style="margin-bottom:32px">
+          <h3 style="margin:0;font-weight:700;font-size:16px;line-height:22px;color:#161616">Distribution de colis alimentaires</h3>
+        </div>
+        <p style="margin:0;font-size:12px;color:#666;display:flex;gap:8px;align-items:flex-start;line-height:16px">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="flex:none;margin-top:1px"><rect x="4" y="5" width="16" height="15" rx="1" stroke="#666" stroke-width="1.6"/><path d="M4 9h16M8 3v3M16 3v3" stroke="#666" stroke-width="1.6" stroke-linecap="round"/></svg>
+          <span>à partir du 12 juin 2026</span>
+        </p>
+      </div>
+      <div style="padding-top:16px;border-top:1px dashed #E5E5E5">
+        <p style="margin:0;font-size:14px;color:#666">2 Responsables : <span style="font-weight:700">Marie Dupont, Paul Martin</span></p>
+      </div>
+    </div>
+    <div style="padding:32px 24px;display:flex;flex-direction:column;gap:24px">
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div style="display:flex;flex-direction:row;justify-content:space-between;align-items:flex-start">
+          <div style="display:flex;gap:16px">
+            <span style="width:48px;height:48px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;background:#000091;color:#fff;font-weight:700;overflow:hidden">CB</span>
+            <div>
+              <h3 style="margin:0;font-weight:700;font-size:16px;color:#161616;line-height:22px">Camille Bernard</h3>
+              <p style="margin:4px 0 0;font-size:14px;color:#666">il y a 3 jours</p>
+            </div>
+          </div>
+          <span style="display:inline-flex;align-items:center;justify-content:center;border-radius:4px;padding:0 8px;font-size:12px;font-weight:700;text-transform:uppercase;background:#FFE9E6;color:#B34000;flex:none">En attente de validation</span>
+        </div>
+        <blockquote style="margin:0;padding-left:12px;border-left:2px solid #E5E5E5;color:#666;font-size:14px;line-height:20px">Bonjour, je suis disponible les mercredis et souhaiterais participer à cette mission, n'hésitez pas à me recontacter.</blockquote>
+        <div>
+          <h4 style="margin:0 0 8px;font-size:14px;font-weight:600;color:#161616">Disponibilités :</h4>
+          <div style="padding-bottom:8px;margin-bottom:8px;border-bottom:1px solid #E5E5E5">
+            <p style="margin:0;font-size:14px;color:#161616">Mercredi 12 juin <span style="font-weight:400;color:#666">: Matin, Après-midi</span></p>
+          </div>
+          <div>
+            <p style="margin:0;font-size:14px;color:#161616">Mercredi 19 juin <span style="font-weight:400;color:#666">: Matin</span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div></div>
+
+      <p class="src">Reproduit la disposition réelle (grille 1/3 mission — 2/3 bénévole, vue <code>displayFor="manager"</code>) : badge d'état, avatar, message et disponibilités, absents de l'ancienne démo qui n'affichait que deux colonnes de texte brut.</p>
 
       <section id="playground-section" class="playground" style="display:none">
         <h4>Tester les props</h4>

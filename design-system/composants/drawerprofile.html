@@ -187,7 +187,33 @@ table.migration th{background:var(--code-bg)}
 
     <div class="tab-panel active" data-panel="presentation">
       <h4>Démo</h4>
-      <div class="demo"><aside class="border-l shadow-xl bg-white max-w-xs ml-auto"><div class="p-4"><p class="font-bold text-lg">Jean Dupont</p><p class="text-sm text-gray-600 mt-2">Bénévole depuis mars 2024</p></div></aside></div>
+      <div class="demo" style="background:#e9e9ee;padding:0"><div style="width:100%;max-width:380px;margin-left:auto;background:#fff;box-shadow:-10px 0 25px -5px rgba(0,0,0,.15);position:relative;max-height:480px;overflow:hidden">
+  <button type="button" aria-label="Fermer le volet" style="position:absolute;top:12px;right:12px;width:36px;height:36px;border-radius:50%;border:1px solid #DDDDDD;background:#fff;color:#666;display:flex;align-items:center;justify-content:center">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+  </button>
+  <div style="padding:48px 24px 24px">
+    <h2 style="margin:0;font-size:22px;font-weight:800;color:#161616;line-height:28px">Camille Bernard</h2>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:16px">
+      <span style="display:inline-flex;align-items:center;height:24px;padding:0 12px;border-radius:9999px;background:#EEEEEE;color:#161616;font-size:12px">Bénévole confirmée</span>
+      <span style="display:inline-flex;align-items:center;height:24px;padding:0 12px;border-radius:9999px;background:#EEEEEE;color:#161616;font-size:12px">Nouvelle</span>
+    </div>
+    <div style="margin-top:16px">
+      <span style="display:inline-flex;align-items:center;gap:6px;padding:4px 12px;font-size:14px;color:#000091;box-shadow:inset 0 0 0 1px #ddd">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M8 12a4 4 0 1 0 8 0 4 4 0 0 0-8 0Z" stroke="currentColor" stroke-width="1.6"/></svg>
+        Détails
+      </span>
+    </div>
+    <div style="border-top:1px solid #E5E5E5;margin:24px 0"></div>
+    <h3 style="margin:0 0 8px;font-size:12px;text-transform:uppercase;font-weight:600;color:#666;letter-spacing:.02em">Disponibilités</h3>
+    <p style="margin:0;font-size:14px;color:#161616">Mercredi et samedi, en journée</p>
+    <div style="border-top:1px solid #E5E5E5;margin:24px 0"></div>
+    <h3 style="margin:0 0 8px;font-size:12px;text-transform:uppercase;font-weight:600;color:#666;letter-spacing:.02em">Informations</h3>
+    <p style="margin:0;font-size:14px;color:#161616">camille.bernard@email.fr</p>
+  </div>
+  <div style="position:absolute;left:0;right:0;bottom:0;height:64px;background:linear-gradient(0deg,#fff,rgba(255,255,255,0))"></div>
+</div></div>
+
+      <p class="src">Même correction que DrawerMission : chrome du volet et en-tête réels (titre, tags, action) reproduits fidèlement ; le contenu complet (disponibilités, rôles, organisations, territoires…) est très étendu et coupé par un dégradé plutôt que recréé intégralement.</p>
 
       <section id="playground-section" class="playground" style="display:none">
         <h4>Tester les props</h4>

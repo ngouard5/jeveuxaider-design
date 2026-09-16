@@ -187,7 +187,8 @@ table.migration th{background:var(--code-bg)}
 
     <div class="tab-panel active" data-panel="presentation">
       <h4>Démo</h4>
-      <div class="demo"><div class="flex gap-2 flex-wrap"><span class="inline-flex items-center justify-center max-w-full truncate uppercase rounded font-bold text-[#18753C] bg-[#B8FEC9] px-2 text-sm">Validée</span><span class="inline-flex items-center justify-center max-w-full truncate uppercase rounded font-bold text-[#716043] bg-[#FEECC2] px-2 text-sm">En attente de validation</span></div></div>
+      <div class="demo"><div style="display:flex;gap:8px;flex-wrap:wrap"><span style="display:inline-flex;align-items:center;justify-content:center;max-width:100%;text-transform:uppercase;border-radius:4px;font-weight:700;color:#18753C;background:#B8FEC9;padding:0 8px;font-size:14px;line-height:20px"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="margin-right:4px;flex:none"><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-.997-6l7.07-7.071-1.414-1.414-5.656 5.657-2.829-2.829-1.414 1.414L11.003 16z"/></svg>Validée</span><span style="display:inline-flex;align-items:center;justify-content:center;max-width:100%;text-transform:uppercase;border-radius:4px;font-weight:700;color:#B34000;background:#FFE9E6;padding:0 8px;font-size:14px;line-height:20px"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="margin-right:4px;flex:none"><path d="M12.866 3l9.526 16.5a1 1 0 01-.866 1.5H2.474a1 1 0 01-.866-1.5L11.134 3a1 1 0 011.732 0zM11 16v2h2v-2h-2zm0-7v5h2V9h-2z"/></svg>En attente de validation</span></div></div>
+      <p class="src">Le composant délègue le rendu à <code>DsfrBadge</code> : l'état « En attente de validation » est mappé sur le type <code>warning</code> (orange), et non <code>yellow</code>.</p>
 
       <section id="playground-section" class="playground" style="display:none">
         <h4>Tester les props</h4>

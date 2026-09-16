@@ -187,7 +187,28 @@ table.migration th{background:var(--code-bg)}
 
     <div class="tab-panel active" data-panel="presentation">
       <h4>Démo</h4>
-      <div class="demo"><ol class="max-w-sm divide-y"><li class="py-3 flex items-center gap-4"><span class="text-xl">🥇</span><span>Les Restos du Cœur — 128 missions</span></li><li class="py-3 flex items-center gap-4"><span class="text-xl">🥈</span><span>Croix-Rouge française — 97 missions</span></li><li class="py-3 flex items-center gap-4"><span class="text-xl">🥉</span><span>Secours populaire — 82 missions</span></li></ol></div>
+      <div class="demo"><ol style="max-width:380px;margin:0;padding:0;list-style:none">
+  <li style="padding:16px 0">
+    <div style="display:flex;gap:24px;align-items:center">
+      <div style="width:64px;height:64px;flex:none;display:flex;align-items:center;justify-content:center;font-size:36px">🥇</div>
+      <div style="flex:1;font-size:16px;color:#161616">Les Restos du Cœur — 128 missions</div>
+    </div>
+  </li>
+  <li style="padding:16px 0">
+    <div style="display:flex;gap:24px;align-items:center">
+      <div style="width:64px;height:64px;flex:none;display:flex;align-items:center;justify-content:center;font-size:36px">🥈</div>
+      <div style="flex:1;font-size:16px;color:#161616">Croix-Rouge française — 97 missions</div>
+    </div>
+  </li>
+  <li style="padding:16px 0">
+    <div style="display:flex;gap:24px;align-items:center">
+      <div style="width:64px;height:64px;flex:none;display:flex;align-items:center;justify-content:center;font-size:36px">🥉</div>
+      <div style="flex:1;font-size:16px;color:#161616">Secours populaire — 82 missions</div>
+    </div>
+  </li>
+</ol></div>
+
+      <p class="src">Retire les séparateurs entre lignes (le composant utilise <code>BaseStackedList</code> avec <code>divided="false"</code>) et agrandit les médailles dans une colonne fixe de 64px, comme dans le vrai rendu.</p>
 
       <section id="playground-section" class="playground" style="display:none">
         <h4>Tester les props</h4>

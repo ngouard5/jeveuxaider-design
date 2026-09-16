@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<title>Prototype — Vérification de compte (OTP)</title>
+<title>Prototype — Validez votre e-mail (OTP)</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
   @font-face { font-family: Marianne; src: url('../design-system/fonts/Marianne-Regular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
@@ -10,48 +10,158 @@
   @font-face { font-family: Marianne; src: url('../design-system/fonts/Marianne-Bold.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
   *{box-sizing:border-box}
   html,body{margin:0;padding:0}
-  body{font-family:Marianne,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
-  .page{position:relative;background:#081992;min-height:100vh;overflow:hidden}
-  .content{position:relative;z-index:10;padding:48px 16px;text-align:center;max-width:960px;margin:0 auto}
-  h1{margin:24px 0 16px;font-size:1.875rem;line-height:2rem;font-weight:700;color:#fff}
-  .subtitle{margin:0;font-size:1rem;color:#c3ddfd}
-  .subtitle strong{color:#fff;font-weight:600}
-  .card-wrap{margin-top:48px;max-width:28rem;margin-left:auto;margin-right:auto;text-align:left}
-  .card{background:#fff;padding:32px 40px;box-shadow:0 1px 3px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06);text-align:center}
-  .otp-row{display:flex;justify-content:center;margin-bottom:8px}
-  .otp-box{margin:8px;height:64px;width:48px;background:#F3F4F6;border:1px solid #D1D5DB;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:1.25rem;color:#9CA3AF}
-  .error{margin-top:16px;font-size:.875rem;color:#ce0500}
-  .btn{font-weight:500;display:inline-flex;align-items:center;justify-content:center;width:100%;cursor:pointer;border:none;box-sizing:border-box}
-  .btn-primary{margin-top:32px;padding:8px 24px;font-size:1.125rem;min-height:3rem;background:#000091;color:#fff}
-  .btn-primary[disabled]{background:#E5E5E5;color:#656565;cursor:not-allowed}
-  .btn-tertiary{margin-top:16px;padding:4px 12px;font-size:.875rem;min-height:34px;background:#fff;color:#000091}
-  .note{margin:24px auto 0;max-width:640px;font-size:.8rem;color:#c3ddfd;background:rgba(255,255,255,.08);border:1px dashed rgba(255,255,255,.3);padding:10px 14px;border-radius:4px}
+  body{font-family:Marianne,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#fff}
+
+  .screen{display:flex;min-height:100vh;background:#fff}
+
+  /* ---- colonne formulaire ---- */
+  .form-col{flex:1 1 65%;display:flex;justify-content:center;padding:56px 24px}
+  .form{width:100%;max-width:488px;display:flex;flex-direction:column;gap:48px}
+
+  .header{display:flex;align-items:center;gap:16px}
+  .bloc-marque{display:flex;flex-direction:column;gap:2px;padding:16px 16px 16px 0;position:relative}
+  .bloc-marque .drapeau{display:flex;gap:2px;width:16px;height:12px;margin-bottom:2px}
+  .bloc-marque .drapeau span{flex:1;display:block}
+  .bloc-marque .drapeau span:nth-child(1){background:#000091}
+  .bloc-marque .drapeau span:nth-child(2){background:#fff;border-top:1px solid #eee;border-bottom:1px solid #eee}
+  .bloc-marque .drapeau span:nth-child(3){background:#e1000f}
+  .bloc-marque p{margin:0;font-weight:700;font-size:11px;line-height:12px;letter-spacing:.06px;text-transform:uppercase;color:#000}
+  .logo-jva{height:40px;width:auto}
+
+  .retour{display:inline-flex;align-items:center;gap:8px;color:#000091;font-size:16px;text-decoration:none;border-bottom:1px solid #000091;padding-bottom:2px;width:fit-content}
+  .retour svg{flex:none}
+
+  .intro{display:flex;flex-direction:column;gap:16px}
+  .intro h1{margin:0;font-weight:700;font-size:32px;line-height:40px;color:#161616}
+  .intro p{margin:0;font-weight:400;font-size:16px;line-height:24px;color:#666}
+  .intro p strong{font-weight:700;color:#666}
+
+  .otp-card{display:flex;flex-direction:column;gap:32px;width:100%}
+
+  .otp-row{display:flex;gap:4px;width:100%}
+  .otp-box{flex:1;min-width:0;height:64px;background:#eee;border:none;border-bottom:2px solid #3a3a3a;border-radius:4px 4px 0 0;text-align:center;font-family:Marianne;font-size:20px;color:#161616;padding:8px 16px}
+  .otp-box:focus{outline:2px solid #000091;outline-offset:2px}
+
+  .btn-valider{width:100%;height:48px;border:none;background:#e5e5e5;color:#929292;font-family:Marianne;font-weight:500;font-size:18px;cursor:not-allowed}
+  .btn-valider.active{background:#000091;color:#fff;cursor:pointer}
+  .btn-valider.active:hover{background:#1212ff}
+
+  .resend{display:flex;align-items:center;gap:8px;font-size:14px;color:#666}
+  .resend a{color:#000091;text-decoration:none;border-bottom:1px solid #000091}
+
+  .aide{display:inline-flex;align-items:center;gap:8px;font-size:14px;color:#666;text-decoration:none;border-bottom:1px solid #666;width:fit-content}
+
+  /* ---- colonne photo ---- */
+  .photo-col{flex:1 1 35%;max-width:504px;position:relative;overflow:hidden;background:#000091}
+  .photo-col img.bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .photo-col .overlay{position:absolute;inset:0;background:rgba(0,0,145,.75)}
+  .photo-col .gradient{position:absolute;inset:0;background:linear-gradient(to bottom, rgba(0,0,145,0) 35%, rgba(0,0,145,.55) 75%, #000091 100%)}
+  .photo-col .tag{position:absolute;top:78px;left:50%;transform:translateX(-50%);color:#fff;font-size:26px;font-style:italic;font-family:'Brush Script MT',cursive;opacity:.9;white-space:nowrap}
+  .photo-col .args{position:absolute;left:48px;right:32px;bottom:64px;display:flex;flex-direction:column;gap:24px;color:#fff}
+  .photo-col .args h2{margin:0;font-weight:700;font-size:28px;line-height:36px}
+  .arg{display:flex;gap:16px;align-items:center}
+  .arg svg{flex:none}
+  .arg p{margin:0;font-size:18px;line-height:26px}
+
+  @media (max-width: 900px){
+    .screen{flex-direction:column}
+    .photo-col{max-width:100%;min-height:280px}
+  }
 </style>
 </head>
 <body>
-<div class="page">
-  <div class="content">
-    <h1>Vérification de votre compte</h1>
-    <p class="subtitle">Saisissez le code à 6 chiffres envoyé par email à <strong>nicolas@exemple.fr</strong></p>
+<div class="screen">
 
-    <div class="card-wrap">
-      <div class="card">
+  <div class="form-col">
+    <div class="form">
+
+      <div class="header">
+        <div class="bloc-marque">
+          <div class="drapeau"><span></span><span></span><span></span></div>
+          <p>République<br>Française</p>
+        </div>
+        <img class="logo-jva" src="../design-system/brand/logo-horizontal.png" alt="JeVeuxAider.gouv.fr — Par la réserve civique">
+      </div>
+
+      <a class="retour" href="#">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="#000091" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Retour
+      </a>
+
+      <div class="intro">
+        <h1>Validez votre e-mail</h1>
+        <p>Nous venons de vous envoyer un code à votre adresse e-mail <strong>nicolas.ginobili@gmail.com</strong>. Cela peut prendre quelques instants.</p>
+      </div>
+
+      <div class="otp-card">
         <div class="otp-row">
-          <div class="otp-box">*</div>
-          <div class="otp-box">*</div>
-          <div class="otp-box">*</div>
-          <div class="otp-box">*</div>
-          <div class="otp-box">*</div>
-          <div class="otp-box">*</div>
+          <input class="otp-box" maxlength="1" inputmode="numeric" aria-label="Chiffre 1 du code">
+          <input class="otp-box" maxlength="1" inputmode="numeric" aria-label="Chiffre 2 du code">
+          <input class="otp-box" maxlength="1" inputmode="numeric" aria-label="Chiffre 3 du code">
+          <input class="otp-box" maxlength="1" inputmode="numeric" aria-label="Chiffre 4 du code">
+          <input class="otp-box" maxlength="1" inputmode="numeric" aria-label="Chiffre 5 du code">
+          <input class="otp-box" maxlength="1" inputmode="numeric" aria-label="Chiffre 6 du code">
         </div>
 
-        <button class="btn btn-primary" disabled>Valider le code</button>
-        <button class="btn btn-tertiary">Renvoyer le code</button>
+        <button class="btn-valider" disabled>Valider</button>
+
+        <div class="resend">
+          <span>Vous n'avez pas reçu de code ?</span>
+          <a href="#">Renvoyer le code</a>
+        </div>
+
+        <a class="aide" href="#">
+          Centre d'aide
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M18 13V19C18 19.5304 17.7893 20.0391 17.4142 20.4142C17.0391 20.7893 16.5304 21 16 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V8C3 7.46957 3.21071 6.96086 3.58579 6.58579C3.96086 6.21071 4.46957 6 5 6H11M15 3H21M21 3V9M21 3L10 14" stroke="#666" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="photo-col">
+    <img class="bg" src="../design-system/brand/photo-benevoles.jpg" alt="">
+    <div class="overlay"></div>
+    <div class="gradient"></div>
+    <div class="tag">#ChacunPourTous</div>
+    <div class="args">
+      <h2>Déjà 840 000 bénévoles inscrits</h2>
+      <div class="arg">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" stroke="#6FE49D" stroke-width="1.6"/><path d="M7 12.5L10.5 16L17 8.5" stroke="#6FE49D" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <p>Trouvez des missions en quelques clics</p>
+      </div>
+      <div class="arg">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" stroke="#6FE49D" stroke-width="1.6"/><path d="M7 12.5L10.5 16L17 8.5" stroke="#6FE49D" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <p>Devenez bénévole près de chez vous ou à distance</p>
+      </div>
+      <div class="arg">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" stroke="#6FE49D" stroke-width="1.6"/><path d="M7 12.5L10.5 16L17 8.5" stroke="#6FE49D" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <p>Faites vivre l'engagement de chacun pour tous</p>
       </div>
     </div>
-
-    <p class="note">Prototype statique — pur HTML/CSS, aucune logique. Référence les styles/polices de ../design-system/.</p>
   </div>
+
 </div>
+
+<script>
+  // Interactions minimales pour tester le parcours visuellement — pas une implémentation de référence.
+  const boxes = Array.from(document.querySelectorAll('.otp-box'));
+  const btn = document.querySelector('.btn-valider');
+  function checkComplete(){
+    const complete = boxes.every(b => b.value.length === 1);
+    btn.disabled = !complete;
+    btn.classList.toggle('active', complete);
+  }
+  boxes.forEach((box, i) => {
+    box.addEventListener('input', () => {
+      box.value = box.value.replace(/[^0-9]/g, '').slice(0, 1);
+      if (box.value && boxes[i + 1]) boxes[i + 1].focus();
+      checkComplete();
+    });
+    box.addEventListener('keydown', (e) => {
+      if (e.key === 'Backspace' && !box.value && boxes[i - 1]) boxes[i - 1].focus();
+    });
+  });
+</script>
 </body>
 </html>

@@ -1,0 +1,689 @@
+﻿nom,chemin,nb_usages,fichiers_utilisateurs,type,props_principales,candidat_dsfr
+ActivityAlgoliaMissionsPreview,components/activity/AlgoliaMissionsPreview.vue,0,,custom,activity,non
+ActivityBanner,components/activity/Banner.vue,0,,custom,activity,non
+ActivityEngagezVousPresDeChezVous,components/activity/EngagezVousPresDeChezVous.vue,0,,custom,activity,non
+ActivityNumbersActivity,components/activity/NumbersActivity.vue,0,,custom,activity,non
+ApiEngagementInputAutocomplete,components/api-engagement/InputAutocomplete.vue,0,,custom,modelValue | showAddButton | loadingAddButton | placeholder | required | ariaLabelledby | ariaDescribedby | ariaErrormessage | name,oui
+ApiEngagementPropulsedByLogo,components/api-engagement/PropulsedByLogo.vue,0,,custom,,non
+BaseBadge,components/base/Badge.vue,1,components/section/logs/DisclosureActivityLogItems.vue,custom,plain | size | color | extraClass,oui
+BaseButtonWithDropown,components/base/ButtonWithDropown.vue,0,,custom,buttonClick,oui
+BaseCheckbox,components/base/Checkbox.vue,1,components/base/CheckboxGroup.vue,custom,option | isChecked | transparent | size | variant | labelClass,à discuter
+BaseCheckboxBoolean,components/base/CheckboxBoolean.vue,1,pages/inscription/responsable/step/organisation.vue,custom,modelValue | name | size,à discuter
+BaseCheckboxGroup,components/base/CheckboxGroup.vue,0,,custom,modelValue | options | error | variant | isModel | classCheckbox | size | labelClass,à discuter
+BaseClampedTextWithModal,components/base/ClampedTextWithModal.vue,0,,custom,text | maxLines | readMoreLabel | readMoreClass | as,oui
+BaseCombobox,components/base/Combobox.vue,0,,custom,modelValue | placeholder | labelEmpty | name | icon | options | attributeKey | attributeLabel | variant | clearable | disabled | loading,oui
+BaseContainerRightSidebar,components/base/ContainerRightSidebar.vue,0,,custom,,non
+BaseDescriptionListItemMasquerade,components/base/DescriptionListItemMasquerade.vue,1,components/section/profile/BoxInformations.vue,custom,profile | termSize,non
+BaseFilterInputAutocomplete,components/base/FilterInputAutocomplete.vue,0,,custom,modelValue | name | options | optionsClass | attributeKey | attributeLabel | attributeRightLabel | clearAfterSelected | authorizeAdd | resetValueOnSelect | minValueLength | disabled | label | hideAttributeKey | loading | valueDelimiter,oui
+BaseInputAutocomplete,components/base/InputAutocomplete.vue,1,components/algolia/InputAutocomplete.vue,custom,modelValue | name | placeholder | labelEmpty | icon | options | optionKeyAttribute | optionLabelAttribute | optionLabelSecondaryAttribute | classOptions | classOptionsUl | inputClass | styleInput | variant | showKeyInOptions | theme | authorizeAdd | resetAfterSelect | minValueLength | size | error | success | ariaLabelListbox | ariaLabelledby | ariaDescribedby | ariaErrormessage | debounceDuration,oui
+BaseInputDate,components/base/InputDate.vue,0,,custom,modelValue | name | required | minDate | attributes | popover | popoverWillShow | ariaRequired | autocomplete,oui
+BaseInputDateNative,components/base/InputDateNative.vue,0,,custom,modelValue | name | required,oui
+BaseMediaPickerDomaine,components/base/MediaPickerDomaine.vue,1,components/form/FormReseau.vue,custom,collection | domaineIds | defaults | limit | previewConversion | previewSizes,non
+BaseMediaPickerReseau,components/base/MediaPickerReseau.vue,0,,custom,reseaux | domaineIds | defaults | limit | previewConversion | previewSizes,non
+BaseModalFooter,components/base/modal/Footer.vue,1,components/base/modal/index.vue,custom,sticky | footerClass,oui
+BaseModalHeader,components/base/modal/Header.vue,1,components/base/modal/index.vue,custom,sticky | headerClass,oui
+BaseNavItem,components/base/NavItem.vue,1,components/section/header/DesktopSecondaryNavigation.vue,custom,to | href | click | target,à discuter
+BasePagination,components/base/Pagination.vue,1,components/section/History.vue,custom,currentPage | totalRows | perPage | maxPages | withFirstPage | withLastPage,oui
+BaseParagraphItem,components/base/ParagraphItem.vue,1,components/base/Paragraph.vue,custom,schema | item,non
+BaseQuote,components/base/Quote.vue,0,,custom,as | htmlEncoded,à discuter
+BaseRadio,components/base/Radio.vue,1,components/base/RadioGroup.vue,custom,name | checked | option | variant,à discuter
+BaseRichEditor,components/base/RichEditor.vue,0,,custom,modelValue | disabled | toolbar | placeholder,oui
+BaseSelectAdvancedMultiple,components/base/SelectAdvancedMultiple.vue,0,,custom,modelValue | placeholder | labelEmpty | name | icon | options | attributeKey | attributeLabel | variant | disabled,oui
+BaseSelectAutocomplete,components/base/SelectAutocomplete.vue,0,,custom,modelValue | name | options | minLengthToSearch | disabled | attributeLabel | attributeRightLabel | labelEmpty | loading | variant | theme | prefixSelect | placeholder | searchInputPlaceholder | selectClass | optionsClass | scrollContainerClass,oui
+BaseSlideshowArrows,components/base/SlideshowArrows.vue,1,components/base/Slideshow.vue,custom,variant | buttonClass | currentSlide | nbSlides,non
+BaseSlideshowTeleportArrows,components/base/SlideshowTeleportArrows.vue,0,,custom,teleportId,non
+BaseSteps,components/base/Steps.vue,1,layouts/register-steps.vue,custom,steps,à discuter
+BaseTagFormItem,components/base/TagFormItem.vue,1,components/base/SelectAdvancedMultiple.vue,custom,tag | removable,oui
+BaseTextareaAutosize,components/base/TextareaAutosize.vue,1,components/messaging/ConversationForm.vue,custom,modelValue | autosize | minHeight | maxHeight | important,oui
+BaseTinderOverlay,components/base/TinderOverlay.vue,1,components/section/UserAlertMissionsOverlay.vue,custom,isOpen | title | contentClass,non
+BoxNumbersVille,components/box/NumbersVille.vue,1,pages/associations/[slug].vue,custom,title | city | benevolesInscrits | organisationsInscrites | benevolesRecherches,non
+BulkOperationActionsParticipations,components/bulk-operation/BulkOperationActionsParticipations.vue,0,,custom,operations,non
+BulkOperationCheckbox,components/bulk-operation/BulkOperationCheckbox.vue,1,pages/admin/participations/index.vue,custom,modelValue | model | ariaLabel | title,à discuter
+CalendarFilters,components/calendar/CalendarFilters.vue,1,pages/en-ce-moment.vue,custom,modelValue | isPinned,non
+CardAlertUnreadMissionCount,components/card/CardAlert/UnreadMissionCount.vue,0,,custom,alert,oui
+CardArticleLight,components/card/CardArticleLight.vue,1,components/section/home/GridActualitesBlog.vue,custom,article | to,à discuter
+CardFicheMission,components/card/CardFicheMission.vue,1,components/section/UserAlertMissionsOverlay.vue,custom,mission,à discuter
+CardMissionFull,components/card/CardMissionFull.vue,1,components/section/search/missions/AlgoliaMissions.vue,custom,mission | to,à discuter
+CardNote,components/card/CardNote.vue,1,pages/admin/notes.vue,custom,note,à discuter
+CardOrganisationWithLogo,components/card/CardOrganisationWithLogo.vue,1,components/section/search/organisations/AlgoliaSearch.vue,custom,organisation | variant | to,à discuter
+CardParticipationBenevole,components/card/CardParticipationBenevole.vue,1,components/section/profile/BoxUserWaitingParticipations.vue,custom,participation | showTags | to,à discuter
+CardQuote,components/card/CardQuote.vue,1,components/pages/homepage/components/BlocTemoignages.vue,custom,quote,à discuter
+CardTemplate,components/card/CardTemplate.vue,1,pages/admin/organisations/[id]/missions/add.vue,custom,template | isSelected,à discuter
+CardTemplatePreview,components/card/CardTemplatePreview.vue,1,pages/admin/organisations/[id]/missions/add.vue,custom,template,à discuter
+CardTestimonyFooter,components/card/CardTestimony/Footer.vue,0,,custom,benevole | organisation,à discuter
+CardTestimonyImgQuote,components/card/CardTestimony/ImgQuote.vue,0,,custom,,à discuter
+CardTestimony,components/card/CardTestimony/index.vue,1,components/section/SectionTemoignages.vue,custom,testimony,à discuter
+ChartBarChart,components/chart/BarChart.vue,0,,custom,chartId | chartTitle | datasetIdKey | width | height | cssClasses | styles | plugins | chartData | chartOptions,non
+ChartDoughnutChart,components/chart/DoughnutChart.vue,0,,custom,chartId | chartTitle | datasetIdKey | width | height | cssClasses | styles | plugins | chartData | chartOptions,non
+ChartGaugeChart,components/chart/GaugeChart.vue,0,,custom,chartId | value | max | chartOptions | width | height | cssClasses | styles | plugins,non
+ConversationContextualMessage,components/conversation/ContextualMessage.vue,0,,custom,message,non
+CustomAlertFilledByProfile,components/custom/AlertFilledByProfile.vue,1,pages/profile/alertes/index.vue,custom,,oui
+CustomBatchDialog,components/custom/BatchDialog.vue,0,,custom,isOpen | title | text | theme | confirmLabel | closeLabel | cancelLabel | batchEndpoint,oui
+CustomBoxHeadingStatistics,components/custom/BoxHeadingStatistics.vue,0,,custom,title | tagTitle | subtitle | noPeriod | noParams | link | infosBulle,oui
+CustomBoxNotes,components/custom/BoxNotes.vue,0,,custom,notableType | notableId,non
+CustomButtonCreateMission,components/custom/ButtonCreateMission.vue,0,,custom,size,oui
+CustomButtonJeProposeMonAide,components/custom/ButtonJeProposeMonAide.vue,0,,custom,mission | type | size | disabled | label,oui
+CustomButtonJeProposeMonAideApiEngagement,components/custom/ButtonJeProposeMonAideApiEngagement.vue,0,,custom,url,oui
+CustomButtonMissionWaitingList,components/custom/ButtonMissionWaitingList.vue,1,pages/missions-benevolat/[id]/[slug].vue,custom,mission | size,oui
+CustomButtonSelectMessageTemplate,components/custom/ButtonSelectMessageTemplate.vue,0,,custom,,oui
+CustomButtonsSubmitFormMission,components/custom/ButtonsSubmitFormMission.vue,0,,custom,mission | structure | templateId | loading,oui
+CustomButtonsSubmitFormMissionTemplate,components/custom/ButtonsSubmitFormMissionTemplate.vue,0,,custom,missionTemplate | loading,oui
+CustomChipList,components/custom/ChipList.vue,0,,custom,modelValue | options | chipClass | legend,non
+CustomDateDisplay,components/custom/DateDisplay.vue,1,components/custom/MissionNextDates.vue,custom,unixDate,non
+CustomDropdownUserNotifications,components/custom/DropdownUserNotifications.vue,1,components/section/header/DesktopPrimaryNavigation.vue,custom,,non
+CustomDropdownUserSwitchRole,components/custom/DropdownUserSwitchRole.vue,0,,custom,,oui
+CustomEmptyStateButtons,components/custom/EmptyStateButtons.vue,0,,custom,label | legend,oui
+CustomFranceConnect,components/custom/FranceConnect.vue,1,pages/login.vue,wrapper_dsfr,theme,non
+CustomInputActionBuilder,components/custom/InputActionBuilder.vue,0,,custom,actionFieldOptions | modelValue,oui
+CustomInputQueryBuilder,components/custom/InputQueryBuilder.vue,0,,custom,conditionFieldOptions | modelValue,oui
+CustomLinkPhoneNumber,components/custom/LinkPhoneNumber.vue,0,,custom,phoneNumber,oui
+CustomListItemCount,components/custom/ListItemCount.vue,0,,custom,size | color | label | display | count | total,non
+CustomMetatags,components/custom/Metatags.vue,0,,custom,metas | placeholders,oui
+CustomMissionApiPage,components/custom/MissionApiPage.vue,0,,custom,mission,non
+CustomMissionNextDates,components/custom/MissionNextDates.vue,1,components/card/CardMissionFull.vue,custom,mission,non
+CustomMissionPreviewItem,components/custom/MissionPreviewItem.vue,1,components/layout/SidebarFormMission.vue,custom,title | isCurrent | isDisabled | isCompleted | isWarning | hasSuggestions,non
+CustomModelChipList,components/custom/ModelChipList.vue,0,,custom,modelValue | options | modelType | chipClass | legend,non
+CustomOnlineIndicator,components/custom/OnlineIndicator.vue,0,,custom,published | publishedLabel | unpublishedLabel,non
+CustomParticipationBenevoleActions,components/custom/ParticipationBenevoleActions.vue,0,,custom,participation,non
+CustomPercentageVariation,components/custom/PercentageVariation.vue,0,,custom,value,oui
+CustomPortraitsRandom,components/custom/PortraitsRandom.vue,0,,custom,count,non
+CustomPrerequisitesInput,components/custom/PrerequisitesInput.vue,0,,custom,initialValue,oui
+CustomQueryResultSummary,components/custom/QueryResultSummary.vue,0,,custom,from | to | loading | total,à discuter
+CustomReadMore,components/custom/ReadMore.vue,0,,custom,moreClass | moreStr | lessStr | text | maxChars | as,non
+CustomSearchFilters,components/custom/SearchFilters.vue,1,pages/admin/other/invitations.vue,custom,,non
+CustomSelectAdvancedMessageTemplate,components/custom/SelectAdvancedMessageTemplate.vue,0,,custom,conversableType | conversable,oui
+CustomSelectMissionState,components/custom/SelectMissionState.vue,0,,custom,mission | missionStats,oui
+CustomSelectMissionTemplateState,components/custom/SelectMissionTemplateState.vue,0,,custom,modelValue,oui
+CustomSelectOrganisationState,components/custom/SelectOrganisationState.vue,0,,custom,organisation,oui
+CustomSelectParticipationState,components/custom/SelectParticipationState.vue,0,,custom,modelValue | participation | size,oui
+CustomSelectTerritoireState,components/custom/SelectTerritoireState.vue,0,,custom,modelValue,oui
+CustomTodoListItem,components/custom/TodoListItem.vue,1,components/section/profile/BoxCompleteProfile.vue,custom,isCompleted,non
+CustomUploadTriggerProfilePicture,components/custom/UploadTriggerProfilePicture.vue,1,components/form/FormUserProfile.vue,custom,label | title | previewSrcset,non
+CustomUserProfileTabs,components/custom/UserProfileTabs.vue,0,,custom,selectedTabKey,oui
+DrawerActivity,components/drawer/DrawerActivity.vue,1,pages/admin/contenus/activites/index.vue,custom,activityId,non
+DrawerConversationBenevole,components/drawer/DrawerConversationBenevole.vue,0,,custom,profileId | conversationId,non
+DrawerDomaine,components/drawer/DrawerDomaine.vue,1,pages/admin/contenus/domaines/index.vue,custom,domaineId,non
+DrawerMissionTemplate,components/drawer/DrawerMissionTemplate.vue,1,pages/admin/contenus/modeles-mission/index.vue,custom,missionTemplateId,non
+DrawerNotification,components/drawer/DrawerNotification.vue,1,pages/admin/settings/emails.vue,custom,notificationKey | notificationLabel | notificationDescription | notificationTags | notificationVariants | selectedVariantKey,non
+DrawerOrganisation,components/drawer/DrawerOrganisation.vue,0,,custom,organisationId,non
+DrawerParticipation,components/drawer/DrawerParticipation.vue,1,pages/admin/participations/index.vue,custom,participationId,non
+DrawerReseau,components/drawer/DrawerReseau.vue,1,pages/admin/contenus/reseaux/index.vue,custom,reseauId,non
+DrawerRessource,components/drawer/DrawerRessource.vue,1,pages/admin/contenus/ressources/index.vue,custom,resourceId,non
+DrawerSearchMissionsFilters,components/drawer/DrawerSearchMissionsFilters.vue,1,components/section/search/missions/MobileFilters.vue,custom,isOpen,non
+DrawerSearchOrganisationsFilters,components/drawer/DrawerSearchOrganisationsFilters.vue,1,components/section/search/organisations/MobileFilters.vue,custom,isOpen,non
+DrawerTemoignage,components/drawer/DrawerTemoignage.vue,1,pages/admin/contenus/testimonials/index.vue,custom,temoignageId,non
+DrawerTerm,components/drawer/DrawerTerm.vue,1,pages/admin/taxonomies/[slug]/index.vue,custom,termId,non
+DrawerTerritoire,components/drawer/DrawerTerritoire.vue,1,pages/admin/contenus/territoires/index.vue,custom,territoireId,non
+DsfrComboboxPanelPanelContent,components/dsfr/combobox-panel/PanelContent.vue,0,,wrapper_dsfr,,non
+DsfrComboboxPanelTrigger,components/dsfr/combobox-panel/Trigger.vue,0,,wrapper_dsfr,,non
+DsfrListboxPanelPanelContent,components/dsfr/listbox-panel/PanelContent.vue,0,,wrapper_dsfr,,non
+DsfrNavItemSubItem,components/dsfr/nav-item/SubItem.vue,0,,wrapper_dsfr,item,non
+DsfrNotice,components/dsfr/Notice.vue,1,components/section/territoire/NoticeCrise.vue,wrapper_dsfr,id | variant | closable,non
+DsfrOverlay,components/dsfr/Overlay.vue,1,components/section/TestimonialOverlay.vue,wrapper_dsfr,title | showCloseButton | isFocusTrap,non
+DsfrPaginationSimple,components/dsfr/PaginationSimple.vue,1,pages/admin/other/logs.vue,wrapper_dsfr,currentPage | prevPageUrl | nextPageUrl | afterPageChange,non
+DsfrPanelContent,components/dsfr/panel/PanelContent.vue,0,,wrapper_dsfr,,non
+DsfrRadioRichGroup,components/dsfr/RadioRichGroup.vue,0,,wrapper_dsfr,modelValue | name | options | disabled | error | success | optionClass,non
+DsfrTabsWithRouter,components/dsfr/TabsWithRouter.vue,0,,wrapper_dsfr,selectedTabKey | name | tabs | tabpanelClass,non
+DsfrToggle,components/dsfr/Toggle.vue,1,components/box/NumbersVille.vue,wrapper_dsfr,modelValue | activeValue | inactiveValue | variant | size | buttonCheckedClass | buttonUncheckedClass | iconCheckedClass | iconUncheckedClass,non
+DsfrVisitCard,components/dsfr/VisitCard.vue,1,components/section/partenaires/EngagementSousToutesSesFormes.vue,wrapper_dsfr,title | description | link,non
+FiltersSecondaryFiltersAdminMissions,components/filters/SecondaryFiltersAdminMissions.vue,0,,custom,,non
+FiltersSecondaryFiltersAdminOrganisations,components/filters/SecondaryFiltersAdminOrganisations.vue,0,,custom,,non
+FiltersSecondaryFiltersAdminParticipations,components/filters/SecondaryFiltersAdminParticipations.vue,0,,custom,,non
+FiltersSecondaryFiltersAdminProfiles,components/filters/SecondaryFiltersAdminProfiles.vue,0,,custom,,non
+FormInvitationAcceptLogin,components/form/FormInvitationAcceptLogin.vue,1,pages/invitations/[hash].vue,custom,invitation,non
+FormInvitationAcceptRegister,components/form/FormInvitationAcceptRegister.vue,1,pages/invitations/[hash].vue,custom,invitation,non
+FormLeadReseau,components/form/FormLeadReseau.vue,1,pages/inscription/responsable/tete-de-reseau.vue,custom,,non
+FormMissionDomains,components/form/FormMissionDomains.vue,1,pages/admin/organisations/[id]/missions/add.vue,custom,selectedDomain,non
+FormNote,components/form/FormNote.vue,1,components/modal/ModalNote.vue,custom,id | notableType | notableId | note | nbRows | required | hideHelp | label | placeholder | context,non
+FormOrganisation,components/form/FormOrganisation.vue,1,pages/admin/organisations/[id]/edit.vue,custom,structure,non
+FormProfileRole,components/form/FormProfileRole.vue,1,components/modal/ModalProfileRoles.vue,custom,userId,non
+FormStructureTag,components/form/FormStructureTag.vue,1,components/modal/ModalTagsManager.vue,custom,tag,oui
+FormTemoignage,components/form/FormTemoignage.vue,1,pages/admin/contenus/testimonials/[id]/edit.vue,custom,temoignage,non
+FormUserBan,components/form/FormUserBan.vue,1,components/modal/ModalUserBan.vue,custom,,non
+FormUserEmail,components/form/FormUserEmail.vue,1,pages/profile/settings.vue,custom,,non
+FormUserNotifications,components/form/FormUserNotifications.vue,1,pages/profile/notifications.vue,custom,,non
+FormUserPassword,components/form/FormUserPassword.vue,1,pages/profile/settings.vue,custom,,non
+FormUserPreferences,components/form/FormUserPreferences.vue,1,pages/profile/preferences.vue,custom,,non
+FormUserProfile,components/form/FormUserProfile.vue,1,pages/profile/edit.vue,custom,,non
+FormUserSkills,components/form/FormUserSkills.vue,1,components/form/FormUserProfile.vue,custom,modelValue | tagClass,non
+IconCalendarPonctuelIcon,components/icon/CalendarPonctuelIcon.vue,0,,custom,,non
+IconCalendarRecurentIcon,components/icon/CalendarRecurentIcon.vue,0,,custom,,non
+IconDsfrAvatar,components/icon/dsfr/Avatar.vue,0,,wrapper_dsfr,,non
+IconDsfrBardFill,components/icon/dsfr/BardFill.vue,0,,wrapper_dsfr,,non
+IconDsfrCalendar,components/icon/dsfr/Calendar.vue,0,,wrapper_dsfr,,non
+IconDsfrCheck,components/icon/dsfr/Check.vue,0,,wrapper_dsfr,,non
+IconDsfrError,components/icon/dsfr/Error.vue,0,,wrapper_dsfr,,non
+IconDsfrFrance,components/icon/dsfr/France.vue,0,,wrapper_dsfr,,non
+IconDsfrHandicap,components/icon/dsfr/Handicap.vue,0,,wrapper_dsfr,,non
+IconDsfrHealth,components/icon/dsfr/Health.vue,0,,wrapper_dsfr,,non
+IconDsfrInfo,components/icon/dsfr/Info.vue,0,,wrapper_dsfr,,non
+IconDsfrMap,components/icon/dsfr/Map.vue,0,,wrapper_dsfr,,non
+IconDsfrMineurs,components/icon/dsfr/Mineurs.vue,0,,wrapper_dsfr,,non
+IconDsfrNew,components/icon/dsfr/New.vue,0,,wrapper_dsfr,,non
+IconDsfrPeuImporte,components/icon/dsfr/PeuImporte.vue,0,,wrapper_dsfr,,non
+IconDsfrSuccess,components/icon/dsfr/Success.vue,0,,wrapper_dsfr,,non
+IconDsfrWarning,components/icon/dsfr/Warning.vue,0,,wrapper_dsfr,,non
+IconExternal,components/icon/External.vue,0,,custom,,non
+IconSpinIcon,components/icon/SpinIcon.vue,1,components/base/Button.vue,custom,,non
+LayoutHeaderBanner,components/layout/HeaderBanner.vue,0,,custom,,non
+LayoutHeaderFormMissions,components/layout/HeaderFormMissions.vue,1,components/form/FormMissionWrapper.vue,custom,,non
+LayoutHeaderMessagerie,components/layout/HeaderMessagerie.vue,0,,custom,,non
+LayoutSidebarFormMission,components/layout/SidebarFormMission.vue,1,layouts/form-mission.vue,custom,,non
+LayoutTeleportDrawer,components/layout/TeleportDrawer.vue,0,,custom,,non
+MenuSidebarAdminMenu,components/menu/SidebarAdminMenu.vue,0,,custom,,non
+MenuSidebarStatisticsMenu,components/menu/SidebarStatisticsMenu.vue,0,,custom,,non
+MenuSidebarStatisticsPublicMenu,components/menu/SidebarStatisticsPublicMenu.vue,0,,custom,,non
+MenuSidebarSupportMenu,components/menu/SidebarSupportMenu.vue,0,,custom,,non
+MessagingAlertSupportAwayUsers,components/messaging/AlertSupportAwayUsers.vue,0,,custom,users,oui
+MessagingCardInfosMission,components/messaging/CardInfosMission.vue,0,,custom,mission,à discuter
+MessagingCardInfosOrganisation,components/messaging/CardInfosOrganisation.vue,0,,custom,organisation,à discuter
+MessagingConversation,components/messaging/Conversation.vue,0,,custom,,non
+MessagingConversationForm,components/messaging/ConversationForm.vue,0,,custom,,non
+MessagingConversationMessages,components/messaging/ConversationMessages.vue,0,,custom,,non
+MessagingConversationMission,components/messaging/ConversationMission.vue,0,,custom,,non
+MessagingConversationMissionActionAsReferent,components/messaging/ConversationMissionActionAsReferent.vue,0,,custom,,non
+MessagingConversationMissionActionAsResponsable,components/messaging/ConversationMissionActionAsResponsable.vue,0,,custom,,non
+MessagingConversationOrganisation,components/messaging/ConversationOrganisation.vue,0,,custom,,non
+MessagingConversationOrganisationActionAsReferent,components/messaging/ConversationOrganisationActionAsReferent.vue,0,,custom,,non
+MessagingConversationOrganisationActionAsResponsable,components/messaging/ConversationOrganisationActionAsResponsable.vue,0,,custom,,non
+MessagingConversationParticipation,components/messaging/ConversationParticipation.vue,0,,custom,,non
+MessagingConversationParticipationActionAsBenevole,components/messaging/ConversationParticipationActionAsBenevole.vue,0,,custom,,non
+MessagingConversationParticipationActionAsResponsable,components/messaging/ConversationParticipationActionAsResponsable.vue,0,,custom,,non
+MessagingConversationRecipient,components/messaging/ConversationRecipient.vue,0,,custom,title,non
+MessagingConversationRecipientBenevole,components/messaging/ConversationRecipientBenevole.vue,0,,custom,user | profile,non
+MessagingConversationRecipientOrganisation,components/messaging/ConversationRecipientOrganisation.vue,0,,custom,structure | users,non
+MessagingConversationRecipientReferentOrAdmin,components/messaging/ConversationRecipientReferentOrAdmin.vue,0,,custom,user,non
+MessagingConversationRecipientResponsable,components/messaging/ConversationRecipientResponsable.vue,0,,custom,user | showPrivateInfos,non
+MessagingConversationsFilters,components/messaging/ConversationsFilters.vue,0,,custom,,non
+MessagingConversationsListingResults,components/messaging/ConversationsListingResults.vue,0,,custom,,non
+MessagingConversationsTabs,components/messaging/ConversationsTabs.vue,0,,custom,,oui
+MessagingConversationTags,components/messaging/ConversationTags.vue,0,,custom,,oui
+MessagingConversationTeaser,components/messaging/ConversationTeaser.vue,0,,custom,conversation | title | hideAvatars,non
+MessagingConversationTeaserMission,components/messaging/ConversationTeaserMission.vue,0,,custom,conversation,non
+MessagingConversationTeaserOrganisation,components/messaging/ConversationTeaserOrganisation.vue,0,,custom,conversation,non
+MessagingConversationTeaserParticipation,components/messaging/ConversationTeaserParticipation.vue,0,,custom,conversation,non
+MessagingMessageChat,components/messaging/MessageChat.vue,0,,custom,message,non
+MessagingMessageParticipationContextual,components/messaging/MessageParticipationContextual.vue,0,,custom,message,non
+MissionTemplatePanelInfo,components/mission-template/PanelInfo.vue,0,,custom,missionTemplate,non
+MissionBoxVisitsStatistics,components/mission/BoxVisitsStatistics.vue,0,,custom,mission,non
+MissionPanelInfo,components/mission/PanelInfo.vue,0,,custom,mission,non
+MissionPanelResponsables,components/mission/PanelResponsables.vue,0,,custom,mission | responsables,non
+MissionResponsableListItem,components/mission/ResponsableListItem.vue,0,,custom,mission | responsable,non
+ModalActivities,components/modal/ModalActivities.vue,1,components/form/FormUserPreferences.vue,custom,isOpen | initialActivities,oui
+ModalBulkParticipationsDecline,components/modal/ModalBulkParticipationsDecline.vue,1,components/bulk-operation/BulkOperationActionsParticipations.vue,custom,operations | isOpen,oui
+ModalBulkParticipationsValidate,components/modal/ModalBulkParticipationsValidate.vue,1,components/bulk-operation/BulkOperationActionsParticipations.vue,custom,operations | isOpen,oui
+ModalDeleteUserAlert,components/modal/ModalDeleteUserAlert.vue,1,components/card/CardAlert/index.vue,custom,isOpen | alert,oui
+ModalFormMissionAddDates,components/modal/ModalFormMissionAddDates.vue,1,pages/admin/missions/[id]/dates.vue,custom,isOpen,oui
+ModalFormMissionAddResponsable,components/modal/ModalFormMissionAddResponsable.vue,0,,custom,responsables,oui
+ModalFormMissionPublish,components/modal/ModalFormMissionPublish.vue,0,,custom,mission,oui
+ModalIsMinor,components/modal/ModalIsMinor.vue,0,,custom,isOpen,oui
+ModalMissionChangeStateToInProgress,components/modal/ModalMissionChangeStateToInProgress.vue,0,,custom,isOpen | mission,oui
+ModalMissionPublish,components/modal/ModalMissionPublish.vue,0,,custom,mission,oui
+ModalMissionRefuse,components/modal/ModalMissionRefuse.vue,1,components/custom/SelectMissionState.vue,custom,isOpen | mission,oui
+ModalMissionTagsManager,components/modal/ModalMissionTagsManager.vue,0,,custom,isOpen | mission,oui
+ModalMissionValidate,components/modal/ModalMissionValidate.vue,1,components/custom/SelectMissionState.vue,custom,isOpen | mission,oui
+ModalOrganisationChangeStateToInProgress,components/modal/ModalOrganisationChangeStateToInProgress.vue,1,components/messaging/ConversationOrganisationActionAsReferent.vue,custom,isOpen | organisation,oui
+ModalOrganisationRefuse,components/modal/ModalOrganisationRefuse.vue,1,components/messaging/ConversationOrganisationActionAsReferent.vue,custom,isOpen | organisation,oui
+ModalOrganisationValidate,components/modal/ModalOrganisationValidate.vue,1,components/messaging/ConversationOrganisationActionAsReferent.vue,custom,isOpen | organisation,oui
+ModalParticipationCancelByBenevole,components/modal/ModalParticipationCancelByBenevole.vue,0,,custom,participation,oui
+ModalParticipationShouldBeDone,components/modal/ModalParticipationShouldBeDone.vue,1,components/messaging/ConversationParticipation.vue,custom,isOpen | participation,oui
+ModalProfileRoles,components/modal/ModalProfileRoles.vue,0,,custom,userId | fullName,oui
+ModalProfileTags,components/modal/ModalProfileTags.vue,0,,custom,profile | loading,oui
+ModalRecommendedMissions,components/modal/ModalRecommendedMissions.vue,0,,custom,user,oui
+ModalRemoveResponsableFromOrganisation,components/modal/ModalRemoveResponsableFromOrganisation.vue,1,components/organisation/ResponsableListItem.vue,custom,isOpen | responsable | organisation,oui
+ModalResponsableSetMissionsIsActive,components/modal/ModalResponsableSetMissionsIsActive.vue,1,components/mission/ResponsableListItem.vue,custom,isOpen | responsable | profileStats | value,oui
+ModalStatisticsFilters,components/modal/ModalStatisticsFilters.vue,1,components/custom/FiltersStatisticsButton.vue,custom,isOpen | filters,oui
+ModalTagsManager,components/modal/ModalTagsManager.vue,1,components/tag/SelectTags.vue,custom,,oui
+ModalUserBan,components/modal/ModalUserBan.vue,0,,custom,profile | loading,oui
+ModalUserDispositifsCEJ,components/modal/ModalUserDispositifsCEJ.vue,1,components/form/SubFormUserDispositifs.vue,custom,isOpen | initialForm,oui
+ModalUserDispositifsFT,components/modal/ModalUserDispositifsFT.vue,1,components/form/SubFormUserDispositifs.vue,custom,isOpen | initialForm,oui
+ModalUserDispositifsSC,components/modal/ModalUserDispositifsSC.vue,1,components/form/SubFormUserDispositifs.vue,custom,isOpen | initialForm,oui
+ModalUserMissingPhoneZip,components/modal/ModalUserMissingPhoneZip.vue,0,,custom,isOpen,oui
+ModalUserUnban,components/modal/ModalUserUnban.vue,0,,custom,profile | loading,oui
+NotificationListItemFull,components/notification/NotificationListItemFull.vue,1,pages/notifications.vue,custom,notification,non
+NotificationListItemTeaser,components/notification/NotificationListItemTeaser.vue,1,components/custom/DropdownUserNotifications.vue,custom,notification,non
+NumbersActivityLogsAdminsVsReferents,components/numbers/ActivityLogsAdminsVsReferents.vue,0,,custom,,non
+NumbersActivityLogsAdminsVsReferentsCumul,components/numbers/ActivityLogsAdminsVsReferentsCumul.vue,0,,custom,,non
+NumbersActivityLogsModerationsStatistics,components/numbers/ActivityLogsModerationsStatistics.vue,0,,custom,,non
+NumbersEvolutionsByMonth,components/numbers/EvolutionsByMonth.vue,0,,custom,,non
+NumbersEvolutionsByYear,components/numbers/EvolutionsByYear.vue,0,,custom,,non
+NumbersMissionsByActivities,components/numbers/MissionsByActivities.vue,0,,custom,,non
+NumbersMissionsByDomaines,components/numbers/MissionsByDomaines.vue,0,,custom,,non
+NumbersMissionsByOrganisations,components/numbers/MissionsByOrganisations.vue,0,,custom,,non
+NumbersMissionsByPeriod,components/numbers/MissionsByPeriod.vue,0,,custom,,non
+NumbersMissionsByReseaux,components/numbers/MissionsByReseaux.vue,0,,custom,,non
+NumbersMissionsByStates,components/numbers/MissionsByStates.vue,0,,custom,,non
+NumbersMissionsByTemplates,components/numbers/MissionsByTemplates.vue,0,,custom,,non
+NumbersMissionsByTemplateTypes,components/numbers/MissionsByTemplateTypes.vue,0,,custom,,non
+NumbersMissionsByTypes,components/numbers/MissionsByTypes.vue,0,,custom,,non
+NumbersMissionsOutdatedByOrganisations,components/numbers/MissionsOutdatedByOrganisations.vue,0,,custom,,non
+NumbersMissionsStatistics,components/numbers/MissionsStatistics.vue,0,,custom,,non
+NumbersModerationMissionsStatistics,components/numbers/ModerationMissionsStatistics.vue,0,,custom,,non
+NumbersModerationOrganisationsStatistics,components/numbers/ModerationOrganisationsStatistics.vue,0,,custom,,non
+NumbersModerationsByDepartments,components/numbers/ModerationsByDepartments.vue,0,,custom,,non
+NumbersOrganisationsByDomaines,components/numbers/OrganisationsByDomaines.vue,0,,custom,,non
+NumbersOrganisationsByPeriod,components/numbers/OrganisationsByPeriod.vue,0,,custom,,non
+NumbersOrganisationsByReseaux,components/numbers/OrganisationsByReseaux.vue,0,,custom,,non
+NumbersOrganisationsByStates,components/numbers/OrganisationsByStates.vue,0,,custom,,non
+NumbersOrganisationsByTypes,components/numbers/OrganisationsByTypes.vue,0,,custom,,non
+NumbersOrganisationsStatistics,components/numbers/OrganisationsStatistics.vue,0,,custom,,non
+NumbersOverviewApiEngagementEntrant,components/numbers/OverviewApiEngagementEntrant.vue,0,,custom,,non
+NumbersOverviewApiEngagementEntrantDetails,components/numbers/OverviewApiEngagementEntrantDetails.vue,0,,custom,,non
+NumbersOverviewApiEngagementSortant,components/numbers/OverviewApiEngagementSortant.vue,0,,custom,,non
+NumbersOverviewApiEngagementSortantDetails,components/numbers/OverviewApiEngagementSortantDetails.vue,0,,custom,,non
+NumbersOverviewReferents,components/numbers/OverviewReferents.vue,0,,custom,,non
+NumbersOverviewResponsables,components/numbers/OverviewResponsables.vue,0,,custom,,non
+NumbersParticipationsByActivities,components/numbers/ParticipationsByActivities.vue,0,,custom,,non
+NumbersParticipationsByDomaines,components/numbers/ParticipationsByDomaines.vue,0,,custom,,non
+NumbersParticipationsByOrganisations,components/numbers/ParticipationsByOrganisations.vue,0,,custom,,non
+NumbersParticipationsByPeriod,components/numbers/ParticipationsByPeriod.vue,0,,custom,,non
+NumbersParticipationsByReseaux,components/numbers/ParticipationsByReseaux.vue,0,,custom,,non
+NumbersParticipationsByStates,components/numbers/ParticipationsByStates.vue,0,,custom,,non
+NumbersParticipationsCanceledByBenevoles,components/numbers/ParticipationsCanceledByBenevoles.vue,0,,custom,,non
+NumbersParticipationsCanceledByOrganisations,components/numbers/ParticipationsCanceledByOrganisations.vue,0,,custom,,non
+NumbersParticipationsInProgressByOrganisations,components/numbers/ParticipationsInProgressByOrganisations.vue,0,,custom,,non
+NumbersParticipationsRefusedByOrganisations,components/numbers/ParticipationsRefusedByOrganisations.vue,0,,custom,,non
+NumbersParticipationsRefusedByResponsables,components/numbers/ParticipationsRefusedByResponsables.vue,0,,custom,,non
+NumbersParticipationsStatistics,components/numbers/ParticipationsStatistics.vue,0,,custom,,non
+NumbersParticipationsWaitingByOrganisations,components/numbers/ParticipationsWaitingByOrganisations.vue,0,,custom,,non
+NumbersPlacesByActivities,components/numbers/PlacesByActivities.vue,0,,custom,,non
+NumbersPlacesByDomaines,components/numbers/PlacesByDomaines.vue,0,,custom,,non
+NumbersPlacesByMissions,components/numbers/PlacesByMissions.vue,0,,custom,,non
+NumbersPlacesByOrganisations,components/numbers/PlacesByOrganisations.vue,0,,custom,,non
+NumbersPlacesByReseaux,components/numbers/PlacesByReseaux.vue,0,,custom,,non
+NumbersPlacesStatistics,components/numbers/PlacesStatistics.vue,0,,custom,,non
+NumbersUtilisateursByActivities,components/numbers/UtilisateursByActivities.vue,0,,custom,,non
+NumbersUtilisateursByAge,components/numbers/UtilisateursByAge.vue,0,,custom,,non
+NumbersUtilisateursByDomaines,components/numbers/UtilisateursByDomaines.vue,0,,custom,,non
+NumbersUtilisateursByPeriod,components/numbers/UtilisateursByPeriod.vue,0,,custom,,non
+NumbersUtilisateursStatistics,components/numbers/UtilisateursStatistics.vue,0,,custom,,non
+NumbersUtilisateursWithParticipations,components/numbers/UtilisateursWithParticipations.vue,0,,custom,,non
+NuxtImgWithFallback,components/NuxtImgWithFallback.vue,1,components/section/organisation/Details.vue,custom,src | srcset | fallbackSrc | alt | class | width | height | loading,non
+OrganisationBoxNotes,components/organisation/BoxNotes.vue,0,,custom,organisation,non
+OrganisationModalAddResponsable,components/organisation/ModalAddResponsable.vue,0,,custom,isOpen | organisation,oui
+OrganisationModalEditResponsableRole,components/organisation/ModalEditResponsableRole.vue,0,,custom,isOpen | organisation | responsable,oui
+OrganisationModalPauseResponsableMissions,components/organisation/ModalPauseResponsableMissions.vue,0,,custom,isOpen | organisation | responsable,oui
+OrganisationModalUnpauseResponsableMissions,components/organisation/ModalUnpauseResponsableMissions.vue,0,,custom,isOpen | organisation | responsable,oui
+OrganisationPanelResponsables,components/organisation/PanelResponsables.vue,0,,custom,organisation | responsables,non
+OrganisationPanelStatistics,components/organisation/PanelStatistics.vue,0,,custom,organisation,non
+OrganisationResponsableListItem,components/organisation/ResponsableListItem.vue,0,,custom,organisation | responsable | totalResponsables,non
+OthersListItemInfo,components/others/ListItemInfo.vue,0,,custom,label | content,non
+OthersPanel,components/others/Panel.vue,0,,custom,loading | contentClass,non
+OthersSidebarMenuItem,components/others/SidebarMenuItem.vue,0,,custom,,non
+OthersSidebarMenuSection,components/others/SidebarMenuSection.vue,0,,custom,,non
+OthersStatisticListItem,components/others/StatisticListItem.vue,0,,custom,value | formatValue | suffixValue,non
+OverlayMissionPreview,components/overlay/mission-preview/index.vue,0,,custom,mission,non
+OverlayMissionPreviewModal,components/overlay/mission-preview/Modal.vue,0,,custom,,oui
+PagesAdminOrganisationsIdDiffusionsComponentsBoxOrganisationPublishersSummary,components/pages/admin/organisations/_id/diffusions/components/BoxOrganisationPublishersSummary.vue,0,,custom,organisation,à discuter
+PagesAdminOrganisationsIdDiffusionsComponentsCategoryListItem,components/pages/admin/organisations/_id/diffusions/components/CategoryListItem.vue,0,,custom,category | publishers,non
+PagesAdminOrganisationsIdDiffusionsComponentsOrganisationPublishers,components/pages/admin/organisations/_id/diffusions/components/OrganisationPublishers.vue,0,,custom,organisationId,non
+PagesAdminOrganisationsIdDiffusionsComponentsPublisherListItem,components/pages/admin/organisations/_id/diffusions/components/PublisherListItem.vue,0,,custom,publisher,non
+PagesHomepageComponentsBlocActeursAssociations,components/pages/homepage/components/BlocActeursAssociations.vue,0,,custom,isLogged,non
+PagesHomepageComponentsBlocActeursCollectivites,components/pages/homepage/components/BlocActeursCollectivites.vue,0,,custom,isLogged,non
+PagesHomepageComponentsBlocActeursEngagement,components/pages/homepage/components/BlocActeursEngagement.vue,0,,custom,,non
+PagesHomepageComponentsBlocActivities,components/pages/homepage/components/BlocActivities.vue,0,,custom,isLogged,non
+PagesHomepageComponentsBlocActualitesEngagement,components/pages/homepage/components/BlocActualitesEngagement.vue,0,,custom,year | isLogged,non
+PagesHomepageComponentsBlocBanner,components/pages/homepage/components/BlocBanner.vue,0,,custom,isLogged,non
+PagesHomepageComponentsBlocCaDevraitVousPlaire,components/pages/homepage/components/BlocCaDevraitVousPlaire.vue,0,,custom,isLogged,non
+PagesHomepageComponentsBlocCommunaute,components/pages/homepage/components/BlocCommunaute.vue,0,,custom,isLogged,non
+PagesHomepageComponentsBlocFaq,components/pages/homepage/components/BlocFaq.vue,0,,custom,,non
+PagesHomepageComponentsBlocFresqueBenevolat,components/pages/homepage/components/BlocFresqueBenevolat.vue,0,,custom,isLogged,non
+PagesHomepageComponentsBlocInscriptionBenevole,components/pages/homepage/components/BlocInscriptionBenevole.vue,0,,custom,isLogged,non
+PagesHomepageComponentsBlocInscriptionResponsable,components/pages/homepage/components/BlocInscriptionResponsable.vue,0,,custom,isLogged,non
+PagesHomepageComponentsBlocMissionsCourtes,components/pages/homepage/components/BlocMissionsCourtes.vue,0,,custom,isLogged,non
+PagesHomepageComponentsBlocOrganisationsAroundMe,components/pages/homepage/components/BlocOrganisationsAroundMe.vue,0,,custom,isLogged,non
+PagesHomepageComponentsBlocProfileActivities,components/pages/homepage/components/BlocProfileActivities.vue,0,,custom,,non
+PagesHomepageComponentsBlocTemoignages,components/pages/homepage/components/BlocTemoignages.vue,0,,custom,,non
+PagesHomepageComponentsBlocVolunteeringArgumentsForMinors,components/pages/homepage/components/BlocVolunteeringArgumentsForMinors.vue,0,,custom,containerClass | hideCta,non
+PendingActionsMissionBoxOpenToMinorsCompliance,components/pending-actions/mission/BoxOpenToMinorsCompliance.vue,0,,custom,mission | pendingAction,non
+PendingActionsMission,components/pending-actions/mission/index.vue,0,,custom,mission | pendingActions | titleClass,non
+ReseauPanelResponsables,components/reseau/PanelResponsables.vue,0,,custom,reseau | responsables,non
+ReseauPanelStatistics,components/reseau/PanelStatistics.vue,0,,custom,reseau,non
+ReseauResponsableListItem,components/reseau/ResponsableListItem.vue,0,,custom,reseau | responsable,non
+SearchBadgeFilter,components/search/BadgeFilter.vue,0,,custom,isActive,oui
+SearchLocalisationFilter,components/search/LocalisationFilter.vue,0,,custom,triggerData | withRadius | defaultRadius | searchPlaceholder | panelClass,non
+SearchLocalisationMobileFilter,components/search/LocalisationMobileFilter.vue,0,,custom,,non
+SearchLocalisationSuggestions,components/search/LocalisationSuggestions.vue,0,,custom,label,non
+SearchMissionTypeFilter,components/search/MissionTypeFilter.vue,0,,custom,,non
+SearchSecondarySearchFilter,components/search/SecondarySearchFilter.vue,0,,custom,,non
+SectionActivityActions,components/section/activity/Actions.vue,0,,custom,activity | buttonSize,non
+SectionActivityBadges,components/section/activity/Badges.vue,0,,custom,activity,oui
+SectionActivityBoxInformations,components/section/activity/BoxInformations.vue,0,,custom,activity,non
+SectionActivityBoxMission,components/section/activity/BoxMission.vue,0,,custom,activity | stats,non
+SectionActivityBoxParticipation,components/section/activity/BoxParticipation.vue,0,,custom,activity | stats,non
+SectionActivityBoxPresentation,components/section/activity/BoxPresentation.vue,0,,custom,activity,non
+SectionActivityHeaderActions,components/section/activity/HeaderActions.vue,0,,custom,activity,non
+SectionAdminMissionsTrending,components/section/admin/MissionsTrending.vue,0,,custom,,non
+SectionAdminOrganisationsTrending,components/section/admin/OrganisationsTrending.vue,0,,custom,,non
+SectionAdminPlausiblePageViews,components/section/admin/PlausiblePageViews.vue,0,,custom,title | paramsFilters,non
+SectionAdminTopitoAdmins,components/section/admin/TopitoAdmins.vue,0,,custom,,non
+SectionAdminTopitoReferents,components/section/admin/TopitoReferents.vue,0,,custom,,non
+SectionAlgoliaFacetsActivities,components/section/AlgoliaFacetsActivities.vue,1,pages/domaines-action/[slug].vue,custom,title | searchParameters | redirectParameters,non
+SectionAlgoliaFacetsCities,components/section/AlgoliaFacetsCities.vue,1,components/section/domaine/Details.vue,custom,title | searchParameters | redirectParameters,non
+SectionArchivedUserOverlay,components/section/ArchivedUserOverlay.vue,0,,custom,,non
+SectionBoxReferents,components/section/BoxReferents.vue,0,,custom,missionId | structureId | department | boxVariant | boxPadding,non
+SectionBoxUtm,components/section/BoxUtm.vue,0,,custom,model | title | showTitle | boxVariant | boxPadding,non
+SectionCurrentUserHeaderActions,components/section/current-user/HeaderActions.vue,0,,custom,title | subtitle,non
+SectionDashboardBoxOperations,components/section/dashboard/BoxOperations.vue,0,,custom,,non
+SectionDashboardGuideLinks,components/section/dashboard/GuideLinks.vue,0,,custom,,oui
+SectionDashboardHelpCenter,components/section/dashboard/HelpCenter.vue,0,,custom,,non
+SectionDashboardLePetitMot,components/section/dashboard/LePetitMot.vue,0,,custom,,non
+SectionDashboardMoreNumbers,components/section/dashboard/MoreNumbers.vue,0,,custom,,non
+SectionDashboardNoticeMinorsForReferents,components/section/dashboard/NoticeMinorsForReferents.vue,0,,custom,,oui
+SectionDashboardNoticeMinorsForResponsables,components/section/dashboard/NoticeMinorsForResponsables.vue,0,,custom,,oui
+SectionDomaineActions,components/section/domaine/Actions.vue,0,,custom,domain | buttonSize,non
+SectionDomaineBadges,components/section/domaine/Badges.vue,0,,custom,domain,oui
+SectionDomaineBoxInformations,components/section/domaine/BoxInformations.vue,0,,custom,domaine,non
+SectionDomaineBoxMission,components/section/domaine/BoxMission.vue,0,,custom,domaine | stats,non
+SectionDomaineBoxParticipation,components/section/domaine/BoxParticipation.vue,0,,custom,domaine | stats,non
+SectionDomaineDetails,components/section/domaine/Details.vue,0,,custom,domaine | statistics | redirectParameters,non
+SectionDomaineHeaderActions,components/section/domaine/HeaderActions.vue,0,,custom,domain,non
+SectionDomainePartenaires,components/section/domaine/Partenaires.vue,1,components/section/domaine/Details.vue,custom,domaine,non
+SectionDomainePresentation,components/section/domaine/Presentation.vue,0,,custom,domaine | srcSet | placesLeft | redirectParameters,non
+SectionFaqParagraph,components/section/FaqParagraph.vue,1,pages/domaines-action/[slug].vue,custom,title | paragraphs,non
+SectionHeaderDesktopPrimaryNavigation,components/section/header/DesktopPrimaryNavigation.vue,0,,custom,,à discuter
+SectionHeaderDesktopSecondaryNavigation,components/section/header/DesktopSecondaryNavigation.vue,0,,custom,,à discuter
+SectionHeaderDesktop,components/section/header/HeaderDesktop.vue,0,,custom,,non
+SectionHeaderMobile,components/section/header/HeaderMobile.vue,0,,custom,,non
+SectionHistory,components/section/History.vue,0,,custom,modelId | modelType,non
+SectionHistoryStateChanges,components/section/HistoryStateChanges.vue,0,,custom,modelId | modelType | boxClass,non
+SectionHomeBlocActivityMissions,components/section/home/BlocActivityMissions.vue,0,,custom,activity,non
+SectionHomeGridActualitesBlog,components/section/home/GridActualitesBlog.vue,0,,custom,isLogged,non
+SectionHomepageCommunaute,components/section/homepage/Communaute.vue,0,,custom,,non
+SectionHomepageEncouragezEngagementLocal,components/section/homepage/EncouragezEngagementLocal.vue,0,,custom,,non
+SectionHomepageFacilitezRecrutement,components/section/homepage/FacilitezRecrutement.vue,0,,custom,,non
+SectionHomepageFaq,components/section/homepage/Faq.vue,0,,custom,,non
+SectionHomepageOrganisations,components/section/homepage/Organisations.vue,0,,custom,,non
+SectionHomepageRejoindreLaCommunaute,components/section/homepage/RejoindreLaCommunaute.vue,0,,custom,,non
+SectionHomepageTemoignages,components/section/homepage/Temoignages.vue,0,,custom,,non
+SectionInscriptionBoxItem,components/section/inscription/BoxItem.vue,0,,custom,icon | title | subtitle | as | to | linkClass,non
+SectionInscriptionCarouselLogos,components/section/inscription/CarouselLogos.vue,0,,custom,,non
+SectionInscriptionDsfrModalPrerequisites,components/section/inscription/DsfrModalPrerequisites.vue,0,,custom,,oui
+SectionLogsBoxChanges,components/section/logs/BoxChanges.vue,0,,custom,activityLog | showAction | linkLabel | showTitle | boxVariant | boxPadding,non
+SectionLogsBoxInformations,components/section/logs/BoxInformations.vue,0,,custom,activityLog | boxVariant | boxPadding,non
+SectionLogsBoxJson,components/section/logs/BoxJson.vue,0,,custom,json | boxVariant | boxPadding,non
+SectionLogsDisclosureActivityLogItems,components/section/logs/DisclosureActivityLogItems.vue,0,,custom,activityLog,non
+SectionMissionTemplateActions,components/section/mission-template/Actions.vue,0,,custom,missionTemplate | buttonSize,non
+SectionMissionTemplateBadges,components/section/mission-template/Badges.vue,0,,custom,missionTemplate,oui
+SectionMissionTemplateBoxInformations,components/section/mission-template/BoxInformations.vue,0,,custom,missionTemplate,non
+SectionMissionTemplateBoxMission,components/section/mission-template/BoxMission.vue,0,,custom,missionTemplate | stats,non
+SectionMissionTemplateBoxParticipation,components/section/mission-template/BoxParticipation.vue,0,,custom,missionTemplate | stats,non
+SectionMissionTemplateBoxReseau,components/section/mission-template/BoxReseau.vue,0,,custom,missionTemplate,non
+SectionMissionTemplateHeaderActions,components/section/mission-template/HeaderActions.vue,0,,custom,missionTemplate,non
+SectionMissionActions,components/section/mission/Actions.vue,0,,custom,mission | buttonSize,non
+SectionMissionBadges,components/section/mission/Badges.vue,0,,custom,mission,oui
+SectionMissionBoxAideModeration,components/section/mission/BoxAideModeration.vue,0,,custom,mission | title,non
+SectionMissionBoxDates,components/section/mission/BoxDates.vue,0,,custom,mission | title,non
+SectionMissionBoxInformations,components/section/mission/BoxInformations.vue,0,,custom,mission | title,non
+SectionMissionBoxOrganisation,components/section/mission/BoxOrganisation.vue,0,,custom,organisation,non
+SectionMissionBoxPlace,components/section/mission/BoxPlace.vue,0,,custom,mission,non
+SectionMissionDetails,components/section/mission/Details.vue,0,,custom,mission,non
+SectionMissionDisclosureModerationAI,components/section/mission/DisclosureModerationAI.vue,0,,custom,mission,non
+SectionMissionDisclosureWarningWords,components/section/mission/DisclosureWarningWords.vue,0,,custom,mission,non
+SectionMissionHeaderActions,components/section/mission/HeaderActions.vue,0,,custom,mission | missionStats,non
+SectionMissionPresentation,components/section/mission/Presentation.vue,0,,custom,mission,non
+SectionMissionPresentielOrDistance,components/section/mission/PresentielOrDistance.vue,0,,custom,mission,non
+SectionMissionActivities,components/section/MissionActivities.vue,0,,custom,title | activities | redirectParameters,non
+SectionMissionShareOverlay,components/section/MissionShareOverlay.vue,0,,custom,,non
+SectionOrganisationActions,components/section/organisation/Actions.vue,0,,custom,organisation | buttonSize,non
+SectionOrganisationBadges,components/section/organisation/Badges.vue,0,,custom,organisation,oui
+SectionOrganisationBoxAideModeration,components/section/organisation/BoxAideModeration.vue,0,,custom,organisation | title,non
+SectionOrganisationBoxDetails,components/section/organisation/BoxDetails.vue,0,,custom,organisation,non
+SectionOrganisationBoxInformations,components/section/organisation/BoxInformations.vue,0,,custom,organisation | showTitle | boxVariant | boxPadding,non
+SectionOrganisationBoxMission,components/section/organisation/BoxMission.vue,0,,custom,organisation | organisationStats,non
+SectionOrganisationBoxParticipation,components/section/organisation/BoxParticipation.vue,0,,custom,organisation | organisationStats,non
+SectionOrganisationBoxPresentation,components/section/organisation/BoxPresentation.vue,0,,custom,organisation,non
+SectionOrganisationBoxReseau,components/section/organisation/BoxReseau.vue,0,,custom,reseau,non
+SectionOrganisationBoxScore,components/section/organisation/BoxScore.vue,0,,custom,structureId | variant | padding,non
+SectionOrganisationBoxScoreLight,components/section/organisation/BoxScoreLight.vue,0,,custom,structureId | showTitle | boxVariant | boxPadding,non
+SectionOrganisationBoxUnsubscribedInformations,components/section/organisation/BoxUnsubscribedInformations.vue,0,,custom,organisation | showTitle | boxVariant | boxPadding,non
+SectionOrganisationContact,components/section/organisation/Contact.vue,0,,custom,organisation,non
+SectionOrganisationDetails,components/section/organisation/Details.vue,0,,custom,organisation | srcSet | redirectParameters,non
+SectionOrganisationDisclosureModerationAI,components/section/organisation/DisclosureModerationAI.vue,0,,custom,organisation,non
+SectionOrganisationDisclosureWarningWords,components/section/organisation/DisclosureWarningWords.vue,0,,custom,organisation,non
+SectionOrganisationHeader,components/section/organisation/Header.vue,0,,custom,organisation,non
+SectionOrganisationHeaderActions,components/section/organisation/HeaderActions.vue,0,,custom,organisation,non
+SectionOrganisationLinkToCityAssociations,components/section/organisation/LinkToCityAssociations.vue,0,,custom,organisation,oui
+SectionOrganisationPresentation,components/section/organisation/Presentation.vue,0,,custom,suffixTitle | organisation | srcSet | redirectParameters,non
+SectionOrganisationScoreDetails,components/section/organisation/ScoreDetails.vue,0,,custom,score,non
+SectionPartenairesEngagementSousToutesSesFormes,components/section/partenaires/EngagementSousToutesSesFormes.vue,1,pages/domaines-action/[slug].vue,custom,title | partenaires,non
+SectionProfileActions,components/section/profile/Actions.vue,0,,custom,profile | buttonSize,non
+SectionProfileBadges,components/section/profile/Badges.vue,0,,custom,profile,oui
+SectionProfileBoxActions,components/section/profile/BoxActions.vue,0,,custom,profile | showAction | linkLabel | showTitle | boxVariant | boxPadding,non
+SectionProfileBoxCompleteProfile,components/section/profile/BoxCompleteProfile.vue,0,,custom,title | showSteps,non
+SectionProfileBoxDisponibilities,components/section/profile/BoxDisponibilities.vue,0,,custom,profile | showAction | linkAction | linkLabel | showTitle | boxVariant | boxPadding,non
+SectionProfileBoxInformations,components/section/profile/BoxInformations.vue,0,,custom,profile | title | showAction | linkAction | linkLabel | showTitle | boxVariant | boxPadding,non
+SectionProfileBoxOrganisations,components/section/profile/BoxOrganisations.vue,0,,custom,structures,non
+SectionProfileBoxReseau,components/section/profile/BoxReseau.vue,0,,custom,reseau,non
+SectionProfileBoxRoles,components/section/profile/BoxRoles.vue,0,,custom,roles,non
+SectionProfileBoxTerritoires,components/section/profile/BoxTerritoires.vue,0,,custom,territoires,non
+SectionProfileBoxUserAlertesActives,components/section/profile/BoxUserAlertesActives.vue,0,,custom,,oui
+SectionProfileBoxUserBan,components/section/profile/BoxUserBan.vue,0,,custom,user,non
+SectionProfileBoxUserFavoris,components/section/profile/BoxUserFavoris.vue,0,,custom,,non
+SectionProfileBoxUserPendingActions,components/section/profile/BoxUserPendingActions.vue,0,,custom,,non
+SectionProfileBoxUserProfileBenevole,components/section/profile/BoxUserProfileBenevole.vue,0,,custom,,non
+SectionProfileBoxUserWaitingParticipations,components/section/profile/BoxUserWaitingParticipations.vue,0,,custom,,non
+SectionProfileHeaderActions,components/section/profile/HeaderActions.vue,0,,custom,profile,non
+SectionProfileOverlayCompletionActivities,components/section/profile/OverlayCompletion/Activities.vue,1,components/section/profile/OverlayCompletion/index.vue,custom,,non
+SectionProfileOverlayCompletionDisponibilities,components/section/profile/OverlayCompletion/Disponibilities.vue,1,components/section/profile/OverlayCompletion/index.vue,custom,,non
+SectionProfileOverlayCompletion,components/section/profile/OverlayCompletion/index.vue,0,,custom,,non
+SectionProfileOverlayCompletionMissionType,components/section/profile/OverlayCompletion/MissionType.vue,1,components/section/profile/OverlayCompletion/index.vue,custom,,non
+SectionProfileOverlayCompletionMoreAboutYou,components/section/profile/OverlayCompletion/MoreAboutYou.vue,1,components/section/profile/OverlayCompletion/index.vue,custom,,non
+SectionProfileOverlayCompletionPicture,components/section/profile/OverlayCompletion/Picture.vue,1,components/section/profile/OverlayCompletion/index.vue,custom,,non
+SectionProfileOverlayCompletionSkills,components/section/profile/OverlayCompletion/Skills.vue,1,components/section/profile/OverlayCompletion/index.vue,custom,scrollContainer,non
+SectionProfileOverlayCompletionStepSelection,components/section/profile/OverlayCompletion/StepSelection.vue,1,components/section/profile/OverlayCompletion/index.vue,custom,,oui
+SectionProfileOverlayCompletionSubstep,components/section/profile/OverlayCompletion/Substep.vue,1,components/section/profile/OverlayCompletion/StepSelection.vue,custom,item,à discuter
+SectionRejoignezLeMouvement,components/section/RejoignezLeMouvement.vue,1,pages/organisations/[slug].vue,custom,,non
+SectionReseauActions,components/section/reseau/Actions.vue,0,,custom,reseau | buttonSize,non
+SectionReseauBadges,components/section/reseau/Badges.vue,0,,custom,reseau,oui
+SectionReseauBoxAntenne,components/section/reseau/BoxAntenne.vue,0,,custom,reseau | stats,non
+SectionReseauBoxDetails,components/section/reseau/BoxDetails.vue,0,,custom,reseau,non
+SectionReseauBoxInformations,components/section/reseau/BoxInformations.vue,0,,custom,reseau,non
+SectionReseauBoxMission,components/section/reseau/BoxMission.vue,0,,custom,reseau | stats,non
+SectionReseauBoxParticipation,components/section/reseau/BoxParticipation.vue,0,,custom,reseau | stats,non
+SectionReseauBoxPresentation,components/section/reseau/BoxPresentation.vue,0,,custom,reseau,non
+SectionReseauBreadcrumb,components/section/reseau/Breadcrumb.vue,0,,custom,reseau | items,oui
+SectionReseauHeader,components/section/reseau/Header.vue,0,,custom,organisation,non
+SectionReseauHeaderActions,components/section/reseau/HeaderActions.vue,0,,custom,reseau,non
+SectionReseauModalAddReseauResponsable,components/section/reseau/ModalAddReseauResponsable.vue,0,,custom,isOpen | reseau,oui
+SectionRessourceBoxInformations,components/section/ressource/BoxInformations.vue,0,,custom,ressource,non
+SectionRessourceHeaderActions,components/section/ressource/HeaderActions.vue,0,,custom,resource,non
+SectionSearchBlocFaq,components/section/search/BlocFaq.vue,1,pages/en-ce-moment.vue,custom,title,non
+SectionSearchBlocFaqSearchOrganisations,components/section/search/BlocFaqSearchOrganisations.vue,0,,custom,title,non
+SectionSearchDatesFilter,components/section/search/DatesFilter.vue,0,,custom,triggerId,non
+SectionSearchDatesMobileFilter,components/section/search/DatesMobileFilter.vue,0,,custom,,non
+SectionSearchFacetFilter,components/section/search/FacetFilter.vue,0,,custom,facetName | facets | label | showMoreLimit | showMore | legend | facetValueResolver,non
+SectionSearchFacetFilterToggle,components/section/search/FacetFilterToggle.vue,0,,custom,facetName | label | legend | placeholder | facetValueResolver | triggerVariant | icon | triggerAttributes,oui
+SectionSearchFacetOptionsFilter,components/section/search/FacetOptionsFilter.vue,0,,custom,modelValue | filterName | options | attributeKey | attributeLabel | label | showMoreLimit | showMore | legend | searchable,non
+SectionSearchFacetSearch,components/section/search/FacetSearch.vue,0,,custom,modelValue | placeholder | icon | autocomplete | ariaLabelledby | ariaLabel | title | ariaExpanded | ariaActivedescendant | showClearButton | alwaysShowClear | clearLabel,non
+SectionSearchIsOpenToMinors,components/section/search/IsOpenToMinors.vue,0,,custom,,non
+SectionSearchIsOpenToMinorsMobileFilter,components/section/search/IsOpenToMinorsMobileFilter.vue,0,,custom,,non
+SectionSearchMissionsAlgoliaMissions,components/section/search/missions/AlgoliaMissions.vue,0,,custom,indexKey | searchParameters | redirectParameters | origin,non
+SectionSearchMissionsAlgoliaSearch,components/section/search/missions/AlgoliaSearch.vue,0,,custom,initialFilters | initialAroundRadius | secondaryFilters | initialHitsPerPage | initialAroundLatLng | noHeader | noFilters | noPagination | withSlideshowRemote | withSummary | paginationScrollTarget | paginationScrollOffset,non
+SectionSearchMissionsAlgoliaSearchSkeleton,components/section/search/missions/AlgoliaSearchSkeleton.vue,0,,custom,,non
+SectionSearchMissionsAlgoliaSlideshowMissions,components/section/search/missions/AlgoliaSlideshowMissions.vue,0,,custom,searchParameters | ariaLabelledby | ariaLabel | dotsVariant | navigationId | navigationButtonClass | navigationVariant | bleed | tagTitle,non
+SectionSearchMissionsBlocSlideshowRemote,components/section/search/missions/BlocSlideshowRemote.vue,0,,custom,scrollToId,non
+SectionSearchMissionsGridResults,components/section/search/missions/GridResults.vue,0,,custom,hits,non
+SectionSearchMissionsMobileFilters,components/section/search/missions/MobileFilters.vue,0,,custom,,non
+SectionSearchMissionsPrimaryFilters,components/section/search/missions/PrimaryFilters.vue,0,,custom,,non
+SectionSearchMissionsSecondaryFilters,components/section/search/missions/SecondaryFilters.vue,0,,custom,filtersName,non
+SectionSearchNumericFilter,components/section/search/NumericFilter.vue,0,,custom,attributeName | operand | inputLabel,non
+SectionSearchNumericFilterToggle,components/section/search/NumericFilterToggle.vue,0,,custom,attributeName | inputLabel | triggerLabel | triggerId | triggerVariant | legend | operand | panelAriaLabel | min,oui
+SectionSearchOrganisationsAlgoliaOrganisations,components/section/search/organisations/AlgoliaOrganisations.vue,0,,custom,component | componentProps | searchParameters | itemClass,non
+SectionSearchOrganisationsAlgoliaSearch,components/section/search/organisations/AlgoliaSearch.vue,0,,custom,initialFilters | secondaryFilters,non
+SectionSearchOrganisationsMobileFilters,components/section/search/organisations/MobileFilters.vue,0,,custom,,non
+SectionSearchOrganisationsPrimaryFilters,components/section/search/organisations/PrimaryFilters.vue,0,,custom,,non
+SectionSearchOrganisationsSecondaryFilters,components/section/search/organisations/SecondaryFilters.vue,0,,custom,filtersName,non
+SectionSearchPonctualFilter,components/section/search/PonctualFilter.vue,0,,custom,,non
+SectionSearchPonctualMobileFilter,components/section/search/PonctualMobileFilter.vue,0,,custom,,non
+SectionSearchRadiosFilter,components/section/search/RadiosFilter.vue,0,,custom,name | legend | options,à discuter
+SectionSearchSectionSlideshowMissions,components/section/search/SectionSlideshowMissions.vue,0,,custom,title | searchParameters | redirectParameters | plausibleParameters | showDisponibilities,non
+SectionSearchTriggerDrawerMobileFilters,components/section/search/TriggerDrawerMobileFilters.vue,0,,custom,,non
+SectionSoftGateAntiFlood,components/section/soft-gate/AntiFlood.vue,0,,custom,,non
+SectionSoftGateCompleteProfile,components/section/soft-gate/CompleteProfile.vue,0,,custom,,non
+SectionSoftGateEmail,components/section/soft-gate/Email.vue,0,,custom,,non
+SectionSoftGateInvitations,components/section/soft-gate/Invitations.vue,0,,custom,action,non
+SectionSoftGateLogin,components/section/soft-gate/Login.vue,0,,custom,datas,non
+SectionSoftGateMissionNotForMinors,components/section/soft-gate/MissionNotForMinors.vue,0,,custom,,non
+SectionSoftGateParticipate,components/section/soft-gate/Participate.vue,0,,custom,hasSlots | isMotivationRequired | isInFavorite | isOpenToMinors,non
+SectionSoftGatePrerequisites,components/section/soft-gate/Prerequisites.vue,0,,custom,checkDistance,non
+SectionSoftGateRegister,components/section/soft-gate/Register.vue,0,,custom,datas | plausibleFrom,non
+SectionSoftGateSelectCreneaux,components/section/soft-gate/SelectCreneaux.vue,0,,custom,,oui
+SectionSoftGateWaitingList,components/section/soft-gate/WaitingList.vue,0,,custom,,non
+SectionSoftGateOverlay,components/section/SoftGateOverlay.vue,0,,custom,,non
+SectionTemoignageBoxInformations,components/section/temoignage/BoxInformations.vue,0,,custom,temoignage,non
+SectionTemoignageHeaderActions,components/section/temoignage/HeaderActions.vue,0,,custom,testimony,non
+SectionTemoignageTestimonials,components/section/temoignage/Testimonials.vue,0,,custom,model | modelType,non
+SectionTermBoxInformations,components/section/term/BoxInformations.vue,0,,custom,term,non
+SectionTermBoxLiaisons,components/section/term/BoxLiaisons.vue,0,,custom,term,non
+SectionTerritoireActions,components/section/territoire/Actions.vue,0,,custom,territoire | buttonSize,non
+SectionTerritoireBadges,components/section/territoire/Badges.vue,0,,custom,territoire,oui
+SectionTerritoireBoxAideModeration,components/section/territoire/BoxAideModeration.vue,0,,custom,territoire | title,non
+SectionTerritoireBoxInformations,components/section/territoire/BoxInformations.vue,0,,custom,territoire | showTitle | boxVariant | boxPadding,non
+SectionTerritoireBoxMission,components/section/territoire/BoxMission.vue,0,,custom,territoire | stats,non
+SectionTerritoireBoxParticipation,components/section/territoire/BoxParticipation.vue,0,,custom,territoire | stats,non
+SectionTerritoireBoxPresentation,components/section/territoire/BoxPresentation.vue,0,,custom,territoire,non
+SectionTerritoireDisclosureWarningWords,components/section/territoire/DisclosureWarningWords.vue,0,,custom,territoire,non
+SectionTerritoireHeaderActions,components/section/territoire/HeaderActions.vue,0,,custom,territoire,non
+SectionTerritoireModalAddTerritoireResponsable,components/section/territoire/ModalAddTerritoireResponsable.vue,0,,custom,territoire,oui
+SectionTestimonialOverlay,components/section/TestimonialOverlay.vue,0,,custom,participation | isFocusTrap,non
+SectionTestimonialsByMissionActivities,components/section/TestimonialsByMissionActivities.vue,0,,custom,pageName | activity | buttonLink,non
+SectionTestimonialsByStructureDepartment,components/section/TestimonialsByStructureDepartment.vue,0,,custom,pageName | department | buttonLink,non
+SectionTestimonialsByStructureZips,components/section/TestimonialsByStructureZips.vue,1,pages/villes/[slug].vue,custom,pageName | zips | buttonLink,non
+SectionThematiqueBoxInformations,components/section/thematique/BoxInformations.vue,0,,custom,thematique,non
+SectionUserAlertStepForm,components/section/user-alert/StepForm.vue,0,,custom,initialForm,oui
+SectionUserAlertMissionsOverlay,components/section/UserAlertMissionsOverlay.vue,0,,custom,isOpen | title,oui
+SectionUserAlertOverlay,components/section/UserAlertOverlay.vue,0,,custom,,oui
+SeoBoxSeoParagraphs,components/seo/BoxSeoParagraphs.vue,0,,custom,page,non
+SeoBoxSeoRecruit,components/seo/BoxSeoRecruit.vue,0,,custom,page,non
+SettingsFormSettingsMessages,components/settings/FormSettingsMessages.vue,0,,custom,settings,non
+ShareFacebook,components/share/Facebook.vue,1,components/section/MissionShareOverlay.vue,custom,size | url,non
+ShareLinkedin,components/share/Linkedin.vue,1,components/section/MissionShareOverlay.vue,custom,size | url | message,oui
+ShareMail,components/share/Mail.vue,1,components/section/MissionShareOverlay.vue,custom,size | url | subject | message,non
+ShareTwitter,components/share/Twitter.vue,1,components/section/MissionShareOverlay.vue,custom,size | url | message,non
+ShareWhatsApp,components/share/WhatsApp.vue,1,components/section/MissionShareOverlay.vue,custom,size | url | message,non
+StatisticsMissionsByActivities,components/statistics/MissionsByActivities.vue,0,,custom,,non
+StatisticsMissionsByDomaines,components/statistics/MissionsByDomaines.vue,0,,custom,,non
+StatisticsMissionsByOrganisations,components/statistics/MissionsByOrganisations.vue,0,,custom,,non
+StatisticsMissionsByPeriod,components/statistics/MissionsByPeriod.vue,0,,custom,,non
+StatisticsMissionsByReseaux,components/statistics/MissionsByReseaux.vue,0,,custom,,non
+StatisticsMissionsByStates,components/statistics/MissionsByStates.vue,0,,custom,,non
+StatisticsMissionsByTemplates,components/statistics/MissionsByTemplates.vue,0,,custom,,non
+StatisticsMissionsByTemplateTypes,components/statistics/MissionsByTemplateTypes.vue,0,,custom,,non
+StatisticsMissionsByTypes,components/statistics/MissionsByTypes.vue,0,,custom,,non
+StatisticsMissionsStatistics,components/statistics/MissionsStatistics.vue,0,,custom,,non
+StatisticsModerationMissionsByDepartments,components/statistics/ModerationMissionsByDepartments.vue,0,,custom,,non
+StatisticsModerationMissionsByWeeks,components/statistics/ModerationMissionsByWeeks.vue,0,,custom,,non
+StatisticsModerationOrganisationsByDepartments,components/statistics/ModerationOrganisationsByDepartments.vue,0,,custom,,non
+StatisticsModerationOrganisationsByWeeks,components/statistics/ModerationOrganisationsByWeeks.vue,0,,custom,,non
+StatisticsOrganisationsByDomaines,components/statistics/OrganisationsByDomaines.vue,0,,custom,,non
+StatisticsOrganisationsByPeriod,components/statistics/OrganisationsByPeriod.vue,0,,custom,,non
+StatisticsOrganisationsByReseaux,components/statistics/OrganisationsByReseaux.vue,0,,custom,,non
+StatisticsOrganisationsByStates,components/statistics/OrganisationsByStates.vue,0,,custom,,non
+StatisticsOrganisationsByTypes,components/statistics/OrganisationsByTypes.vue,0,,custom,,non
+StatisticsOrganisationsStatistics,components/statistics/OrganisationsStatistics.vue,0,,custom,,non
+StatisticsOverviewApiEngagement,components/statistics/OverviewApiEngagement.vue,0,,custom,,non
+StatisticsOverviewMissions,components/statistics/OverviewMissions.vue,0,,custom,,non
+StatisticsOverviewOrganisations,components/statistics/OverviewOrganisations.vue,0,,custom,,non
+StatisticsOverviewParticipations,components/statistics/OverviewParticipations.vue,0,,custom,,non
+StatisticsOverviewPlaces,components/statistics/OverviewPlaces.vue,0,,custom,,non
+StatisticsOverviewQuickGlance,components/statistics/OverviewQuickGlance.vue,0,,custom,,non
+StatisticsOverviewUtilisateurs,components/statistics/OverviewUtilisateurs.vue,0,,custom,,non
+StatisticsParticipationsByActivities,components/statistics/ParticipationsByActivities.vue,0,,custom,,non
+StatisticsParticipationsByDomaines,components/statistics/ParticipationsByDomaines.vue,0,,custom,,non
+StatisticsParticipationsByOrganisations,components/statistics/ParticipationsByOrganisations.vue,0,,custom,,non
+StatisticsParticipationsByPeriod,components/statistics/ParticipationsByPeriod.vue,0,,custom,,non
+StatisticsParticipationsByReseaux,components/statistics/ParticipationsByReseaux.vue,0,,custom,,non
+StatisticsParticipationsCanceledByBenevoles,components/statistics/ParticipationsCanceledByBenevoles.vue,0,,custom,,non
+StatisticsParticipationsDelaysByRegistrations,components/statistics/ParticipationsDelaysByRegistrations.vue,0,,custom,,non
+StatisticsParticipationsStatistics,components/statistics/ParticipationsStatistics.vue,0,,custom,,non
+StatisticsPlacesByActivities,components/statistics/PlacesByActivities.vue,0,,custom,,non
+StatisticsPlacesByDomaines,components/statistics/PlacesByDomaines.vue,0,,custom,,non
+StatisticsPlacesByMissions,components/statistics/PlacesByMissions.vue,0,,custom,,non
+StatisticsPlacesByOrganisations,components/statistics/PlacesByOrganisations.vue,0,,custom,,non
+StatisticsPlacesByReseaux,components/statistics/PlacesByReseaux.vue,0,,custom,,non
+StatisticsPlacesStatistics,components/statistics/PlacesStatistics.vue,0,,custom,,non
+StatisticsTemoignagesByGrades,components/statistics/TemoignagesByGrades.vue,0,,custom,,non
+StatisticsUtilisateursByActivities,components/statistics/UtilisateursByActivities.vue,0,,custom,,non
+StatisticsUtilisateursByAge,components/statistics/UtilisateursByAge.vue,0,,custom,,non
+StatisticsUtilisateursByPeriod,components/statistics/UtilisateursByPeriod.vue,0,,custom,,non
+StatisticsUtilisateursStatistics,components/statistics/UtilisateursStatistics.vue,0,,custom,,non
+TagBoxTags,components/tag/BoxTags.vue,0,,custom,participation,oui
+TagSelectTags,components/tag/SelectTags.vue,0,,custom,participation,oui
+TerritoireAlgoliaMissionsPreview,components/territoire/AlgoliaMissionsPreview.vue,0,,custom,territoire,non
+TerritoireBanner,components/territoire/Banner.vue,0,,custom,territoire,non
+TerritoireEngagezVousPresDeChezVous,components/territoire/EngagezVousPresDeChezVous.vue,0,,custom,territoire,non
+TerritoireNumbersAroundCities,components/territoire/NumbersAroundCities.vue,0,,custom,territoire,non
+TerritoireNumbersNational,components/territoire/NumbersNational.vue,0,,custom,,non
+TerritoirePanelResponsables,components/territoire/PanelResponsables.vue,0,,custom,territoire | responsables,non
+TerritoireResponsableListItem,components/territoire/ResponsableListItem.vue,0,,custom,territoire | responsable,non
+ToastError,components/ToastError.vue,0,,custom,message | errors,non
+UiAccordion,components/ui/accordion/Accordion.vue,0,,custom,,oui
+UiAccordionContent,components/ui/accordion/AccordionContent.vue,0,,custom,,oui
+UiAccordionItem,components/ui/accordion/AccordionItem.vue,0,,custom,,oui
+UiAccordionTrigger,components/ui/accordion/AccordionTrigger.vue,0,,custom,,oui
+UiBadge,components/ui/Badge.vue,1,components/pages/admin/organisations/_id/diffusions/components/CategoryListItem.vue,custom,size | as | variant,oui
+UiButton,components/ui/button/Button.vue,1,pages/admin/ui.vue,custom,variant | size | class,oui
+UiButtonExpand,components/ui/ButtonExpand.vue,1,components/pages/admin/organisations/_id/diffusions/components/CategoryListItem.vue,custom,isExpanded,oui
+UiCard,components/ui/card/Card.vue,1,pages/admin/ui.vue,custom,class,à discuter
+UiCardContent,components/ui/card/CardContent.vue,1,pages/admin/ui.vue,custom,class,à discuter
+UiCardDescription,components/ui/card/CardDescription.vue,1,pages/admin/ui.vue,custom,class,à discuter
+UiCardFooter,components/ui/card/CardFooter.vue,1,pages/admin/ui.vue,custom,class,à discuter
+UiCardHeader,components/ui/card/CardHeader.vue,1,pages/admin/ui.vue,custom,class,à discuter
+UiCardTitle,components/ui/card/CardTitle.vue,1,pages/admin/ui.vue,custom,class,oui
+UiCombobox,components/ui/combobox/Combobox.vue,1,pages/admin/ui.vue,custom,,oui
+UiComboboxAnchor,components/ui/combobox/ComboboxAnchor.vue,1,pages/admin/ui.vue,custom,,oui
+UiComboboxEmpty,components/ui/combobox/ComboboxEmpty.vue,1,pages/admin/ui.vue,custom,,oui
+UiComboboxGroup,components/ui/combobox/ComboboxGroup.vue,1,pages/admin/ui.vue,custom,,oui
+UiComboboxInput,components/ui/combobox/ComboboxInput.vue,1,pages/admin/ui.vue,custom,,oui
+UiComboboxItem,components/ui/combobox/ComboboxItem.vue,1,pages/admin/ui.vue,custom,,oui
+UiComboboxList,components/ui/combobox/ComboboxList.vue,1,pages/admin/ui.vue,custom,,oui
+UiComboboxSeparator,components/ui/combobox/ComboboxSeparator.vue,0,,custom,,oui
+UiComboboxTrigger,components/ui/combobox/ComboboxTrigger.vue,0,,custom,,oui
+UiDropdownMenuCheckboxItem,components/ui/dropdown-menu/DropdownMenuCheckboxItem.vue,0,,custom,,à discuter
+UiDropdownMenuGroup,components/ui/dropdown-menu/DropdownMenuGroup.vue,0,,custom,,non
+UiDropdownMenuLabel,components/ui/dropdown-menu/DropdownMenuLabel.vue,1,components/custom/ButtonSelectMessageTemplate.vue,custom,,non
+UiDropdownMenuRadioGroup,components/ui/dropdown-menu/DropdownMenuRadioGroup.vue,0,,custom,,à discuter
+UiDropdownMenuRadioItem,components/ui/dropdown-menu/DropdownMenuRadioItem.vue,0,,custom,,à discuter
+UiDropdownMenuShortcut,components/ui/dropdown-menu/DropdownMenuShortcut.vue,0,,custom,class,non
+UiDropdownMenuSub,components/ui/dropdown-menu/DropdownMenuSub.vue,0,,custom,,non
+UiDropdownMenuSubContent,components/ui/dropdown-menu/DropdownMenuSubContent.vue,0,,custom,,non
+UiDropdownMenuSubTrigger,components/ui/dropdown-menu/DropdownMenuSubTrigger.vue,0,,custom,,non
+UiFileUploadDrop,components/ui/file-upload/FileUploadDrop.vue,1,components/ui/FileUpload.vue,custom,extensions | maxSize,non
+UiFileUpload,components/ui/FileUpload.vue,1,features/invitations/components/FormInvitationReseauAntennesFromFile.vue,custom,extensions | maxSize,non
+UiFormControl,components/ui/form/FormControl.vue,1,pages/admin/ui.vue,custom,,oui
+UiFormDescription,components/ui/form/FormDescription.vue,1,pages/admin/ui.vue,custom,class,non
+UiFormItem,components/ui/form/FormItem.vue,1,pages/admin/ui.vue,custom,class,non
+UiFormLabel,components/ui/form/FormLabel.vue,1,pages/admin/ui.vue,custom,,non
+UiFormMessage,components/ui/form/FormMessage.vue,1,pages/admin/ui.vue,custom,,non
+UiImageUploadImageCropper,components/ui/image-upload/ImageCropper.vue,1,components/ui/MediaUpload.vue,custom,image | ratio | minWidth | minHeight,non
+UiImageUploadImagePreview,components/ui/image-upload/ImagePreview.vue,1,components/ui/MediaPicker.vue,custom,image,non
+UiImageUploadArea,components/ui/image-upload/ImageUploadArea.vue,1,components/ui/MediaUpload.vue,custom,extensions | maxSize,non
+UiImageUploadPrompt,components/ui/image-upload/ImageUploadPrompt.vue,1,components/ui/MediaUpload.vue,custom,,non
+UiImageUploadMediaPreview,components/ui/image-upload/MediaPreview.vue,1,components/ui/MediaUpload.vue,custom,image,non
+UiImageUploadMediaSelectPrompt,components/ui/image-upload/MediaSelectPrompt.vue,1,components/ui/MediaPicker.vue,custom,,oui
+UiInput,components/ui/input/Input.vue,1,pages/admin/ui.vue,custom,defaultValue | modelValue | class,oui
+UiLabel,components/ui/label/Label.vue,1,components/ui/form/FormLabel.vue,custom,,non
+UiLink,components/ui/Link.vue,1,components/mission/BoxVisitsStatistics.vue,custom,,oui
+UiMediaPicker,components/ui/MediaPicker.vue,1,components/form/FormMissionTemplate.vue,custom,media | params,non
+UiMediaUpload,components/ui/MediaUpload.vue,1,components/form/FormMissionTemplate.vue,custom,media | minWidth | minHeight | maxWidth | maxHeight | ratio | maxSize | extensions,non
+UiScrollArea,components/ui/scroll-area/ScrollArea.vue,1,features/missions/analyzer/PopupSummary.vue,custom,,non
+UiScrollAreaScrollBar,components/ui/scroll-area/ScrollBar.vue,1,components/ui/scroll-area/ScrollArea.vue,custom,,non
+UiSelect,components/ui/select/Select.vue,1,pages/admin/ui.vue,custom,,oui
+UiSelectContent,components/ui/select/SelectContent.vue,1,pages/admin/ui.vue,custom,,oui
+UiSelectGroup,components/ui/select/SelectGroup.vue,1,pages/admin/ui.vue,custom,,oui
+UiSelectItem,components/ui/select/SelectItem.vue,1,pages/admin/ui.vue,custom,,oui
+UiSelectItemText,components/ui/select/SelectItemText.vue,1,components/ui/select/SelectItem.vue,custom,,oui
+UiSelectLabel,components/ui/select/SelectLabel.vue,0,,custom,,oui
+UiSelectScrollDownButton,components/ui/select/SelectScrollDownButton.vue,1,components/ui/select/SelectContent.vue,custom,,oui
+UiSelectScrollUpButton,components/ui/select/SelectScrollUpButton.vue,1,components/ui/select/SelectContent.vue,custom,,oui
+UiSelectSeparator,components/ui/select/SelectSeparator.vue,0,,custom,,oui
+UiSelectTrigger,components/ui/select/SelectTrigger.vue,1,pages/admin/ui.vue,custom,,oui
+UiSelectValue,components/ui/select/SelectValue.vue,1,pages/admin/ui.vue,custom,,oui
+UiSheetClose,components/ui/sheet/SheetClose.vue,0,,custom,,non
+UiSheetOverlay,components/ui/sheet/SheetOverlay.vue,1,components/ui/sheet/SheetContent.vue,custom,class,non
+UiSonner,components/ui/sonner/Sonner.vue,0,,custom,,non
+UiTabs,components/ui/tabs/Tabs.vue,0,,custom,,oui
+UiTabsContent,components/ui/tabs/TabsContent.vue,0,,custom,,oui
+UiTabsList,components/ui/tabs/TabsList.vue,0,,custom,,oui
+UiTabsTrigger,components/ui/tabs/TabsTrigger.vue,0,,custom,,oui

@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Prototype — Vérification de compte (OTP)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  @font-face { font-family: Marianne; src: url('../design-system/fonts/Marianne-Regular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: Marianne; src: url('../design-system/fonts/Marianne-Medium.woff2') format('woff2'); font-weight: 500; font-style: normal; font-display: swap; }
+  @font-face { font-family: Marianne; src: url('../design-system/fonts/Marianne-Bold.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font-family:Marianne,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+  .page{position:relative;background:#081992;min-height:100vh;overflow:hidden}
+  .content{position:relative;z-index:10;padding:48px 16px;text-align:center;max-width:960px;margin:0 auto}
+  h1{margin:24px 0 16px;font-size:1.875rem;line-height:2rem;font-weight:700;color:#fff}
+  .subtitle{margin:0;font-size:1rem;color:#c3ddfd}
+  .subtitle strong{color:#fff;font-weight:600}
+  .card-wrap{margin-top:48px;max-width:28rem;margin-left:auto;margin-right:auto;text-align:left}
+  .card{background:#fff;padding:32px 40px;box-shadow:0 1px 3px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06);text-align:center}
+  .otp-row{display:flex;justify-content:center;margin-bottom:8px}
+  .otp-box{margin:8px;height:64px;width:48px;background:#F3F4F6;border:1px solid #D1D5DB;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:1.25rem;color:#9CA3AF}
+  .error{margin-top:16px;font-size:.875rem;color:#ce0500}
+  .btn{font-weight:500;display:inline-flex;align-items:center;justify-content:center;width:100%;cursor:pointer;border:none;box-sizing:border-box}
+  .btn-primary{margin-top:32px;padding:8px 24px;font-size:1.125rem;min-height:3rem;background:#000091;color:#fff}
+  .btn-primary[disabled]{background:#E5E5E5;color:#656565;cursor:not-allowed}
+  .btn-tertiary{margin-top:16px;padding:4px 12px;font-size:.875rem;min-height:34px;background:#fff;color:#000091}
+  .note{margin:24px auto 0;max-width:640px;font-size:.8rem;color:#c3ddfd;background:rgba(255,255,255,.08);border:1px dashed rgba(255,255,255,.3);padding:10px 14px;border-radius:4px}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="content">
+    <h1>Vérification de votre compte</h1>
+    <p class="subtitle">Saisissez le code à 6 chiffres envoyé par email à <strong>nicolas@exemple.fr</strong></p>
+
+    <div class="card-wrap">
+      <div class="card">
+        <div class="otp-row">
+          <div class="otp-box">*</div>
+          <div class="otp-box">*</div>
+          <div class="otp-box">*</div>
+          <div class="otp-box">*</div>
+          <div class="otp-box">*</div>
+          <div class="otp-box">*</div>
+        </div>
+
+        <button class="btn btn-primary" disabled>Valider le code</button>
+        <button class="btn btn-tertiary">Renvoyer le code</button>
+      </div>
+    </div>
+
+    <p class="note">Prototype statique — pur HTML/CSS, aucune logique. Référence les styles/polices de ../design-system/.</p>
+  </div>
+</div>
+</body>
+</html>

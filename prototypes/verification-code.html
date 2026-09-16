@@ -18,12 +18,15 @@
   .form-col{flex:1 1 65%;display:flex;justify-content:center;padding:56px 24px}
   .form{width:100%;max-width:488px;display:flex;flex-direction:column;gap:48px}
 
-  .header{display:flex;align-items:center;gap:16px}
+  .header{display:flex;align-items:center;justify-content:center;gap:16px}
   .bloc-marque-img{height:64px;width:auto}
   .logo-jva{height:40px;width:auto}
 
-  .retour{display:inline-flex;align-items:center;gap:8px;color:#000091;font-size:16px;text-decoration:none;border-bottom:1px solid #000091;padding-bottom:2px;width:fit-content}
+  .retour{display:inline-flex;align-items:center;gap:8px;color:#000091;font-size:16px;text-decoration:none;width:fit-content}
   .retour svg{flex:none}
+  .retour span{text-rendering:optimizeLegibility;background-image:linear-gradient(0deg,currentColor,currentColor),linear-gradient(0deg,currentColor,currentColor);background-position:0 100%,0 calc(100% - .0625em);background-repeat:no-repeat,no-repeat;background-size:0 .125em,100% .0625em}
+  .retour:hover span{background-size:100% .125em,100% .0625em}
+  .retour:active span{background-color:#ededed}
 
   .intro{display:flex;flex-direction:column;gap:16px}
   .intro h1{margin:0;font-weight:700;font-size:32px;line-height:40px;color:#161616}
@@ -50,10 +53,15 @@
   .btn-valider.active:hover{background:#1212ff}
 
   .resend{display:flex;align-items:center;gap:8px;font-size:14px;color:#666}
-  .resend a{color:#000091;text-decoration:none;border-bottom:1px solid #000091}
-  .resend a.disabled{color:#929292;border-bottom-color:#929292;pointer-events:none}
+  .resend a{color:#000091;text-decoration:none;text-rendering:optimizeLegibility;background-image:linear-gradient(0deg,currentColor,currentColor),linear-gradient(0deg,currentColor,currentColor);background-position:0 100%,0 calc(100% - .0625em);background-repeat:no-repeat,no-repeat;background-size:0 .125em,100% .0625em}
+  .resend a:hover{background-size:100% .125em,100% .0625em}
+  .resend a:active{background-color:#ededed}
+  .resend a.disabled{color:#929292;pointer-events:none;background-image:none}
 
-  .aide{display:inline-flex;align-items:center;gap:8px;font-size:14px;color:#666;text-decoration:none;border-bottom:1px solid #666;width:fit-content}
+  .aide{display:inline-flex;align-items:center;gap:8px;font-size:14px;color:#666;text-decoration:none;width:fit-content}
+  .aide span{text-rendering:optimizeLegibility;background-image:linear-gradient(0deg,currentColor,currentColor),linear-gradient(0deg,currentColor,currentColor);background-position:0 100%,0 calc(100% - .0625em);background-repeat:no-repeat,no-repeat;background-size:0 .125em,100% .0625em}
+  .aide:hover span{background-size:100% .125em,100% .0625em}
+  .aide:active span{background-color:#ededed}
 
   /* ---- colonne photo ---- */
   .photo-col{flex:1 1 35%;max-width:504px;position:relative;overflow:hidden;background:#000091}
@@ -86,7 +94,7 @@
 
       <a class="retour" href="#">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="#000091" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        Retour
+        <span>Retour</span>
       </a>
 
       <div class="intro">
@@ -127,7 +135,7 @@
         </div>
 
         <a class="aide" href="#">
-          Centre d'aide
+          <span>Centre d'aide</span>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M18 13V19C18 19.5304 17.7893 20.0391 17.4142 20.4142C17.0391 20.7893 16.5304 21 16 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V8C3 7.46957 3.21071 6.96086 3.58579 6.58579C3.96086 6.21071 4.46957 6 5 6H11M15 3H21M21 3V9M21 3L10 14" stroke="#666" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </a>
       </div>

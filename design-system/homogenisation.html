@@ -170,76 +170,66 @@ table.migration th{background:var(--code-bg)}
 <main class="main">
   <div class="wrap">
     <p class="crumb"><a href="index.html">Accueil</a> &rsaquo; À homogénéiser</p>
-    <h1>À homogénéiser</h1><div class="homog"><p class="muted">Condensé de <code>homogenization-candidates.md</code> (analyse complète des 647 composants à usage unique). Détail et méthodologie dans le fichier original.</p>
+    <h1>À homogénéiser</h1>
+    <div class="homog">
+      <p class="muted">Constats remontés en documentant les composants pour ce design-system — pas un audit de code. Pensés comme des points de départ pour une discussion avec l'équipe dev, pas comme un plan de refacto : le détail technique (fichiers, diffs) reste dans <code>homogenization-candidates.md</code> pour qui voudra creuser.</p>
 
-<h3>1. numbers/ vs statistics/ — 32 paires quasi-clonées</h3>
+<h3>1. Composants « ByX » et « Statistics » recopiés entre admin et public</h3>
 <div class="group">
-  <p><span class="tag tag-effort-faible">Effort faible</span><span class="tag tag-effort-faible">Risque faible</span> — <strong>27 composants « ByX »</strong> (répartitions/graphiques) : diff réduite à une seule ligne, l'URL de l'endpoint (admin vs <code>/public</code>). Ex. <code>MissionsByDomaines.vue</code>, 53 lignes identiques des deux côtés.</p>
-  <p class="files"><code>components/numbers/{Missions,Organisations,Participations,Places,Utilisateurs}By*.vue</code> ↔ <code>components/statistics/</code> (mêmes noms)</p>
-  <p><strong>Recommandation :</strong> un seul composant paramétré par une prop <code>endpoint</code> ou <code>visibility</code> remplace les 54 fichiers.</p>
-  <p style="margin-top:.75rem"><span class="tag tag-effort-moyen">Effort moyen</span><span class="tag tag-effort-moyen">Risque moyen</span> — <strong>5 composants « *Statistics »</strong> (vues de synthèse KPI) : même squelette mais contenu de KPI réellement différent admin/public.</p>
-  <p class="files"><code>components/numbers/{Missions,Organisations,Participations,Places,Utilisateurs}Statistics.vue</code> ↔ <code>components/statistics/</code></p>
-  <p><strong>Recommandation :</strong> extraire le squelette commun (<a href="composants/basebox.html">BaseBox</a> + <a href="composants/basesectionheading.html">titre</a> + grille), laisser chaque appelant fournir sa liste de KPI.</p>
+  <p><span class="tag tag-effort-faible">Effort faible</span><span class="tag tag-effort-faible">Risque faible</span> — une trentaine de composants de répartition/graphique (ex. missions par domaine) existent en double, quasiment à l'identique, selon qu'on est côté admin ou côté public.</p>
+  <p><strong>Piste :</strong> un seul composant, piloté par le contexte d'affichage, pourrait remplacer ces paires.</p>
+  <p style="margin-top:.75rem"><span class="tag tag-effort-moyen">Effort moyen</span><span class="tag tag-effort-moyen">Risque moyen</span> — les vues de synthèse (KPI) partagent la même structure visuelle admin/public, mais les indicateurs affichés diffèrent réellement selon le contexte.</p>
+  <p><strong>Piste :</strong> mutualiser la structure commune (<a href="composants/basebox.html">encadré</a> + titre + grille), en laissant chaque contexte fournir ses propres indicateurs.</p>
 </div>
 
-<h3>2. Badge « en ligne / hors ligne » recopié 3 fois</h3>
+<h3>2. Badge « en ligne / hors ligne » recopié à plusieurs endroits</h3>
 <div class="group">
-  <p><span class="tag tag-effort-faible">Effort faible</span><span class="tag tag-effort-faible">Risque faible</span> — <a href="composants/badgeonline.html">BadgeOnline</a> encapsule déjà le pattern (19 usages), mais il est recopié à la main dans 3 fichiers.</p>
-  <p class="files"><code>components/section/mission/Badges.vue</code>, <code>components/section/profile/Badges.vue</code>, <code>components/card/CardMission.vue</code></p>
-  <p><strong>Recommandation :</strong> remplacer les 3 blocs par <code>&lt;BadgeOnline :is-online="…" /&gt;</code> — rendu DOM déjà identique.</p>
+  <p><span class="tag tag-effort-faible">Effort faible</span><span class="tag tag-effort-faible">Risque faible</span> — un composant partagé existe déjà pour ce badge, mais son affichage est recopié à la main à 3 endroits du produit plutôt que réutilisé.</p>
 </div>
 
-<h3>3. Famille « pill / badge / tag » fragmentée</h3>
+<h3>3. Famille « pastille / badge / tag » fragmentée</h3>
 <div class="group">
-  <p><span class="tag tag-effort-moyen">Effort moyen</span><span class="tag tag-effort-moyen">Risque moyen</span> — au moins 3 implémentations de pill indépendantes en plus de <a href="composants/dsfrbadge.html">DsfrBadge</a>/<a href="composants/dsfrtag.html">DsfrTag</a>.</p>
-  <p class="files"><code>components/base/Badge.vue</code> (couleurs métier codées en dur), <code>components/search/BadgeFilter.vue</code> (pill filtre actif/inactif), <code>components/base/TagFormItem.vue</code> (tag supprimable)</p>
-  <p><strong>Recommandation :</strong> <code>BadgeFilter</code> → <a href="composants/dsfrtag.html">DsfrTag</a> sélectionnable ; <code>TagFormItem</code> → <a href="composants/dsfrtaglink.html">DsfrTagLink</a> + icône de fermeture.</p>
+  <p><span class="tag tag-effort-moyen">Effort moyen</span><span class="tag tag-effort-moyen">Risque moyen</span> — au moins 3 implémentations maison de ce pattern coexistent avec les composants DSFR équivalents (<a href="composants/dsfrbadge.html">DsfrBadge</a>/<a href="composants/dsfrtag.html">DsfrTag</a>), sans qu'on sache toujours lequel utiliser dans du code neuf.</p>
 </div>
 
-<h3>4. Disclosure* — 2 groupes quasi-clonés par entité</h3>
+<h3>4. Blocs « dépliables » dupliqués par entité</h3>
 <div class="group">
-  <p><span class="tag tag-effort-faible">Effort faible</span><span class="tag tag-effort-faible">Risque faible</span> — <code>DisclosureWarningWords.vue</code> (mission/organisation/territoire) : 83 lignes identiques, seul le nom du mixin et de la prop change.</p>
-  <p class="files"><code>components/section/{mission,organisation,territoire}/DisclosureWarningWords.vue</code></p>
-  <p style="margin-top:.5rem"><span class="tag tag-effort-faible">Effort faible</span><span class="tag tag-effort-faible">Risque faible</span> — <code>DisclosureModerationAI.vue</code> (mission/organisation) : diff limitée à 2 libellés et au nom du mixin.</p>
-  <p class="files"><code>components/section/{mission,organisation}/DisclosureModerationAI.vue</code></p>
-  <p class="muted">Les deux groupes s'appuient sur <a href="composants/basedisclosure.html">BaseDisclosure</a> (accordéon maison) plutôt que sur <a href="composants/dsfraccordion.html">DsfrAccordion</a> — voir aussi section migration DSFR.</p>
+  <p><span class="tag tag-effort-faible">Effort faible</span><span class="tag tag-effort-faible">Risque faible</span> — deux familles de blocs dépliables (avertissements, modération IA) sont dupliquées presque à l'identique selon l'entité concernée (mission, organisation, territoire).</p>
+  <p class="muted">Ces blocs s'appuient sur un accordéon maison plutôt que sur <a href="composants/dsfraccordion.html">l'accordéon DSFR</a> — voir aussi la page <a href="migration-dsfr.html">Candidats migration DSFR</a>.</p>
 </div>
 
-<h3>5. PanelStatistics.vue (organisation / reseau) — quasi-clone</h3>
+<h3>5. Panneau de statistiques dupliqué (organisation / réseau)</h3>
 <div class="group">
-  <p><span class="tag tag-effort-faible">Effort faible</span><span class="tag tag-effort-faible">Risque faible</span> — 112 lignes des deux côtés, diff limitée aux noms de champs API et aux query params de liens.</p>
-  <p class="files"><code>components/organisation/PanelStatistics.vue</code>, <code>components/reseau/PanelStatistics.vue</code></p>
+  <p><span class="tag tag-effort-faible">Effort faible</span><span class="tag tag-effort-faible">Risque faible</span> — quasiment identique des deux côtés ; seuls les champs d'API et les liens diffèrent.</p>
 </div>
 
-<h3>6. PanelInfo.vue (mission / mission-template) — squelette partagé, contenu différent</h3>
+<h3>6. Bloc d'informations dupliqué (mission / modèle de mission)</h3>
 <div class="group">
-  <p><span class="tag tag-effort-moyen">Effort moyen</span><span class="tag tag-effort-moyen">Risque moyen</span> — champs métier affichés très différents ; ne mutualiser que l'en-tête (dates de création/màj).</p>
-  <p class="files"><code>components/mission/PanelInfo.vue</code>, <code>components/mission-template/PanelInfo.vue</code></p>
+  <p><span class="tag tag-effort-moyen">Effort moyen</span><span class="tag tag-effort-moyen">Risque moyen</span> — les champs métier affichés diffèrent nettement selon le contexte ; seul l'en-tête (dates de création/mise à jour) semble mutualisable.</p>
 </div>
 
-<h3>7. BoxInformations.vue — pattern recopié 13 fois</h3>
+<h3>7. Un même patron « encadré + titre + liste de champs » recopié une dizaine de fois</h3>
 <div class="group">
-  <p><span class="tag tag-effort-moyen">Effort moyen</span><span class="tag tag-effort-faible">Risque faible à moyen</span> — même squelette (<a href="composants/basebox.html">BaseBox</a> + titre + <code>BaseDescriptionListItem</code>) mais contenu métier différent par entité ; duplication de structure, pas de code à l'identique.</p>
-  <p class="files"><code>components/section/{activity,domaine,logs,mission,mission-template,organisation,profile,reseau,ressource,temoignage,term,territoire,thematique}/BoxInformations.vue</code></p>
-  <p><strong>Recommandation :</strong> extraire un composant <code>InfoBox</code> (titre + BaseBox + slot), chaque entité ne garde que sa liste de champs.</p>
+  <p><span class="tag tag-effort-moyen">Effort moyen</span><span class="tag tag-effort-faible">Risque faible à moyen</span> — même structure visuelle (<a href="composants/basebox.html">encadré</a> + titre + liste de champs) recopiée pour chaque entité du produit (activités, domaines, missions, modèles de mission, organisations, profils, réseaux, ressources, témoignages, territoires...), avec à chaque fois son propre contenu métier.</p>
+  <p><strong>Piste :</strong> un bloc générique partagé (titre + encadré + liste), où chaque entité ne fournirait plus que ses champs.</p>
 </div>
 
-<h3>8. Famille « autocomplete / combobox » — doublons et code mort</h3>
+<h3>8. Composants de saisie autocomplete non utilisés</h3>
 <div class="group">
-  <p><span class="tag tag-effort-faible">Effort faible</span><span class="tag tag-effort-faible">Risque quasi nul</span> — <code>base/InputAutocomplete.vue</code>, <code>base/FilterInputAutocomplete.vue</code>, <code>base/SelectAutocomplete.vue</code> et <code>base/Combobox.vue</code> ont <strong>0 usage réel</strong> (un import commenté faussait le comptage). Un équivalent DSFR (<a href="composants/dsfrinputautocomplete.html">DsfrInputAutocomplete</a>, <a href="composants/dsfrselectautocomplete.html">DsfrSelectAutocomplete</a>) est déjà en place.</p>
-  <p><strong>Recommandation :</strong> supprimer purement et simplement ces 4 fichiers (code mort), pas de migration nécessaire.</p>
+  <p><span class="tag tag-effort-faible">Effort faible</span><span class="tag tag-effort-faible">Risque quasi nul</span> — plusieurs composants de saisie autocomplete maison ne semblent plus utilisés nulle part (un import resté commenté faussait le comptage initial). Des équivalents DSFR (<a href="composants/dsfrinputautocomplete.html">DsfrInputAutocomplete</a>, <a href="composants/dsfrselectautocomplete.html">DsfrSelectAutocomplete</a>) sont déjà en place ailleurs.</p>
+  <p class="muted">À vérifier côté dev avant suppression — le fichier détaillé liste les composants concernés.</p>
 </div>
 
 <h3>Incohérences de nommage</h3>
 <div class="group">
   <ul style="margin:.25rem 0 0;padding-left:1.2rem">
     <li>Trois préfixes concurrents pour un même concept — <code>Base*</code> (maison), <code>Dsfr*</code> (wrapper DSFR), <code>Ui*</code> (shadcn) — sans règle explicite sur lequel utiliser dans du code neuf (ex. Bouton : <a href="composants/basebutton.html">BaseButton</a> / <a href="composants/dsfrbutton.html">DsfrButton</a> / UiButton).</li>
-    <li><code>Badges.vue</code> (pluriel, 8 fichiers) vs <code>Badge.vue</code> (singulier) : rien dans le nom ne relie visuellement ces regroupements aux badges qu'ils utilisent en interne.</li>
-    <li>Rangement par type d'UI (<code>base/</code>, <code>dsfr/</code>, <code>ui/</code>) vs par domaine métier (<code>section/*/</code>, <code>card/</code>) coexistent sans règle, ce qui complique la détection de doublons.</li>
-    <li><code>numbers/</code> vs <code>statistics/</code> : deux dossiers pour la même famille de composants selon le contexte admin/public — un emplacement unique + prop de visibilité éviterait la confusion structurelle.</li>
+    <li>Des regroupements au pluriel (« Badges ») et des composants au singulier (« Badge ») coexistent, sans que le nom relie visuellement les deux.</li>
+    <li>Rangement par type d'UI (composants de base / DSFR / UI) vs par domaine métier (sections, cartes...) coexistent sans règle, ce qui complique la détection de doublons.</li>
+    <li>Deux emplacements différents pour la même famille de composants selon le contexte admin/public — un emplacement unique éviterait la confusion structurelle.</li>
   </ul>
 </div>
-</div>
+    </div>
   </div>
 </main>
 

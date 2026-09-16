@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="fr">
 <head>
-<title>Ombres — Fondamentaux — Composants JeVeuxAider</title>
+<title>Boilerplate de page — Gabarits — Composants JeVeuxAider</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="../compiled.css">
@@ -135,30 +135,6 @@ a[target="_blank"]:after{content:none}
 .cat-card li{margin:.15rem 0}
 .cat-card a{font-size:.88rem;text-decoration:none}
 .cat-card a:hover{text-decoration:underline}
-.homog h3{margin-top:2rem}
-.homog .group{border:1px solid var(--border);border-radius:8px;padding:1rem 1.25rem;margin-bottom:1rem;background:var(--card)}
-.homog .files{font-size:.82rem;color:var(--muted)}
-.tag-effort-faible{background:#dff5e1;color:#1c6b2e}
-.tag-effort-moyen{background:#fff2cf;color:#8a6100}
-.tag-effort-eleve{background:#fde0e0;color:#a3231f}
-@media (prefers-color-scheme: dark){
-  .tag-effort-faible{background:#123c1c;color:#7be08f}
-  .tag-effort-moyen{background:#463a10;color:#f5cf6b}
-  .tag-effort-eleve{background:#4a1d1d;color:#f59a97}
-}
-.homog .tag{display:inline-block;font-size:.7rem;font-weight:600;padding:.1rem .5rem;border-radius:99px;margin-right:.3rem}
-table.migration{border-collapse:collapse;width:100%;font-size:.85rem;margin-top:1rem}
-table.migration th,table.migration td{border:1px solid var(--border);padding:.5rem .7rem;text-align:left;vertical-align:top}
-table.migration th{background:var(--code-bg)}
-.effort{display:inline-block;font-size:.72rem;font-weight:700;padding:.1rem .55rem;border-radius:99px}
-.effort-faible{background:#dff5e1;color:#1c6b2e}
-.effort-moyen{background:#fff2cf;color:#8a6100}
-.effort-eleve{background:#fde0e0;color:#a3231f}
-@media (prefers-color-scheme: dark){
-  .effort-faible{background:#123c1c;color:#7be08f}
-  .effort-moyen{background:#463a10;color:#f5cf6b}
-  .effort-eleve{background:#4a1d1d;color:#f59a97}
-}
 @media (max-width: 900px){
   body{flex-direction:column}
   .sidebar{position:static;height:auto;width:auto;border-right:none;border-bottom:1px solid var(--border)}
@@ -177,13 +153,13 @@ table.migration th{background:var(--code-bg)}
     </ul>
 
     <div class="nav-section">
-      <button class="nav-toggle" type="button" aria-expanded="true" aria-controls="nav-fondamentaux">Fondamentaux <span class="chevron" aria-hidden="true">▸</span></button>
-      <ul class="nav-sublist" id="nav-fondamentaux"><li><a class="item" href="../fondamentaux/couleurs.html">Couleurs</a></li><li><a class="item" href="../fondamentaux/typographie.html">Typographie</a></li><li><a class="item active" href="../fondamentaux/ombres.html">Ombres &amp; élévation</a></li><li><a class="item" href="../fondamentaux/grille.html">Grille &amp; points de rupture</a></li><li><a class="item" href="../fondamentaux/espacements.html">Espacements</a></li><li><a class="item" href="../fondamentaux/ratio-medias.html">Ratios médias</a></li><li><a class="item" href="../fondamentaux/icones.html">Icônes</a></li></ul>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-fondamentaux">Fondamentaux <span class="chevron" aria-hidden="true">▸</span></button>
+      <ul class="nav-sublist" id="nav-fondamentaux" hidden><li><a class="item" href="../fondamentaux/couleurs.html">Couleurs</a></li><li><a class="item" href="../fondamentaux/typographie.html">Typographie</a></li><li><a class="item" href="../fondamentaux/ombres.html">Ombres &amp; élévation</a></li><li><a class="item" href="../fondamentaux/grille.html">Grille &amp; points de rupture</a></li><li><a class="item" href="../fondamentaux/espacements.html">Espacements</a></li><li><a class="item" href="../fondamentaux/ratio-medias.html">Ratios médias</a></li><li><a class="item" href="../fondamentaux/icones.html">Icônes</a></li></ul>
     </div>
 
     <div class="nav-section">
-      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-gabarits">Gabarits <span class="chevron" aria-hidden="true">▸</span></button>
-      <ul class="nav-sublist" id="nav-gabarits" hidden><li><a class="item" href="../gabarits/boilerplate.html">Boilerplate de page</a></li><li><a class="item" href="../gabarits/page-contenu-2-colonnes.html">Page de contenu à 2 colonnes</a></li><li><a class="item" href="../gabarits/page-accueil.html">Page d'accueil</a></li></ul>
+      <button class="nav-toggle" type="button" aria-expanded="true" aria-controls="nav-gabarits">Gabarits <span class="chevron" aria-hidden="true">▸</span></button>
+      <ul class="nav-sublist" id="nav-gabarits"><li><a class="item active" href="../gabarits/boilerplate.html">Boilerplate de page</a></li><li><a class="item" href="../gabarits/page-contenu-2-colonnes.html">Page de contenu à 2 colonnes</a></li><li><a class="item" href="../gabarits/page-accueil.html">Page d'accueil</a></li></ul>
     </div>
 
     <div class="nav-section">
@@ -191,7 +167,7 @@ table.migration th{background:var(--code-bg)}
       <div class="nav-sublist" id="nav-composants" hidden>
         <div class="nav-search"><input type="search" id="component-search" placeholder="Rechercher un composant…" autocomplete="off"></div>
 <div class="cat-title">Boutons (7)</div><ul><li><a class="item" href="../composants/basebutton.html">BaseButton</a></li><li><a class="item" href="../composants/buttoncreateuseralert.html">ButtonCreateUserAlert</a></li><li><a class="item" href="../composants/custombuttonmissionfavorite.html">CustomButtonMissionFavorite</a></li><li><a class="item" href="../composants/customfiltersstatisticsbutton.html">CustomFiltersStatisticsButton</a></li><li><a class="item" href="../composants/dsfrbutton.html">DsfrButton</a></li><li><a class="item" href="../composants/dsfriconbutton.html">DsfrIconButton</a></li><li><a class="item" href="../composants/uibuttonlink.html">UiButtonLink</a></li></ul><div class="cat-title">Formulaires (52)</div><ul><li><a class="item" href="../composants/algoliainputautocomplete.html">AlgoliaInputAutocomplete</a></li><li><a class="item" href="../composants/basefilterselectadvanced.html">BaseFilterSelectAdvanced</a></li><li><a class="item" href="../composants/baseformcontrol.html">BaseFormControl</a></li><li><a class="item" href="../composants/baseformerror.html">BaseFormError</a></li><li><a class="item" href="../composants/baseformhelpertext.html">BaseFormHelperText</a></li><li><a class="item" href="../composants/baseforminfo.html">BaseFormInfo</a></li><li><a class="item" href="../composants/baseformlabel.html">BaseFormLabel</a></li><li><a class="item" href="../composants/baseformsuccess.html">BaseFormSuccess</a></li><li><a class="item" href="../composants/baseimagecrop.html">BaseImageCrop</a></li><li><a class="item" href="../composants/baseimagecropmultiple.html">BaseImageCropMultiple</a></li><li><a class="item" href="../composants/baseinput.html">BaseInput</a></li><li><a class="item" href="../composants/baseinputdatenumeric.html">BaseInputDateNumeric</a></li><li><a class="item" href="../composants/baselistbox.html">BaseListbox</a></li><li><a class="item" href="../composants/basemediapicker.html">BaseMediaPicker</a></li><li><a class="item" href="../composants/baseradiogroup.html">BaseRadioGroup</a></li><li><a class="item" href="../composants/baseroleradiogroup.html">BaseRoleRadioGroup</a></li><li><a class="item" href="../composants/baseselectadvanced.html">BaseSelectAdvanced</a></li><li><a class="item" href="../composants/baseselectwithdescription.html">BaseSelectWithDescription</a></li><li><a class="item" href="../composants/basetextarea.html">BaseTextarea</a></li><li><a class="item" href="../composants/basetoggle.html">BaseToggle</a></li><li><a class="item" href="../composants/baseupload.html">BaseUpload</a></li><li><a class="item" href="../composants/dsfrcheckboxboolean.html">DsfrCheckboxBoolean</a></li><li><a class="item" href="../composants/dsfrcheckboxgroup.html">DsfrCheckboxGroup</a></li><li><a class="item" href="../composants/dsfrcheckboxrichgroup.html">DsfrCheckboxRichGroup</a></li><li><a class="item" href="../composants/dsfrcomboboxpanel.html">DsfrComboboxPanel</a></li><li><a class="item" href="../composants/dsfrformcontrol.html">DsfrFormControl</a></li><li><a class="item" href="../composants/dsfrinput.html">DsfrInput</a></li><li><a class="item" href="../composants/dsfrinputautocomplete.html">DsfrInputAutocomplete</a></li><li><a class="item" href="../composants/dsfrlistboxpanel.html">DsfrListboxPanel</a></li><li><a class="item" href="../composants/dsfrradiogroup.html">DsfrRadioGroup</a></li><li><a class="item" href="../composants/dsfrricheditor.html">DsfrRichEditor</a></li><li><a class="item" href="../composants/dsfrselect.html">DsfrSelect</a></li><li><a class="item" href="../composants/dsfrselectautocomplete.html">DsfrSelectAutocomplete</a></li><li><a class="item" href="../composants/dsfrselectmultiple.html">DsfrSelectMultiple</a></li><li><a class="item" href="../composants/dsfrtextarea.html">DsfrTextarea</a></li><li><a class="item" href="../composants/formactivity.html">FormActivity</a></li><li><a class="item" href="../composants/formaddresponsable.html">FormAddResponsable</a></li><li><a class="item" href="../composants/formdomaine.html">FormDomaine</a></li><li><a class="item" href="../composants/formmessagetemplate.html">FormMessageTemplate</a></li><li><a class="item" href="../composants/formmissiontemplate.html">FormMissionTemplate</a></li><li><a class="item" href="../composants/formmissionwrapper.html">FormMissionWrapper</a></li><li><a class="item" href="../composants/formparticipationdecline.html">FormParticipationDecline</a></li><li><a class="item" href="../composants/formrequiredmessage.html">FormRequiredMessage</a></li><li><a class="item" href="../composants/formreseau.html">FormReseau</a></li><li><a class="item" href="../composants/formressource.html">FormRessource</a></li><li><a class="item" href="../composants/formrule.html">FormRule</a></li><li><a class="item" href="../composants/formsubformuserdispositifs.html">FormSubFormUserDispositifs</a></li><li><a class="item" href="../composants/formterm.html">FormTerm</a></li><li><a class="item" href="../composants/formterritoire.html">FormTerritoire</a></li><li><a class="item" href="../composants/formuseractivities.html">FormUserActivities</a></li><li><a class="item" href="../composants/searchfilter.html">SearchFilter</a></li><li><a class="item" href="../composants/sectionprofilecommunicationpreferences.html">SectionProfileCommunicationPreferences</a></li></ul><div class="cat-title">Cards (8)</div><ul><li><a class="item" href="../composants/cardalert.html">CardAlert</a></li><li><a class="item" href="../composants/cardmission.html">CardMission</a></li><li><a class="item" href="../composants/cardorganisation.html">CardOrganisation</a></li><li><a class="item" href="../composants/cardparticipation.html">CardParticipation</a></li><li><a class="item" href="../composants/cardstatistic.html">CardStatistic</a></li><li><a class="item" href="../composants/cardtemoignage.html">CardTemoignage</a></li><li><a class="item" href="../composants/cardtestimonial.html">CardTestimonial</a></li><li><a class="item" href="../composants/customoptioncard.html">CustomOptionCard</a></li></ul><div class="cat-title">Badges &amp; tags (8)</div><ul><li><a class="item" href="../composants/badgeonline.html">BadgeOnline</a></li><li><a class="item" href="../composants/baseavatar.html">BaseAvatar</a></li><li><a class="item" href="../composants/customfiltersstatisticsactive.html">CustomFiltersStatisticsActive</a></li><li><a class="item" href="../composants/dsfrbadge.html">DsfrBadge</a></li><li><a class="item" href="../composants/dsfrtag.html">DsfrTag</a></li><li><a class="item" href="../composants/dsfrtaglink.html">DsfrTagLink</a></li><li><a class="item" href="../composants/dsfrtagsgroup.html">DsfrTagsGroup</a></li><li><a class="item" href="../composants/uibadgestate.html">UiBadgeState</a></li></ul><div class="cat-title">Modales &amp; panneaux latéraux (19)</div><ul><li><a class="item" href="../composants/basealertdialog.html">BaseAlertDialog</a></li><li><a class="item" href="../composants/basedrawer.html">BaseDrawer</a></li><li><a class="item" href="../composants/basedrawerleft.html">BaseDrawerLeft</a></li><li><a class="item" href="../composants/basemodal.html">BaseModal</a></li><li><a class="item" href="../composants/baseoverlay.html">BaseOverlay</a></li><li><a class="item" href="../composants/drawermission.html">DrawerMission</a></li><li><a class="item" href="../composants/drawerprofile.html">DrawerProfile</a></li><li><a class="item" href="../composants/dsfrmodal.html">DsfrModal</a></li><li><a class="item" href="../composants/dsfrpanel.html">DsfrPanel</a></li><li><a class="item" href="../composants/modalbulkoperations.html">ModalBulkOperations</a></li><li><a class="item" href="../composants/modalexport.html">ModalExport</a></li><li><a class="item" href="../composants/modalmissiontoggleisactive.html">ModalMissionToggleIsActive</a></li><li><a class="item" href="../composants/modalnote.html">ModalNote</a></li><li><a class="item" href="../composants/modalparticipationdeclinebyresponsable.html">ModalParticipationDeclineByResponsable</a></li><li><a class="item" href="../composants/modalromemacrocompetence.html">ModalRomeMacroCompetence</a></li><li><a class="item" href="../composants/modalsendmessage.html">ModalSendMessage</a></li><li><a class="item" href="../composants/uisheet.html">UiSheet</a></li><li><a class="item" href="../composants/uisheetcontent.html">UiSheetContent</a></li><li><a class="item" href="../composants/uisheettrigger.html">UiSheetTrigger</a></li></ul><div class="cat-title">Navigation (15)</div><ul><li><a class="item" href="../composants/baselink.html">BaseLink</a></li><li><a class="item" href="../composants/basetabs.html">BaseTabs</a></li><li><a class="item" href="../composants/customdropdownuser.html">CustomDropdownUser</a></li><li><a class="item" href="../composants/dsfrbreadcrumb.html">DsfrBreadcrumb</a></li><li><a class="item" href="../composants/dsfrlink.html">DsfrLink</a></li><li><a class="item" href="../composants/dsfrnavitemdsfrnavitem.html">DsfrNavItemDsfrNavItem</a></li><li><a class="item" href="../composants/dsfrpagination.html">DsfrPagination</a></li><li><a class="item" href="../composants/dsfrtabs.html">DsfrTabs</a></li><li><a class="item" href="../composants/organisationbreadcrumb.html">OrganisationBreadcrumb</a></li><li><a class="item" href="../composants/skiplinks.html">SkipLinks</a></li><li><a class="item" href="../composants/uidropdownmenu.html">UiDropdownMenu</a></li><li><a class="item" href="../composants/uidropdownmenucontent.html">UiDropdownMenuContent</a></li><li><a class="item" href="../composants/uidropdownmenuitem.html">UiDropdownMenuItem</a></li><li><a class="item" href="../composants/uidropdownmenuseparator.html">UiDropdownMenuSeparator</a></li><li><a class="item" href="../composants/uidropdownmenutrigger.html">UiDropdownMenuTrigger</a></li></ul><div class="cat-title">Feedback &amp; alertes (16)</div><ul><li><a class="item" href="../composants/basealert.html">BaseAlert</a></li><li><a class="item" href="../composants/basebanner.html">BaseBanner</a></li><li><a class="item" href="../composants/basegauge.html">BaseGauge</a></li><li><a class="item" href="../composants/customemptystate.html">CustomEmptyState</a></li><li><a class="item" href="../composants/custominforecommendation.html">CustomInfoRecommendation</a></li><li><a class="item" href="../composants/customloadingindicator.html">CustomLoadingIndicator</a></li><li><a class="item" href="../composants/customtips.html">CustomTips</a></li><li><a class="item" href="../composants/dsfralert.html">DsfrAlert</a></li><li><a class="item" href="../composants/dsfrcallout.html">DsfrCallout</a></li><li><a class="item" href="../composants/sectionterritoirenoticecrise.html">SectionTerritoireNoticeCrise</a></li><li><a class="item" href="../composants/uiloadingindicator.html">UiLoadingIndicator</a></li><li><a class="item" href="../composants/uiskeleton.html">UiSkeleton</a></li><li><a class="item" href="../composants/uitooltip.html">UiTooltip</a></li><li><a class="item" href="../composants/uitooltipcontent.html">UiTooltipContent</a></li><li><a class="item" href="../composants/uitooltipprovider.html">UiTooltipProvider</a></li><li><a class="item" href="../composants/uitooltiptrigger.html">UiTooltipTrigger</a></li></ul><div class="cat-title">Mise en page (24)</div><ul><li><a class="item" href="../composants/basebox.html">BaseBox</a></li><li><a class="item" href="../composants/basecontainer2cols.html">BaseContainer2Cols</a></li><li><a class="item" href="../composants/basecontainerscrollable.html">BaseContainerScrollable</a></li><li><a class="item" href="../composants/basedisclosure.html">BaseDisclosure</a></li><li><a class="item" href="../composants/baseheading.html">BaseHeading</a></li><li><a class="item" href="../composants/basehrtitle.html">BaseHrTitle</a></li><li><a class="item" href="../composants/baseparagraph.html">BaseParagraph</a></li><li><a class="item" href="../composants/basesectionheading.html">BaseSectionHeading</a></li><li><a class="item" href="../composants/baseslideshow.html">BaseSlideshow</a></li><li><a class="item" href="../composants/basetextformatted.html">BaseTextFormatted</a></li><li><a class="item" href="../composants/customdraweritem.html">CustomDrawerItem</a></li><li><a class="item" href="../composants/dsfraccordion.html">DsfrAccordion</a></li><li><a class="item" href="../composants/dsfraccordionsgroup.html">DsfrAccordionsGroup</a></li><li><a class="item" href="../composants/dsfrheading.html">DsfrHeading</a></li><li><a class="item" href="../composants/dsfrseparator.html">DsfrSeparator</a></li><li><a class="item" href="../composants/layoutfooter.html">LayoutFooter</a></li><li><a class="item" href="../composants/layoutheader.html">LayoutHeader</a></li><li><a class="item" href="../composants/sectiondonation.html">SectionDonation</a></li><li><a class="item" href="../composants/sectionnewsletter.html">SectionNewsletter</a></li><li><a class="item" href="../composants/sectiontemoignages.html">SectionTemoignages</a></li><li><a class="item" href="../composants/seoparagraphs.html">SeoParagraphs</a></li><li><a class="item" href="../composants/seorecruit.html">SeoRecruit</a></li><li><a class="item" href="../composants/strapipage.html">StrapiPage</a></li><li><a class="item" href="../composants/uibox.html">UiBox</a></li></ul><div class="cat-title">Tableaux &amp; listes (13)</div><ul><li><a class="item" href="../composants/basedescriptionlist.html">BaseDescriptionList</a></li><li><a class="item" href="../composants/basedescriptionlistitem.html">BaseDescriptionListItem</a></li><li><a class="item" href="../composants/basedescriptionlistitemgauge.html">BaseDescriptionListItemGauge</a></li><li><a class="item" href="../composants/basestackedlist.html">BaseStackedList</a></li><li><a class="item" href="../composants/basestackedlistitem.html">BaseStackedListItem</a></li><li><a class="item" href="../composants/basetable.html">BaseTable</a></li><li><a class="item" href="../composants/basetablebody.html">BaseTableBody</a></li><li><a class="item" href="../composants/basetablehead.html">BaseTableHead</a></li><li><a class="item" href="../composants/basetableheadcell.html">BaseTableHeadCell</a></li><li><a class="item" href="../composants/basetablerow.html">BaseTableRow</a></li><li><a class="item" href="../composants/basetablerowcell.html">BaseTableRowCell</a></li><li><a class="item" href="../composants/chartdatalist.html">ChartDataList</a></li><li><a class="item" href="../composants/customstatisticsrankedlist.html">CustomStatisticsRankedList</a></li></ul><div class="cat-title">Autres / utilitaires (2)</div><ul><li><a class="item" href="../composants/focusanchor.html">FocusAnchor</a></li><li><a class="item" href="../composants/focusloop.html">FocusLoop</a></li></ul>
-        <p class="nav-search-empty" id="component-search-empty" hidden>Aucun résultat</p>
+<p class="nav-search-empty" id="component-search-empty" hidden>Aucun résultat</p>
       </div>
     </div>
 
@@ -203,30 +179,72 @@ table.migration th{background:var(--code-bg)}
 </aside>
 <main class="main">
   <div class="wrap">
-    <p class="crumb"><a href="../index.html">Accueil</a> &rsaquo; Ombres &amp; élévation</p>
+    <p class="crumb"><a href="../index.html">Accueil</a> &rsaquo; Gabarits &rsaquo; Boilerplate de page</p>
 
-  <h1>Ombres &amp; élévation</h1>
-  <p class="subtitle">3 niveaux d'élévation DSFR. Source : Figma « DSFR - v1.15.0 - Fondamentaux » (page Ombres). <strong>Déjà implémentés à l'identique dans le code</strong> — aucun écart constaté.</p>
+  <h1>Boilerplate de page</h1>
+  <p class="subtitle">Point de départ minimal pour esquisser rapidement une nouvelle page statique conforme à l'identité JVA/DSFR — pour une maquette ou un prototype, pas du code de production. Copiez ce squelette, adaptez le contenu.</p>
 
-  <div class="dsfr-link-box">🔗 Documentation officielle DSFR : <a href="https://www.systeme-de-design.gouv.fr/version-courante/fr/fondamentaux/ombre-et-elevation" target="_blank" rel="noopener">Ombre et élévation<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:-1px;margin-left:.2rem"><path d="M10 6v2H5v11h11v-5h2v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6Zm11-3v8h-2V6.413l-7.793 7.794-1.414-1.414L17.585 5H13V3h8Z"/></svg></a></div>
+  <div class="methodo"><p style="margin:0">Cette page et les deux gabarits qui suivent documentent des <strong>schémas de composition</strong> (comment assembler les composants déjà catalogués sur une page entière), et non des composants individuels. Ils s'appuient sur l'analyse de 3 maquettes Figma réelles : édition du profil bénévole, page mission, page d'accueil.</p></div>
 
-  <h2>Démo</h2>
-  <div class="demo" style="background:#fff">
-<div style="display:inline-block;width:160px;height:100px;margin:0 1.5rem 1rem 0;background:#fff;border-radius:8px;box-shadow:0 2px 6px 0 rgba(0,0,18,.16);vertical-align:top;text-align:center;line-height:100px;color:#3A3A3A;font-size:.8rem">--shadow-raised</div>
-<div style="display:inline-block;width:160px;height:100px;margin:0 1.5rem 1rem 0;background:#fff;border-radius:8px;box-shadow:0 4px 12px 0 rgba(0,0,18,.16);vertical-align:top;text-align:center;line-height:100px;color:#3A3A3A;font-size:.8rem">--shadow-overlap</div>
-<div style="display:inline-block;width:160px;height:100px;margin:0 1.5rem 1rem 0;background:#fff;border-radius:8px;box-shadow:0 6px 18px 0 rgba(0,0,18,.16);vertical-align:top;text-align:center;line-height:100px;color:#3A3A3A;font-size:.8rem">--shadow-lifted</div>
-  </div>
+  <h2>Squelette HTML à copier</h2>
+  <p>Le <code>&lt;head&gt;</code> ci-dessous reprend celui utilisé sur toutes les pages de ce design-system : polices Marianne, CSS DSFR, script de thème clair/sombre. Adaptez les chemins relatifs (<code>../</code>) à l'emplacement réel de votre fichier.</p>
+  <pre><code>&lt;!doctype html&gt;
+&lt;html lang="fr"&gt;
+&lt;head&gt;
+  &lt;title&gt;Titre de la page&lt;/title&gt;
+  &lt;meta charset="utf-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;
+  &lt;link rel="stylesheet" href="../dsfr.min.css"&gt;
+  &lt;script&gt;
+    document.documentElement.setAttribute("data-fr-theme",
+      matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+  &lt;/script&gt;
+  &lt;style&gt;
+    @font-face { font-family: Marianne; src: url('../fonts/Marianne-Regular.woff2') format('woff2'); font-weight: 400; }
+    @font-face { font-family: Marianne; src: url('../fonts/Marianne-Bold.woff2') format('woff2'); font-weight: 700; }
+    body{ margin:0; font-family:Marianne,-apple-system,'Segoe UI',Roboto,sans-serif; }
+    .container{ max-width:1200px; margin:0 auto; padding:0 1.5rem; }
+    @media (min-width:1248px){ .container{ padding:0 120px; } }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;!-- En-tête : cf. LayoutHeader --&gt;
+  &lt;header&gt;…&lt;/header&gt;
 
-  <h2>Valeurs</h2>
-  <table class="fond-table"><thead><tr><th>Token</th><th>Usage</th><th>Light</th><th>Dark</th><th>Classe Tailwind (code)</th></tr></thead><tbody>
-<tr><td><code>--shadow-raised</code></td><td>Léger relief — cartes, boutons au repos</td><td><code class="small">0 2px 6px 0 rgba(0,0,18,.16)</code></td><td><code class="small">0 2px 6px 0 rgba(0,0,18,.32)</code></td><td><code class="small">shadow-dsfr-sm</code></td></tr>
-<tr><td><code>--shadow-overlap</code></td><td>Élément superposé — menus déroulants, popovers</td><td><code class="small">0 4px 12px 0 rgba(0,0,18,.16)</code></td><td><code class="small">0 4px 12px 0 rgba(0,0,18,.32)</code></td><td><code class="small">shadow-dsfr-md</code></td></tr>
-<tr><td><code>--shadow-lifted</code></td><td>Élément flottant au-dessus du contenu — modales, drawers</td><td><code class="small">0 6px 18px 0 rgba(0,0,18,.16)</code></td><td><code class="small">0 6px 18px 0 rgba(0,0,18,.32)</code></td><td><code class="small">shadow-dsfr-lg</code></td></tr>
+  &lt;!-- Fil d'Ariane : cf. DsfrBreadcrumb --&gt;
+  &lt;nav class="container"&gt;…&lt;/nav&gt;
+
+  &lt;main class="container"&gt;
+    &lt;!-- Contenu de la page --&gt;
+  &lt;/main&gt;
+
+  &lt;!-- Pied de page : cf. LayoutFooter --&gt;
+  &lt;footer&gt;…&lt;/footer&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+  <h2>Convention de conteneur</h2>
+  <p>Les pages JVA respectent un conteneur de contenu de <strong>1200px</strong> de large maximum, centré, avec des marges externes qui s'élargissent avec la fenêtre — jusqu'à environ <strong>120px</strong> de chaque côté en desktop large (mesuré sur la maquette Figma de la page d'accueil). En dessous du point de rupture LG, revenir aux gouttières standards DSFR de 16 à 24px — voir <a href="../fondamentaux/grille.html">Grille &amp; points de rupture</a>.</p>
+  <div class="demo" style="background:#fff;padding:0"><div style="display:flex;height:48px"><div style="width:15%;background:repeating-linear-gradient(45deg,#eee,#eee 6px,#fff 6px,#fff 12px)"></div><div style="flex:1;background:#E3E3FD;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:.78rem;color:#3a3a3a;text-align:center;padding:0 .5rem">Conteneur de contenu — 1200px max</div><div style="width:15%;background:repeating-linear-gradient(45deg,#eee,#eee 6px,#fff 6px,#fff 12px)"></div></div></div>
+  <p class="muted small">Les zones hachurées représentent les marges externes fluides. Ni <code>BaseContainer2Cols</code> ni les classes Tailwind existantes n'implémentent explicitement cette valeur de 120px aujourd'hui : c'est un candidat d'homogénéisation à vérifier avec l'équipe dev plutôt qu'une valeur figée à copier telle quelle.</p>
+
+  <h2>En-tête et pied de page</h2>
+  <p>Ne redessinez pas l'en-tête ou le pied de page : reprenez la structure déjà documentée dans <a href="../composants/layoutheader.html">LayoutHeader</a> et <a href="../composants/layoutfooter.html">LayoutFooter</a>. Pour le fil d'Ariane sous l'en-tête, voir <a href="../composants/dsfrbreadcrumb.html">DsfrBreadcrumb</a>.</p>
+
+  <h2>Check-list avant de livrer une maquette</h2>
+  <table class="fond-table"><thead><tr><th>Point à vérifier</th><th>Référence</th></tr></thead><tbody>
+  <tr><td>Couleurs</td><td><a href="../fondamentaux/couleurs.html">Couleurs</a></td></tr>
+  <tr><td>Typographie (Marianne)</td><td><a href="../fondamentaux/typographie.html">Typographie</a></td></tr>
+  <tr><td>Grille &amp; points de rupture</td><td><a href="../fondamentaux/grille.html">Grille &amp; points de rupture</a></td></tr>
+  <tr><td>Espacements</td><td><a href="../fondamentaux/espacements.html">Espacements</a></td></tr>
+  <tr><td>Icônes</td><td><a href="../fondamentaux/icones.html">Icônes</a></td></tr>
+  <tr><td>Un composant existant peut-il faire le travail ?</td><td><a href="../index.html">Vue d'ensemble des 164 composants</a></td></tr>
   </tbody></table>
 
-  <h2>Cohérence avec le code</h2>
-  <div class="methodo">
-    <p style="margin:0">Les 3 classes <code>shadow-dsfr-sm</code> / <code>shadow-dsfr-md</code> / <code>shadow-dsfr-lg</code> de <code>tailwind.config.ts</code> reproduisent exactement les valeurs light de raised/overlap/lifted (mêmes offsets, mêmes flous, même alpha 16%). Aucune variante dark définie côté Tailwind pour l'instant — à ajouter si le mode sombre est un jour activé sur la plateforme.</p>
+  <h2>Gabarits de composition disponibles</h2>
+  <div class="cat-grid">
+    <div class="cat-card"><h3>Page de contenu à 2 colonnes</h3><p class="muted small">Formulaire, page de détail avec bloc d'infos annexes (ex. édition de profil, page mission).</p><a href="../gabarits/page-contenu-2-colonnes.html">Voir le gabarit →</a></div>
+    <div class="cat-card"><h3>Page d'accueil / landing</h3><p class="muted small">Sections empilées pleine largeur, sans espace entre elles.</p><a href="../gabarits/page-accueil.html">Voir le gabarit →</a></div>
   </div>
 
   </div>

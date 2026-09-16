@@ -77,11 +77,8 @@ h4{font-size:.8rem;text-transform:uppercase;letter-spacing:.04em;color:var(--mut
 /* ---------- tabs ---------- */
 .tabs{display:flex;gap:1.75rem;border-bottom:2px solid var(--border);margin:1.5rem 0 1.75rem;flex-wrap:wrap}
 .fr-tabs__list{border-bottom:1px solid var(--border);padding-bottom:0}
-.tab-btn{background:none;border:none;font:inherit;font-size:.95rem;padding:.6rem 0;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-2px}
-.tab-btn:hover{color:var(--fg)}
-.tab-btn.active{color:var(--link);border-bottom-color:var(--link);font-weight:700}
-.tab-panel{display:none}
-.tab-panel.active{display:block}
+.fr-tabs__panel{display:none!important;position:static!important;left:auto!important;flex:none!important;margin:0!important;visibility:visible!important;height:auto!important;overflow:visible!important;width:auto!important}
+.fr-tabs__panel--selected{display:block!important}
 
 /* ---------- component meta ---------- */
 .badge{display:inline-block;font-size:.72rem;padding:.1rem .5rem;border-radius:99px;font-weight:600}
@@ -197,19 +194,20 @@ table.migration th{background:var(--code-bg)}
     
     <h1>FormSubFormUserDispositifs</h1>
     <div class="meta-row">
-      <span class="usages-badge">3 usages</span>
-      <span class="badge badge-custom">Custom</span>
+      <p class="fr-tag">3 usages</p>
+      <p class="fr-badge">Custom</p>
       <span class="path-line small"><code>components/form/SubFormUserDispositifs.vue</code></span>
     </div>
     <p class="subtitle">Sous-formulaire de rattachement d'un profil à un dispositif (Service Civique, CEJ…).</p>
 
-    <div class="tabs" role="tablist">
-      <button class="tab-btn active" data-tab="presentation" role="tab" aria-selected="true">Présentation</button>
-      <button class="tab-btn" data-tab="code" role="tab" aria-selected="false">Code</button>
-      <button class="tab-btn" data-tab="usages" role="tab" aria-selected="false">Usages</button>
-    </div>
+    <div class="fr-tabs">
+    <ul class="fr-tabs__list" role="tablist" aria-label="Documentation du composant">
+      <li role="presentation"><button id="tab-presentation" class="fr-tabs__tab" tabindex="0" role="tab" aria-selected="true" aria-controls="tab-presentation-panel" data-tab="presentation">Présentation</button></li>
+      <li role="presentation"><button id="tab-code" class="fr-tabs__tab" tabindex="-1" role="tab" aria-selected="false" aria-controls="tab-code-panel" data-tab="code">Code</button></li>
+      <li role="presentation"><button id="tab-usages" class="fr-tabs__tab" tabindex="-1" role="tab" aria-selected="false" aria-controls="tab-usages-panel" data-tab="usages">Usages</button></li>
+    </ul>
 
-    <div class="tab-panel active" data-panel="presentation">
+    <div id="tab-presentation-panel" class="fr-tabs__panel fr-tabs__panel--selected" role="tabpanel" aria-labelledby="tab-presentation" tabindex="0" data-panel="presentation">
       <h4>Démo</h4>
       <div class="demo"><div style="max-width:460px;display:flex;flex-direction:column;gap:12px"><div style="display:flex;align-items:center;gap:16px;border:1px solid #DDDDDD;border-radius:8px;padding:16px 20px"><div style="flex:none;width:56px;height:40px;border:1px solid #DDDDDD;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#000091;text-align:center;line-height:1.1">SERVICE<br>CIVIQUE</div><div style="flex:1;min-width:0"><label style="font-weight:700;color:#161616">Volontaire en Service Civique</label><p style="margin:2px 0 0;font-size:12px;color:#666">Permet de valoriser votre parcours.</p></div><div style="flex:none;text-align:center"><button type="button" style="position:relative;display:inline-flex;border:1px solid #000091;border-radius:9999px;background:#000091;height:24px;width:40px"><span style="position:absolute;top:-1px;left:-1px;display:inline-flex;background:#fff;border:1px solid #000091;border-radius:9999px;transform:translateX(16px);height:24px;width:24px"></span></button><div style="font-size:11px;color:#000091;margin-top:4px">Oui</div></div></div><div style="display:flex;align-items:center;gap:16px;border:1px solid #DDDDDD;border-radius:8px;padding:16px 20px"><div style="flex:none;width:56px;height:40px;border:1px solid #DDDDDD;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#161616">CEJ</div><div style="flex:1;min-width:0"><label style="font-weight:700;color:#161616">Contrat d'engagement jeune</label><p style="margin:2px 0 0;font-size:12px;color:#666">Permet de valoriser votre parcours.</p></div><div style="flex:none;text-align:center"><button type="button" style="position:relative;display:inline-flex;border:1px solid #DDDDDD;border-radius:9999px;background:#fff;height:24px;width:40px"><span style="position:absolute;top:-1px;left:-1px;display:inline-flex;background:#fff;border:1px solid #DDDDDD;border-radius:9999px;height:24px;width:24px"></span></button><div style="font-size:11px;color:#666;margin-top:4px">Non</div></div></div></div></div>
 
@@ -228,31 +226,32 @@ table.migration th{background:var(--code-bg)}
       </section>
 
       <h4>Props principales</h4>
-      <table class="props"><thead><tr><th>Prop</th><th>Type</th><th>Défaut</th></tr></thead><tbody><tr><td><code>form</code> <span class="req">*</span></td><td><code>ProfileFormState</code></td><td><code>—</code></td></tr><tr><td><code>showHeader</code></td><td><code>boolean</code></td><td><code>—</code></td></tr></tbody></table>
+      <div class="fr-table"><table class="props"><caption>Props principales</caption><thead><tr><th>Prop</th><th>Type</th><th>Défaut</th></tr></thead><tbody><tr><td><code>form</code> <span class="req">*</span></td><td><code>ProfileFormState</code></td><td><code>—</code></td></tr><tr><td><code>showHeader</code></td><td><code>boolean</code></td><td><code>—</code></td></tr></tbody></table></div>
       <h4>Slots</h4><p><code>label-ft</code></p>
       
     </div>
 
-    <div class="tab-panel" data-panel="code">
+    <div id="tab-code-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tab-code" tabindex="0" data-panel="code">
       <h4>Exemple d'usage réel</h4>
       <pre><code>&lt;FormSubFormUserDispositifs :form="form" @update="form = { ...form, ...$event }" /&gt;</code></pre><p class="src">Source réelle : <code>pages/inscription/benevole/step/profile.vue</code></p>
     </div>
 
-    <div class="tab-panel" data-panel="usages">
+    <div id="tab-usages-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tab-usages" tabindex="0" data-panel="usages">
       <h4>Fichiers utilisateurs</h4>
       <p class="muted small">3 fichiers utilisent ce composant.</p><ul class="usages-list"><li><code>components/form/FormUserProfile.vue</code></li><li><code>components/section/soft-gate/Register.vue</code></li><li><code>pages/inscription/benevole/step/profile.vue</code></li></ul>
     </div>
 
     <script>
-      document.querySelectorAll('.tab-btn').forEach(btn => {
+      document.querySelectorAll('.fr-tabs__tab').forEach(btn => {
         btn.addEventListener('click', () => {
-          document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
-          document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-          btn.classList.add('active'); btn.setAttribute('aria-selected','true');
-          document.querySelector('.tab-panel[data-panel="' + btn.dataset.tab + '"]').classList.add('active');
+          document.querySelectorAll('.fr-tabs__tab').forEach(b => { b.setAttribute('aria-selected','false'); b.tabIndex = -1; });
+          document.querySelectorAll('.fr-tabs__panel').forEach(p => p.classList.remove('fr-tabs__panel--selected'));
+          btn.setAttribute('aria-selected','true'); btn.tabIndex = 0;
+          document.getElementById('tab-' + btn.dataset.tab + '-panel').classList.add('fr-tabs__panel--selected');
         });
       });
     </script>
+    </div>
   
   </div>
 </main>

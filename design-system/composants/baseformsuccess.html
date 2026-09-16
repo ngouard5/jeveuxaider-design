@@ -77,11 +77,8 @@ h4{font-size:.8rem;text-transform:uppercase;letter-spacing:.04em;color:var(--mut
 /* ---------- tabs ---------- */
 .tabs{display:flex;gap:1.75rem;border-bottom:2px solid var(--border);margin:1.5rem 0 1.75rem;flex-wrap:wrap}
 .fr-tabs__list{border-bottom:1px solid var(--border);padding-bottom:0}
-.tab-btn{background:none;border:none;font:inherit;font-size:.95rem;padding:.6rem 0;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-2px}
-.tab-btn:hover{color:var(--fg)}
-.tab-btn.active{color:var(--link);border-bottom-color:var(--link);font-weight:700}
-.tab-panel{display:none}
-.tab-panel.active{display:block}
+.fr-tabs__panel{display:none!important;position:static!important;left:auto!important;flex:none!important;margin:0!important;visibility:visible!important;height:auto!important;overflow:visible!important;width:auto!important}
+.fr-tabs__panel--selected{display:block!important}
 
 /* ---------- component meta ---------- */
 .badge{display:inline-block;font-size:.72rem;padding:.1rem .5rem;border-radius:99px;font-weight:600}
@@ -197,19 +194,20 @@ table.migration th{background:var(--code-bg)}
     
     <h1>BaseFormSuccess</h1>
     <div class="meta-row">
-      <span class="usages-badge">2 usages</span>
-      <span class="badge badge-custom">Custom</span>
+      <p class="fr-tag">2 usages</p>
+      <p class="fr-badge">Custom</p>
       <span class="path-line small"><code>components/base/FormSuccess.vue</code></span>
     </div>
     <p class="subtitle">Message de validation positive affiché sous un champ de formulaire.</p>
 
-    <div class="tabs" role="tablist">
-      <button class="tab-btn active" data-tab="presentation" role="tab" aria-selected="true">Présentation</button>
-      <button class="tab-btn" data-tab="code" role="tab" aria-selected="false">Code</button>
-      <button class="tab-btn" data-tab="usages" role="tab" aria-selected="false">Usages</button>
-    </div>
+    <div class="fr-tabs">
+    <ul class="fr-tabs__list" role="tablist" aria-label="Documentation du composant">
+      <li role="presentation"><button id="tab-presentation" class="fr-tabs__tab" tabindex="0" role="tab" aria-selected="true" aria-controls="tab-presentation-panel" data-tab="presentation">Présentation</button></li>
+      <li role="presentation"><button id="tab-code" class="fr-tabs__tab" tabindex="-1" role="tab" aria-selected="false" aria-controls="tab-code-panel" data-tab="code">Code</button></li>
+      <li role="presentation"><button id="tab-usages" class="fr-tabs__tab" tabindex="-1" role="tab" aria-selected="false" aria-controls="tab-usages-panel" data-tab="usages">Usages</button></li>
+    </ul>
 
-    <div class="tab-panel active" data-panel="presentation">
+    <div id="tab-presentation-panel" class="fr-tabs__panel fr-tabs__panel--selected" role="tabpanel" aria-labelledby="tab-presentation" tabindex="0" data-panel="presentation">
       <h4>Démo</h4>
       <div class="demo"><div style="text-align:left;font-size:12px;color:#18753C;margin-top:8px;display:flex;align-items:flex-start"><svg width="16" height="16" viewBox="0 0 24 24" fill="#18753C" style="flex:none;margin-right:8px;margin-top:1px"><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-.997-6l7.07-7.071-1.414-1.414-5.656 5.657-2.829-2.829-1.414 1.414L11.003 16z"/></svg>Email vérifié avec succès</div></div>
 
@@ -233,28 +231,29 @@ table.migration th{background:var(--code-bg)}
       
     </div>
 
-    <div class="tab-panel" data-panel="code">
+    <div id="tab-code-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tab-code" tabindex="0" data-panel="code">
       <h4>Exemple d'usage réel</h4>
       <pre><code>&lt;BaseFormSuccess v-if="success"&gt;
       {{ success }}
     &lt;/BaseFormSuccess&gt;</code></pre><p class="src">Source réelle : <code>components/base/FormControl.vue</code></p>
     </div>
 
-    <div class="tab-panel" data-panel="usages">
+    <div id="tab-usages-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tab-usages" tabindex="0" data-panel="usages">
       <h4>Fichiers utilisateurs</h4>
       <p class="muted small">2 fichiers utilisent ce composant.</p><ul class="usages-list"><li><code>components/base/FormControl.vue</code></li><li><code>components/dsfr/FormControl.vue</code></li></ul>
     </div>
 
     <script>
-      document.querySelectorAll('.tab-btn').forEach(btn => {
+      document.querySelectorAll('.fr-tabs__tab').forEach(btn => {
         btn.addEventListener('click', () => {
-          document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
-          document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-          btn.classList.add('active'); btn.setAttribute('aria-selected','true');
-          document.querySelector('.tab-panel[data-panel="' + btn.dataset.tab + '"]').classList.add('active');
+          document.querySelectorAll('.fr-tabs__tab').forEach(b => { b.setAttribute('aria-selected','false'); b.tabIndex = -1; });
+          document.querySelectorAll('.fr-tabs__panel').forEach(p => p.classList.remove('fr-tabs__panel--selected'));
+          btn.setAttribute('aria-selected','true'); btn.tabIndex = 0;
+          document.getElementById('tab-' + btn.dataset.tab + '-panel').classList.add('fr-tabs__panel--selected');
         });
       });
     </script>
+    </div>
   
   </div>
 </main>

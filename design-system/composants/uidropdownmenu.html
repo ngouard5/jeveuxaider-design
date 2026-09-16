@@ -77,11 +77,8 @@ h4{font-size:.8rem;text-transform:uppercase;letter-spacing:.04em;color:var(--mut
 /* ---------- tabs ---------- */
 .tabs{display:flex;gap:1.75rem;border-bottom:2px solid var(--border);margin:1.5rem 0 1.75rem;flex-wrap:wrap}
 .fr-tabs__list{border-bottom:1px solid var(--border);padding-bottom:0}
-.tab-btn{background:none;border:none;font:inherit;font-size:.95rem;padding:.6rem 0;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-2px}
-.tab-btn:hover{color:var(--fg)}
-.tab-btn.active{color:var(--link);border-bottom-color:var(--link);font-weight:700}
-.tab-panel{display:none}
-.tab-panel.active{display:block}
+.fr-tabs__panel{display:none!important;position:static!important;left:auto!important;flex:none!important;margin:0!important;visibility:visible!important;height:auto!important;overflow:visible!important;width:auto!important}
+.fr-tabs__panel--selected{display:block!important}
 
 /* ---------- component meta ---------- */
 .badge{display:inline-block;font-size:.72rem;padding:.1rem .5rem;border-radius:99px;font-weight:600}
@@ -197,19 +194,20 @@ table.migration th{background:var(--code-bg)}
     
     <h1>UiDropdownMenu</h1>
     <div class="meta-row">
-      <span class="usages-badge">34 usages</span>
-      <span class="badge badge-custom">Custom</span>
+      <p class="fr-tag">34 usages</p>
+      <p class="fr-badge">Custom</p>
       <span class="path-line small"><code>components/ui/dropdown-menu/DropdownMenu.vue</code></span>
     </div>
     <p class="subtitle">Racine du menu déroulant shadcn (Radix) ; gère l'ouverture/fermeture du menu.</p>
 
-    <div class="tabs" role="tablist">
-      <button class="tab-btn active" data-tab="presentation" role="tab" aria-selected="true">Présentation</button>
-      <button class="tab-btn" data-tab="code" role="tab" aria-selected="false">Code</button>
-      <button class="tab-btn" data-tab="usages" role="tab" aria-selected="false">Usages</button>
-    </div>
+    <div class="fr-tabs">
+    <ul class="fr-tabs__list" role="tablist" aria-label="Documentation du composant">
+      <li role="presentation"><button id="tab-presentation" class="fr-tabs__tab" tabindex="0" role="tab" aria-selected="true" aria-controls="tab-presentation-panel" data-tab="presentation">Présentation</button></li>
+      <li role="presentation"><button id="tab-code" class="fr-tabs__tab" tabindex="-1" role="tab" aria-selected="false" aria-controls="tab-code-panel" data-tab="code">Code</button></li>
+      <li role="presentation"><button id="tab-usages" class="fr-tabs__tab" tabindex="-1" role="tab" aria-selected="false" aria-controls="tab-usages-panel" data-tab="usages">Usages</button></li>
+    </ul>
 
-    <div class="tab-panel active" data-panel="presentation">
+    <div id="tab-presentation-panel" class="fr-tabs__panel fr-tabs__panel--selected" role="tabpanel" aria-labelledby="tab-presentation" tabindex="0" data-panel="presentation">
       <h4>Démo</h4>
       <div class="demo"><div class="inline-block border border-neutral-200 bg-white p-2 shadow-md w-[220px] rounded"><div class="px-2 py-1.5 rounded hover:bg-neutral-100 text-sm cursor-pointer">Mon profil</div><div class="px-2 py-1.5 rounded hover:bg-neutral-100 text-sm cursor-pointer">Paramètres</div><div class="bg-neutral-200 -mx-1 my-1 h-px"></div><div class="px-2 py-1.5 rounded hover:bg-neutral-100 text-sm cursor-pointer">Déconnexion</div></div></div>
 
@@ -233,7 +231,7 @@ table.migration th{background:var(--code-bg)}
       
     </div>
 
-    <div class="tab-panel" data-panel="code">
+    <div id="tab-code-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tab-code" tabindex="0" data-panel="code">
       <h4>Exemple d'usage réel</h4>
       <pre><code>&lt;DropdownMenu&gt;
           &lt;DropdownMenuTrigger ref="trigger" as-child&gt;
@@ -256,21 +254,22 @@ table.migration th{background:var(--code-bg)}
         &lt;/DropdownMenu&gt;</code></pre><p class="src">Source réelle : <code>features/invitations/components/TableRowInvitation.vue</code></p>
     </div>
 
-    <div class="tab-panel" data-panel="usages">
+    <div id="tab-usages-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tab-usages" tabindex="0" data-panel="usages">
       <h4>Fichiers utilisateurs</h4>
       <p class="muted small">34 fichiers utilisent ce composant.</p><ul class="usages-list"><li><code>components/bulk-operation/BulkOperationActionsParticipations.vue</code></li><li><code>components/custom/ButtonSelectMessageTemplate.vue</code></li><li><code>components/custom/DropdownUser.vue</code></li><li><code>components/custom/DropdownUserNotifications.vue</code></li><li><code>components/custom/DropdownUserSwitchRole.vue</code></li><li><code>components/custom/InputQueryBuilder.vue</code></li><li><code>components/messaging/ConversationMissionActionAsReferent.vue</code></li><li><code>components/messaging/ConversationMissionActionAsResponsable.vue</code></li><li><code>components/messaging/ConversationOrganisationActionAsReferent.vue</code></li><li><code>components/messaging/ConversationOrganisationActionAsResponsable.vue</code></li><li><code>components/messaging/ConversationParticipationActionAsBenevole.vue</code></li><li><code>components/messaging/ConversationParticipationActionAsResponsable.vue</code></li><li><code>components/mission/ResponsableListItem.vue</code></li><li><code>components/organisation/ResponsableListItem.vue</code></li><li><code>components/reseau/ResponsableListItem.vue</code></li><li><code>components/section/activity/Actions.vue</code></li><li><code>components/section/domaine/Actions.vue</code></li><li><code>components/section/mission-template/Actions.vue</code></li><li><code>components/section/mission/Actions.vue</code></li><li><code>components/section/organisation/Actions.vue</code></li><li><code>components/section/profile/Actions.vue</code></li><li><code>components/section/reseau/Actions.vue</code></li><li><code>components/section/territoire/Actions.vue</code></li><li><code>components/territoire/ResponsableListItem.vue</code></li><li><code>features/invitations/components/ListItemInvitation.vue</code></li><li><code>features/invitations/components/TableRowInvitation.vue</code></li><li><code>features/reseaux/components/TableRowReseau.vue</code></li><li><code>features/rules/components/Actions.vue</code></li><li><code>pages/admin/contenus/activites/index.vue</code></li><li><code>pages/admin/contenus/domaines/index.vue</code></li><li><code>pages/admin/contenus/modeles-mission/index.vue</code></li><li><code>pages/admin/contenus/territoires/index.vue</code></li><li><code>pages/admin/tags/macro-competences.vue</code></li><li><code>pages/admin/taxonomies/[slug]/index.vue</code></li></ul>
     </div>
 
     <script>
-      document.querySelectorAll('.tab-btn').forEach(btn => {
+      document.querySelectorAll('.fr-tabs__tab').forEach(btn => {
         btn.addEventListener('click', () => {
-          document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
-          document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-          btn.classList.add('active'); btn.setAttribute('aria-selected','true');
-          document.querySelector('.tab-panel[data-panel="' + btn.dataset.tab + '"]').classList.add('active');
+          document.querySelectorAll('.fr-tabs__tab').forEach(b => { b.setAttribute('aria-selected','false'); b.tabIndex = -1; });
+          document.querySelectorAll('.fr-tabs__panel').forEach(p => p.classList.remove('fr-tabs__panel--selected'));
+          btn.setAttribute('aria-selected','true'); btn.tabIndex = 0;
+          document.getElementById('tab-' + btn.dataset.tab + '-panel').classList.add('fr-tabs__panel--selected');
         });
       });
     </script>
+    </div>
   
   </div>
 </main>

@@ -77,11 +77,8 @@ h4{font-size:.8rem;text-transform:uppercase;letter-spacing:.04em;color:var(--mut
 /* ---------- tabs ---------- */
 .tabs{display:flex;gap:1.75rem;border-bottom:2px solid var(--border);margin:1.5rem 0 1.75rem;flex-wrap:wrap}
 .fr-tabs__list{border-bottom:1px solid var(--border);padding-bottom:0}
-.tab-btn{background:none;border:none;font:inherit;font-size:.95rem;padding:.6rem 0;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-2px}
-.tab-btn:hover{color:var(--fg)}
-.tab-btn.active{color:var(--link);border-bottom-color:var(--link);font-weight:700}
-.tab-panel{display:none}
-.tab-panel.active{display:block}
+.fr-tabs__panel{display:none!important;position:static!important;left:auto!important;flex:none!important;margin:0!important;visibility:visible!important;height:auto!important;overflow:visible!important;width:auto!important}
+.fr-tabs__panel--selected{display:block!important}
 
 /* ---------- component meta ---------- */
 .badge{display:inline-block;font-size:.72rem;padding:.1rem .5rem;border-radius:99px;font-weight:600}
@@ -197,19 +194,20 @@ table.migration th{background:var(--code-bg)}
     
     <h1>CardStatistic</h1>
     <div class="meta-row">
-      <span class="usages-badge">35 usages</span>
-      <span class="badge badge-custom">Custom</span>
+      <p class="fr-tag">35 usages</p>
+      <p class="fr-badge">Custom</p>
       <span class="path-line small"><code>components/card/CardStatistic.vue</code></span>
     </div>
     <p class="subtitle">Carte KPI (valeur, titre, jauge optionnelle, lien) ; brique de base de toutes les vues de statistiques.</p>
 
-    <div class="tabs" role="tablist">
-      <button class="tab-btn active" data-tab="presentation" role="tab" aria-selected="true">Présentation</button>
-      <button class="tab-btn" data-tab="code" role="tab" aria-selected="false">Code</button>
-      <button class="tab-btn" data-tab="usages" role="tab" aria-selected="false">Usages</button>
-    </div>
+    <div class="fr-tabs">
+    <ul class="fr-tabs__list" role="tablist" aria-label="Documentation du composant">
+      <li role="presentation"><button id="tab-presentation" class="fr-tabs__tab" tabindex="0" role="tab" aria-selected="true" aria-controls="tab-presentation-panel" data-tab="presentation">Présentation</button></li>
+      <li role="presentation"><button id="tab-code" class="fr-tabs__tab" tabindex="-1" role="tab" aria-selected="false" aria-controls="tab-code-panel" data-tab="code">Code</button></li>
+      <li role="presentation"><button id="tab-usages" class="fr-tabs__tab" tabindex="-1" role="tab" aria-selected="false" aria-controls="tab-usages-panel" data-tab="usages">Usages</button></li>
+    </ul>
 
-    <div class="tab-panel active" data-panel="presentation">
+    <div id="tab-presentation-panel" class="fr-tabs__panel fr-tabs__panel--selected" role="tabpanel" aria-labelledby="tab-presentation" tabindex="0" data-panel="presentation">
       <h4>Démo</h4>
       <div class="demo"><li class="relative flex flex-col shadow-[0_0_0_1px_#E5E5E5] max-w-xs"><div class="px-4 py-6 flex-1 bg-white flex flex-col space-y-2"><p class="text-[32px] font-bold leading-10">1 284</p><p class="font-bold">missions</p><p class="text-[#3A3A3A] text-sm">en ligne</p></div></li></div>
 
@@ -228,12 +226,12 @@ table.migration th{background:var(--code-bg)}
       </section>
 
       <h4>Props principales</h4>
-      <table class="props"><thead><tr><th>Prop</th><th>Type</th><th>Défaut</th></tr></thead><tbody><tr><td><code>value</code></td><td><code>[String, Number]</code></td><td><code>null</code></td></tr><tr><td><code>title</code></td><td><code>String</code></td><td><code>null</code></td></tr><tr><td><code>subtitle</code></td><td><code>[String, null]</code></td><td><code>null</code></td></tr><tr><td><code>gaugePosition</code></td><td><code>String</code></td><td><code>'bottom'</code></td></tr><tr><td><code>gaugeSize</code></td><td><code>String</code></td><td><code>'sm'</code></td></tr><tr><td><code>gaugePercentage</code></td><td><code>Number</code></td><td><code>null</code></td></tr><tr><td><code>gaugeColor</code></td><td><code>String</code></td><td><code>'salmon'</code></td></tr><tr><td><code>gaugeFromLabel</code></td><td><code>[String, Number]</code></td><td><code>null</code></td></tr><tr><td><code>gaugeToLabel</code></td><td><code>[String, Number]</code></td><td><code>null</code></td></tr><tr><td><code>link</code></td><td><code>String</code></td><td><code>null</code></td></tr><tr><td><code>linkLabel</code></td><td><code>String</code></td><td><code>null</code></td></tr><tr><td><code>linkHidden</code></td><td><code>Boolean</code></td><td><code>false</code></td></tr><tr><td><code>infosBulle</code></td><td><code>String</code></td><td><code>null</code></td></tr></tbody></table>
+      <div class="fr-table"><table class="props"><caption>Props principales</caption><thead><tr><th>Prop</th><th>Type</th><th>Défaut</th></tr></thead><tbody><tr><td><code>value</code></td><td><code>[String, Number]</code></td><td><code>null</code></td></tr><tr><td><code>title</code></td><td><code>String</code></td><td><code>null</code></td></tr><tr><td><code>subtitle</code></td><td><code>[String, null]</code></td><td><code>null</code></td></tr><tr><td><code>gaugePosition</code></td><td><code>String</code></td><td><code>'bottom'</code></td></tr><tr><td><code>gaugeSize</code></td><td><code>String</code></td><td><code>'sm'</code></td></tr><tr><td><code>gaugePercentage</code></td><td><code>Number</code></td><td><code>null</code></td></tr><tr><td><code>gaugeColor</code></td><td><code>String</code></td><td><code>'salmon'</code></td></tr><tr><td><code>gaugeFromLabel</code></td><td><code>[String, Number]</code></td><td><code>null</code></td></tr><tr><td><code>gaugeToLabel</code></td><td><code>[String, Number]</code></td><td><code>null</code></td></tr><tr><td><code>link</code></td><td><code>String</code></td><td><code>null</code></td></tr><tr><td><code>linkLabel</code></td><td><code>String</code></td><td><code>null</code></td></tr><tr><td><code>linkHidden</code></td><td><code>Boolean</code></td><td><code>false</code></td></tr><tr><td><code>infosBulle</code></td><td><code>String</code></td><td><code>null</code></td></tr></tbody></table></div>
       
       <div class="dsfr-link-box muted">Piste DSFR à discuter — voir <a href="https://www.systeme-de-design.gouv.fr/elements-d-interface/composants" target="_blank" rel="noopener">catalogue des composants DSFR</a>.</div>
     </div>
 
-    <div class="tab-panel" data-panel="code">
+    <div id="tab-code-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tab-code" tabindex="0" data-panel="code">
       <h4>Exemple d'usage réel</h4>
       <pre><code>&lt;CardStatistic
         :value="statistics.places_left"
@@ -251,21 +249,22 @@ table.migration th{background:var(--code-bg)}
       /&gt;</code></pre><p class="src">Source réelle : <code>features/dashboard/ui/BoxStatistics.vue</code></p>
     </div>
 
-    <div class="tab-panel" data-panel="usages">
+    <div id="tab-usages-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tab-usages" tabindex="0" data-panel="usages">
       <h4>Fichiers utilisateurs</h4>
       <p class="muted small">35 fichiers utilisent ce composant.</p><ul class="usages-list"><li><code>components/numbers/ActivityLogsModerationsStatistics.vue</code></li><li><code>components/numbers/MissionsStatistics.vue</code></li><li><code>components/numbers/ModerationMissionsStatistics.vue</code></li><li><code>components/numbers/ModerationOrganisationsStatistics.vue</code></li><li><code>components/numbers/OrganisationsStatistics.vue</code></li><li><code>components/numbers/OverviewApiEngagementEntrant.vue</code></li><li><code>components/numbers/OverviewApiEngagementSortant.vue</code></li><li><code>components/numbers/OverviewReferents.vue</code></li><li><code>components/numbers/OverviewResponsables.vue</code></li><li><code>components/numbers/ParticipationsStatistics.vue</code></li><li><code>components/numbers/PlacesStatistics.vue</code></li><li><code>components/numbers/UtilisateursStatistics.vue</code></li><li><code>components/section/organisation/BoxScore.vue</code></li><li><code>components/statistics/MissionsStatistics.vue</code></li><li><code>components/statistics/OrganisationsStatistics.vue</code></li><li><code>components/statistics/OverviewApiEngagement.vue</code></li><li><code>components/statistics/OverviewMissions.vue</code></li><li><code>components/statistics/OverviewOrganisations.vue</code></li><li><code>components/statistics/OverviewParticipations.vue</code></li><li><code>components/statistics/OverviewPlaces.vue</code></li><li><code>components/statistics/OverviewQuickGlance.vue</code></li><li><code>components/statistics/OverviewUtilisateurs.vue</code></li><li><code>components/statistics/ParticipationsStatistics.vue</code></li><li><code>components/statistics/PlacesStatistics.vue</code></li><li><code>components/statistics/UtilisateursStatistics.vue</code></li><li><code>features/dashboard/ui/BoxStatistics.vue</code></li><li><code>features/statistics/ui/GoalsJVAStatistics.vue</code></li><li><code>features/statistics/ui/GoalsPPGStatistics.vue</code></li><li><code>features/statistics/ui/OverviewGoalsPPG.vue</code></li><li><code>features/statistics/ui/OverviewMissions.vue</code></li><li><code>features/statistics/ui/OverviewOrganisations.vue</code></li><li><code>features/statistics/ui/OverviewParticipations.vue</code></li><li><code>features/statistics/ui/OverviewPlaces.vue</code></li><li><code>features/statistics/ui/OverviewQuickGlance.vue</code></li><li><code>features/statistics/ui/OverviewUtilisateurs.vue</code></li></ul>
     </div>
 
     <script>
-      document.querySelectorAll('.tab-btn').forEach(btn => {
+      document.querySelectorAll('.fr-tabs__tab').forEach(btn => {
         btn.addEventListener('click', () => {
-          document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
-          document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-          btn.classList.add('active'); btn.setAttribute('aria-selected','true');
-          document.querySelector('.tab-panel[data-panel="' + btn.dataset.tab + '"]').classList.add('active');
+          document.querySelectorAll('.fr-tabs__tab').forEach(b => { b.setAttribute('aria-selected','false'); b.tabIndex = -1; });
+          document.querySelectorAll('.fr-tabs__panel').forEach(p => p.classList.remove('fr-tabs__panel--selected'));
+          btn.setAttribute('aria-selected','true'); btn.tabIndex = 0;
+          document.getElementById('tab-' + btn.dataset.tab + '-panel').classList.add('fr-tabs__panel--selected');
         });
       });
     </script>
+    </div>
   
   </div>
 </main>

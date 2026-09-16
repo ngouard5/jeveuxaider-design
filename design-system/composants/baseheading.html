@@ -77,11 +77,8 @@ h4{font-size:.8rem;text-transform:uppercase;letter-spacing:.04em;color:var(--mut
 /* ---------- tabs ---------- */
 .tabs{display:flex;gap:1.75rem;border-bottom:2px solid var(--border);margin:1.5rem 0 1.75rem;flex-wrap:wrap}
 .fr-tabs__list{border-bottom:1px solid var(--border);padding-bottom:0}
-.tab-btn{background:none;border:none;font:inherit;font-size:.95rem;padding:.6rem 0;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-2px}
-.tab-btn:hover{color:var(--fg)}
-.tab-btn.active{color:var(--link);border-bottom-color:var(--link);font-weight:700}
-.tab-panel{display:none}
-.tab-panel.active{display:block}
+.fr-tabs__panel{display:none!important;position:static!important;left:auto!important;flex:none!important;margin:0!important;visibility:visible!important;height:auto!important;overflow:visible!important;width:auto!important}
+.fr-tabs__panel--selected{display:block!important}
 
 /* ---------- component meta ---------- */
 .badge{display:inline-block;font-size:.72rem;padding:.1rem .5rem;border-radius:99px;font-weight:600}
@@ -197,20 +194,21 @@ table.migration th{background:var(--code-bg)}
     
     <h1>BaseHeading</h1>
     <div class="meta-row">
-      <span class="usages-badge">68 usages</span>
-      <span class="badge badge-custom">Custom</span>
+      <p class="fr-tag">68 usages</p>
+      <p class="fr-badge">Custom</p>
       <span class="path-line small"><code>components/base/Heading.vue</code></span>
     </div>
     <p class="subtitle">Titre de page (niveau h1-h6 configurable) au style custom.</p>
     <div class="dsfr-link-box">🔗 Cible DSFR : <strong><a href="dsfrheading.html">DsfrHeading</a></strong><br><span class="muted">Composant simple (2 props) mais 68 points d'usage à vérifier visuellement un par un (tailles/couleurs).</span></div>
 
-    <div class="tabs" role="tablist">
-      <button class="tab-btn active" data-tab="presentation" role="tab" aria-selected="true">Présentation</button>
-      <button class="tab-btn" data-tab="code" role="tab" aria-selected="false">Code</button>
-      <button class="tab-btn" data-tab="usages" role="tab" aria-selected="false">Usages</button>
-    </div>
+    <div class="fr-tabs">
+    <ul class="fr-tabs__list" role="tablist" aria-label="Documentation du composant">
+      <li role="presentation"><button id="tab-presentation" class="fr-tabs__tab" tabindex="0" role="tab" aria-selected="true" aria-controls="tab-presentation-panel" data-tab="presentation">Présentation</button></li>
+      <li role="presentation"><button id="tab-code" class="fr-tabs__tab" tabindex="-1" role="tab" aria-selected="false" aria-controls="tab-code-panel" data-tab="code">Code</button></li>
+      <li role="presentation"><button id="tab-usages" class="fr-tabs__tab" tabindex="-1" role="tab" aria-selected="false" aria-controls="tab-usages-panel" data-tab="usages">Usages</button></li>
+    </ul>
 
-    <div class="tab-panel active" data-panel="presentation">
+    <div id="tab-presentation-panel" class="fr-tabs__panel fr-tabs__panel--selected" role="tabpanel" aria-labelledby="tab-presentation" tabindex="0" data-panel="presentation">
       <h4>Démo</h4>
       <div class="demo"><div class="space-y-3"><p class="text-3xl font-bold">Titre niveau 2</p><p class="text-[22px] sm:text-[22px] font-extrabold">Titre niveau 3</p></div></div>
 
@@ -229,30 +227,31 @@ table.migration th{background:var(--code-bg)}
       </section>
 
       <h4>Props principales</h4>
-      <table class="props"><thead><tr><th>Prop</th><th>Type</th><th>Défaut</th></tr></thead><tbody><tr><td><code>as</code></td><td><code>String</code></td><td><code>'div'</code></td></tr><tr><td><code>level</code> <span class="req">*</span></td><td><code>Number</code></td><td><code>—</code></td></tr></tbody></table>
+      <div class="fr-table"><table class="props"><caption>Props principales</caption><thead><tr><th>Prop</th><th>Type</th><th>Défaut</th></tr></thead><tbody><tr><td><code>as</code></td><td><code>String</code></td><td><code>'div'</code></td></tr><tr><td><code>level</code> <span class="req">*</span></td><td><code>Number</code></td><td><code>—</code></td></tr></tbody></table></div>
       <h4>Slots</h4><p><code>default</code></p>
     </div>
 
-    <div class="tab-panel" data-panel="code">
+    <div id="tab-code-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tab-code" tabindex="0" data-panel="code">
       <h4>Exemple d'usage réel</h4>
       <pre><code>&lt;BaseHeading as="h2" :level="2" class="mb-8 font-extrabold"&gt; Notes &lt;/BaseHeading&gt;</code></pre><p class="src">Source réelle : <code>pages/admin/notes.vue</code></p>
     </div>
 
-    <div class="tab-panel" data-panel="usages">
+    <div id="tab-usages-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tab-usages" tabindex="0" data-panel="usages">
       <h4>Fichiers utilisateurs</h4>
       <p class="muted small">68 fichiers utilisent ce composant.</p><ul class="usages-list"><li><code>components/custom/BoxHeadingStatistics.vue</code></li><li><code>components/drawer/DrawerActivity.vue</code></li><li><code>components/drawer/DrawerConversationBenevole.vue</code></li><li><code>components/drawer/DrawerDomaine.vue</code></li><li><code>components/drawer/DrawerMission.vue</code></li><li><code>components/drawer/DrawerMissionTemplate.vue</code></li><li><code>components/drawer/DrawerNotification.vue</code></li><li><code>components/drawer/DrawerOrganisation.vue</code></li><li><code>components/drawer/DrawerParticipation.vue</code></li><li><code>components/drawer/DrawerProfile.vue</code></li><li><code>components/drawer/DrawerReseau.vue</code></li><li><code>components/drawer/DrawerRessource.vue</code></li><li><code>components/drawer/DrawerTemoignage.vue</code></li><li><code>components/drawer/DrawerTerm.vue</code></li><li><code>components/drawer/DrawerTerritoire.vue</code></li><li><code>components/form/FormActivity.vue</code></li><li><code>components/form/FormDomaine.vue</code></li><li><code>components/form/FormMissionTemplate.vue</code></li><li><code>components/form/FormOrganisation.vue</code></li><li><code>components/form/FormReseau.vue</code></li><li><code>components/form/FormRessource.vue</code></li><li><code>components/form/FormRule.vue</code></li><li><code>components/form/FormTemoignage.vue</code></li><li><code>components/form/FormTerm.vue</code></li><li><code>components/form/FormTerritoire.vue</code></li><li><code>components/section/activity/BoxPresentation.vue</code></li><li><code>components/section/activity/HeaderActions.vue</code></li><li><code>components/section/dashboard/BoxOperations.vue</code></li><li><code>components/section/dashboard/GuideLinks.vue</code></li><li><code>components/section/dashboard/MoreNumbers.vue</code></li><li><code>components/section/domaine/HeaderActions.vue</code></li><li><code>components/section/mission-template/HeaderActions.vue</code></li><li><code>components/section/mission/HeaderActions.vue</code></li><li><code>components/section/organisation/BoxPresentation.vue</code></li><li><code>components/section/organisation/HeaderActions.vue</code></li><li><code>components/section/profile/BoxCompleteProfile.vue</code></li><li><code>components/section/profile/BoxUserAlertesActives.vue</code></li><li><code>components/section/profile/BoxUserPendingActions.vue</code></li><li><code>components/section/profile/BoxUserProfileBenevole.vue</code></li><li><code>components/section/profile/BoxUserWaitingParticipations.vue</code></li><li><code>components/section/profile/HeaderActions.vue</code></li><li><code>components/section/reseau/BoxPresentation.vue</code></li><li><code>components/section/reseau/HeaderActions.vue</code></li><li><code>components/section/ressource/HeaderActions.vue</code></li><li><code>components/section/temoignage/HeaderActions.vue</code></li><li><code>components/section/territoire/BoxPresentation.vue</code></li><li><code>components/section/territoire/HeaderActions.vue</code></li><li><code>features/activity-log/components/DrawerActivityLog.vue</code></li><li><code>features/dashboard/ui/BoxMarketplaceMissions.vue</code></li><li><code>features/dashboard/ui/BoxMissionsOffline.vue</code></li><li><code>features/dashboard/ui/BoxPendingActions.vue</code></li><li><code>features/dashboard/ui/BoxStatistics.vue</code></li><li><code>features/dashboard/ui/BoxTestimonials.vue</code></li><li><code>features/missions/market-place/components/DrawerMarketplaceBenevole.vue</code></li><li><code>features/organisations/unsubscribe/Box.vue</code></li><li><code>features/rules/components/DrawerRule.vue</code></li><li><code>pages/admin/contenus/activites/add.vue</code></li><li><code>pages/admin/contenus/domaines/add.vue</code></li><li><code>pages/admin/contenus/modeles-mission/[id]/index.vue</code></li><li><code>pages/admin/contenus/ressources/add.vue</code></li><li><code>pages/admin/contenus/territoires/add.vue</code></li><li><code>pages/admin/missions/[id]/trouver-des-benevoles/index.vue</code></li><li><code>pages/admin/notes.vue</code></li><li><code>pages/admin/ressources.vue</code></li><li><code>pages/admin/temoignages.vue</code></li><li><code>pages/admin/utilisateurs/[id]/index.vue</code></li><li><code>pages/dashboard/index.vue</code></li><li><code>pages/maintenance/index.vue</code></li></ul>
     </div>
 
     <script>
-      document.querySelectorAll('.tab-btn').forEach(btn => {
+      document.querySelectorAll('.fr-tabs__tab').forEach(btn => {
         btn.addEventListener('click', () => {
-          document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
-          document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-          btn.classList.add('active'); btn.setAttribute('aria-selected','true');
-          document.querySelector('.tab-panel[data-panel="' + btn.dataset.tab + '"]').classList.add('active');
+          document.querySelectorAll('.fr-tabs__tab').forEach(b => { b.setAttribute('aria-selected','false'); b.tabIndex = -1; });
+          document.querySelectorAll('.fr-tabs__panel').forEach(p => p.classList.remove('fr-tabs__panel--selected'));
+          btn.setAttribute('aria-selected','true'); btn.tabIndex = 0;
+          document.getElementById('tab-' + btn.dataset.tab + '-panel').classList.add('fr-tabs__panel--selected');
         });
       });
     </script>
+    </div>
   
   </div>
 </main>

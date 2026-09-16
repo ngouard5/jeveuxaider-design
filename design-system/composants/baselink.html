@@ -77,11 +77,8 @@ h4{font-size:.8rem;text-transform:uppercase;letter-spacing:.04em;color:var(--mut
 /* ---------- tabs ---------- */
 .tabs{display:flex;gap:1.75rem;border-bottom:2px solid var(--border);margin:1.5rem 0 1.75rem;flex-wrap:wrap}
 .fr-tabs__list{border-bottom:1px solid var(--border);padding-bottom:0}
-.tab-btn{background:none;border:none;font:inherit;font-size:.95rem;padding:.6rem 0;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-2px}
-.tab-btn:hover{color:var(--fg)}
-.tab-btn.active{color:var(--link);border-bottom-color:var(--link);font-weight:700}
-.tab-panel{display:none}
-.tab-panel.active{display:block}
+.fr-tabs__panel{display:none!important;position:static!important;left:auto!important;flex:none!important;margin:0!important;visibility:visible!important;height:auto!important;overflow:visible!important;width:auto!important}
+.fr-tabs__panel--selected{display:block!important}
 
 /* ---------- component meta ---------- */
 .badge{display:inline-block;font-size:.72rem;padding:.1rem .5rem;border-radius:99px;font-weight:600}
@@ -197,20 +194,21 @@ table.migration th{background:var(--code-bg)}
     
     <h1>BaseLink</h1>
     <div class="meta-row">
-      <span class="usages-badge">33 usages</span>
-      <span class="badge badge-custom">Custom</span>
+      <p class="fr-tag">33 usages</p>
+      <p class="fr-badge">Custom</p>
       <span class="path-line small"><code>components/base/Link.vue</code></span>
     </div>
     <p class="subtitle">Lien custom interne/externe avec icône ; alternative maison à DsfrLink.</p>
     <div class="dsfr-link-box">🔗 Cible DSFR : <strong><a href="dsfrlink.html">DsfrLink</a></strong><br><span class="muted">33 points d'usage à vérifier visuellement (icône, cible externe).</span></div>
 
-    <div class="tabs" role="tablist">
-      <button class="tab-btn active" data-tab="presentation" role="tab" aria-selected="true">Présentation</button>
-      <button class="tab-btn" data-tab="code" role="tab" aria-selected="false">Code</button>
-      <button class="tab-btn" data-tab="usages" role="tab" aria-selected="false">Usages</button>
-    </div>
+    <div class="fr-tabs">
+    <ul class="fr-tabs__list" role="tablist" aria-label="Documentation du composant">
+      <li role="presentation"><button id="tab-presentation" class="fr-tabs__tab" tabindex="0" role="tab" aria-selected="true" aria-controls="tab-presentation-panel" data-tab="presentation">Présentation</button></li>
+      <li role="presentation"><button id="tab-code" class="fr-tabs__tab" tabindex="-1" role="tab" aria-selected="false" aria-controls="tab-code-panel" data-tab="code">Code</button></li>
+      <li role="presentation"><button id="tab-usages" class="fr-tabs__tab" tabindex="-1" role="tab" aria-selected="false" aria-controls="tab-usages-panel" data-tab="usages">Usages</button></li>
+    </ul>
 
-    <div class="tab-panel active" data-panel="presentation">
+    <div id="tab-presentation-panel" class="fr-tabs__panel fr-tabs__panel--selected" role="tabpanel" aria-labelledby="tab-presentation" tabindex="0" data-panel="presentation">
       <h4>Démo</h4>
       <div class="demo"><div class="text-jva-blue-500 hover:text-jva-blue-600"><a class="flex items-center space-x-2 cursor-pointer hover:underline focus:underline transition"><span>En savoir plus</span></a></div></div>
 
@@ -229,11 +227,11 @@ table.migration th{background:var(--code-bg)}
       </section>
 
       <h4>Props principales</h4>
-      <table class="props"><thead><tr><th>Prop</th><th>Type</th><th>Défaut</th></tr></thead><tbody><tr><td><code>to</code></td><td><code>String</code></td><td><code>null</code></td></tr><tr><td><code>target</code></td><td><code>String</code></td><td><code>null</code></td></tr><tr><td><code>external</code></td><td><code>Boolean</code></td><td><code>false</code></td></tr><tr><td><code>icon</code></td><td><code>String</code></td><td><code>null</code></td></tr><tr><td><code>iconPosition</code></td><td><code>String</code></td><td><code>'right'</code></td></tr><tr><td><code>iconClass</code></td><td><code>String</code></td><td><code>'h-3'</code></td></tr><tr><td><code>linkClass</code></td><td><code>[String, Array]</code></td><td><code>''</code></td></tr></tbody></table>
+      <div class="fr-table"><table class="props"><caption>Props principales</caption><thead><tr><th>Prop</th><th>Type</th><th>Défaut</th></tr></thead><tbody><tr><td><code>to</code></td><td><code>String</code></td><td><code>null</code></td></tr><tr><td><code>target</code></td><td><code>String</code></td><td><code>null</code></td></tr><tr><td><code>external</code></td><td><code>Boolean</code></td><td><code>false</code></td></tr><tr><td><code>icon</code></td><td><code>String</code></td><td><code>null</code></td></tr><tr><td><code>iconPosition</code></td><td><code>String</code></td><td><code>'right'</code></td></tr><tr><td><code>iconClass</code></td><td><code>String</code></td><td><code>'h-3'</code></td></tr><tr><td><code>linkClass</code></td><td><code>[String, Array]</code></td><td><code>''</code></td></tr></tbody></table></div>
       <h4>Slots</h4><p><code>default</code></p>
     </div>
 
-    <div class="tab-panel" data-panel="code">
+    <div id="tab-code-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tab-code" tabindex="0" data-panel="code">
       <h4>Exemple d'usage réel</h4>
       <pre><code>&lt;BaseLink
                       :to="`/admin/participations?filter[profile.id]=${profile.id}&amp;full_name=${profile.full_name}`"
@@ -242,21 +240,22 @@ table.migration th{background:var(--code-bg)}
                     &lt;/BaseLink&gt;</code></pre><p class="src">Source réelle : <code>pages/admin/utilisateurs/[id]/index.vue</code></p>
     </div>
 
-    <div class="tab-panel" data-panel="usages">
+    <div id="tab-usages-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tab-usages" tabindex="0" data-panel="usages">
       <h4>Fichiers utilisateurs</h4>
       <p class="muted small">33 fichiers utilisent ce composant.</p><ul class="usages-list"><li><code>components/base/DescriptionListItemMasquerade.vue</code></li><li><code>components/card/CardStatistic.vue</code></li><li><code>components/custom/ButtonsSubmitFormMissionTemplate.vue</code></li><li><code>components/drawer/DrawerMission.vue</code></li><li><code>components/drawer/DrawerOrganisation.vue</code></li><li><code>components/drawer/DrawerParticipation.vue</code></li><li><code>components/drawer/DrawerReseau.vue</code></li><li><code>components/drawer/DrawerTemoignage.vue</code></li><li><code>components/drawer/DrawerTerritoire.vue</code></li><li><code>components/mission/BoxVisitsStatistics.vue</code></li><li><code>components/organisation/PanelStatistics.vue</code></li><li><code>components/reseau/PanelStatistics.vue</code></li><li><code>components/section/BoxReferents.vue</code></li><li><code>components/section/domaine/BoxMission.vue</code></li><li><code>components/section/domaine/BoxParticipation.vue</code></li><li><code>components/section/mission-template/BoxMission.vue</code></li><li><code>components/section/mission-template/BoxParticipation.vue</code></li><li><code>components/section/mission-template/BoxReseau.vue</code></li><li><code>components/section/mission/BoxDates.vue</code></li><li><code>components/section/mission/BoxOrganisation.vue</code></li><li><code>components/section/mission/BoxPlace.vue</code></li><li><code>components/section/organisation/BoxMission.vue</code></li><li><code>components/section/organisation/BoxParticipation.vue</code></li><li><code>components/section/organisation/BoxReseau.vue</code></li><li><code>components/section/profile/BoxRoles.vue</code></li><li><code>components/section/reseau/BoxAntenne.vue</code></li><li><code>components/section/reseau/BoxMission.vue</code></li><li><code>components/section/reseau/BoxParticipation.vue</code></li><li><code>components/section/territoire/BoxMission.vue</code></li><li><code>components/section/territoire/BoxParticipation.vue</code></li><li><code>features/activity-log/components/DrawerActivityLog.vue</code></li><li><code>features/rules/components/PanelPendingItems.vue</code></li><li><code>pages/admin/utilisateurs/[id]/index.vue</code></li></ul>
     </div>
 
     <script>
-      document.querySelectorAll('.tab-btn').forEach(btn => {
+      document.querySelectorAll('.fr-tabs__tab').forEach(btn => {
         btn.addEventListener('click', () => {
-          document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
-          document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-          btn.classList.add('active'); btn.setAttribute('aria-selected','true');
-          document.querySelector('.tab-panel[data-panel="' + btn.dataset.tab + '"]').classList.add('active');
+          document.querySelectorAll('.fr-tabs__tab').forEach(b => { b.setAttribute('aria-selected','false'); b.tabIndex = -1; });
+          document.querySelectorAll('.fr-tabs__panel').forEach(p => p.classList.remove('fr-tabs__panel--selected'));
+          btn.setAttribute('aria-selected','true'); btn.tabIndex = 0;
+          document.getElementById('tab-' + btn.dataset.tab + '-panel').classList.add('fr-tabs__panel--selected');
         });
       });
     </script>
+    </div>
   
   </div>
 </main>

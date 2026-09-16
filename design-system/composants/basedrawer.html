@@ -77,11 +77,8 @@ h4{font-size:.8rem;text-transform:uppercase;letter-spacing:.04em;color:var(--mut
 /* ---------- tabs ---------- */
 .tabs{display:flex;gap:1.75rem;border-bottom:2px solid var(--border);margin:1.5rem 0 1.75rem;flex-wrap:wrap}
 .fr-tabs__list{border-bottom:1px solid var(--border);padding-bottom:0}
-.tab-btn{background:none;border:none;font:inherit;font-size:.95rem;padding:.6rem 0;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-2px}
-.tab-btn:hover{color:var(--fg)}
-.tab-btn.active{color:var(--link);border-bottom-color:var(--link);font-weight:700}
-.tab-panel{display:none}
-.tab-panel.active{display:block}
+.fr-tabs__panel{display:none!important;position:static!important;left:auto!important;flex:none!important;margin:0!important;visibility:visible!important;height:auto!important;overflow:visible!important;width:auto!important}
+.fr-tabs__panel--selected{display:block!important}
 
 /* ---------- component meta ---------- */
 .badge{display:inline-block;font-size:.72rem;padding:.1rem .5rem;border-radius:99px;font-weight:600}
@@ -197,19 +194,20 @@ table.migration th{background:var(--code-bg)}
     
     <h1>BaseDrawer</h1>
     <div class="meta-row">
-      <span class="usages-badge">17 usages</span>
-      <span class="badge badge-custom">Custom</span>
+      <p class="fr-tag">17 usages</p>
+      <p class="fr-badge">Custom</p>
       <span class="path-line small"><code>components/base/Drawer.vue</code></span>
     </div>
     <p class="subtitle">Panneau latéral générique avec zone de titre, de formulaire et de chargement.</p>
 
-    <div class="tabs" role="tablist">
-      <button class="tab-btn active" data-tab="presentation" role="tab" aria-selected="true">Présentation</button>
-      <button class="tab-btn" data-tab="code" role="tab" aria-selected="false">Code</button>
-      <button class="tab-btn" data-tab="usages" role="tab" aria-selected="false">Usages</button>
-    </div>
+    <div class="fr-tabs">
+    <ul class="fr-tabs__list" role="tablist" aria-label="Documentation du composant">
+      <li role="presentation"><button id="tab-presentation" class="fr-tabs__tab" tabindex="0" role="tab" aria-selected="true" aria-controls="tab-presentation-panel" data-tab="presentation">Présentation</button></li>
+      <li role="presentation"><button id="tab-code" class="fr-tabs__tab" tabindex="-1" role="tab" aria-selected="false" aria-controls="tab-code-panel" data-tab="code">Code</button></li>
+      <li role="presentation"><button id="tab-usages" class="fr-tabs__tab" tabindex="-1" role="tab" aria-selected="false" aria-controls="tab-usages-panel" data-tab="usages">Usages</button></li>
+    </ul>
 
-    <div class="tab-panel active" data-panel="presentation">
+    <div id="tab-presentation-panel" class="fr-tabs__panel fr-tabs__panel--selected" role="tabpanel" aria-labelledby="tab-presentation" tabindex="0" data-panel="presentation">
       <h4>Démo</h4>
       <div class="demo"><aside class="sm:pl-8"><div class="w-full max-w-xs h-full divide-y divide-gray-200 flex flex-col bg-white shadow-xl"><div class="min-h-0 flex-1 flex flex-col pb-6 pt-3 px-4"><button type="button" class="bg-white text-[#666666] p-2 self-end rounded-full border border-[#DDDDDD] mb-3 hover:scale-110 transition hover:bg-[#F6F6F6] hover:text-jva-blue-500 active:bg-[#EDEDED] active:text-jva-blue-500" title="Fermer le volet"><svg class="size-5 fill-current" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2"/></svg></button><div class="text-gray-700">Titre du panneau</div><div class="text-sm text-gray-600 mt-2">Formulaire ou contenu du drawer.</div></div></div></aside></div>
 
@@ -228,12 +226,12 @@ table.migration th{background:var(--code-bg)}
       </section>
 
       <h4>Props principales</h4>
-      <table class="props"><thead><tr><th>Prop</th><th>Type</th><th>Défaut</th></tr></thead><tbody><tr><td><code>formId</code></td><td><code>string | null</code></td><td><code>—</code></td></tr><tr><td><code>submitLabel</code></td><td><code>string</code></td><td><code>—</code></td></tr><tr><td><code>loading</code></td><td><code>boolean</code></td><td><code>—</code></td></tr></tbody></table>
+      <div class="fr-table"><table class="props"><caption>Props principales</caption><thead><tr><th>Prop</th><th>Type</th><th>Défaut</th></tr></thead><tbody><tr><td><code>formId</code></td><td><code>string | null</code></td><td><code>—</code></td></tr><tr><td><code>submitLabel</code></td><td><code>string</code></td><td><code>—</code></td></tr><tr><td><code>loading</code></td><td><code>boolean</code></td><td><code>—</code></td></tr></tbody></table></div>
       <h4>Slots</h4><p><code>loading</code>, <code>top</code>, <code>title</code>, <code>default</code></p>
       
     </div>
 
-    <div class="tab-panel" data-panel="code">
+    <div id="tab-code-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tab-code" tabindex="0" data-panel="code">
       <h4>Exemple d'usage réel</h4>
       <pre><code>&lt;BaseDrawer
       :is-open="true"
@@ -260,21 +258,22 @@ table.migration th{background:var(--code-bg)}
   ...</code></pre><p class="src">Source réelle : <code>features/rules/components/DrawerRule.vue</code></p>
     </div>
 
-    <div class="tab-panel" data-panel="usages">
+    <div id="tab-usages-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tab-usages" tabindex="0" data-panel="usages">
       <h4>Fichiers utilisateurs</h4>
       <p class="muted small">17 fichiers utilisent ce composant.</p><ul class="usages-list"><li><code>components/drawer/DrawerActivity.vue</code></li><li><code>components/drawer/DrawerConversationBenevole.vue</code></li><li><code>components/drawer/DrawerDomaine.vue</code></li><li><code>components/drawer/DrawerMission.vue</code></li><li><code>components/drawer/DrawerMissionTemplate.vue</code></li><li><code>components/drawer/DrawerNotification.vue</code></li><li><code>components/drawer/DrawerOrganisation.vue</code></li><li><code>components/drawer/DrawerParticipation.vue</code></li><li><code>components/drawer/DrawerProfile.vue</code></li><li><code>components/drawer/DrawerReseau.vue</code></li><li><code>components/drawer/DrawerRessource.vue</code></li><li><code>components/drawer/DrawerTemoignage.vue</code></li><li><code>components/drawer/DrawerTerm.vue</code></li><li><code>components/drawer/DrawerTerritoire.vue</code></li><li><code>features/activity-log/components/DrawerActivityLog.vue</code></li><li><code>features/missions/market-place/components/DrawerMarketplaceBenevole.vue</code></li><li><code>features/rules/components/DrawerRule.vue</code></li></ul>
     </div>
 
     <script>
-      document.querySelectorAll('.tab-btn').forEach(btn => {
+      document.querySelectorAll('.fr-tabs__tab').forEach(btn => {
         btn.addEventListener('click', () => {
-          document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
-          document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-          btn.classList.add('active'); btn.setAttribute('aria-selected','true');
-          document.querySelector('.tab-panel[data-panel="' + btn.dataset.tab + '"]').classList.add('active');
+          document.querySelectorAll('.fr-tabs__tab').forEach(b => { b.setAttribute('aria-selected','false'); b.tabIndex = -1; });
+          document.querySelectorAll('.fr-tabs__panel').forEach(p => p.classList.remove('fr-tabs__panel--selected'));
+          btn.setAttribute('aria-selected','true'); btn.tabIndex = 0;
+          document.getElementById('tab-' + btn.dataset.tab + '-panel').classList.add('fr-tabs__panel--selected');
         });
       });
     </script>
+    </div>
   
   </div>
 </main>

@@ -53,6 +53,14 @@
      entre la maquette et le code à vérifier avec l'équipe dev. */
   #btn-valider:disabled{background:#E5E5E5;color:#929292}
 
+  /* dsfr.min.css applique un survol gris générique à tous les boutons :
+     "button:not(:disabled):hover{background-color:var(--hover-tint)}" (spécificité 0,2,1).
+     Notre classe utilitaire hover:bg-jva-blue-800 (0,2,0) perd donc face à cette règle
+     globale du DSFR, quel que soit l'ordre de chargement des feuilles de style — d'où le
+     survol gris au lieu du bleu. On force ici la bonne couleur avec un sélecteur plus
+     spécifique. À vérifier avec l'équipe dev si ce même conflit existe dans l'app réelle. */
+  #btn-valider:not(:disabled):hover{background-color:var(--background-action-high-blue-france-hover)}
+
   .error-msg{display:flex;align-items:flex-start;gap:8px;text-align:left;font-size:14px;line-height:20px;color:#CE0500;margin:0}
   .error-msg[hidden],.success-msg[hidden]{display:none}
 

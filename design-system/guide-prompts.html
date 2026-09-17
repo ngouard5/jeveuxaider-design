@@ -204,6 +204,15 @@ table.migration th{background:var(--code-bg)}
     <h1>Bien prompter pour créer une page</h1>
     <div class="methodo">Les pages de ce projet (design-system et prototypes) sont produites avec Claude. Ce guide réunit ce qui, en pratique, évite les allers-retours et les malentendus &mdash; pour que la première version soit la bonne, ou proche.</div>
 
+<h2>0. Comment démarrer</h2>
+<p>Ce guide couvre la formulation d'une demande une fois qu'on travaille déjà sur ce dépôt. Pour tout le reste (quel contexte métier Claude a déjà, quels pièges techniques éviter, par quel fichier commencer), voir dans l'ordre :</p>
+<ol>
+  <li><strong><a href="../AGENTS.md">AGENTS.md</a></strong> (racine du dépôt) &mdash; le contexte produit (JeVeuxAider, rôles, ton) et les liens ci-dessous. Lu automatiquement par une session Claude qui s'ouvre sur ce dépôt, quel que soit le compte utilisé.</li>
+  <li><strong><a href="GUIDE-PROTOTYPAGE.md">GUIDE-PROTOTYPAGE.md</a></strong> &mdash; les pièges techniques déjà rencontrés (CSS, composants réels) et la checklist avant de committer.</li>
+  <li><strong><a href="_prototype-starter.html">_prototype-starter.html</a></strong> &mdash; le point de départ pour tout nouveau prototype.</li>
+</ol>
+<p class="muted small">Le Projet Claude personnel de Nicolas (instructions, historique) n'est pas un prérequis : tout ce qui doit être réutilisable par quelqu'un d'autre est écrit dans ces fichiers, versionnés avec le dépôt.</p>
+
 <h2>1. Précise où ça doit vivre</h2>
 <p>Le projet contient deux types de pages, qui n'ont pas le même rôle. Les confondre a déjà coûté un aller-retour complet : une demande de « redesign de la page OTP » a d'abord donné une page de documentation, alors qu'il s'agissait en réalité de mettre à jour le prototype interactif existant.</p>
 <table class="props">

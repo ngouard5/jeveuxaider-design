@@ -10,6 +10,9 @@ mêmes catégories de bugs sont apparues : composants inventés, hovers cassés,
 soulignements parasites. Ce guide capitalise ces apprentissages pour que les
 prochains prototypes ne les répètent pas.
 
+Voir aussi : [`AGENTS.md`](../AGENTS.md) (contexte produit JeVeuxAider) et
+[`guide-prompts.html`](guide-prompts.html) (comment formuler la demande).
+
 ## Démarrer un nouveau prototype
 
 Copiez `design-system/_prototype-starter.html` comme point de départ plutôt

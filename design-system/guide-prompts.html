@@ -204,40 +204,36 @@ table.migration th{background:var(--code-bg)}
     <h1>Bien prompter pour créer une page</h1>
     <div class="methodo">Les pages de ce projet (design-system et prototypes) sont produites avec Claude. Ce guide réunit ce qui, en pratique, évite les allers-retours et les malentendus &mdash; pour que la première version soit la bonne, ou proche.</div>
 
-<h2>0. Comment démarrer</h2>
-<p>Ce guide couvre la formulation d'une demande une fois qu'on travaille déjà sur ce dépôt. Pour tout le reste (quel contexte métier Claude a déjà, quels pièges techniques éviter, par quel fichier commencer), voir dans l'ordre :</p>
+<h2>Avant de commencer</h2>
+<p>Ce dépôt est écrit et maintenu avec Claude. Pour créer un prototype ou une page de doc, dans l'ordre :</p>
 <ol>
-  <li><strong><a href="../AGENTS.md">AGENTS.md</a></strong> (racine du dépôt) &mdash; le contexte produit (JeVeuxAider, rôles, ton) et les liens ci-dessous. Lu automatiquement par une session Claude qui s'ouvre sur ce dépôt, quel que soit le compte utilisé.</li>
-  <li><strong><a href="GUIDE-PROTOTYPAGE.md">GUIDE-PROTOTYPAGE.md</a></strong> &mdash; les pièges techniques déjà rencontrés (CSS, composants réels) et la checklist avant de committer.</li>
-  <li><strong><a href="_prototype-starter.html">_prototype-starter.html</a></strong> &mdash; le point de départ pour tout nouveau prototype.</li>
+  <li><strong>Récupère le dépôt sur ton ordinateur.</strong> <code>git clone https://github.com/ngouard5/jeveuxaider-design.git</code> &mdash; ou, si tu ne connais pas git, le bouton vert <strong>Code &rsaquo; Download ZIP</strong> sur la page GitHub du dépôt.</li>
+  <li><strong>Ouvre ce dossier avec Claude.</strong> Avec Claude Code (terminal, commande <code>claude</code> dans le dossier) ou avec l'application Claude desktop (Cowork) en connectant ce dossier. Pas besoin de créer un Projet Claude ni de recopier des instructions à la main : Claude lit automatiquement <a href="../AGENTS.md">AGENTS.md</a> à la racine, qui donne le contexte du produit et pointe vers <a href="GUIDE-PROTOTYPAGE.md">GUIDE-PROTOTYPAGE.md</a> (pièges techniques à éviter) et <a href="_prototype-starter.html">_prototype-starter.html</a> (point de départ pour un nouveau prototype).</li>
+  <li><strong>Demande ce que tu veux</strong>, en suivant les règles ci-dessous.</li>
 </ol>
-<p class="muted small">Le Projet Claude personnel de Nicolas (instructions, historique) n'est pas un prérequis : tout ce qui doit être réutilisable par quelqu'un d'autre est écrit dans ces fichiers, versionnés avec le dépôt.</p>
 
-<h2>1. Précise où ça doit vivre</h2>
-<p>Le projet contient deux types de pages, qui n'ont pas le même rôle. Les confondre a déjà coûté un aller-retour complet : une demande de « redesign de la page OTP » a d'abord donné une page de documentation, alors qu'il s'agissait en réalité de mettre à jour le prototype interactif existant.</p>
+<h2>1. Dis où ça doit vivre</h2>
 <table class="props">
-  <thead><tr><th></th><th><code>design-system/</code></th><th><code>prototypes/</code></th></tr></thead>
+  <thead><tr><th><code>design-system/</code></th><th><code>prototypes/</code></th></tr></thead>
   <tbody>
-    <tr><td><strong>Rôle</strong></td><td>Documentation de référence : un composant, un token, une règle</td><td>Test visuel d'un parcours utilisateur complet</td></tr>
-    <tr><td><strong>Style</strong></td><td>Partagé (<code>compiled.css</code> + <code>dsfr.min.css</code>), cohérent d'une page à l'autre</td><td>Les deux mêmes feuilles de style sont liées (<code>../design-system/compiled.css</code> et <code>dsfr.min.css</code>) : les vraies classes DSFR/JVA sont réutilisées, rien n'est recodé. Seuls le CSS de mise en page propre au prototype (ex. la disposition 2 colonnes) et le JS de démo restent embarqués</td></tr>
-    <tr><td><strong>Exemple de demande</strong></td><td>« Ajoute l'état focus dans la doc de DsfrButton »</td><td>« Dans le prototype d'inscription, ajoute un état d'erreur au champ mot de passe, avec les vraies classes du bouton et du champ »</td></tr>
+    <tr><td>Documente un composant existant : un bouton, un token de couleur, une règle</td><td>Teste visuellement un parcours utilisateur complet, avec ses différents écrans et états</td></tr>
   </tbody>
 </table>
-<p class="muted small">En cas de doute, nomme le fichier ou le dossier exact plutôt que « la page » ou « le prototype » tout court. Ça vaut aussi pour un composant qui n'a pas d'équivalent exact en classes réelles (ex. une mise en page inédite) : dans ce cas seulement, du CSS propre au prototype est légitime.</p>
+<p>Nomme le fichier exact plutôt que « la page » ou « le prototype ». Par exemple : « Dans <code>prototypes/verification-code.html</code>, ajoute… » plutôt que « améliore la page de vérification ».</p>
 
-<h2>2. Appuie-toi sur le vrai code, pas sur une supposition</h2>
-<p>Claude a un accès en lecture seule au code réel de l'application (le dossier <code>jeveuxaider</code>) &mdash; jamais modifié, uniquement consulté comme référence. Demande explicitement de vérifier un champ, un libellé, une règle de validation ou une couleur dans le vrai composant plutôt que de laisser deviner, en particulier pour les libellés, les placeholders, les tokens de couleur DSFR et les règles de validation.</p>
+<h2>2. Appuie-toi sur le vrai code</h2>
+<p>Claude a un accès en lecture seule au code réel de l'application (le dossier <code>jeveuxaider</code>). Demande-lui explicitement de vérifier un champ, un libellé ou une couleur dans le vrai composant plutôt que de le laisser deviner.</p>
 <pre><code>Vérifie le vrai champ « pays de résidence » dans le formulaire d'inscription
 réel avant de le maquetter (placeholder, valeur par défaut, composant utilisé).</code></pre>
 
-<h2>3. Donne le contexte de l'écran, pas juste l'élément</h2>
-<p>Pour un composant isolé, le nom suffit généralement. Pour un écran ou un état, précise l'étape du parcours, le rôle concerné (bénévole, responsable d'organisation…) et l'état à représenter (erreur, succès, chargement, vide). Une demande du type « ajoute les états d'erreur et de succès à la vérification du code, avec un délai avant de pouvoir le renvoyer » est plus rapide à traiter correctement qu'« améliore la page ».</p>
+<h2>3. Donne le contexte de l'écran</h2>
+<p>Pour un composant isolé, son nom suffit. Pour un écran, précise l'étape du parcours, le rôle concerné (bénévole, responsable d'organisation…) et l'état représenté (erreur, succès, chargement, vide).</p>
 
 <h2>4. Un prompt, un objectif</h2>
-<p>Plusieurs prompts ciblés valent mieux qu'un seul prompt qui empile tout : plus faciles à vérifier, plus faciles à revenir en arrière si un point ne convient pas. Regrouper plusieurs correctifs indépendants dans un même message reste utile (« les boutons ont des bords arrondis à corriger, utilise le vrai stepper DSFR, documente-le »), mais chaque point doit rester une instruction autonome et vérifiable séparément.</p>
+<p>Plusieurs demandes ciblées valent mieux qu'une seule qui empile tout : plus faciles à vérifier, plus faciles à annuler si un point ne convient pas.</p>
 
-<h2>5. Pense aux deux bouts : maquette et documentation</h2>
-<p>Un défaut repéré dans un prototype (un hover manquant, une couleur en dur) vient souvent d'un composant documenté ailleurs dans le design-system. Précise si le correctif doit aussi être répercuté dans la doc du composant, pas seulement là où tu l'as remarqué &mdash; sinon la doc et le prototype divergent silencieusement.</p>
+<h2>5. Pense aux deux bouts</h2>
+<p>Un défaut vu dans un prototype (hover manquant, couleur en dur) vient souvent d'un composant documenté ailleurs dans le design-system. Précise si le correctif doit aussi être répercuté dans sa doc.</p>
 
 <h2>Exemples</h2>
 <table class="props">

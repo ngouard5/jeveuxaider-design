@@ -1,0 +1,11 @@
+title: Design System JeVeuxAider
+baseurl: "/jeveuxaider-design"
+
+# Jekyll traite par défaut tout fichier/dossier préfixé par _ comme interne
+# (sauf _layouts/ et _includes/, réservés). outils/ contient des scripts
+# Python utilitaires, pas des pages : pas besoin qu'ils passent par le build,
+# mais les laisser copiés tels quels ne pose pas de problème non plus.
+exclude:
+  - "*.py"
+  - "*.md"
+  - "Claude outputs"

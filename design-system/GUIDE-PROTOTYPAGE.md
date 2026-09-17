@@ -15,7 +15,7 @@ Voir aussi : [`AGENTS.md`](../AGENTS.md) (contexte produit JeVeuxAider) et
 
 ## Démarrer un nouveau prototype
 
-Copiez `design-system/_prototype-starter.html` comme point de départ plutôt
+Copiez `design-system/prototype-starter.html` comme point de départ plutôt
 que de repartir d'un `<head>` vide ou de copier un ancien prototype au
 hasard — il contient déjà la base qui évite les deux bugs les plus
 récurrents (voir plus bas). Renommez le `<title>`, videz le `<main>`, gardez
@@ -74,7 +74,7 @@ soulignement parasite sous les titres de cartes et sous les boutons eux-mêmes
 (bordure blanche visible au repos).
 
 **Le correctif à ne plus refaire au cas par cas** (id, classes doublées...) :
-`design-system/_prototype-starter.html` charge les deux feuilles DSFR via
+`design-system/prototype-starter.html` charge les deux feuilles DSFR via
 `@import ... layer(...)` dans deux cascade layers distincts, DANS CET ORDRE :
 
 ```css
@@ -143,5 +143,5 @@ anciens correctifs (`prototypes/verification-code.html`,
 `design-system/composants/dsfrbutton.html`,
 `design-system/composants/buttoncreateuseralert.html`,
 `design-system/composants/dsfriconbutton.html`) ont été migrés. Tout nouveau
-prototype doit repartir de `_prototype-starter.html`, qui a le pattern déjà en
+prototype doit repartir de `prototype-starter.html`, qui a le pattern déjà en
 place.

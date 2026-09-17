@@ -44,7 +44,7 @@ actuel (https://www.systeme-de-design.gouv.fr/).
    DSFR/Tailwind, cascade layers) et la checklist avant de committer.
 2. Lire **[`design-system/guide-prompts.html`](design-system/guide-prompts.html)** —
    comment formuler la demande pour que la première version soit la bonne.
-3. Partir de **[`design-system/_prototype-starter.html`](design-system/_prototype-starter.html)**
+3. Partir de **[`design-system/prototype-starter.html`](design-system/prototype-starter.html)**
    pour tout nouveau prototype (il contient déjà le correctif cascade layers).
 4. Composants déjà documentés : **[`design-system/index.html`](design-system/index.html)**
    (164 composants réutilisables) — toujours vérifier si un composant existe

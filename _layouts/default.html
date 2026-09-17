@@ -166,6 +166,7 @@ table.migration th{background:var(--code-bg)}
 {% if page.extra_head %}{{ page.extra_head }}{% endif %}
 </head>
 <body{% if page.data_chemin %} data-chemin="{{ page.data_chemin }}"{% endif %}{% if page.data_tagname %} data-tagname="{{ page.data_tagname }}"{% endif %}>
+<!-- DEBUG page.url={{ page.url }} -->
 {% include sidebar.html %}
 <main class="main">
 {{ content }}

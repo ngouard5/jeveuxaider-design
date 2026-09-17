@@ -45,11 +45,13 @@
   .otp-box{flex:1;min-width:0;height:64px;text-align:center;font-family:Marianne;font-size:20px;padding:8px 16px;border:none}
   .otp-box:focus{outline:2px solid #000091;outline-offset:2px}
 
-  /* État disabled du vrai DsfrButton primary (components/dsfr/Button.vue) : !bg-[#E5E5E5]
-     text-[#656565] shadow-[inset_0_0_0_1px_#E5E5E5]. Ces classes précises n'existent pas
-     dans notre compiled.css (bundle incomplet), donc les valeurs réelles sont reprises ici
-     à la main, comme pour .dsfr-link plus haut. */
-  #btn-valider:disabled{background:#E5E5E5;color:#656565;box-shadow:inset 0 0 0 1px #E5E5E5}
+  /* État disabled du bouton primary, d'après la maquette Figma (Inscription et connexion,
+     nœud 1916:26908) : \-disabled-grey #E5E5E5, \-disabled-grey #929292.
+     Ces classes précises n'existent pas dans notre compiled.css (bundle incomplet), donc les
+     valeurs sont reprises ici à la main, comme pour .dsfr-link plus haut. À noter :
+     components/dsfr/Button.vue applique en réalité text-[#656565] pour ce même état — écart
+     entre la maquette et le code à vérifier avec l'équipe dev. */
+  #btn-valider:disabled{background:#E5E5E5;color:#929292}
 
   .error-msg{display:flex;align-items:flex-start;gap:8px;text-align:left;font-size:14px;line-height:20px;color:#CE0500;margin:0}
   .error-msg[hidden],.success-msg[hidden]{display:none}

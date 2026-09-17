@@ -122,16 +122,23 @@ habituel.
    répondre "written" sans que le contenu ait réellement changé côté device
    (observé sur ce dépôt) ; si les checksums ne correspondent pas, relancer
    avec `force: true` et revérifier.
+5. Si `git commit`/`git status` échoue avec une erreur `index.lock` ou
+   `HEAD.lock` déjà existant alors qu'aucun autre processus git ne tourne
+   (`ps aux | grep git`), c'est un lock résiduel d'une commande précédente,
+   pas une vraie collision : supprimez les fichiers `*.lock` sous `.git/`
+   (et les `tmp_obj_*` sous `.git/objects/` si présents) puis recommittez.
+   Sur ce dépôt, ça demande la permission de suppression sur le dossier
+   connecté (observé et débloqué plusieurs fois).
 
-## Reste à faire (proposé, pas encore fait)
+## État de la migration
 
-Les fichiers suivants portent encore les anciens correctifs "au cas par cas"
-(id ou classes doublées) plutôt que le fix systémique par cascade layers :
-`prototypes/verification-code.html`, `prototypes/inscription-benevole-etape-1.html`,
+Tous les fichiers du dépôt utilisent désormais le pattern cascade layers
+(plus aucun `<link>` vers compiled.css/dsfr.min.css, plus aucune astuce de
+spécificité au cas par cas). Les cinq fichiers qui portaient encore les
+anciens correctifs (`prototypes/verification-code.html`,
+`prototypes/inscription-benevole-etape-1.html`,
 `design-system/composants/dsfrbutton.html`,
 `design-system/composants/buttoncreateuseralert.html`,
-`design-system/composants/dsfriconbutton.html`. Fonctionnellement corrects
-aujourd'hui, mais toute nouvelle classe utilitaire ajoutée plus tard sur ces
-pages reste exposée au même bug. À migrer vers le pattern cascade layers
-quand l'un de ces fichiers est de toute façon rouvert pour une autre raison,
-ou en une passe dédiée si vous préférez le faire maintenant.
+`design-system/composants/dsfriconbutton.html`) ont été migrés. Tout nouveau
+prototype doit repartir de `_prototype-starter.html`, qui a le pattern déjà en
+place.

@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Prototype — [Titre à remplacer]</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>document.documentElement.setAttribute("data-fr-theme", matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");</script>
+<style>
+  /* ==========================================================================
+     BASE À NE PAS RETIRER — lire design-system/GUIDE-PROTOTYPAGE.md pour le
+     détail. Résumé : compiled.css/dsfr.min.css appliquent des styles de base
+     génériques (soulignement de tout [href], hover générique sur [href]/
+     button) dont la spécificité CSS bat parfois nos classes utilitaires
+     (hover de boutons, cartes, tags — bug vécu et corrigé sur le prototype
+     homepage.html, voir son historique git). Les deux feuilles DSFR sont donc
+     chargées dans DEUX cascade layers distincts plutôt que via <link>, dans
+     CET ORDRE précis (dsfr-base avant dsfr-utilitaires : la couche déclarée
+     en second gagne toujours, quelle que soit la spécificité — ça reproduit
+     la hiérarchie base < utilities d'un vrai build Tailwind). Tout ce que
+     vous écrivez plus bas dans ce <style> reste hors de toute couche, donc
+     gagne TOUJOURS contre le DSFR de base : plus jamais besoin d'astuces de
+     spécificité (id, classes doublées, etc.).
+     ========================================================================== */
+  @import url("../design-system/dsfr.min.css") layer(dsfr-base);
+  @import url("../design-system/compiled.css") layer(dsfr-utilitaires);
+
+  /* .dsfr-link n'existe pas dans compiled.css/dsfr.min.css : c'est du CSS scoped du
+     vrai composant Vue (components/dsfr/Link.vue), repris tel quel car il n'est pas
+     exporté dans le bundle global. À utiliser sur tout vrai lien texte (nav,
+     "voir plus", liens de contenu). */
+  .dsfr-link{text-rendering:optimizeLegibility;background-image:linear-gradient(0deg,currentColor,currentColor),linear-gradient(0deg,currentColor,currentColor);background-position:0 100%,0 calc(100% - .0625em);background-repeat:no-repeat,no-repeat;background-size:0 .125em,100% .0625em}
+  .dsfr-link:hover{background-size:100% .125em,100% .0625em}
+  .dsfr-link:active{background-color:#ededed}
+
+  /* Les vrais boutons DsfrButton.vue sont rendus en <button> par défaut (jamais
+     concernés par les règles [href] ci-dessus) et ne deviennent des <a href>
+     que lorsqu'ils naviguent (via NuxtLink). Dans un prototype statique, on
+     rend souvent CES boutons en <a href="#"> pour simuler la navigation : cette
+     règle neutralise alors le soulignement/la ligne de fond que DSFR applique
+     par défaut à tout [href], pour retrouver le rendu réel. Elle cible les deux
+     classes présentes sur TOUS les vrais boutons DsfrButton.vue
+     ('font-medium transition-extended'), jamais .dsfr-link. Si vous rendez vos
+     boutons en <button> plutôt qu'en <a>, cette règle ne sert à rien mais ne
+     gêne pas non plus — gardez-la par défaut. */
+  a.font-medium.transition-extended{background-image:none}
+
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font-family:Marianne,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#fff;font-synthesis:none}
+  @font-face { font-family: Marianne; src: url('../design-system/fonts/Marianne-Light.woff2') format('woff2'); font-weight: 300; font-style: normal; font-display: swap; }
+  @font-face { font-family: Marianne; src: url('../design-system/fonts/Marianne-Regular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: Marianne; src: url('../design-system/fonts/Marianne-Medium.woff2') format('woff2'); font-weight: 500; font-style: normal; font-display: swap; }
+  @font-face { font-family: Marianne; src: url('../design-system/fonts/Marianne-Bold.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
+
+  /* ==========================================================================
+     À VOUS DE JOUER — styles propres à ce prototype à partir d'ici.
+     Rappels (détail dans GUIDE-PROTOTYPAGE.md) :
+     - Avant d'utiliser une classe utilitaire Tailwind (bg-*, hover:*, shadow-*,
+       responsive...), vérifiez qu'elle existe vraiment dans compiled.css/
+       dsfr.min.css : le bundle est PARTIEL. En cas de doute, faites tourner
+       design-system/outils/audit-classes.py sur ce fichier.
+     - Pour la mise en page/espacements/typo propres au prototype (pas des
+       vrais composants), écrivez du CSS simple documenté plutôt que de deviner
+       des classes Tailwind absentes du bundle.
+     - Pour un vrai composant (bouton, carte, tag...), reprenez sa structure et
+       ses classes/valeurs EXACTES depuis le code source du composant Vue réel
+       (lecture seule, dossier jeveuxaider/) plutôt que d'improviser un pattern
+       "qui ressemble". Documentez la source dans un commentaire.
+     - Avant de committer : équilibrage des balises (outils/checktags.py),
+       audit de classes (outils/audit-classes.py), et un passage Playwright qui
+       hover RÉELLEMENT chaque bouton/tag/carte interactif (pas juste un
+       screenshot statique — c'est justement ce qui a fait rater les bugs de
+       hover à plusieurs reprises sur ce dépôt).
+     ========================================================================== */
+</style>
+</head>
+<body>
+
+<!-- Le bandeau RF + header JVA n'est volontairement pas inclus ici : il est
+     "hors sujet" dans la plupart des prototypes de contenu. Copiez-le depuis
+     prototypes/homepage.html si votre prototype en a besoin. -->
+
+<main>
+
+  <!-- Votre contenu ici -->
+
+</main>
+
+</body>
+</html>

@@ -37,33 +37,11 @@
      supportent nativement les cascade layers. ----------------------------- */
   @import url("../design-system/dsfr.min.css") layer(dsfr-base);
   @import url("../design-system/compiled.css") layer(dsfr-utilitaires);
-
-  /* .dsfr-link n'existe pas dans compiled.css/dsfr.min.css : c'est du CSS scoped du
-     vrai composant Vue (components/dsfr/Link.vue), repris tel quel car il n'est pas
-     exporté dans le bundle global. */
-  .dsfr-link{text-rendering:optimizeLegibility;background-image:linear-gradient(0deg,currentColor,currentColor),linear-gradient(0deg,currentColor,currentColor);background-position:0 100%,0 calc(100% - .0625em);background-repeat:no-repeat,no-repeat;background-size:0 .125em,100% .0625em}
-  .dsfr-link:hover{background-size:100% .125em,100% .0625em}
-  .dsfr-link:active{background-color:#ededed}
-
-  /* Les vrais boutons DsfrButton.vue sont rendus en <button> par défaut (jamais
-     concernés par la règle [href] ci-dessus) et ne deviennent des <a href> que
-     lorsqu'ils naviguent (via NuxtLink, comme "Trouver une mission" ou
-     "Inscription" ici). Dans ce prototype statique, tous ces boutons sont des
-     <a href="#">, donc on neutralise explicitement le soulignement/la ligne de
-     fond que le layer "dsfr" applique par défaut à tout élément [href] — sans
-     quoi elle reste visible sous le texte même au repos (le bug remonté par
-     Nicolas). Sélecteur basé sur les deux classes présentes sur TOUS les vrais
-     boutons DsfrButton.vue ('font-medium transition-extended'), jamais sur
-     .dsfr-link. */
-  a.font-medium.transition-extended{background-image:none}
+  @import url("../design-system/patches.css") layer(site-patches);
 
   *{box-sizing:border-box}
   html,body{margin:0;padding:0}
   body{font-family:Marianne,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#fff;font-synthesis:none}
-  @font-face { font-family: Marianne; src: url('../design-system/fonts/Marianne-Light.woff2') format('woff2'); font-weight: 300; font-style: normal; font-display: swap; }
-  @font-face { font-family: Marianne; src: url('../design-system/fonts/Marianne-Regular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
-  @font-face { font-family: Marianne; src: url('../design-system/fonts/Marianne-Medium.woff2') format('woff2'); font-weight: 500; font-style: normal; font-display: swap; }
-  @font-face { font-family: Marianne; src: url('../design-system/fonts/Marianne-Bold.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
 
   /* --- Couleurs réelles absentes du compiled.css (bundle partiel) — reproduites à la
      main, sourcées de tailwind.config.ts (frontend), à date du 17/09/2026 --- */

@@ -1,0 +1,54 @@
+/* patches.css — correctifs centralisés pour les trous du bundle DSFR vendored
+   (dsfr.min.css + compiled.css). Un bug/trou découvert une fois se corrige
+   ici, une seule fois, plutôt que d'être recopié dans chaque page — voir
+   design-system/GUIDE-PROTOTYPAGE.md et claude/plan-refacto-design-system.md
+   (Project Claude) pour le contexte complet.
+
+   À charger en dernier, après les deux feuilles DSFR, dans le <style> de la
+   page :
+     @import url("dsfr.min.css") layer(dsfr-base);
+     @import url("compiled.css") layer(dsfr-utilitaires);
+     @import url("patches.css") layer(site-patches);
+   (adapter le chemin relatif de dsfr.min.css/compiled.css/patches.css selon
+   la position du fichier qui importe — patches.css est toujours dans
+   design-system/.)
+
+   Pour une page qui n'a pas encore migré vers les cascade layers (ancien
+   pattern <link>), un simple <link rel="stylesheet" href="...patches.css">
+   ajouté APRÈS les <link> dsfr.min.css/compiled.css suffit aussi pour les
+   correctifs ci-dessous : ce sont des propriétés additives sur des sélecteurs
+   à spécificité simple, pas le bug de hover/soulignement (qui lui a
+   spécifiquement besoin des cascade layers, cf. GUIDE-PROTOTYPAGE.md). */
+
+/* Polices Marianne — chemins relatifs à CE fichier (design-system/patches.css),
+   donc valables depuis n'importe quelle page qui l'importe, peu importe sa
+   profondeur dans l'arborescence. */
+@font-face { font-family: Marianne; src: url('fonts/Marianne-Light.woff2') format('woff2'); font-weight: 300; font-style: normal; font-display: swap; }
+@font-face { font-family: Marianne; src: url('fonts/Marianne-Regular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: Marianne; src: url('fonts/Marianne-Medium.woff2') format('woff2'); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: Marianne; src: url('fonts/Marianne-Bold.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
+
+/* .dsfr-link n'existe pas dans compiled.css/dsfr.min.css : c'est du CSS scoped
+   du vrai composant Vue (components/dsfr/Link.vue), repris tel quel car il
+   n'est pas exporté dans le bundle global. À utiliser sur tout vrai lien
+   texte (nav, "voir plus", liens de contenu). */
+.dsfr-link{text-rendering:optimizeLegibility;background-image:linear-gradient(0deg,currentColor,currentColor),linear-gradient(0deg,currentColor,currentColor);background-position:0 100%,0 calc(100% - .0625em);background-repeat:no-repeat,no-repeat;background-size:0 .125em,100% .0625em}
+.dsfr-link:hover{background-size:100% .125em,100% .0625em}
+.dsfr-link:active{background-color:#ededed}
+
+/* Les vrais boutons DsfrButton.vue sont rendus en <button> par défaut (jamais
+   concernés par les règles [href] de dsfr.min.css) et ne deviennent des
+   <a href> que lorsqu'ils naviguent (via NuxtLink). Un prototype statique
+   rend souvent CES boutons en <a href="#"> pour simuler la navigation :
+   cette règle neutralise alors le soulignement/la ligne de fond que DSFR
+   applique par défaut à tout [href], pour retrouver le rendu réel. Cible les
+   deux classes présentes sur TOUS les vrais boutons DsfrButton.vue
+   ('font-medium transition-extended'), jamais .dsfr-link. Si vos boutons
+   sont rendus en <button> plutôt qu'en <a>, cette règle ne sert à rien mais
+   ne gêne pas non plus. */
+a.font-medium.transition-extended{background-image:none}
+
+/* dsfr.min.css ne force pas display:block sur .fr-stepper__state : sans ça,
+   le texte de l'état ("Étape X sur Y") reste en ligne avec le titre au lieu
+   de passer dessous. */
+.fr-stepper__state{display:block}

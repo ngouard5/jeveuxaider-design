@@ -14,14 +14,8 @@
      avant cette migration). */
   @import url("../dsfr.min.css") layer(dsfr-base);
   @import url("../compiled.css") layer(dsfr-utilitaires);
+  @import url("../patches.css") layer(site-patches);
 
-  @font-face { font-family: Marianne; src: url('../fonts/Marianne-Light.woff2') format('woff2'); font-weight: 300; font-style: normal; font-display: swap; }
-  @font-face { font-family: Marianne; src: url('../fonts/Marianne-Regular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
-  @font-face { font-family: Marianne; src: url('../fonts/Marianne-Medium.woff2') format('woff2'); font-weight: 500; font-style: normal; font-display: swap; }
-  @font-face { font-family: Marianne; src: url('../fonts/Marianne-Bold.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
-  .dsfr-link{text-rendering:optimizeLegibility;background-image:linear-gradient(0deg,currentColor,currentColor),linear-gradient(0deg,currentColor,currentColor);background-position:0 100%,0 calc(100% - .0625em);background-repeat:no-repeat,no-repeat;background-size:0 .125em,100% .0625em}
-  .dsfr-link:hover{background-size:100% .125em,100% .0625em}
-  .dsfr-link:active{background-color:#ededed}
 </style>
 <style>
 :root{

@@ -6,15 +6,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="../compiled.css">
 <link rel="stylesheet" href="../dsfr.min.css">
+<link rel="stylesheet" href="../patches.css">
 <script>document.documentElement.setAttribute("data-fr-theme", matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");</script>
 <style>
-  @font-face { font-family: Marianne; src: url('../fonts/Marianne-Light.woff2') format('woff2'); font-weight: 300; font-style: normal; font-display: swap; }
-  @font-face { font-family: Marianne; src: url('../fonts/Marianne-Regular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
-  @font-face { font-family: Marianne; src: url('../fonts/Marianne-Medium.woff2') format('woff2'); font-weight: 500; font-style: normal; font-display: swap; }
-  @font-face { font-family: Marianne; src: url('../fonts/Marianne-Bold.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
-  .dsfr-link{text-rendering:optimizeLegibility;background-image:linear-gradient(0deg,currentColor,currentColor),linear-gradient(0deg,currentColor,currentColor);background-position:0 100%,0 calc(100% - .0625em);background-repeat:no-repeat,no-repeat;background-size:0 .125em,100% .0625em}
-  .dsfr-link:hover{background-size:100% .125em,100% .0625em}
-  .dsfr-link:active{background-color:#ededed}
 </style>
 <style>
 :root{
@@ -89,7 +83,6 @@ h4{font-size:.8rem;text-transform:uppercase;letter-spacing:.04em;color:var(--mut
 
 .fr-badge.fr-badge--info:before,.fr-badge.fr-badge--success:before,.fr-badge.fr-badge--error:before,.fr-badge.fr-badge--warning:before,.fr-badge.fr-badge--new:before{content:none}
 
-
 .wip-tag{display:inline-block;font-size:.72rem;font-weight:700;padding:.15rem .6rem;border-radius:99px;background:#FFF2CF;color:#8A6100;margin-bottom:1rem}
 @media (prefers-color-scheme: dark){ .wip-tag{background:#463A10;color:#F5CF6B} }
 .meta-row{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;margin:.5rem 0 1rem}
@@ -163,10 +156,6 @@ table.migration th{background:var(--code-bg)}
   .main{padding:1.5rem 1.25rem 4rem}
 }
 
-/* dsfr.min.css ne force pas display:block sur .fr-stepper__state ici : sans ça, le texte de
-   l'état ("Étape X sur Y") reste en ligne avec le titre au lieu de passer dessous.
-   Même correctif que dans prototypes/inscription-benevole-etape-1.html, pour rester cohérent. */
-.fr-stepper__state{display:block}
 </style>
 </head>
 <body data-chemin="proposé : components/dsfr/Stepper.vue (non créé)" data-tagname="DsfrStepper">

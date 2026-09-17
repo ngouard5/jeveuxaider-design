@@ -14,19 +14,7 @@
      avant cette migration). */
   @import url("../design-system/dsfr.min.css") layer(dsfr-base);
   @import url("../design-system/compiled.css") layer(dsfr-utilitaires);
-
-  /* .dsfr-link n'existe pas dans compiled.css/dsfr.min.css : c'est du CSS scoped du
-     vrai composant Vue (components/dsfr/Link.vue), repris tel quel car il n'est pas
-     exporté dans le bundle global. Le fr-stepper, les boutons, les couleurs et les
-     champs viennent en revanche directement des feuilles de style réelles liées
-     ci-dessus (aucune redéfinition ici). */
-  .dsfr-link{text-rendering:optimizeLegibility;background-image:linear-gradient(0deg,currentColor,currentColor),linear-gradient(0deg,currentColor,currentColor);background-position:0 100%,0 calc(100% - .0625em);background-repeat:no-repeat,no-repeat;background-size:0 .125em,100% .0625em}
-  .dsfr-link:hover{background-size:100% .125em,100% .0625em}
-  .dsfr-link:active{background-color:#ededed}
-
-  /* dsfr.min.css ne force pas display:block sur .fr-stepper__state ici : sans ça, le texte de
-     l'état ("Étape 1 sur 5") reste en ligne avec le titre au lieu de passer dessous. */
-  .fr-stepper__state{display:block}
+  @import url("../design-system/patches.css") layer(site-patches);
 
   /* Mise en page propre à ce prototype (2 colonnes) — ce n'est pas un composant du design-system */
   *{box-sizing:border-box}

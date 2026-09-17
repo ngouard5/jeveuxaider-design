@@ -4,10 +4,17 @@
 <title>DsfrButton — Composants JeVeuxAider</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="../compiled.css">
-<link rel="stylesheet" href="../dsfr.min.css">
 <script>document.documentElement.setAttribute("data-fr-theme", matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");</script>
 <style>
+  /* Feuilles DSFR chargées en deux cascade layers plutôt qu'en <link> — voir
+     design-system/GUIDE-PROTOTYPAGE.md pour le détail. Nos styles ci-dessous
+     restent hors de toute couche et gagnent donc toujours contre la base DSFR,
+     sans avoir besoin d'un sélecteur à spécificité renforcée pour les hovers
+     de boutons (c'est ce qui corrigeait le survol du bouton "Primary" ici
+     avant cette migration). */
+  @import url("../dsfr.min.css") layer(dsfr-base);
+  @import url("../compiled.css") layer(dsfr-utilitaires);
+
   @font-face { font-family: Marianne; src: url('../fonts/Marianne-Light.woff2') format('woff2'); font-weight: 300; font-style: normal; font-display: swap; }
   @font-face { font-family: Marianne; src: url('../fonts/Marianne-Regular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
   @font-face { font-family: Marianne; src: url('../fonts/Marianne-Medium.woff2') format('woff2'); font-weight: 500; font-style: normal; font-display: swap; }
@@ -15,14 +22,6 @@
   .dsfr-link{text-rendering:optimizeLegibility;background-image:linear-gradient(0deg,currentColor,currentColor),linear-gradient(0deg,currentColor,currentColor);background-position:0 100%,0 calc(100% - .0625em);background-repeat:no-repeat,no-repeat;background-size:0 .125em,100% .0625em}
   .dsfr-link:hover{background-size:100% .125em,100% .0625em}
   .dsfr-link:active{background-color:#ededed}
-
-  /* dsfr.min.css applique un survol gris générique à tous les boutons :
-     "button:not(:disabled):hover{background-color:var(--hover-tint)}" (spécificité 0,2,1).
-     La classe utilitaire hover:bg-jva-blue-800 seule (0,2,0) perd donc face à cette règle
-     globale du DSFR — d'où un survol gris au lieu du bleu sur le bouton "Primary" ci-dessous.
-     On force la bonne couleur avec un sélecteur combinant les deux classes déjà posées sur
-     le bouton (bg-jva-blue-500 + hover:bg-jva-blue-800), plus spécifique que la règle DSFR. */
-  .bg-jva-blue-500.hover\:bg-jva-blue-800:not(:disabled):hover{background-color:var(--background-action-high-blue-france-hover)}
 </style>
 <style>
 :root{

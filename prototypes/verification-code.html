@@ -4,10 +4,17 @@
 <meta charset="utf-8">
 <title>Prototype — Validez votre e-mail (OTP)</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="../design-system/compiled.css">
-<link rel="stylesheet" href="../design-system/dsfr.min.css">
 <script>document.documentElement.setAttribute("data-fr-theme", matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");</script>
 <style>
+  /* Feuilles DSFR chargées en deux cascade layers plutôt qu'en <link> — voir
+     design-system/GUIDE-PROTOTYPAGE.md pour le détail. Nos styles ci-dessous
+     restent hors de toute couche et gagnent donc toujours contre la base DSFR,
+     sans avoir besoin d'id ou de sélecteurs de spécificité renforcée pour les
+     hovers de boutons (c'est ce qui gérait le survol de #btn-valider ici avant
+     cette migration). */
+  @import url("../design-system/dsfr.min.css") layer(dsfr-base);
+  @import url("../design-system/compiled.css") layer(dsfr-utilitaires);
+
   /* .dsfr-link n'existe pas dans compiled.css/dsfr.min.css : c'est du CSS scoped du
      vrai composant Vue (components/dsfr/Link.vue), repris tel quel car il n'est pas
      exporté dans le bundle global. Tout le reste (boutons, couleurs, input) vient
@@ -52,14 +59,6 @@
      components/dsfr/Button.vue applique en réalité text-[#656565] pour ce même état — écart
      entre la maquette et le code à vérifier avec l'équipe dev. */
   #btn-valider:disabled{background:#E5E5E5;color:#929292}
-
-  /* dsfr.min.css applique un survol gris générique à tous les boutons :
-     "button:not(:disabled):hover{background-color:var(--hover-tint)}" (spécificité 0,2,1).
-     Notre classe utilitaire hover:bg-jva-blue-800 (0,2,0) perd donc face à cette règle
-     globale du DSFR, quel que soit l'ordre de chargement des feuilles de style — d'où le
-     survol gris au lieu du bleu. On force ici la bonne couleur avec un sélecteur plus
-     spécifique. À vérifier avec l'équipe dev si ce même conflit existe dans l'app réelle. */
-  #btn-valider:not(:disabled):hover{background-color:var(--background-action-high-blue-france-hover)}
 
   .error-msg{display:flex;align-items:flex-start;gap:8px;text-align:left;font-size:14px;line-height:20px;color:#CE0500;margin:0}
   .error-msg[hidden],.success-msg[hidden]{display:none}

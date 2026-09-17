@@ -4,16 +4,58 @@
 <meta charset="utf-8">
 <title>Prototype — Nouvelle Homepage</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="../design-system/compiled.css">
-<link rel="stylesheet" href="../design-system/dsfr.min.css">
 <script>document.documentElement.setAttribute("data-fr-theme", matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");</script>
 <style>
+  /* ==========================================================================
+     COUCHES DSFR — isolées dans deux cascade layers plutôt que chargées via
+     <link>. Raison : compiled.css/dsfr.min.css appliquent des règles de base
+     génériques (ex. a[href]:hover{background-color:var(--hover-tint)},
+     [href]{background-image:<trait de soulignement>}) qui, en CSS "normal",
+     battent parfois nos classes utilitaires (hover de boutons, cartes, tags) à
+     cause d'une spécificité légèrement supérieure — c'est le bug qui a cassé le
+     hover des boutons bleus et fait apparaître un soulignement/une ligne
+     parasite sous les boutons et les titres de cartes.
+     Deux couches, PAS une seule : dsfr.min.css contient à la fois les resets
+     génériques ([href]:hover, [href]{background-image...}) ET des styles de
+     composants réels (ex. a.fr-tag:hover{background-color:#c1c1fb}) ; compiled.css
+     contient les utilitaires Tailwind (ex. .hover\:bg-jva-blue-800:hover). Si les
+     deux sont importés dans LA MÊME couche, le conflit entre ces deux fichiers
+     reste entier à l'intérieur de la couche (la spécificité y départage encore,
+     et a[href]:hover de dsfr.min.css, plus spécifique, continue de battre
+     .hover\:bg-jva-blue-800:hover de compiled.css). En les mettant dans deux
+     couches distinctes, déclarées dans CET ORDRE (dsfr-base avant
+     dsfr-utilitaires), la couche déclarée en second gagne TOUJOURS sur la
+     première, quelle que soit la spécificité — exactement la hiérarchie
+     base < utilities d'un vrai build Tailwind (que compiled.css/dsfr.min.css,
+     étant un export figé, ne reproduisent plus une fois sortis du build).
+     Nos propres styles ci-dessous restent hors de toute couche : une règle non
+     assignée à une couche gagne toujours contre une règle qui l'est, quelle que
+     soit sa spécificité — nos surcharges n'ont donc plus jamais besoin
+     d'astuces de spécificité (id, classes doublées, etc.) pour battre la base
+     DSFR. C'est le nouveau standard pour tous les prototypes de ce dépôt (voir
+     design-system/GUIDE-PROTOTYPAGE.md). Chrome/Edge/Safari/Firefox récents
+     supportent nativement les cascade layers. ----------------------------- */
+  @import url("../design-system/dsfr.min.css") layer(dsfr-base);
+  @import url("../design-system/compiled.css") layer(dsfr-utilitaires);
+
   /* .dsfr-link n'existe pas dans compiled.css/dsfr.min.css : c'est du CSS scoped du
      vrai composant Vue (components/dsfr/Link.vue), repris tel quel car il n'est pas
      exporté dans le bundle global. */
   .dsfr-link{text-rendering:optimizeLegibility;background-image:linear-gradient(0deg,currentColor,currentColor),linear-gradient(0deg,currentColor,currentColor);background-position:0 100%,0 calc(100% - .0625em);background-repeat:no-repeat,no-repeat;background-size:0 .125em,100% .0625em}
   .dsfr-link:hover{background-size:100% .125em,100% .0625em}
   .dsfr-link:active{background-color:#ededed}
+
+  /* Les vrais boutons DsfrButton.vue sont rendus en <button> par défaut (jamais
+     concernés par la règle [href] ci-dessus) et ne deviennent des <a href> que
+     lorsqu'ils naviguent (via NuxtLink, comme "Trouver une mission" ou
+     "Inscription" ici). Dans ce prototype statique, tous ces boutons sont des
+     <a href="#">, donc on neutralise explicitement le soulignement/la ligne de
+     fond que le layer "dsfr" applique par défaut à tout élément [href] — sans
+     quoi elle reste visible sous le texte même au repos (le bug remonté par
+     Nicolas). Sélecteur basé sur les deux classes présentes sur TOUS les vrais
+     boutons DsfrButton.vue ('font-medium transition-extended'), jamais sur
+     .dsfr-link. */
+  a.font-medium.transition-extended{background-image:none}
 
   *{box-sizing:border-box}
   html,body{margin:0;padding:0}
@@ -71,12 +113,7 @@
      jva-blue-500. La classe utilitaire correspondante n'existe pas dans le bundle
      partiel, d'où cette reproduction en CSS simple avec les mêmes valeurs hex. */
   .btn-transparent-outline{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:transparent;border:1px solid #fff;color:#fff;font-weight:500;text-decoration:none;padding:11px 24px;font-size:16px;min-height:42px;transition:background-color .15s}
-  /* Sélecteur en classe doublée : dsfr.min.css applique une règle générique
-     a[href]:hover{background-color:var(--hover-tint)} (spécificité 0,2,1) qui bat
-     une simple classe .btn-transparent-outline:hover (0,2,0) sur les vrais <a href>.
-     Même bug de spécificité que le hover des boutons bleus corrigé précédemment
-     dans ce dépôt (voir commits sur dsfrbutton.html) — ici sur les liens. */
-  .btn-transparent-outline.btn-transparent-outline:hover{background:#2323ff}
+  .btn-transparent-outline:hover{background:#2323ff}
 
   /* Tag — réplique de DsfrTag.vue (contexte "default" et "clickable", taille sm/md) */
   .tag{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;font-weight:500;text-decoration:none;width:fit-content}
@@ -84,10 +121,8 @@
   .tag--md{padding:4px 12px;font-size:14px;height:32px;gap:8px}
   .tag--default{color:#161616;background:#EEEEEE}
   .tag--clickable{color:#000091;background:#E3E3FD}
-  /* Même contournement de spécificité que .btn-transparent-outline ci-dessus,
-     nécessaire car les pastilles d'activités sont des <a href="#">. */
-  .tag--clickable.tag--clickable:hover{background:#C1C1FB}
-  .tag--clickable.tag--clickable:active{background:#ADADF9}
+  .tag--clickable:hover{background:#C1C1FB}
+  .tag--clickable:active{background:#ADADF9}
 
   /* Hero — fusionné avec la campagne du moment (voir commentaire dans le HTML) */
   .hero{position:relative;color:#fff;overflow:hidden}
@@ -123,7 +158,7 @@
   .card-mission:hover .card-mission__thumb span{transform:scale(1.1)}
   .card-mission__body{padding:20px;display:flex;flex-direction:column;gap:12px}
   .card-mission__title{font-weight:700;color:#161616;font-size:16px;line-height:1.35;margin:0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-  .card-mission__title a{color:inherit;text-decoration:none}
+  .card-mission__title a{color:inherit;text-decoration:none;background-image:none}
   .card-mission__title a::after{content:"";position:absolute;inset:0}
   .card-mission__meta{display:flex;flex-direction:column;gap:8px;margin-top:2px}
   .card-mission__meta-row{display:flex;align-items:center;gap:8px;color:#666666;font-size:14px;line-height:1.3}
@@ -155,7 +190,7 @@
   .card-article__thumb span{font-size:44px;display:block;transition:transform .25s ease}
   .card-article:hover .card-article__thumb span{transform:scale(1.1)}
   .card-article__title{font-weight:700;color:#161616;font-size:20px;line-height:1.35;margin:20px 0 0}
-  .card-article__title a{color:inherit;text-decoration:none}
+  .card-article__title a{color:inherit;text-decoration:none;background-image:none}
   .card-article__title a::after{content:"";position:absolute;inset:0}
 
   /* Fresque */
@@ -486,18 +521,18 @@
     <p class="section-lede" style="color:#4D4D4D">Restez informé de l’actualité de tous ceux qui font vivre l’engagement en France</p>
 
     <div class="news__grid">
-      <a href="#" class="card-article">
+      <div class="card-article">
         <div class="card-article__thumb bg-jva-blue-500"><span class="text-white" aria-hidden="true">📘</span></div>
         <h3 class="card-article__title"><a href="#">Mesure d’impact 2025 : tout ce que vous avez toujours voulu savoir sur nous, sur vous, sur le bénévolat</a></h3>
-      </a>
-      <a href="#" class="card-article">
+      </div>
+      <div class="card-article">
         <div class="card-article__thumb domain-education"><span aria-hidden="true">🎒</span></div>
         <h3 class="card-article__title"><a href="#">Septembre pour Apprendre : la rentrée solidaire bat son plein partout en France</a></h3>
-      </a>
-      <a href="#" class="card-article">
+      </div>
+      <div class="card-article">
         <div class="card-article__thumb domain-nature"><span aria-hidden="true">🌳</span></div>
         <h3 class="card-article__title"><a href="#">Protection de la nature : les missions qui recrutent le plus ce mois-ci</a></h3>
-      </a>
+      </div>
     </div>
     <a href="#" class="font-medium transition-extended ease-out inline-flex items-center justify-center shadow-[inset_0_0_0_1px_#000091] bg-white text-jva-blue-500 hover:bg-[#F6F6F6] active:bg-[#EDEDED] px-4 py-2 text-base min-h-[42px]" style="margin-top:40px">Plus d’articles</a>
   </div>

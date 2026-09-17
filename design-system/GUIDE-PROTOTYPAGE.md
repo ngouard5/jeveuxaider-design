@@ -80,7 +80,13 @@ soulignement parasite sous les titres de cartes et sous les boutons eux-mêmes
 ```css
 @import url("../design-system/dsfr.min.css") layer(dsfr-base);
 @import url("../design-system/compiled.css") layer(dsfr-utilitaires);
+@import url("../design-system/patches.css") layer(site-patches);
 ```
+
+La 3e couche, `patches.css`, centralise les correctifs pour les trous du
+bundle DSFR (reset `.dsfr-link`, `@font-face` Marianne, etc.) — voir
+`design-system/patches.css` pour le détail. Un nouveau correctif de ce type
+va dans ce fichier, jamais copié-collé dans une page.
 
 Tout le CSS du prototype écrit après reste hors de toute couche. Règle des
 cascade layers CSS : une règle non assignée à une couche gagne TOUJOURS
@@ -98,9 +104,10 @@ Un cas reste à traiter à la main : un vrai bouton `DsfrButton.vue` est un
 `<button>` en production (jamais concerné par `[href]`) et ne devient un
 `<a href>` que pour la navigation. Un prototype statique rend souvent CES
 boutons en `<a href="#">` pour simuler des liens de navigation, ce qui les
-expose quand même au soulignement `[href]` de base. Le starter neutralise
-déjà ça via `a.font-medium.transition-extended{background-image:none}`
-(ces deux classes sont présentes sur tous les vrais boutons DsfrButton.vue).
+expose quand même au soulignement `[href]` de base. Ce correctif vit dans `design-system/patches.css`
+(`a.font-medium.transition-extended{background-image:none}` — ces deux
+classes sont présentes sur tous les vrais boutons DsfrButton.vue), chargé
+par le starter : rien à recopier.
 Pour un titre de carte en stretched-link (`CardMission`, `CardArticleLight`),
 ajoutez `background-image:none` explicitement à côté du `text-decoration:none`
 habituel.
@@ -112,7 +119,11 @@ habituel.
    `<img ... />` déclenche une fausse erreur ("stray closing `</img>`") à
    cause d'une particularité de `html.parser.HTMLParser` (`handle_startendtag`
    n'est pas surchargé). Écrivez toujours les balises void sans `/>` final
-   (`<img ...>`), comme partout ailleurs dans ce dépôt.
+   (`<img ...>`), comme partout ailleurs dans ce dépôt. Autre faux positif
+   connu, cette fois sur `_layouts/default.html` uniquement : le script ne
+   comprend pas la syntaxe Liquid (`{% if %}` dans une balise `<body>`) et
+   remonte une erreur de balises sans rapport avec le HTML réellement rendu
+   — sans impact, vérifiez plutôt le rendu en prod après déploiement.
 2. `python3 design-system/outils/audit-classes.py votre-prototype.html` —
    aucune classe utilitaire non vérifiée.
 3. Un passage Playwright qui **hover réellement** chaque élément interactif
@@ -133,15 +144,42 @@ habituel.
    Sur ce dépôt, ça demande la permission de suppression sur le dossier
    connecté (observé et débloqué plusieurs fois).
 
+## Éditer une page de doc existante (composants, fondamentaux, gabarits, ressources)
+
+Ce guide, jusqu'ici, parle de créer un nouveau *prototype*. Pour modifier une
+page de *documentation* existante (`design-system/composants/*.html`,
+`fondamentaux/*.html`, `gabarits/*.html`, `homogenisation.html`,
+`migration-dsfr.html`, `guide-prompts.html`, `index.html`), c'est différent :
+ces pages sont générées par Jekyll (GitHub Pages les build automatiquement).
+
+- Le fichier d'une page de doc ne contient **que son contenu propre** (ce qui
+  était avant dans `<main>`) + un court front matter en tête
+  (`layout: default`, `title: "..."`, parfois `data_chemin`/`data_tagname`).
+  Éditez ce contenu normalement.
+- Le `<head>` et la sidebar de navigation, eux, sont **partagés par toutes
+  les pages** et vivent dans deux fichiers à la racine du dépôt :
+  `_layouts/default.html` (head, CSS de mise en page commune) et
+  `_includes/sidebar.html` (menu). **Ne jamais recopier un changement de
+  menu ou de tête de page dans un fichier individuel** — toujours éditer ces
+  deux fichiers, le changement s'applique alors automatiquement aux 180
+  pages concernées. C'est tout le sens de ce refacto : avant, une correction
+  de sidebar oubliée sur 165 pages sur 166 est passée inaperçue plusieurs
+  jours (voir `claude/plan-refacto-design-system.md` sur le Project Claude).
+- Un nouveau correctif pour un trou du bundle DSFR (dans le style de
+  `.fr-stepper__state{display:block}`) va dans `design-system/patches.css`,
+  jamais dans le `<style>` d'une page.
+
 ## État de la migration
 
-Tous les fichiers du dépôt utilisent désormais le pattern cascade layers
-(plus aucun `<link>` vers compiled.css/dsfr.min.css, plus aucune astuce de
-spécificité au cas par cas). Les cinq fichiers qui portaient encore les
-anciens correctifs (`prototypes/verification-code.html`,
-`prototypes/inscription-benevole-etape-1.html`,
-`design-system/composants/dsfrbutton.html`,
-`design-system/composants/buttoncreateuseralert.html`,
-`design-system/composants/dsfriconbutton.html`) ont été migrés. Tout nouveau
-prototype doit repartir de `prototype-starter.html`, qui a le pattern déjà en
-place.
+Toutes les pages de doc du design-system (180 : composants, fondamentaux,
+gabarits, ressources, vue d'ensemble) sont générées par le layout Jekyll
+partagé (`_layouts/default.html` + `_includes/sidebar.html`) — plus aucun
+head ni sidebar dupliqué page par page. `design-system/patches.css`
+centralise les correctifs pour les trous du bundle DSFR (reset `.dsfr-link`,
+`@font-face` Marianne, `background-image:none`, `.fr-stepper__state`).
+
+Les prototypes (`prototypes/*.html`) et `prototype-starter.html` restent en
+HTML autonome par choix (ils doivent reproduire fidèlement une page produit,
+pas le chrome du site de doc), mais chargent tous `patches.css` en 3e
+cascade layer. Tout nouveau prototype doit repartir de
+`prototype-starter.html`, qui a le pattern déjà en place.

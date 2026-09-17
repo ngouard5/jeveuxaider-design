@@ -49,3 +49,23 @@ actuel (https://www.systeme-de-design.gouv.fr/).
 4. Composants déjà documentés : **[`design-system/index.html`](design-system/index.html)**
    (164 composants réutilisables) — toujours vérifier si un composant existe
    déjà avant d'en improviser un.
+
+## Architecture du dépôt : deux mondes différents
+
+- **Les pages de doc** (`design-system/composants/*.html`,
+  `fondamentaux/*.html`, `gabarits/*.html`, `homogenisation.html`,
+  `migration-dsfr.html`, `guide-prompts.html`, `index.html`) sont générées
+  par Jekyll (GitHub Pages) : chaque fichier ne contient plus que son
+  contenu (`<main>`) + un front matter (`layout: default`, `title`, parfois
+  `data_chemin`/`data_tagname`). Le head et la sidebar partagés vivent dans
+  `_layouts/default.html` et `_includes/sidebar.html`, à la racine du
+  dépôt — **on ne les édite jamais dans une page individuelle**, toujours
+  dans ces deux fichiers, qui s'appliquent alors automatiquement partout.
+- **Les prototypes** (`prototypes/*.html`) restent en HTML autonome, sans
+  passer par Jekyll : ils doivent reproduire fidèlement une vraie page
+  produit, pas être encapsulés dans le chrome du site de doc.
+- **`design-system/patches.css`** centralise tous les correctifs pour les
+  trous du bundle DSFR vendored (reset `.dsfr-link`, `@font-face` Marianne,
+  etc.) — chargé par le layout Jekyll et par chaque prototype via
+  `_prototype-starter.html` → `prototype-starter.html`. Un nouveau correctif
+  de ce type va dans ce fichier, jamais copié-collé dans une page.

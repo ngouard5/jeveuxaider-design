@@ -192,6 +192,11 @@ table.migration th{background:var(--code-bg)}
       </div>
     </div>
 
+    <div class="nav-section">
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-prototypes">Prototypes <span class="chevron" aria-hidden="true">▸</span></button>
+      <ul class="nav-sublist" id="nav-prototypes" hidden><li><a class="item" href="../prototypes/inscription-benevole-etape-1.html">Inscription bénévole, étape 1</a></li><li><a class="item" href="../prototypes/verification-code.html">Validez votre e-mail (OTP)</a></li></ul>
+    </div>
+
     <div class="nav-section sidebar-foot">
       <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-ressources">Ressources <span class="chevron" aria-hidden="true">▸</span></button>
       <ul class="nav-sublist" id="nav-ressources" hidden><li><a class="item" href="homogenisation.html">À homogénéiser</a></li><li><a class="item" href="migration-dsfr.html">Candidats migration DSFR</a></li><li><a class="item" href="guide-prompts.html">Bien prompter pour créer une page</a></li></ul>
@@ -204,9 +209,6 @@ table.migration th{background:var(--code-bg)}
     
   <h1>Documentation des composants frontend</h1>
   <p class="subtitle">JeVeuxAider.gouv.fr — composants réutilisables (≥ 2 usages), analysés automatiquement depuis le code source. 164 composants au total.</p>
-  <div class="methodo" style="border-left:3px solid var(--link);margin-bottom:1.5rem">
-    <strong>Version publiée.</strong> Cette doc est aussi en ligne, pratique pour un lien à partager avec l'équipe ou les devs : <a href="https://ngouard5.github.io/jeveuxaider-design/" target="_blank" rel="noopener">ngouard5.github.io/jeveuxaider-design</a>. Prototype de la nouvelle homepage : <a href="../prototypes/homepage.html" target="_blank" rel="noopener">voir le prototype</a>.
-  </div>
 
   <div class="methodo">
     <strong>Méthodologie.</strong> Props, exemples d'usage et statuts DSFR extraits automatiquement du code source (script d'analyse statique). Les démos (onglet « Démo » de chaque page) sont des aperçus visuels statiques reconstruits en HTML à partir des classes réelles des composants et compilés avec la configuration Tailwind du projet — ce ne sont pas des rendus Vue live. Pour les composants applicatifs liés à des données métier, seul l'exemple de code réel est fourni. « DSFR » = <a href="https://www.systeme-de-design.gouv.fr/" target="_blank" rel="noopener">Système de Design de l'État<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:-1px;margin-left:.2rem"><path d="M10 6v2H5v11h11v-5h2v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6Zm11-3v8h-2V6.413l-7.793 7.794-1.414-1.414L17.585 5H13V3h8Z"/></svg></a> ; le dossier <code>components/dsfr/</code> est l'implémentation maison de ce référentiel.

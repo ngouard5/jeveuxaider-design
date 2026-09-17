@@ -1,0 +1,599 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Prototype — Nouvelle Homepage</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../design-system/compiled.css">
+<link rel="stylesheet" href="../design-system/dsfr.min.css">
+<script>document.documentElement.setAttribute("data-fr-theme", matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");</script>
+<style>
+  /* .dsfr-link n'existe pas dans compiled.css/dsfr.min.css : c'est du CSS scoped du
+     vrai composant Vue (components/dsfr/Link.vue), repris tel quel car il n'est pas
+     exporté dans le bundle global. */
+  .dsfr-link{text-rendering:optimizeLegibility;background-image:linear-gradient(0deg,currentColor,currentColor),linear-gradient(0deg,currentColor,currentColor);background-position:0 100%,0 calc(100% - .0625em);background-repeat:no-repeat,no-repeat;background-size:0 .125em,100% .0625em}
+  .dsfr-link:hover{background-size:100% .125em,100% .0625em}
+  .dsfr-link:active{background-color:#ededed}
+
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font-family:Marianne,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#fff;font-synthesis:none}
+  @font-face { font-family: Marianne; src: url('../design-system/fonts/Marianne-Light.woff2') format('woff2'); font-weight: 300; font-style: normal; font-display: swap; }
+  @font-face { font-family: Marianne; src: url('../design-system/fonts/Marianne-Regular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: Marianne; src: url('../design-system/fonts/Marianne-Medium.woff2') format('woff2'); font-weight: 500; font-style: normal; font-display: swap; }
+  @font-face { font-family: Marianne; src: url('../design-system/fonts/Marianne-Bold.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
+
+  /* --- Couleurs réelles absentes du compiled.css (bundle partiel) — reproduites à la
+     main, sourcées de tailwind.config.ts (frontend), à date du 17/09/2026 --- */
+  .bg-jva-orange-300{background-color:#FFA48B}
+  .text-jva-orange-300{color:#FFA48B}
+  .bg-cream{background-color:#F9F6F2}
+  .domain-solidarite{background:#FDDFDA}
+  .domain-nature{background:#BAFAEE}
+  .domain-education{background:#E9EDFE}
+  .domain-sante{background:#DAE6FD}
+  .domain-prevention{background:#FEE7FC}
+  .domain-sport{background:#FEE9E5}
+  .domain-culture{background:#FEECC2}
+  .domain-memoire{background:#EEEEEE}
+  .domain-competences{background:#C7F6FC}
+
+  /* ==========================================================================
+     Mise en page propre à ce prototype (structure de page, espacements, typo
+     responsive) — ce n'est pas le design-system. compiled.css est un bundle
+     Tailwind PARTIEL (uniquement les classes déjà utilisées par les quelques
+     vrais fichiers déjà extraits) : la plupart des combinaisons responsive
+     inédites que demande une page entièrement nouvelle comme cette homepage
+     n'y existent pas. Les couleurs, boutons, ombres et l'accordéon DSFR
+     ci-dessus/ci-dessous restent eux 100% réels. Les tailles de titres
+     ci-dessous reprennent les valeurs réelles de DsfrHeading (Heading.vue :
+     alt-lg = 40→48→62px, alt-md = 36→40→54px) en CSS simple plutôt qu'en
+     classes utilitaires absentes du bundle. Breakpoints alignés sur ceux de
+     dsfr.min.css : 640 / 768 / 1024 / 1348px.
+     ========================================================================== */
+  .section{padding:64px 0}
+  @media (min-width:1024px){ .section{padding:80px 0} }
+  .h2-section{font-weight:700;color:#161616;font-size:28px;line-height:1.3;margin:0 0 12px}
+  @media (min-width:1024px){ .h2-section{font-size:32px} }
+  .section-lede{font-size:20px;line-height:1.4;margin:0 0 48px}
+  @media (min-width:1280px){ .section-lede{font-size:24px} }
+
+  /* Hero */
+  .hero{padding:40px 0 64px}
+  @media (min-width:640px){ .hero{padding:64px 0 80px} }
+  @media (min-width:1024px){ .hero{padding:80px 0 96px} }
+  .hero__chip{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.15);color:#fff;font-size:14px;font-weight:500;padding:8px 16px;border-radius:999px;margin-bottom:32px;text-decoration:none;transition:background-color .2s}
+  .hero__chip:hover{background:rgba(255,255,255,.25)}
+  .hero__eyebrow{color:#FFA48B;font-weight:700;font-size:22px;margin:0 0 16px}
+  @media (min-width:640px){ .hero__eyebrow{font-size:32px} }
+  @media (min-width:1280px){ .hero__eyebrow{font-size:46px;margin-bottom:32px} }
+  .h1-hero{color:#fff;font-weight:700;font-size:52px;line-height:1;margin:0 0 32px;max-width:860px}
+  @media (min-width:480px){ .h1-hero{font-size:64px} }
+  @media (min-width:1024px){ .h1-hero{font-size:80px;margin-bottom:40px} }
+  .hero__ctas{display:flex;flex-direction:column;align-items:flex-start;gap:16px}
+  @media (min-width:480px){ .hero__ctas{flex-direction:row;align-items:center;gap:32px} }
+
+  /* Bandeau de chiffres */
+  .stats{padding:32px 0}
+  @media (min-width:1024px){ .stats{padding:40px 0} }
+  .stats__grid{display:grid;grid-template-columns:1fr;gap:24px;text-align:center}
+  @media (min-width:480px){ .stats__grid{grid-template-columns:repeat(3,1fr);gap:16px} }
+  .stats__number{font-weight:700;color:#000091;font-size:32px;margin:0}
+  @media (min-width:1024px){ .stats__number{font-size:40px} }
+
+  /* Campagne du moment */
+  .campaign__inner{display:flex;flex-direction:column;align-items:flex-start;gap:40px}
+  @media (min-width:1024px){ .campaign__inner{flex-direction:row;align-items:center;gap:64px} }
+  .campaign__text{flex:1;max-width:640px}
+  .campaign__label{font-weight:700;text-transform:uppercase;letter-spacing:.02em;color:#522F29;margin:0 0 16px}
+  .campaign__title{font-weight:700;color:#161616;font-size:36px;line-height:1.15;margin:0 0 24px}
+  @media (min-width:480px){ .campaign__title{font-size:40px} }
+  @media (min-width:1280px){ .campaign__title{font-size:54px} }
+  .campaign__pitch{color:#522F29;font-size:20px;line-height:1.6;margin:0 0 32px}
+  @media (min-width:1280px){ .campaign__pitch{font-size:24px} }
+  .campaign__badge{flex:none;display:flex;align-items:center;justify-content:center;width:180px;height:180px;border-radius:999px;background:rgba(255,255,255,.3);font-size:100px;line-height:1}
+  @media (min-width:1024px){ .campaign__badge{width:260px;height:260px;font-size:140px} }
+
+  /* Missions faciles */
+  .missions__head{display:flex;flex-direction:column;gap:24px;margin-bottom:40px}
+  @media (min-width:1024px){ .missions__head{flex-direction:row;align-items:flex-end;justify-content:space-between;margin-bottom:56px} }
+  .missions__grid{display:grid;grid-template-columns:1fr;gap:24px}
+  @media (min-width:480px){ .missions__grid{grid-template-columns:repeat(2,1fr)} }
+  @media (min-width:1024px){ .missions__grid{grid-template-columns:repeat(4,1fr)} }
+
+  /* Activités */
+  .activities__domains{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:40px}
+  @media (min-width:480px){ .activities__domains{grid-template-columns:repeat(3,1fr)} }
+  @media (min-width:1024px){ .activities__domains{grid-template-columns:repeat(9,1fr)} }
+
+  /* Organisations */
+  .org-grid{display:grid;grid-template-columns:1fr;gap:24px}
+  @media (min-width:768px){ .org-grid{grid-template-columns:1fr 1fr} }
+
+  /* Témoignages */
+  .testimonials__grid{display:grid;grid-template-columns:1fr;gap:24px;margin-bottom:64px}
+  @media (min-width:768px){ .testimonials__grid{grid-template-columns:repeat(3,1fr)} }
+  .logos-row{display:flex;flex-wrap:wrap;column-gap:32px;row-gap:12px;color:#fff;font-weight:700;font-size:18px;opacity:.9}
+
+  /* Actualités */
+  .news__grid{display:grid;grid-template-columns:1fr;gap:32px}
+  @media (min-width:1024px){ .news__grid{grid-template-columns:repeat(3,1fr)} }
+  .news__thumb{height:220px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .news__thumb span{transition:transform .25s ease}
+  .news__link:hover .news__thumb span{transform:scale(1.08)}
+  .news__title{font-weight:700;color:#161616;font-size:22px;line-height:1.35;margin:24px 0 0}
+
+  /* Fresque */
+  .fresque__inner{display:flex;flex-direction:column;gap:40px;align-items:flex-start}
+  @media (min-width:1024px){ .fresque__inner{flex-direction:row;align-items:center;gap:64px} }
+  .fresque__icon{flex:none;font-size:100px;line-height:1}
+  @media (min-width:1024px){ .fresque__icon{font-size:140px} }
+  .fresque__list{display:grid;grid-template-columns:1fr;gap:24px;font-size:18px;line-height:1.4;margin:0 0 32px;padding:0;list-style:none}
+  @media (min-width:640px){ .fresque__list{grid-template-columns:repeat(3,1fr)} }
+  .fresque__list li{display:flex;align-items:flex-start;gap:12px}
+
+  /* FAQ */
+  .faq-wrap{max-width:860px;margin:0 auto}
+  .faq-tab{display:inline-flex;align-items:center;justify-content:center;transition:.2s;padding:12px 24px;border:1px solid transparent;border-bottom:0;border-top-width:2px;font-weight:700;background:#fff;color:#000091;border-top-color:#000091;border-bottom-color:#fff;cursor:pointer;font-family:inherit;font-size:16px}
+  .faq-tab[aria-selected="false"]{background:#E3E3FD;border-color:#E3E3FD;color:#161616}
+  .faq-tab[aria-selected="false"]:hover{border-color:#C1C1FB;background:#C1C1FB}
+  .faq-panel[hidden]{display:none}
+  .fr-collapse[hidden]{display:none}
+  .fr-accordion p{margin:0;padding:0 1.5rem 1.5rem}
+
+  .domain-chip{transition:opacity .2s}
+  .domain-chip:hover{opacity:.8}
+
+  /* Bandeau minimal (hors sujet) : on masque juste la nav sur petit écran plutôt que
+     de construire un vrai menu mobile, qui n'est pas le sujet de ce prototype. */
+  .top-nav{display:none}
+  @media (min-width:1024px){ .top-nav{display:flex} }
+</style>
+</head>
+<body>
+
+<!-- ============ BANDEAU MINIMAL (hors sujet du prototype — header/footer réels non
+     reproduits ici, seul le corps de la homepage est retravaillé) ============ -->
+<div style="background:#000091" class="text-white">
+  <div class="container" style="display:flex;align-items:center;gap:8px;padding:4px 0;font-size:12px">
+    <img src="ressources/rf.svg" alt="République Française" style="height:32px;width:auto">
+    <span style="opacity:.8">La plateforme publique du bénévolat</span>
+  </div>
+</div>
+<header class="bg-white shadow-lg relative">
+  <div class="container" style="display:flex;align-items:center;justify-content:space-between;padding:16px 0">
+    <img src="ressources/jva_logohorizontal_bleu.svg" alt="JeVeuxAider.gouv.fr" style="height:40px;width:auto">
+    <nav aria-label="Navigation principale" class="top-nav" style="align-items:center;gap:32px;font-size:16px;font-weight:500">
+      <a href="#" class="dsfr-link">Trouver une mission</a>
+      <a href="#" class="dsfr-link">Devenir bénévole</a>
+      <a href="#" class="dsfr-link">Publier une mission</a>
+    </nav>
+    <div style="display:flex;align-items:center;gap:12px">
+      <a href="#" class="font-medium transition-extended ease-out inline-flex items-center justify-center shadow-[inset_0_0_0_1px_#000091] bg-white text-jva-blue-500 hover:bg-[#F6F6F6] active:bg-[#EDEDED] px-4 py-2 text-base min-h-[42px]">Connexion</a>
+      <a href="#" class="font-medium transition-extended ease-out inline-flex items-center justify-center text-white bg-jva-blue-500 hover:bg-jva-blue-800 active:bg-jva-blue-900 px-4 py-2 text-base min-h-[42px]">Inscription</a>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<!-- ============ 1. HERO — repensé pour donner un sentiment de renouveau ============ -->
+<section class="hero bg-jva-blue-500">
+  <div class="container">
+
+    <!-- Chip "en ce moment" : ce qui donne le sentiment de renouveau même hors campagne
+         nationale — pointe toujours vers ce qu'il y a de neuf sur la plateforme. -->
+    <a href="#campagne" class="hero__chip">
+      <span aria-hidden="true">🎒</span>
+      <span>En ce moment : Septembre pour Apprendre</span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+    </a>
+
+    <p class="hero__eyebrow">
+      Je veux
+      <span class="word-cycle" style="position:relative;display:inline-block" aria-live="polite">
+        <span>aider</span><span hidden>du sens</span><span hidden>être utile</span><span hidden>passer à l’action</span><span hidden>apprendre</span>
+      </span>
+    </p>
+    <h1 class="h1-hero">Devenez bénévole.</h1>
+
+    <div class="hero__ctas">
+      <a href="#" class="font-medium transition-extended ease-out inline-flex items-center justify-center gap-2 bg-white text-jva-blue-500 hover:bg-[#F6F6F6] active:bg-[#EDEDED] px-6 py-3 text-lg min-h-[3rem]">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M11 19a8 8 0 100-16 8 8 0 000 16zM21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+        Trouver une mission
+      </a>
+      <a href="#" class="dsfr-link" style="color:#fff;font-weight:500;display:inline-flex;align-items:center;gap:8px">
+        Pas encore d’idée ? Laissez-vous guider en 2&nbsp;minutes
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Bandeau de réassurance chiffrée, juste sous le hero ============ -->
+<section class="stats bg-white" style="border-bottom:1px solid #E5E5E5">
+  <div class="container">
+    <div class="stats__grid">
+      <div>
+        <p class="stats__number">840 000</p>
+        <p style="color:#3A3A3A;margin:0">bénévoles inscrits</p>
+      </div>
+      <div>
+        <p class="stats__number">21 000</p>
+        <p style="color:#3A3A3A;margin:0">organisations engagées</p>
+      </div>
+      <div>
+        <p class="stats__number">30 000</p>
+        <p style="color:#3A3A3A;margin:0">missions disponibles</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 2. CAMPAGNE DU MOMENT — événementialisée, contenu réel (Septembre
+     pour Apprendre) mis en forme beaucoup plus visible qu'aujourd'hui. Ce bloc est
+     fait pour être remplacé à chaque nouvelle opération nationale (comme le composant
+     réel CurrentNationalOperation) ; hors campagne, on y met un temps fort saisonnier
+     générique plutôt que de le masquer, pour garder l'effet de renouveau. ============ -->
+<section id="campagne" class="section bg-jva-orange-300">
+  <div class="container campaign__inner">
+    <div class="campaign__text">
+      <p class="campaign__label">Du 1er au 30 septembre</p>
+      <h2 class="campaign__title">Rejoignez Septembre pour Apprendre</h2>
+      <p class="campaign__pitch">
+        L’éducation est essentielle à tous les âges. Tout le mois de septembre, des
+        organisations partout en France unissent leurs forces pour la réussite scolaire,
+        l’insertion professionnelle et les rêves d’enfants devenus grands.
+      </p>
+      <a href="#" class="font-medium transition-extended ease-out inline-flex items-center justify-center gap-2 bg-white text-jva-blue-500 hover:bg-[#F6F6F6] active:bg-[#EDEDED] px-6 py-3 text-lg min-h-[3rem]">
+        Découvrir les missions
+      </a>
+    </div>
+    <div class="campaign__badge" aria-hidden="true">🎒</div>
+  </div>
+</section>
+
+<!-- ============ 3. MISSIONS FACILES, PONCTUELLES — remontée plus haut dans la page :
+     un des deux chemins d'atterrissage direct sur une mission demandés. ============ -->
+<section class="section bg-jva-blue-500">
+  <div class="container">
+    <div class="missions__head">
+      <div>
+        <h2 class="h2-section" style="color:#fff">Devenez bénévole d’un jour !</h2>
+        <p class="section-lede" style="color:#fff;margin-bottom:0">Des missions courtes selon vos envies, à faire tout de suite</p>
+      </div>
+      <a href="#" class="font-medium transition-extended ease-out inline-flex items-center justify-center text-white hover:bg-jva-blue-800 active:bg-jva-blue-900 px-4 py-2 text-base min-h-[42px]" style="flex:none;box-shadow:inset 0 0 0 1px #fff">
+        Plus de missions
+      </a>
+    </div>
+
+    <!-- Contenu d'exemple illustratif, à remplacer par de vraies missions (ex. via Algolia
+         comme le fait BlocMissionsCourtes réel) -->
+    <div class="missions__grid">
+      <a href="#" class="bg-white hover:bg-[#F6F6F6] transition" style="display:flex;flex-direction:column;gap:16px;padding:24px">
+        <span style="font-size:32px" aria-hidden="true">☕️</span>
+        <div>
+          <p class="font-bold" style="color:#161616;font-size:18px;margin:0 0 4px">Maraude solidaire</p>
+          <p style="color:#666666;font-size:14px;margin:0">Épicerie solidaire du Marais · Paris</p>
+        </div>
+        <span style="margin-top:auto;display:inline-flex;width:fit-content;align-items:center;font-size:12px;font-weight:500;background:#EEEEEE;color:#3A3A3A;padding:4px 10px;border-radius:4px">Quelques heures</span>
+      </a>
+      <a href="#" class="bg-white hover:bg-[#F6F6F6] transition" style="display:flex;flex-direction:column;gap:16px;padding:24px">
+        <span style="font-size:32px" aria-hidden="true">♻️</span>
+        <div>
+          <p class="font-bold" style="color:#161616;font-size:18px;margin:0 0 4px">Collecte de déchets</p>
+          <p style="color:#666666;font-size:14px;margin:0">Rivage Propre · Nantes</p>
+        </div>
+        <span style="margin-top:auto;display:inline-flex;width:fit-content;align-items:center;font-size:12px;font-weight:500;background:#EEEEEE;color:#3A3A3A;padding:4px 10px;border-radius:4px">Une matinée</span>
+      </a>
+      <a href="#" class="bg-white hover:bg-[#F6F6F6] transition" style="display:flex;flex-direction:column;gap:16px;padding:24px">
+        <span style="font-size:32px" aria-hidden="true">💬</span>
+        <div>
+          <p class="font-bold" style="color:#161616;font-size:18px;margin:0 0 4px">Traduction bénévole</p>
+          <p style="color:#666666;font-size:14px;margin:0">Accueil Nouveaux Arrivants · Lyon</p>
+        </div>
+        <span style="margin-top:auto;display:inline-flex;width:fit-content;align-items:center;font-size:12px;font-weight:500;background:#EEEEEE;color:#3A3A3A;padding:4px 10px;border-radius:4px">À distance</span>
+      </a>
+      <a href="#" class="bg-white hover:bg-[#F6F6F6] transition" style="display:flex;flex-direction:column;gap:16px;padding:24px">
+        <span style="font-size:32px" aria-hidden="true">📆</span>
+        <div>
+          <p class="font-bold" style="color:#161616;font-size:18px;margin:0 0 4px">Aide événementielle</p>
+          <p style="color:#666666;font-size:14px;margin:0">Foire aux Assos · Bordeaux</p>
+        </div>
+        <span style="margin-top:auto;display:inline-flex;width:fit-content;align-items:center;font-size:12px;font-weight:500;background:#EEEEEE;color:#3A3A3A;padding:4px 10px;border-radius:4px">Un week-end</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 4. L'ÉTENDUE DES ACTIVITÉS — vraie taxonomie et vraies couleurs de
+     domaines (tailwind.config.ts), vrais émojis (activities.json). ============ -->
+<section class="section bg-cream">
+  <div class="container" style="text-align:center">
+    <h2 class="h2-section">Le bénévolat et plus si affinités</h2>
+    <p class="section-lede">9 domaines, des dizaines d’activités : il y en a pour tous les goûts</p>
+
+    <div class="activities__domains">
+      <a href="#" class="domain-solidarite domain-chip" style="padding:16px;text-align:center;text-decoration:none"><p class="font-bold" style="color:#161616;font-size:14px;margin:0">Solidarité et insertion</p></a>
+      <a href="#" class="domain-nature domain-chip" style="padding:16px;text-align:center;text-decoration:none"><p class="font-bold" style="color:#161616;font-size:14px;margin:0">Protection de la nature</p></a>
+      <a href="#" class="domain-education domain-chip" style="padding:16px;text-align:center;text-decoration:none"><p class="font-bold" style="color:#161616;font-size:14px;margin:0">Éducation pour tous</p></a>
+      <a href="#" class="domain-sante domain-chip" style="padding:16px;text-align:center;text-decoration:none"><p class="font-bold" style="color:#161616;font-size:14px;margin:0">Santé pour tous</p></a>
+      <a href="#" class="domain-prevention domain-chip" style="padding:16px;text-align:center;text-decoration:none"><p class="font-bold" style="color:#161616;font-size:14px;margin:0">Prévention et protection</p></a>
+      <a href="#" class="domain-sport domain-chip" style="padding:16px;text-align:center;text-decoration:none"><p class="font-bold" style="color:#161616;font-size:14px;margin:0">Sport pour tous</p></a>
+      <a href="#" class="domain-culture domain-chip" style="padding:16px;text-align:center;text-decoration:none"><p class="font-bold" style="color:#161616;font-size:14px;margin:0">Art et culture pour tous</p></a>
+      <a href="#" class="domain-memoire domain-chip" style="padding:16px;text-align:center;text-decoration:none"><p class="font-bold" style="color:#161616;font-size:14px;margin:0">Mémoire et citoyenneté</p></a>
+      <a href="#" class="domain-competences domain-chip" style="padding:16px;text-align:center;text-decoration:none"><p class="font-bold" style="color:#161616;font-size:14px;margin:0">Bénévolat de compétences</p></a>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center">
+      <a href="#" class="bg-white shadow hover:bg-[#F6F6F6] transition" style="display:inline-flex;align-items:center;gap:8px;padding:8px 16px;font-size:16px;font-weight:500;text-decoration:none;color:#161616"><span aria-hidden="true">☕️</span>Maraude</a>
+      <a href="#" class="bg-white shadow hover:bg-[#F6F6F6] transition" style="display:inline-flex;align-items:center;gap:8px;padding:8px 16px;font-size:16px;font-weight:500;text-decoration:none;color:#161616"><span aria-hidden="true">🐰</span>Soins aux animaux</a>
+      <a href="#" class="bg-white shadow hover:bg-[#F6F6F6] transition" style="display:inline-flex;align-items:center;gap:8px;padding:8px 16px;font-size:16px;font-weight:500;text-decoration:none;color:#161616"><span aria-hidden="true">♻️</span>Ramassage de déchets</a>
+      <a href="#" class="bg-white shadow hover:bg-[#F6F6F6] transition" style="display:inline-flex;align-items:center;gap:8px;padding:8px 16px;font-size:16px;font-weight:500;text-decoration:none;color:#161616"><span aria-hidden="true">🙋‍♂️</span>Mentorat &amp; parrainage</a>
+      <a href="#" class="bg-white shadow hover:bg-[#F6F6F6] transition" style="display:inline-flex;align-items:center;gap:8px;padding:8px 16px;font-size:16px;font-weight:500;text-decoration:none;color:#161616"><span aria-hidden="true">💬</span>Traduction</a>
+      <a href="#" class="bg-white shadow hover:bg-[#F6F6F6] transition" style="display:inline-flex;align-items:center;gap:8px;padding:8px 16px;font-size:16px;font-weight:500;text-decoration:none;color:#161616"><span aria-hidden="true">🚛</span>Logistique</a>
+      <a href="#" class="bg-white shadow hover:bg-[#F6F6F6] transition" style="display:inline-flex;align-items:center;gap:8px;padding:8px 16px;font-size:16px;font-weight:500;text-decoration:none;color:#161616"><span aria-hidden="true">🖥</span>Informatique</a>
+      <a href="#" class="bg-white shadow hover:bg-[#F6F6F6] transition" style="display:inline-flex;align-items:center;gap:8px;padding:8px 16px;font-size:16px;font-weight:500;text-decoration:none;color:#161616"><span aria-hidden="true">📆</span>Événementiel</a>
+      <a href="#" class="bg-white shadow hover:bg-[#F6F6F6] transition" style="display:inline-flex;align-items:center;gap:8px;padding:8px 16px;font-size:16px;font-weight:500;text-decoration:none;color:#161616"><span aria-hidden="true">🌳</span>Aménagement d’espaces naturels</a>
+      <a href="#" class="dsfr-link" style="color:#000091;font-weight:500;display:inline-flex;align-items:center;padding:8px 16px">Voir toutes les activités →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 5. ORGANISATIONS — bloc conservé a minima, contenu réel resserré ============ -->
+<section class="section bg-white">
+  <div class="container">
+    <h2 class="h2-section" style="text-align:center;margin-bottom:48px">Acteurs de l’engagement, rejoignez le mouvement !</h2>
+    <div class="org-grid">
+      <div class="bg-cream" style="padding:32px">
+        <h3 class="font-bold" style="color:#161616;font-size:24px;margin:0 0 24px">Associations et organisations publiques</h3>
+        <ul style="font-size:18px;line-height:1.4;margin:0 0 32px;padding:0;list-style:none;display:flex;flex-direction:column;gap:16px">
+          <li style="display:flex;align-items:flex-start;gap:12px">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" class="text-jva-blue-500" style="flex:none;margin-top:2px" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="M8 12l3 3 5-6" stroke="#fff" stroke-width="2" fill="none"/></svg>
+            <p style="margin:0">Inscrivez votre organisation <strong>en quelques clics</strong></p>
+          </li>
+          <li style="display:flex;align-items:flex-start;gap:12px">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" class="text-jva-blue-500" style="flex:none;margin-top:2px" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="M8 12l3 3 5-6" stroke="#fff" stroke-width="2" fill="none"/></svg>
+            <p style="margin:0"><strong>Publiez vos missions</strong> de bénévolat</p>
+          </li>
+          <li style="display:flex;align-items:flex-start;gap:12px">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" class="text-jva-blue-500" style="flex:none;margin-top:2px" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="M8 12l3 3 5-6" stroke="#fff" stroke-width="2" fill="none"/></svg>
+            <p style="margin:0">Trouvez facilement de <strong>nouveaux bénévoles</strong></p>
+          </li>
+        </ul>
+        <a href="#" class="font-medium transition-extended ease-out inline-flex items-center justify-center shadow-[inset_0_0_0_1px_#000091] bg-white text-jva-blue-500 hover:bg-[#F6F6F6] active:bg-[#EDEDED] px-6 py-3 text-lg min-h-[3rem]">Inscrire mon organisation</a>
+      </div>
+      <div class="bg-cream" style="padding:32px">
+        <h3 class="font-bold" style="color:#161616;font-size:24px;margin:0 0 24px">Collectivités locales et territoires</h3>
+        <ul style="font-size:18px;line-height:1.4;margin:0 0 32px;padding:0;list-style:none;display:flex;flex-direction:column;gap:16px">
+          <li style="display:flex;align-items:flex-start;gap:12px">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" class="text-jva-blue-500" style="flex:none;margin-top:2px" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="M8 12l3 3 5-6" stroke="#fff" stroke-width="2" fill="none"/></svg>
+            <p style="margin:0">Créez <strong>une page dédiée</strong> à votre collectivité</p>
+          </li>
+          <li style="display:flex;align-items:flex-start;gap:12px">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" class="text-jva-blue-500" style="flex:none;margin-top:2px" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="M8 12l3 3 5-6" stroke="#fff" stroke-width="2" fill="none"/></svg>
+            <p style="margin:0"><strong>Centralisez les missions</strong> des organisations locales</p>
+          </li>
+          <li style="display:flex;align-items:flex-start;gap:12px">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" class="text-jva-blue-500" style="flex:none;margin-top:2px" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="M8 12l3 3 5-6" stroke="#fff" stroke-width="2" fill="none"/></svg>
+            <p style="margin:0">Encouragez l’<strong>engagement de vos citoyens</strong></p>
+          </li>
+        </ul>
+        <a href="#" class="font-medium transition-extended ease-out inline-flex items-center justify-center shadow-[inset_0_0_0_1px_#000091] bg-white text-jva-blue-500 hover:bg-[#F6F6F6] active:bg-[#EDEDED] px-6 py-3 text-lg min-h-[3rem]">Inscrire ma collectivité</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 6. RÉASSURANCE — témoignages réels (déjà publiés sur le site), logos
+     texte des associations partenaires ============ -->
+<section class="section" style="background:#6A6AF4">
+  <div class="container">
+    <h2 class="h2-section" style="color:#fff">Paroles de bénévoles</h2>
+    <p class="section-lede" style="color:#fff">Découvrez les témoignages de la communauté JeVeuxAider.gouv.fr</p>
+
+    <div class="testimonials__grid">
+      <div class="bg-white" style="padding:32px;display:flex;flex-direction:column;gap:16px">
+        <span style="color:#8B8BF6;font-size:32px" aria-hidden="true">&ldquo;</span>
+        <p class="font-bold" style="color:#161616;font-size:18px;margin:0">Expérience très positive qui m’a permis d’être utile envers les autres, mais aussi de rencontrer des belles personnes.</p>
+        <div style="margin-top:auto;display:flex;align-items:center;gap:12px">
+          <span class="bg-jva-blue-500 text-white font-bold" style="flex:none;height:40px;width:40px;border-radius:999px;display:flex;align-items:center;justify-content:center" aria-hidden="true">A</span>
+          <div>
+            <p class="font-bold" style="color:#3A3A3A;font-size:14px;margin:0">Anne-Marie</p>
+            <p style="color:#666666;font-size:12px;margin:0">Bénévole à la Banque Alimentaire</p>
+          </div>
+        </div>
+      </div>
+      <div class="bg-white" style="padding:32px;display:flex;flex-direction:column;gap:16px">
+        <span style="color:#8B8BF6;font-size:32px" aria-hidden="true">&ldquo;</span>
+        <p class="font-bold" style="color:#161616;font-size:18px;margin:0">Une expérience formidable avec un super groupe de vacanciers et d’accompagnateurs. On s’est vite sentis comme en famille.</p>
+        <div style="margin-top:auto;display:flex;align-items:center;gap:12px">
+          <span class="bg-jva-blue-500 text-white font-bold" style="flex:none;height:40px;width:40px;border-radius:999px;display:flex;align-items:center;justify-content:center" aria-hidden="true">R</span>
+          <div>
+            <p class="font-bold" style="color:#3A3A3A;font-size:14px;margin:0">Romain</p>
+            <p style="color:#666666;font-size:12px;margin:0">Bénévole à APF Evasion France Handicap</p>
+          </div>
+        </div>
+      </div>
+      <div class="bg-white" style="padding:32px;display:flex;flex-direction:column;gap:16px">
+        <span style="color:#8B8BF6;font-size:32px" aria-hidden="true">&ldquo;</span>
+        <p class="font-bold" style="color:#161616;font-size:18px;margin:0">J’ai adoré cette expérience. L’équipe est formidable et les bénévoles sont tellement admirables.</p>
+        <div style="margin-top:auto;display:flex;align-items:center;gap:12px">
+          <span class="bg-jva-blue-500 text-white font-bold" style="flex:none;height:40px;width:40px;border-radius:999px;display:flex;align-items:center;justify-content:center" aria-hidden="true">K</span>
+          <div>
+            <p class="font-bold" style="color:#3A3A3A;font-size:14px;margin:0">Kevin</p>
+            <p style="color:#666666;font-size:12px;margin:0">Bénévole à TRIATHL’AIX</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p style="color:rgba(255,255,255,.8);font-size:14px;margin:0 0 16px">Ils sont déjà sur la plateforme</p>
+    <div class="logos-row">
+      <span>Croix-Rouge française</span>
+      <span>Secours Populaire</span>
+      <span>Restos du Cœur</span>
+      <span>Emmaüs</span>
+      <span>Banque Alimentaire</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 7. ACTUALITÉS ============ -->
+<section class="section bg-white">
+  <div class="container">
+    <h2 class="h2-section">Les actualités de l’engagement</h2>
+    <p class="section-lede" style="color:#4D4D4D">Restez informé de l’actualité de tous ceux qui font vivre l’engagement en France</p>
+
+    <div class="news__grid">
+      <a href="#" class="news__link" style="text-decoration:none">
+        <div class="news__thumb bg-jva-blue-500">
+          <span class="text-white" style="font-size:48px" aria-hidden="true">📘</span>
+        </div>
+        <h3 class="news__title">Mesure d’impact 2025 : tout ce que vous avez toujours voulu savoir sur nous, sur vous, sur le bénévolat</h3>
+      </a>
+      <a href="#" class="news__link" style="text-decoration:none">
+        <div class="news__thumb domain-education">
+          <span style="font-size:48px" aria-hidden="true">🎒</span>
+        </div>
+        <h3 class="news__title">Septembre pour Apprendre : la rentrée solidaire bat son plein partout en France</h3>
+      </a>
+      <a href="#" class="news__link" style="text-decoration:none">
+        <div class="news__thumb domain-nature">
+          <span style="font-size:48px" aria-hidden="true">🌳</span>
+        </div>
+        <h3 class="news__title">Protection de la nature : les missions qui recrutent le plus ce mois-ci</h3>
+      </a>
+    </div>
+    <a href="#" class="font-medium transition-extended ease-out inline-flex items-center justify-center shadow-[inset_0_0_0_1px_#000091] bg-white text-jva-blue-500 hover:bg-[#F6F6F6] active:bg-[#EDEDED] px-4 py-2 text-base min-h-[42px]" style="margin-top:40px">Plus d’articles</a>
+  </div>
+</section>
+
+<!-- ============ 8. FRESQUE DU BÉNÉVOLAT — relais conservé, contenu réel ============ -->
+<section class="section domain-culture">
+  <div class="container fresque__inner">
+    <span class="fresque__icon" aria-hidden="true">🖼️</span>
+    <div>
+      <h2 class="h2-section">Devenez animateur pour la Fresque du Bénévolat</h2>
+      <ul class="fresque__list">
+        <li>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="color:#FB926B;flex:none;margin-top:2px" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor"/></svg>
+          <p style="margin:0;color:#3A3A3A">2h30 d’atelier <strong>collectif, ludique et participatif</strong></p>
+        </li>
+        <li>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="color:#FB926B;flex:none;margin-top:2px" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor"/></svg>
+          <p style="margin:0;color:#3A3A3A"><strong>Sensibilisez</strong> aux bienfaits du bénévolat</p>
+        </li>
+        <li>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="color:#FB926B;flex:none;margin-top:2px" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor"/></svg>
+          <p style="margin:0;color:#3A3A3A"><strong>Inspirez</strong> et donnez envie de sauter le pas</p>
+        </li>
+      </ul>
+      <a href="#" class="font-medium transition-extended ease-out inline-flex items-center justify-center text-white bg-jva-blue-500 hover:bg-jva-blue-800 active:bg-jva-blue-900 px-6 py-3 text-lg min-h-[3rem]">Découvrir la Fresque du Bénévolat</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 9. FAQ — pour le SEO, contenu réel resserré ============ -->
+<section class="section bg-white">
+  <div class="container faq-wrap">
+    <h2 class="h2-section" style="text-align:center;margin-bottom:40px">Vous avez des questions ?</h2>
+
+    <div role="tablist" style="display:flex;gap:8px;margin-bottom:32px" aria-label="Catégories de FAQ">
+      <button type="button" id="faq-tab-benevoles" class="faq-tab" role="tab" aria-selected="true" aria-controls="faq-panel-benevoles">Bénévoles</button>
+      <button type="button" id="faq-tab-organisation" class="faq-tab" role="tab" aria-selected="false" aria-controls="faq-panel-organisation">Organisation</button>
+    </div>
+
+    <div id="faq-panel-benevoles" class="faq-panel" role="tabpanel" aria-labelledby="faq-tab-benevoles">
+      <section class="fr-accordion border-t border-b">
+        <h3 class="fr-accordion__title"><button class="fr-accordion__btn" aria-expanded="false" type="button" aria-controls="faq-a1">Qui peut s’inscrire sur JeVeuxAider.gouv.fr ?</button></h3>
+        <div class="fr-collapse" id="faq-a1" hidden>
+          <p>Tout citoyen ou résident régulier de plus de 16 ans souhaitant s’engager dans son temps libre peut proposer son aide aux associations référencées.</p>
+        </div>
+      </section>
+      <section class="fr-accordion border-b">
+        <h3 class="fr-accordion__title"><button class="fr-accordion__btn" aria-expanded="false" type="button" aria-controls="faq-a2">Comment trouver une mission ?</button></h3>
+        <div class="fr-collapse" id="faq-a2" hidden>
+          <p>La plateforme est alimentée par les propositions de missions des associations et collectivités territoriales. Utilisez la recherche pour filtrer par activité, lieu ou disponibilité.</p>
+        </div>
+      </section>
+      <section class="fr-accordion border-b">
+        <h3 class="fr-accordion__title"><button class="fr-accordion__btn" aria-expanded="false" type="button" aria-controls="faq-a3">Comment candidater à une mission ?</button></h3>
+        <div class="fr-collapse" id="faq-a3" hidden>
+          <p>Une fois la mission qui vous convient identifiée, cliquez sur le bouton « Je propose mon aide » pour candidater.</p>
+        </div>
+      </section>
+    </div>
+
+    <div id="faq-panel-organisation" class="faq-panel" role="tabpanel" aria-labelledby="faq-tab-organisation" hidden>
+      <section class="fr-accordion border-t border-b">
+        <h3 class="fr-accordion__title"><button class="fr-accordion__btn" aria-expanded="false" type="button" aria-controls="faq-b1">Comment inscrire mon organisation ?</button></h3>
+        <div class="fr-collapse" id="faq-b1" hidden>
+          <p>Cliquez sur « Inscription » puis sélectionnez « Je veux publier des missions » pour créer votre compte organisation.</p>
+        </div>
+      </section>
+      <section class="fr-accordion border-b">
+        <h3 class="fr-accordion__title"><button class="fr-accordion__btn" aria-expanded="false" type="button" aria-controls="faq-b2">Qui peut publier des missions ?</button></h3>
+        <div class="fr-collapse" id="faq-b2" hidden>
+          <p>Les organismes sans but lucratif et les structures publiques (établissements scolaires, de santé, collectivités territoriales, services de l’État) relevant des 10 domaines d’action reconnus.</p>
+        </div>
+      </section>
+      <section class="fr-accordion border-b">
+        <h3 class="fr-accordion__title"><button class="fr-accordion__btn" aria-expanded="false" type="button" aria-controls="faq-b3">Comment publier une mission ?</button></h3>
+        <div class="fr-collapse" id="faq-b3" hidden>
+          <p>Depuis votre espace responsable, ouvrez l’onglet « Mes Missions » pour mettre en ligne une nouvelle mission.</p>
+        </div>
+      </section>
+    </div>
+
+    <div style="margin-top:32px;text-align:center">
+      <a href="#" class="dsfr-link" style="color:#000091;font-weight:500">Toutes les réponses à vos questions</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer style="background:#161616;color:rgba(255,255,255,.7);font-size:14px;text-align:center;padding:32px 0">
+  <p>Pied de page réel non reproduit ici — hors sujet de ce prototype.</p>
+</footer>
+
+<script>
+(function(){
+  // Cycle des mots du hero ("Je veux aider / du sens / ...")
+  var cycle = document.querySelector('.word-cycle');
+  if (cycle) {
+    var words = Array.from(cycle.children);
+    var i = 0;
+    setInterval(function(){
+      words[i].hidden = true;
+      i = (i + 1) % words.length;
+      words[i].hidden = false;
+    }, 2200);
+  }
+
+  // Accordéon FAQ (dsfr.js réel non embarqué dans ce prototype)
+  document.querySelectorAll('.fr-accordion__btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var expanded = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', String(!expanded));
+      var target = document.getElementById(btn.getAttribute('aria-controls'));
+      if (target) target.hidden = expanded;
+    });
+  });
+
+  // Onglets FAQ
+  var tabs = document.querySelectorAll('.faq-tab');
+  tabs.forEach(function(tab){
+    tab.addEventListener('click', function(){
+      tabs.forEach(function(t){
+        t.setAttribute('aria-selected', String(t === tab));
+        document.getElementById(t.getAttribute('aria-controls')).hidden = t !== tab;
+      });
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

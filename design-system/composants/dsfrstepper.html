@@ -162,6 +162,11 @@ table.migration th{background:var(--code-bg)}
   .sidebar{position:static;height:auto;width:auto;border-right:none;border-bottom:1px solid var(--border)}
   .main{padding:1.5rem 1.25rem 4rem}
 }
+
+/* dsfr.min.css ne force pas display:block sur .fr-stepper__state ici : sans ça, le texte de
+   l'état ("Étape X sur Y") reste en ligne avec le titre au lieu de passer dessous.
+   Même correctif que dans prototypes/inscription-benevole-etape-1.html, pour rester cohérent. */
+.fr-stepper__state{display:block}
 </style>
 </head>
 <body data-chemin="proposé : components/dsfr/Stepper.vue (non créé)" data-tagname="DsfrStepper">

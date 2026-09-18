@@ -14,7 +14,7 @@ data_tagname: "UiBadgeState"
       <span class="path-line small"><code>components/ui/BadgeState.vue</code></span>
     </div>
     <p class="subtitle">Badge d'état générique (shadcn), utilisé pour seulement deux libellés d'état — voir section homogénéisation.</p>
-    <div class="meta-row"><p class="fr-tag">⚠️ Écart Figma détecté</p></div>
+    <div class="meta-row"><p class="fr-tag tag-figma-only">🎨 Figma seulement</p></div>
 
     <div class="fr-tabs">
     <ul class="fr-tabs__list" role="tablist" aria-label="Documentation du composant">
@@ -30,7 +30,7 @@ data_tagname: "UiBadgeState"
       <p class="src">Mapping réel (<code>components/ui/BadgeState.vue</code>) : <code>Validée</code>/<code>validated</code> → <code>success</code> ; <code>Refusée</code>, <code>Annulée</code>/<code>refused</code> → <code>error</code> ; <code>En attente de validation</code>, <code>En cours de traitement</code>/<code>waiting</code> → <code>warning</code> ; <code>Brouillon</code>/<code>draft</code> → <code>info</code> ; tout autre libellé → <code>default</code> (rose <code>#FEE7FC</code>/<code>#6E445A</code>, le style par défaut de <code>DsfrBadge</code>).</p>
 
       <p class="muted small" style="margin-top:1rem">La <a href="https://www.figma.com/design/ibEVX5A5hRPDy3qEgWltuf/Composants-JVA?node-id=754-5059" target="_blank" rel="noopener">maquette Figma</a> (composant « Badge Statut Principal ») ajoute un 7e état, <code>Terminée</code>, dessiné avec le même style que <code>Brouillon</code> (bleu info). Mais <code>Terminée</code> n'a <strong>aucun cas</strong> dans le <code>switch</code> de <code>BadgeState.vue</code> ci-dessus : il tombe donc dans le <code>default</code> et s'affiche en rose, pas en bleu.</p>
-      <p class="fr-tag">🎨 Figma seulement</p>
+      <p class="fr-tag tag-figma-only">🎨 Figma seulement</p>
       <div class="demo" style="margin-top:.5rem"><div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
         <div><span style="display:inline-flex;align-items:center;justify-content:center;max-width:100%;text-transform:uppercase;border-radius:4px;font-weight:700;color:#0063CB;background:#E8EDFF;padding:0 8px;font-size:14px;line-height:20px"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="margin-right:4px;flex:none"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>Terminée</span><p class="muted small" style="margin:.35rem 0 0">Attendu Figma</p></div>
         <div><span style="display:inline-flex;align-items:center;justify-content:center;max-width:100%;text-transform:uppercase;border-radius:4px;font-weight:700;color:#6E445A;background:#FEE7FC;padding:0 8px;font-size:14px;line-height:20px">Terminée</span><p class="muted small" style="margin:.35rem 0 0">Rendu réel (<code>type="default"</code>)</p></div>

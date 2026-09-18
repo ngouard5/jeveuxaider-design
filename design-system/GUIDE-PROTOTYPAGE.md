@@ -36,6 +36,54 @@ Avant d'écrire le markup d'un bouton, d'une carte, d'un tag, etc. :
    couleurs, un hover) sans vérifier qu'il existe réellement quelque part.
    C'est le retour le plus direct reçu sur ce dépôt : *"tu as inventé des
    composants"*.
+4. **Figma et le code peuvent dire deux choses différentes — ce n'est pas
+   une erreur à corriger en silence en choisissant l'un des deux.** Les deux
+   sont des sources réelles : le code est ce qui tourne en prod, Figma est
+   l'intention de design actuelle (parfois en avance sur le code, parfois
+   désynchronisée). "Composants réels, pas inventés" suppose implicitement
+   que les deux sources sont d'accord ; le cas `DsfrAlert`/`BadgeState` a
+   prouvé que non. Si vous en découvrez un en documentant un composant, ne
+   l'ignorez pas et ne montrez qu'une seule des deux versions : signalez-le
+   avec le badge dédié (section suivante).
+
+## Signaler un écart entre Figma et le code
+
+Quand la maquette Figma d'un composant décrit quelque chose que le code
+source réel ne produit pas, ne tranchez jamais en silence pour l'un ou
+l'autre : documentez les deux, avec ce badge (classe définie dans
+`_layouts/default.html`, toujours ce texte exact — l'emoji fait partie du
+repère visuel) :
+
+```html
+<p class="fr-tag tag-figma-only">🎨 Figma seulement</p>
+```
+
+**🎨 Figma seulement** couvre deux situations, toutes les deux résumables
+pour le lecteur en une phrase — *« ce bout de Figma n'est pas fiable pour
+prédire le rendu réel, vérifiez le composant »* :
+- une variante, un état ou une prop que le code ne fait pas du tout
+  aujourd'hui (ex. les variantes `warning`/`error` et les boutons d'action de
+  `DsfrAlert`, absents de `components/dsfr/Alert.vue`) ;
+- un état que le code est censé gérer mais qui tombe dans le mauvais cas —
+  un vrai bug de couverture, pas juste un manque (ex. `Terminée` dessiné en
+  bleu dans Figma mais qui tombe dans le badge rose par défaut faute de cas
+  dans le `switch` de `components/ui/BadgeState.vue`).
+
+**Ce qui NE justifie PAS ce badge** : une nuance de couleur, un écart de
+quelques pixels, une valeur de token légèrement différente — ce genre de
+dérive cosmétique existe en permanence dans n'importe quel design system
+vivant. Si on se mettait à flagger chaque pixel d'écart, le badge
+apparaîtrait presque partout et cesserait de vouloir dire quoi que ce soit.
+Réservez-le aux écarts structurels (une variante entière, un état qui tombe
+dans le mauvais cas) — vérifiés dans le vrai composant source, jamais
+devinés depuis la maquette seule.
+
+Placement : dans le `.meta-row` en haut de page si l'écart concerne le
+composant dans son ensemble (comme sur `dsfralert.html`) ; localement, juste
+avant la démo concernée, quand un seul état/variante est affecté (comme sur
+`uibadgestate.html`). Pour un état qui tombe dans le mauvais cas, montrez
+toujours les deux rendus côte à côte (« Attendu Figma » / « Rendu réel »)
+plutôt que de décrire l'écart en prose seule.
 
 ## Piège n°1 : compiled.css est un bundle PARTIEL
 
@@ -140,9 +188,11 @@ a beau détecter le dark mode, rien ne change visuellement (bug vécu sur
 
 **La règle** : pour tout texte, fond, bordure ou icône dont la couleur doit
 suivre le thème, utilisez la variable sémantique DSFR correspondante plutôt
-qu'un hex recopié à la main. Table de correspondance des couleurs les plus
-fréquentes dans ce dépôt (valeur claire → variable ; la valeur sombre est
-automatique) :
+qu'un hex recopié à la main — jamais une couleur de la palette brute
+directement, voir [`fondamentaux/couleurs.html`](fondamentaux/couleurs.html)
+pour la liste complète des tokens. Table de correspondance des couleurs les
+plus fréquentes dans ce dépôt (valeur claire → variable ; la valeur sombre
+est automatique) :
 
 | Usage | Hex vu dans les prototypes | Variable DSFR |
 |---|---|---|
@@ -175,6 +225,40 @@ screenshot Playwright pris avec `color_scheme="light"` puis `"dark"` (voir
 étape 3 d'« Avant de committer ») — toute zone identique dans les deux
 captures qui ne devrait pas l'être (texte, fond, bouton) pointe vers une
 couleur figée à remplacer.
+
+## Piège n°4 : tailles de texte arbitraires au lieu de l'échelle DSFR
+
+Un prototype qui invente ses propres tailles/interlignes (`font-size:30px`,
+`line-height:1.4`...) dérive silencieusement de l'échelle réelle du design
+system. Avant d'écrire une taille de texte à la main, vérifiez
+[`fondamentaux/typographie.html`](fondamentaux/typographie.html), qui
+documente l'échelle DSFR complète (source Figma) :
+
+| Usage | Taille / interligne desktop | Classe DSFR |
+|---|---|---|
+| Titre de page (H1) | 40px / 48px | `fr-h1` |
+| Titre de section (H2) | 32px / 40px | `fr-h2` |
+| Titre de sous-section (H3) | 28px / 36px | `fr-h3` |
+| Titre XS (H6) | 20px / 28px | `fr-h6` |
+| Chapô | 20px / 32px | `fr-text--xl` |
+| Texte article | 18px / 28px | `fr-text--lg` |
+| Texte standard | 16px / 24px | `fr-text--md` |
+| Texte détail | 14px / 24px | `fr-text--sm` |
+| Texte mention | 12px / 20px | `fr-text--xs` |
+| Éditorial (hero, mise en avant) | 48–80px | `fr-display--xs` à `fr-display--xl` |
+
+**Nuance code réel** (déjà notée sur la page fondamentaux) : les vrais
+composants Vue utilisent surtout `text-sm`/`text-base`/`text-lg` (Tailwind)
+pour le corps de texte, pas les classes `fr-text--*` — mais ces tailles
+Tailwind (14/16/18px) correspondent déjà aux paliers DSFR ci-dessus, donc
+pas de conflit. La règle à suivre selon le cas :
+1. Vous reproduisez un écran réel dont le composant Vue source existe → les
+   classes/tailles exactes du composant (point 2 du principe "composants
+   réels, pas inventés" plus haut) priment sur ce tableau.
+2. Pas de précédent réel (nouvel écran) → utilisez l'échelle DSFR
+   ci-dessus, jamais une taille au-delà de `fr-display--xl` (80px) ou
+   arbitraire entre deux paliers — voir la note "Cohérence avec le code" sur
+   `fondamentaux/typographie.html`.
 
 ## Avant de committer
 

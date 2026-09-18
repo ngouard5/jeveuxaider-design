@@ -101,6 +101,12 @@ h4{font-size:.8rem;text-transform:uppercase;letter-spacing:.04em;color:var(--mut
 .usages-badge{font-weight:normal;font-size:.75rem;color:var(--muted);border:1px solid var(--border);border-radius:99px;padding:.15rem .6rem}
 .fr-badge{padding:.2rem .7rem}
 
+/* Badge Figma/code — voir design-system/GUIDE-PROTOTYPAGE.md, section
+   « Signaler un écart entre Figma et le code ». Toujours ce texte exact
+   (l'emoji fait partie du repère visuel, pas une décoration) :
+   <p class="fr-tag tag-figma-only">🎨 Figma seulement</p> */
+.tag-figma-only{background:var(--background-contrast-info);color:var(--text-default-info)}
+
 .fr-badge.fr-badge--info:before,.fr-badge.fr-badge--success:before,.fr-badge.fr-badge--error:before,.fr-badge.fr-badge--warning:before,.fr-badge.fr-badge--new:before{content:none}
 .meta-row{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;margin:.5rem 0 1rem}
 .path-line{color:var(--muted)}

@@ -11,7 +11,7 @@ data_tagname: "DsfrAlert"
     <div class="meta-row">
       <p class="fr-tag">6 usages</p>
       <p class="fr-tag">Wrapper DSFR</p>
-      <p class="fr-tag">⚠️ Écart Figma détecté</p>
+      <p class="fr-tag tag-figma-only">🎨 Figma seulement</p>
       <span class="path-line small"><code>components/dsfr/Alert.vue</code></span>
     </div>
     <p class="subtitle">Bandeau d'alerte DSFR officiel (types sémantiques + icône).</p>
@@ -32,7 +32,7 @@ data_tagname: "DsfrAlert"
 
       <h4>Proposées par Figma, pas encore codées</h4>
       <p class="muted small">La <a href="https://www.figma.com/design/ibEVX5A5hRPDy3qEgWltuf/Composants-JVA?node-id=641-5971" target="_blank" rel="noopener">maquette Figma</a> décrit aussi <code>warning</code> et <code>error</code>, un layout empilé pour mobile, et un état avec deux boutons d'action ("Action 1" / "Action 2", prop <code>showActionsButtons</code>). Aucun de ces éléments n'existe aujourd'hui dans <code>components/dsfr/Alert.vue</code> : les démos ci-dessous reprennent les couleurs, l'icône et — pour les boutons — les vraies classes de <code>components/dsfr/Button.vue</code> (<code>size="sm"</code>, <code>type="primary"</code>/<code>"tertiary"</code>, cf. Figma "Thème clair / Primaire / SM" et "Thème clair / Tertiaire / SM") à titre de repère visuel, mais ne sont pas des variantes utilisables en l'état.</p>
-      <p class="fr-tag">🎨 Figma seulement</p>
+      <p class="fr-tag tag-figma-only">🎨 Figma seulement</p>
       <div class="demo" style="margin-top:.5rem"><div class="p-6 flex items-start gap-4 border rounded" style="background:#FEF4F2;border-color:#FCC0B0"><svg class="text-[#B34000] w-8 h-8" viewBox="0 0 24 24" fill="none"><path d="M12 4 21 20H3L12 4Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 10v4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="17" r="1" fill="currentColor"/></svg><div class="text-[#161616] flex-1">Message d'avertissement mis en avant.</div></div></div>
       <div class="demo" style="margin-top:1rem"><div class="p-6 flex items-start gap-4 border rounded" style="background:#FEF4F4;border-color:#FCBFBF"><svg class="text-[#CE0500] w-8 h-8" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M9.5 9.5l5 5M14.5 9.5l-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><div class="text-[#161616] flex-1">Message d'erreur mis en avant.</div></div></div>
 

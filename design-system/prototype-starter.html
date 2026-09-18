@@ -12,15 +12,24 @@
      génériques (soulignement de tout [href], hover générique sur [href]/
      button) dont la spécificité CSS bat parfois nos classes utilitaires
      (hover de boutons, cartes, tags — bug vécu et corrigé sur le prototype
-     homepage.html, voir son historique git). Les deux feuilles DSFR sont donc
-     chargées dans DEUX cascade layers distincts plutôt que via <link>, dans
-     CET ORDRE précis (dsfr-base avant dsfr-utilitaires : la couche déclarée
-     en second gagne toujours, quelle que soit la spécificité — ça reproduit
-     la hiérarchie base < utilities d'un vrai build Tailwind). Tout ce que
-     vous écrivez plus bas dans ce <style> reste hors de toute couche, donc
-     gagne TOUJOURS contre le DSFR de base : plus jamais besoin d'astuces de
-     spécificité (id, classes doublées, etc.).
+     homepage.html, voir son historique git). Les feuilles DSFR sont donc
+     chargées dans des cascade layers distincts plutôt que via <link>, dans
+     CET ORDRE précis (la couche déclarée en dernier gagne toujours, quelle
+     que soit la spécificité — ça reproduit la hiérarchie
+     base < components < utilities d'un vrai build Tailwind) :
+       1. tailwind-reset  (compiled-reset.css) — préflight générique
+          (button/input/table/ul...), doit perdre contre les vrais
+          composants DSFR.
+       2. dsfr-base       (dsfr.min.css) — composants DSFR réels
+          (.fr-tabs__tab, .fr-btn...), doivent battre le préflight (1) mais
+          perdre contre nos utilitaires (3).
+       3. dsfr-utilitaires (compiled.css) — classes utilitaires réellement
+          utilisées (dont les :hover), doivent battre dsfr-base (2).
+     Tout ce que vous écrivez plus bas dans ce <style> reste hors de toute
+     couche, donc gagne TOUJOURS contre les 4 : plus jamais besoin d'astuces
+     de spécificité (id, classes doublées, etc.).
      ========================================================================== */
+  @import url("../design-system/compiled-reset.css") layer(tailwind-reset);
   @import url("../design-system/dsfr.min.css") layer(dsfr-base);
   @import url("../design-system/compiled.css") layer(dsfr-utilitaires);
   @import url("../design-system/patches.css") layer(site-patches);

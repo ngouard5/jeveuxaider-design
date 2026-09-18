@@ -74,31 +74,43 @@ soulignement parasite sous les titres de cartes et sous les boutons eux-mêmes
 (bordure blanche visible au repos).
 
 **Le correctif à ne plus refaire au cas par cas** (id, classes doublées...) :
-`design-system/prototype-starter.html` charge les deux feuilles DSFR via
-`@import ... layer(...)` dans deux cascade layers distincts, DANS CET ORDRE :
+`design-system/prototype-starter.html` charge les feuilles DSFR via
+`@import ... layer(...)` dans des cascade layers distincts, DANS CET ORDRE :
 
 ```css
+@import url("../design-system/compiled-reset.css") layer(tailwind-reset);
 @import url("../design-system/dsfr.min.css") layer(dsfr-base);
 @import url("../design-system/compiled.css") layer(dsfr-utilitaires);
 @import url("../design-system/patches.css") layer(site-patches);
 ```
 
-La 3e couche, `patches.css`, centralise les correctifs pour les trous du
-bundle DSFR (reset `.dsfr-link`, `@font-face` Marianne, etc.) — voir
+La dernière couche, `patches.css`, centralise les correctifs pour les trous
+du bundle DSFR (reset `.dsfr-link`, `@font-face` Marianne, etc.) — voir
 `design-system/patches.css` pour le détail. Un nouveau correctif de ce type
 va dans ce fichier, jamais copié-collé dans une page.
 
 Tout le CSS du prototype écrit après reste hors de toute couche. Règle des
 cascade layers CSS : une règle non assignée à une couche gagne TOUJOURS
 contre une règle qui l'est, quelle que soit sa spécificité ; et entre deux
-couches, celle déclarée en second (ici `dsfr-utilitaires`) gagne toujours sur
-la première (`dsfr-base`), là aussi indépendamment de la spécificité. Ça
-reproduit la hiérarchie `base < utilities` d'un vrai build Tailwind, que le
-bundle figé `compiled.css`/`dsfr.min.css` ne conserve plus une fois exporté
-du build réel.
+couches, celle déclarée en dernier gagne toujours sur les précédentes, là
+aussi indépendamment de la spécificité. Ça reproduit la hiérarchie
+`base < components < utilities` d'un vrai build Tailwind, que le bundle figé
+`compiled.css`/`dsfr.min.css` ne conserve plus une fois exporté du build réel.
+
+`compiled-reset.css` est le préflight Tailwind générique (reset de
+`button`/`input`/`table`/`ul`...) qui vivait à l'origine en tête de
+`compiled.css`. Il doit rester dans sa PROPRE couche, placée AVANT
+`dsfr-base` : sinon (ancien état de ce dépôt) il gagne contre les vrais
+composants DSFR par le même mécanisme de couches — `.fr-tabs__tab`,
+`.fr-btn`, etc. perdent alors tout leur style visuel (padding, couleur de
+fond...) malgré une spécificité supérieure. C'est le bug qui a fait
+apparaître des onglets (`fr-tabs`) sans aucun style DSFR. `compiled.css` ne
+contient plus que les classes utilitaires (celles qui doivent battre
+`dsfr-base`, notamment les `:hover`) ; le préflight en a été retiré.
 
 Résultat concret : plus besoin d'ID ou de classes doublées pour qu'un hover
-personnalisé gagne — une simple `.ma-classe:hover{...}` suffit toujours.
+personnalisé gagne — une simple `.ma-classe:hover{...}` suffit toujours — et
+les vrais composants DSFR gardent leur style.
 
 Un cas reste à traiter à la main : un vrai bouton `DsfrButton.vue` est un
 `<button>` en production (jamais concerné par `[href]`) et ne devient un

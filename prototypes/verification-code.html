@@ -6,12 +6,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script>document.documentElement.setAttribute("data-fr-theme", matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");</script>
 <style>
-  /* Feuilles DSFR chargées en deux cascade layers plutôt qu'en <link> — voir
+  /* Feuilles DSFR chargées en cascade layers plutôt qu'en <link> — voir
      design-system/GUIDE-PROTOTYPAGE.md pour le détail. Nos styles ci-dessous
      restent hors de toute couche et gagnent donc toujours contre la base DSFR,
      sans avoir besoin d'id ou de sélecteurs de spécificité renforcée pour les
      hovers de boutons (c'est ce qui gérait le survol de #btn-valider ici avant
-     cette migration). */
+     cette migration). tailwind-reset (préflight générique) passe avant
+     dsfr-base pour ne pas écraser le style des vrais composants DSFR. */
+  @import url("../design-system/compiled-reset.css") layer(tailwind-reset);
   @import url("../design-system/dsfr.min.css") layer(dsfr-base);
   @import url("../design-system/compiled.css") layer(dsfr-utilitaires);
   @import url("../design-system/patches.css") layer(site-patches);

@@ -34,7 +34,14 @@
      d'astuces de spécificité (id, classes doublées, etc.) pour battre la base
      DSFR. C'est le nouveau standard pour tous les prototypes de ce dépôt (voir
      design-system/GUIDE-PROTOTYPAGE.md). Chrome/Edge/Safari/Firefox récents
-     supportent nativement les cascade layers. ----------------------------- */
+     supportent nativement les cascade layers. -----------------------------
+     Complément : compiled.css commençait par le préflight Tailwind générique
+     (reset de button/input/table/ul...), qui gagnait donc aussi contre les
+     vrais composants DSFR (.fr-tabs__tab, .fr-btn...) par le même mécanisme
+     de couches — ceux-ci perdaient tout leur style malgré une spécificité
+     supérieure. Ce préflight vit maintenant dans compiled-reset.css, chargé
+     dans sa propre couche `tailwind-reset` placée AVANT dsfr-base. */
+  @import url("../design-system/compiled-reset.css") layer(tailwind-reset);
   @import url("../design-system/dsfr.min.css") layer(dsfr-base);
   @import url("../design-system/compiled.css") layer(dsfr-utilitaires);
   @import url("../design-system/patches.css") layer(site-patches);

@@ -1,2 +1,7 @@
 Claude outputs/
 .DS_Store
+.bundle/
+vendor/
+Gemfile.lock
+_site/
+.jekyll-cache/

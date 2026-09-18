@@ -21,9 +21,9 @@
   /* Mise en page propre à ce prototype (2 colonnes) — ce n'est pas un composant du design-system */
   *{box-sizing:border-box}
   html,body{margin:0;padding:0}
-  body{font-family:Marianne,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#fff;font-synthesis:none}
+  body{font-family:Marianne,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--background-default-grey);font-synthesis:none}
 
-  .screen{display:flex;min-height:100vh;background:#fff}
+  .screen{display:flex;min-height:100vh;background:var(--background-default-grey)}
 
   .form-col{flex:1 1 65%;display:flex;justify-content:center;padding:56px 24px}
   .form{width:100%;max-width:488px;display:flex;flex-direction:column;gap:48px}
@@ -32,20 +32,46 @@
   .bloc-marque-img{height:64px;width:auto}
   .logo-jva{height:40px;width:auto}
 
-  .retour{display:inline-flex;align-items:center;gap:8px;color:#000091;font-size:16px;text-decoration:none;width:fit-content}
+  .retour{display:inline-flex;align-items:center;gap:8px;color:var(--text-action-high-blue-france);font-size:16px;text-decoration:none;width:fit-content}
   .retour svg{flex:none}
+  .retour svg path{stroke:var(--text-action-high-blue-france)}
 
   .intro{display:flex;flex-direction:column;gap:16px}
-  .intro h1{margin:0;font-weight:700;font-size:32px;line-height:40px;color:#161616}
-  .intro p{margin:0;font-weight:400;font-size:16px;line-height:24px;color:#666}
-  .intro p strong{font-weight:700;color:#666}
+  .intro h1{margin:0;font-weight:700;font-size:32px;line-height:40px;color:var(--text-title-grey)}
+  .intro p{margin:0;font-weight:400;font-size:16px;line-height:24px;color:var(--text-mention-grey)}
+  .intro p strong{font-weight:700;color:var(--text-mention-grey)}
 
   .otp-card{display:flex;flex-direction:column;gap:32px;width:100%}
 
   .otp-row{display:flex;gap:4px;width:100%}
   /* dimensions propres à cette disposition à 6 cases ; couleur, ombre et arrondi viennent des classes réelles posées sur chaque input */
   .otp-box{flex:1;min-width:0;height:64px;text-align:center;font-family:Marianne;font-size:20px;padding:8px 16px;border:none}
-  .otp-box:focus{outline:2px solid #000091;outline-offset:2px}
+  .otp-box:focus{outline:2px solid var(--text-action-high-blue-france);outline-offset:2px}
+
+  /* Surcharges scopées à cette page des classes utilitaires Tailwind posées
+     directement dans le HTML (bg-[#EEEEEE], shadow-[inset_0_-2px_0_0_#...]) :
+     compiled.css les fige en couleurs fixes, donc invisibles en dark mode.
+     Ce <style> reste hors de toute cascade layer (voir plus haut) et gagne
+     donc toujours contre compiled.css, sans avoir besoin d'y toucher — ce
+     fichier est partagé par tout le design-system. */
+  .bg-\[\#EEEEEE\]{background-color:var(--background-contrast-grey)}
+  .shadow-\[inset_0_-2px_0_0_\#3A3A3A\]{--tw-shadow:inset 0 -2px 0 0 var(--border-plain-grey)}
+  .shadow-\[inset_0_-2px_0_0_\#ce0500\]{--tw-shadow:inset 0 -2px 0 0 var(--text-default-error)}
+  .bg-\[\#B8FEC9\]{background-color:var(--background-contrast-success)}
+  .text-\[\#18753C\]{color:var(--text-default-success)}
+
+  /* CTA principal : bg-jva-blue-500/700/900 + text-white viennent du bundle
+     Tailwind figé (couleur de marque fixe dans les deux thèmes — correct
+     pour les autres pages qui utilisent ces mêmes classes). Sur CE bouton,
+     on veut le vrai traitement DSFR "action haute emphase", adaptatif : bleu
+     marine/texte clair en light, violet clair/texte marine en dark (le bg
+     s'éclaircit en dark, donc le texte doit s'assombrir en retour —
+     --text-inverted-blue-france gère cette inversion). Surcharge scopée à
+     cette page, comme les autres ci-dessus. */
+  .bg-jva-blue-500{background-color:var(--background-action-high-blue-france)}
+  .hover\:bg-jva-blue-800:hover{background-color:var(--background-action-high-blue-france-hover)}
+  .active\:bg-jva-blue-900:active{background-color:var(--background-action-high-blue-france-active)}
+  #btn-valider.text-white{color:var(--text-inverted-blue-france)}
 
   /* État disabled du bouton primary, d'après la maquette Figma (Inscription et connexion,
      nœud 1916:26908) : \-disabled-grey #E5E5E5, \-disabled-grey #929292.
@@ -53,15 +79,18 @@
      valeurs sont reprises ici à la main, comme pour .dsfr-link plus haut. À noter :
      components/dsfr/Button.vue applique en réalité text-[#656565] pour ce même état — écart
      entre la maquette et le code à vérifier avec l'équipe dev. */
-  #btn-valider:disabled{background:#E5E5E5;color:#929292}
+  #btn-valider:disabled{background:var(--background-disabled-grey);color:var(--text-disabled-grey)}
 
-  .error-msg{display:flex;align-items:flex-start;gap:8px;text-align:left;font-size:14px;line-height:20px;color:#CE0500;margin:0}
-  .error-msg[hidden],.success-msg[hidden]{display:none}
+  .error-msg{display:flex;align-items:flex-start;gap:8px;text-align:left;font-size:14px;line-height:20px;color:var(--text-default-error);margin:0}
+  .error-msg[hidden],.success-msg[hidden],.otp-row[hidden],#btn-valider[hidden]{display:none}
+  .error-msg svg{fill:var(--text-default-error)}
+  .success-msg svg{fill:var(--text-default-success)}
 
-  .resend{display:flex;align-items:center;gap:8px;font-size:14px;color:#666}
-  .resend a.disabled{color:#929292;pointer-events:none;background-image:none}
+  .resend{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text-mention-grey)}
+  .resend a.disabled{color:var(--text-disabled-grey);pointer-events:none;background-image:none}
 
-  .aide{display:inline-flex;align-items:center;gap:8px;font-size:14px;color:#666;text-decoration:none;width:fit-content}
+  .aide{display:inline-flex;align-items:center;gap:8px;font-size:14px;color:var(--text-mention-grey);text-decoration:none;width:fit-content}
+  .aide svg path{stroke:var(--text-mention-grey)}
 
   /* ---- colonne photo ---- */
   .photo-col{flex:1 1 35%;max-width:504px;position:relative;overflow:hidden;background:#000091}
@@ -126,7 +155,7 @@
 
         <div class="resend">
           <span id="resend-label">Vous n'avez pas reçu de code ?</span>
-          <a href="#" id="resend-link" class="dsfr-link" style="color:#000091;text-decoration:none">Renvoyer le code</a>
+          <a href="#" id="resend-link" class="dsfr-link" style="color:var(--text-action-high-blue-france);text-decoration:none">Renvoyer le code</a>
         </div>
 
         <div class="success-msg inline-flex items-center gap-2 rounded px-2.5 py-1.5 text-sm bg-[#B8FEC9] text-[#18753C]" id="resend-success" hidden>

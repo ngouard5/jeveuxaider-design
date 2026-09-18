@@ -52,3 +52,17 @@ a.font-medium.transition-extended{background-image:none}
    le texte de l'état ("Étape X sur Y") reste en ligne avec le titre au lieu
    de passer dessous. */
 .fr-stepper__state{display:block}
+
+/* Token JVA — PAS un token DSFR officiel (aucune décision équivalente dans
+   dsfr.min.css). Couleur de fond de base du site (confirmé par l'équipe
+   produit), jamais nommée nulle part avant ce token. S'appuie sur la valeur
+   brute DSFR --beige-gris-galet-975-75 (#F9F6F2 clair / #211D19 sombre) —
+   c'est d'ailleurs déjà la couleur utilisée sans le savoir par .demo dans
+   _layouts/default.html. Attention à ne pas confondre avec
+   --beige-gris-galet-950-100 (#F3EDE5), un ton plus saturé utilisé en fond
+   de section sur certaines pages (pages/reseaux/[slug].vue,
+   pages/organisations/[slug].vue...) — un usage différent, pas encore
+   tokenisé. Voir design-system/fondamentaux/couleurs.html, section "Tokens
+   spécifiques JeVeuxAider" — une variable Figma du même nom reste à créer
+   côté maquette (pas fait dans cette passe). */
+:root{--background-warm-neutral:var(--beige-gris-galet-975-75)}

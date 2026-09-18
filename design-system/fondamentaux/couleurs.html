@@ -147,6 +147,17 @@ title: "Couleurs — Fondamentaux — Composants JeVeuxAider"
 <tr><td><code>focus-525</code></td><td><span class="swatch" style="background:#0A76F6"></span><code class="small">#0A76F6</code></td></tr>
   </tbody></table>
 
+  <h2>Tokens spécifiques JeVeuxAider (pas DSFR officiel)</h2>
+  <p class="muted small">Certains fonds/couleurs utilisés en vrai sur le produit ne correspondent à
+  aucun token « Decisions » de dsfr.min.css : c'est un choix produit posé
+  par-dessus la base DSFR, jamais nommé nulle part (ni en code, ni en
+  Figma) — juste recopié en hex à chaque usage. Documentés ici au fur et à
+  mesure qu'on les découvre, pas un audit exhaustif.</p>
+  <table class="fond-table"><thead><tr><th>Token JVA</th><th>Light</th><th>Dark</th><th>Usage réel</th></tr></thead><tbody>
+<tr><td><code>--background-warm-neutral</code></td><td><span class="swatch" style="background:#F9F6F2"></span><code class="small">#F9F6F2</code></td><td><span class="swatch" style="background:#211D19"></span><code class="small">#211D19</code></td><td class="muted small">Couleur de fond de base du site (confirmé par l'équipe produit). S'appuie sur la valeur brute DSFR <code>--beige-gris-galet-975-75</code> (qui a un vrai pendant dark), défini dans <code>design-system/patches.css</code> — c'est aussi, sans lien exprès, la couleur déjà utilisée par <code>.demo</code> dans <code>_layouts/default.html</code>. À ne pas confondre avec <code>--beige-gris-galet-950-100</code> (<code>#F3EDE5</code>), un ton plus saturé utilisé en fond de section sur certaines pages (<code>pages/reseaux/[slug].vue</code>, <code>pages/organisations/[slug].vue</code>...) — un usage différent, pas encore tokenisé.</td></tr>
+  </tbody></table>
+  <p class="methodo" style="margin-bottom:0"><strong>Côté Figma :</strong> créé comme <em>styles</em> (pas variables — DSFR lui-même utilise des styles, pas des variables, dans ce fichier ; un jeu <code>Light/</code>/<code>Dark/</code> par style plutôt qu'un mode qui bascule) dans « Composants JVA » : <code>Light/JVA/Fond neutre chaud</code> et <code>Dark/JVA/Fond neutre chaud</code>. Un style ne peut pas référencer la valeur brute DSFR comme le fait <code>var(--background-warm-neutral)</code> en CSS — si <code>beige-gris-galet-975-75</code> change un jour côté DSFR, ces deux styles devront être resynchronisés à la main.</p>
+
   <h2>Cohérence avec le code</h2>
   <div class="methodo">
     <p style="margin-top:0"><strong>Confirmé :</strong> <code>--text-disabled-grey</code> vaut <code>#929292</code> en light dans Figma, ce qui correspond à ce qu'on a tranché pour <a href="../composants/dsfrbutton.html">DsfrButton</a> (le code utilisait <code>#656565</code> par endroits — voir <a href="../homogenisation.html">À homogénéiser</a>).</p>

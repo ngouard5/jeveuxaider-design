@@ -81,7 +81,17 @@ h4{font-size:.8rem;text-transform:uppercase;letter-spacing:.04em;color:var(--mut
 /* ---------- tabs ---------- */
 .tabs{display:flex;gap:1.75rem;border-bottom:2px solid var(--border);margin:1.5rem 0 1.75rem;flex-wrap:wrap}
 .fr-tabs__list{border-bottom:1px solid var(--border);padding-bottom:0}
-.fr-tabs__panel{display:none!important;position:static!important;left:auto!important;flex:none!important;margin:0!important;visibility:visible!important;height:auto!important;overflow:visible!important;width:auto!important}
+/* flex:1 1 auto (pas flex:none) : dsfr.min.css fait de .fr-tabs un
+   display:flex, et .fr-tabs__panel (seul panel visible à la fois, les autres
+   sont display:none donc hors flux) doit remplir toute la largeur de la
+   ligne comme un bloc normal. flex-shrink:0 (implicite dans flex:none)
+   empêche un flex-item de rétrécir sous la largeur "max-content" de son
+   contenu — un contenu qui DEVRAIT se retasser (ex. une rangée de badges en
+   flex-wrap dans .demo) forçait alors ce panel, et .demo dedans, à s'élargir
+   bien au-delà de la page, débordant silencieusement hors du viewport (bug
+   découvert sur la démo de uibadgestate.html). flex-shrink:1 (via flex:1 1
+   auto) laisse le panel se retasser à la largeur disponible normalement. */
+.fr-tabs__panel{display:none!important;position:static!important;left:auto!important;flex:1 1 auto!important;margin:0!important;visibility:visible!important;height:auto!important;overflow:visible!important;width:auto!important}
 .fr-tabs__panel--selected{display:block!important}
 
 /* ---------- component meta ---------- */

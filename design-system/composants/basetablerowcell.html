@@ -27,6 +27,26 @@ data_tagname: "BaseTableRowCell"
       <h4>Démo</h4>
       <div class="demo"><table><tbody><tr><td class="px-6 py-4 whitespace-pre-wrap text-sm text-[#666666]">Distribution alimentaire</td></tr></tbody></table></div>
 
+      <p class="muted small" style="margin-top:1rem">Avec <code>with-preview</code> : la cellule devient un bloc cliquable qui affiche un bouton « Aperçu » au survol (fondu en dégradé + <code>DsfrButton type="transparent" size="xs"</code>), comme dans les listes de participations/organisations ci-dessous — d'après la <a href="https://www.figma.com/design/ibEVX5A5hRPDy3qEgWltuf/Composants-JVA?node-id=754-5059" target="_blank" rel="noopener">maquette Figma « Tableaux »</a>.</p>
+      <div class="demo" style="margin-top:.5rem;display:flex;gap:1rem;flex-wrap:wrap">
+        <div>
+          <div style="width:280px;padding:1rem;border-radius:8px">
+            <div style="display:flex;gap:4px"><span style="display:inline-flex;align-items:center;justify-content:center;text-transform:uppercase;border-radius:4px;font-weight:700;color:#18753C;background:#B8FEC9;padding:0 6px;font-size:12px;line-height:20px">Validée</span></div>
+            <p style="margin:8px 0 0;font-weight:700;font-size:16px;color:#161616">Je rejoins l'équipe de restauration / buvette d'un festival</p>
+            <div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:8px"><span style="background:#eee;color:#3a3a3a;border-radius:12px;padding:2px 8px;font-size:12px">Angers</span><span style="background:#eee;color:#3a3a3a;border-radius:12px;padding:2px 8px;font-size:12px">13 juillet 2025</span><span style="background:#eee;color:#3a3a3a;border-radius:12px;padding:2px 8px;font-size:12px">Vous</span></div>
+          </div>
+          <p class="muted small" style="margin:.5rem 0 0">Repos</p>
+        </div>
+        <div>
+          <div style="width:280px;padding:1rem;border-radius:8px;background:#ededed;position:relative">
+            <div style="display:flex;gap:4px"><span style="display:inline-flex;align-items:center;justify-content:center;text-transform:uppercase;border-radius:4px;font-weight:700;color:#18753C;background:#B8FEC9;padding:0 6px;font-size:12px;line-height:20px">Validée</span></div>
+            <p style="margin:8px 0 0;font-weight:700;font-size:16px;color:#161616">Je rejoins l'équipe de restauration / buvette d'un festival</p>
+            <div style="display:flex;align-items:center;justify-content:flex-end;margin-top:8px"><span style="display:inline-flex;align-items:center;gap:8px;padding:4px 8px;border:1px solid #ddd;font-size:12px;color:#000091;background:#fff">Aperçu</span></div>
+          </div>
+          <p class="muted small" style="margin:.5rem 0 0">Survol (fond <code>#F2F2F2</code>, bouton Aperçu)</p>
+        </div>
+      </div>
+
       <section id="playground-section" class="playground" style="display:none">
         <h4>Tester les props</h4>
         <p class="muted small">Modifiez les valeurs pour voir le code correspondant se mettre à jour ; pour certains composants, l'aperçu visuel ci-dessous réagit aussi en direct.</p>

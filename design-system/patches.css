@@ -52,18 +52,3 @@ a.font-medium.transition-extended{background-image:none}
    le texte de l'état ("Étape X sur Y") reste en ligne avec le titre au lieu
    de passer dessous. */
 .fr-stepper__state{display:block}
-
-/* compiled.css (bundle Tailwind) réinitialise button/input/select/textarea
-   et ul/ol à margin:0;padding:0 dans layer(dsfr-utilitaires), déclarée
-   après layer(dsfr-base) qui contient les vraies règles DSFR
-   .fr-tabs__tab/.fr-tabs__list : la couche la plus récente gagne TOUJOURS,
-   quelle que soit la spécificité, donc ce reset écrasait le padding/margin
-   des onglets DSFR réels malgré une classe plus spécifique — les onglets
-   "Présentation/Code/Usages" des pages composants se retrouvaient collés,
-   sans style. On restaure ici les valeurs de dsfr.min.css. Même mécanisme
-   à surveiller pour toute autre vraie classe DSFR posée directement sur un
-   <button>/<input>/<select>/<textarea>/<ul>/<ol> sans classe utilitaire
-   Tailwind par-dessus (qui, elle, regagnerait via le cascade normal au
-   sein de la même couche). */
-.fr-tabs__tab{padding:.5rem 1rem;margin:0 .25rem}
-.fr-tabs__list{padding:4px .75rem;margin:-4px 0}

@@ -124,6 +124,58 @@ Pour un titre de carte en stretched-link (`CardMission`, `CardArticleLight`),
 ajoutez `background-image:none` explicitement à côté du `text-decoration:none`
 habituel.
 
+## Piège n°3 : couleurs en dur = dark mode cassé
+
+Tout prototype charge déjà le mécanisme de theming DSFR (`data-fr-theme`
+posé en `<script>` dans le `<head>`, cf. `prototype-starter.html`) et
+`dsfr.min.css` redéfinit ses variables sémantiques pour `[data-fr-theme=dark]`.
+Mais ce mécanisme ne sert à rien si le CSS du prototype utilise des couleurs
+en dur (`color:#161616`, `background:#fff`, classes Tailwind à valeur figée
+comme `bg-jva-blue-500`) au lieu des variables DSFR (`var(--text-title-grey)`,
+`var(--background-default-grey)`, `var(--background-action-high-blue-france)`,
+etc.) : une valeur figée reste identique quel que soit le thème, donc la page
+a beau détecter le dark mode, rien ne change visuellement (bug vécu sur
+`inscription-benevole-etape-1.html`, resté 100% clair sous
+`prefers-color-scheme: dark` jusqu'à correction).
+
+**La règle** : pour tout texte, fond, bordure ou icône dont la couleur doit
+suivre le thème, utilisez la variable sémantique DSFR correspondante plutôt
+qu'un hex recopié à la main. Table de correspondance des couleurs les plus
+fréquentes dans ce dépôt (valeur claire → variable ; la valeur sombre est
+automatique) :
+
+| Usage | Hex vu dans les prototypes | Variable DSFR |
+|---|---|---|
+| Fond de page | `#fff` | `var(--background-default-grey)` |
+| Titre / label | `#161616` | `var(--text-title-grey)` |
+| Texte secondaire / muted | `#666` | `var(--text-mention-grey)` |
+| Soulignement de champ | `#3A3A3A` | `var(--border-plain-grey)` |
+| Fond de champ de saisie | `#EEEEEE` | `var(--background-contrast-grey)` |
+| Texte / icône d'erreur | `#CE0500`, `#E2011C` | `var(--text-default-error)` |
+| Texte / icône de succès | `#18753C` | `var(--text-default-success)` |
+| Fond de bandeau succès | `#B8FEC9` | `var(--background-contrast-success)` |
+| Lien / action bleu France | `#000091` | `var(--text-action-high-blue-france)` |
+
+**Cas du bouton d'action principal (CTA)** : ne PAS utiliser les classes
+`bg-jva-blue-500`/`hover:bg-jva-blue-800`/`active:bg-jva-blue-900` avec
+`text-white` — ce sont des couleurs de marque figées (bundle Tailwind
+partiel, `compiled.css`), volontairement fixes sur les pages qui doivent
+reproduire une couleur de marque exacte, mais donc illisibles dès qu'on
+force un fond clair en dark mode via une variable. Pour un vrai bouton
+d'action haute emphase adaptatif, utilisez plutôt :
+`background-color:var(--background-action-high-blue-france)` (+ `-hover` /
+`-active` au survol/clic) **et** `color:var(--text-inverted-blue-france)`
+pour le texte. Les deux vont ensemble : en dark mode, DSFR éclaircit le fond
+(bleu → violet clair) ET assombrit le texte en retour (blanc → bleu marine)
+— changer l'un sans l'autre rend le bouton illisible dans un des deux
+thèmes. Si vous ne changez que le fond, vous recréez ce bug.
+
+Pour vérifier qu'aucune couleur en dur n'a été oubliée : comparer un
+screenshot Playwright pris avec `color_scheme="light"` puis `"dark"` (voir
+étape 3 d'« Avant de committer ») — toute zone identique dans les deux
+captures qui ne devrait pas l'être (texte, fond, bouton) pointe vers une
+couleur figée à remplacer.
+
 ## Avant de committer
 
 1. `python3 design-system/outils/checktags.py votre-prototype.html` —
@@ -142,7 +194,9 @@ habituel.
    (bouton, tag, carte) et lit `getComputedStyle` avant/après — pas juste un
    screenshot statique. C'est précisément ce qui a laissé passer les bugs de
    hover à plusieurs reprises : un screenshot à l'état repos ne les montre
-   pas.
+   pas. Répétez ce passage avec `color_scheme="light"` PUIS `"dark"` (voir
+   Piège n°3) : un élément identique dans les deux captures qui ne devrait
+   pas l'être trahit une couleur en dur.
 4. Propager au device avec `device_commit_files`, puis **vérifier le md5sum
    des deux côtés** avant de committer — un `device_commit_files` peut
    répondre "written" sans que le contenu ait réellement changé côté device

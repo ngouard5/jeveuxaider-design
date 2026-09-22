@@ -1,0 +1,970 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Prototype — Mes missions (responsable d'organisation)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>document.documentElement.setAttribute("data-fr-theme", matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");</script>
+<style>
+  /* Cascade layers — voir design-system/GUIDE-PROTOTYPAGE.md. Ordre : reset
+     Tailwind < dsfr-base < utilitaires Tailwind < nos styles (hors couche,
+     toujours gagnants). */
+  @import url("../design-system/compiled-reset.css") layer(tailwind-reset);
+  @import url("../design-system/dsfr.min.css") layer(dsfr-base);
+  @import url("../design-system/compiled.css") layer(dsfr-utilitaires);
+  @import url("../design-system/patches.css") layer(site-patches);
+
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font-family:Marianne,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--background-warm-neutral);color:var(--text-default-grey);font-synthesis:none}
+  a{color:inherit}
+  button{font-family:inherit}
+
+  /* Composants réels repris pour cette page :
+     - components/base/Table.vue + TableHead/TableHeadCell/TableRow/TableRowCell
+       (structure <table>, cellule "Mission" avec pattern with-preview)
+     - components/ui/BadgeState.vue (mapping état → type de DsfrBadge)
+     - components/BadgeOnline.vue → même famille de badge gris pour le statut
+       des inscriptions (pas de state BadgeState dédié, donc DsfrBadge type="gray"
+       directement, cf. note "Figma seulement" sur uibadgestate.html)
+     - components/dsfr/Badge.vue (couleurs exactes, via les vraies variables
+       sémantiques DSFR plutôt que les hex recopiés du doc, pour le dark mode)
+     - components/search/SearchFilter.vue, components/base/FilterSelectAdvanced.vue,
+       components/dsfr/Tag.vue (filtre "Places disponibles")
+     - components/dsfr/Pagination.vue, components/custom/EmptyState.vue
+     - components/dsfr/Button.vue / IconButton.vue, ui/dropdown-menu/* (menu "…")
+     - components/drawer/DrawerMission.vue (aperçu via l'icône œil)
+     Source précise de la ligne de tableau (badges, colonnes, actions) :
+     maquette Figma "Composants JVA" › Tableau / Thème Clair / Ligne mission
+     (node 688:6008), demandée explicitement par Nicolas comme référence pour
+     le comportement de clic. Elle montre que le TITRE n'est pas cliquable :
+     l'aperçu passe par une icône dédiée (œil) + le survol de la cellule
+     "Informations principales" (pattern with-preview documenté sur
+     basetablerowcell.html), jamais par un lien sur le titre lui-même. */
+
+  /* ---------- header ----------
+     Maquette Figma "Composants JVA" › navigation/desktop/header/XL, variante
+     "Logged In" (node 409:4656) : bloc marque RF + logo JVA, à droite un lien
+     "Trouver une mission", icônes messagerie/notifications, puis profil
+     (avatar + nom + rôle). La nav du dessous est le composant DSFR standard
+     "Navigation principale" (https://www.systeme-de-design.gouv.fr/version-courante/fr/composants/navigation-principale),
+     classes fr-nav/fr-nav__list/fr-nav__link réelles du bundle dsfr.min.css —
+     l'état actif (aria-current="page") est stylé nativement par DSFR, aucun
+     CSS perso nécessaire pour ça. */
+  .jva-header{background:var(--background-default-grey);box-shadow:0 2px 3px rgba(0,0,18,.16);position:relative;z-index:30}
+  .jva-header__row{max-width:1440px;margin:0 auto;display:flex;align-items:center;gap:24px;padding:12px 24px;flex-wrap:wrap}
+  @media (min-width:1024px){.jva-header__row{gap:40px;padding:12px 120px 12px 104px;flex-wrap:nowrap}}
+  .jva-header__brand{display:flex;align-items:center;gap:16px;flex:none}
+  .jva-header__rf{height:48px;width:auto;flex:none}
+  .jva-header__logo{height:40px;width:auto;flex:none}
+  .jva-header__tools{display:flex;align-items:center;gap:16px;flex:1 1 auto;justify-content:flex-end;flex-wrap:wrap}
+  @media (min-width:1024px){.jva-header__tools{gap:24px}}
+  .jva-header__tool-link{display:inline-flex;align-items:center;gap:8px;padding:4px 12px;font-size:14px;font-weight:500;line-height:24px;color:var(--text-action-high-blue-france);text-decoration:none;background-image:none;white-space:nowrap}
+  .jva-header__icon-btn{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border:none;background:none;color:var(--text-title-grey);cursor:pointer;padding:0}
+  .jva-header__icon-btn:hover{background:var(--background-default-grey-hover)}
+  .jva-header__profile{display:inline-flex;align-items:center;gap:12px;border:none;background:none;cursor:pointer;padding:0;font-family:inherit}
+  .jva-header__avatar{width:40px;height:40px;border-radius:50%;background:var(--background-action-high-blue-france);color:var(--text-inverted-blue-france);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500;flex:none}
+  .jva-header__profile-text{display:flex;flex-direction:column;align-items:flex-start;font-size:14px;line-height:20px}
+  .jva-header__profile-text strong{color:var(--text-title-grey);font-weight:700}
+  .jva-header__profile-text span{color:var(--text-mention-grey)}
+  .jva-header__menu{border-top:1px solid var(--border-default-grey);max-width:1440px;margin:0 auto;padding:0 24px}
+  @media (min-width:1024px){.jva-header__menu{padding:0 104px}}
+  .jva-header__menu .fr-nav__list{overflow-x:auto}
+
+  /* ---------- page ---------- */
+  .page{max-width:1440px;margin:0 auto;padding:40px 24px 80px}
+  @media (min-width:1024px){.page{padding:40px 80px 80px}}
+  .fr-breadcrumb{margin:0 0 32px}
+
+  .page-header{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:32px}
+  .page-header h1{margin:0;color:var(--text-title-grey);font-size:32px;line-height:40px;font-weight:700}
+  .page-header .subtitle{margin:8px 0 0;color:var(--text-mention-grey);font-size:16px;line-height:24px}
+
+  .btn-cta{display:inline-flex;align-items:center;gap:8px;border:none;cursor:pointer;font-weight:500;font-size:16px;line-height:24px;padding:9px 16px;min-height:42px;color:var(--text-inverted-blue-france);background-color:var(--background-action-high-blue-france)}
+  .btn-cta:hover{background-color:var(--background-action-high-blue-france-hover)}
+  .btn-cta:active{background-color:var(--background-action-high-blue-france-active)}
+
+  /* ---------- barre de filtres ---------- */
+  .filters-card{background:var(--background-default-grey);box-shadow:0 4px 6px rgba(0,0,18,.08);padding:24px;margin-bottom:24px}
+  .search-row{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:2px solid var(--border-plain-grey);margin-bottom:16px}
+  .search-row svg{flex:none;color:var(--text-mention-grey)}
+  .search-row input{border:none;outline:none;background:none;width:100%;font-size:16px;color:var(--text-title-grey)}
+  .search-row input::placeholder{color:var(--text-mention-grey)}
+
+  .filters-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+  .filter-pill{position:relative}
+  .filter-pill > button{display:inline-flex;align-items:center;border-radius:9999px;background:var(--background-open-blue-france);color:var(--text-action-high-blue-france);padding:4px 12px;height:32px;font-size:14px;border:none;cursor:pointer;max-width:220px;font-family:inherit}
+  .filter-pill > button span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .filter-pill > button svg{margin-left:4px;flex:none;transition:transform .15s}
+  .filter-pill.open > button svg{transform:rotate(180deg)}
+  .filter-pill.active > button{background:var(--background-action-high-blue-france);color:var(--text-inverted-blue-france)}
+  .filter-pill.active > button svg{color:var(--text-inverted-blue-france)}
+
+  .filter-panel{position:absolute;top:calc(100% + 4px);left:0;z-index:20;background:var(--background-default-grey);border:1px solid var(--border-default-grey);box-shadow:0 4px 6px rgba(0,0,18,.16);padding:8px;width:240px;max-height:280px;overflow-y:auto}
+  .filter-panel label{display:flex;align-items:center;gap:8px;padding:6px 8px;font-size:14px;color:var(--text-title-grey);cursor:pointer;border-radius:4px}
+  .filter-panel label:hover{background:var(--background-alt-grey)}
+  .filter-panel input[type=checkbox]{accent-color:var(--background-action-high-blue-france)}
+
+  .tag-places{margin-left:4px}
+  .btn-reset{border:none;background:none;color:var(--text-mention-grey);font-size:14px;text-decoration:underline;background-image:none;cursor:pointer;padding:4px 8px}
+  .btn-reset:hover{color:var(--text-title-grey)}
+
+  .results-line{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:12px;color:var(--text-mention-grey);font-size:14px}
+
+  /* ---------- tableau ---------- */
+  .table-card{background:var(--background-default-grey);box-shadow:0 4px 6px rgba(0,0,18,.08);overflow:hidden}
+  .table-scroll{overflow-x:auto}
+  table.missions{width:100%;border-collapse:collapse;min-width:960px}
+  table.missions thead th{background:var(--background-alt-grey);border-bottom:1px solid var(--border-default-grey);text-align:left;padding:12px 16px;font-size:14px;font-weight:700;color:var(--text-mention-grey);text-transform:uppercase;letter-spacing:.02em}
+  table.missions thead th.col-actions{text-align:right}
+  table.missions tbody tr{border-bottom:1px solid var(--border-default-grey)}
+  table.missions tbody tr:last-child{border-bottom:none}
+  table.missions tbody td{padding:16px;vertical-align:top}
+
+  /* Cellule "Informations principales" — pattern with-preview (basetablerowcell.html) :
+     tout le bloc devient un déclencheur d'aperçu au survol/focus, avec un
+     bouton "Aperçu" qui apparaît en bas à droite. */
+  td.col-mission{padding:0;position:relative}
+  .mission-trigger{all:unset;display:block;width:100%;box-sizing:border-box;padding:16px;cursor:pointer;position:relative;border-radius:8px}
+  .mission-trigger:hover,.mission-trigger:focus-visible{background:var(--background-default-grey-hover)}
+  .mission-trigger:focus-visible{outline:2px solid var(--background-action-high-blue-france);outline-offset:-2px}
+  .mission-badges{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px}
+  .badge{display:inline-flex;align-items:center;gap:4px;border-radius:4px;font-weight:700;text-transform:uppercase;padding:0 6px;font-size:12px;line-height:20px;white-space:nowrap}
+  .badge svg{flex:none}
+  .badge--success{color:var(--text-default-success);background:var(--background-contrast-success)}
+  .badge--warning{color:var(--text-default-warning);background:var(--background-contrast-warning)}
+  .badge--error{color:var(--text-default-error);background:var(--background-contrast-error)}
+  .badge--info{color:var(--text-default-info);background:var(--background-contrast-info)}
+  /* "Terminée" tombe dans le type "default" du vrai BadgeState.vue (rose), pas
+     bleu comme le dessine la maquette Figma — écart déjà signalé sur
+     uibadgestate.html. On reproduit ici le rendu réel du code. */
+  .badge--default{color:var(--purple-glycine-sun-319-moon-630);background:var(--purple-glycine-950-100)}
+  .badge--gray{color:var(--text-default-grey);background:var(--background-contrast-grey);font-weight:700}
+
+  .mission-title{margin:0 0 8px;font-weight:700;font-size:16px;line-height:24px;color:var(--text-title-grey);text-align:left}
+  .mission-chips{display:flex;gap:4px;flex-wrap:wrap}
+  .chip{display:inline-flex;align-items:center;gap:4px;background:var(--background-contrast-grey);color:var(--text-default-grey);border-radius:12px;padding:2px 8px;font-size:12px;line-height:20px;white-space:nowrap}
+  .chip svg{flex:none;opacity:.7}
+
+  .btn-preview{position:absolute;right:12px;bottom:12px;display:inline-flex;align-items:center;gap:8px;padding:4px 8px;font-size:12px;color:var(--text-action-high-blue-france);background:var(--background-default-grey);box-shadow:inset 0 0 0 1px var(--border-default-grey);opacity:0;pointer-events:none;transition:opacity .1s}
+  .mission-trigger:hover .btn-preview,.mission-trigger:focus-visible .btn-preview{opacity:1;pointer-events:auto}
+
+  .col-inscriptions{width:200px}
+  .col-inscriptions .places{margin:8px 0 0;color:var(--text-mention-grey);font-size:14px;line-height:24px}
+  .col-inscriptions .places strong{color:var(--text-title-grey);font-weight:500}
+  .col-candidatures{width:140px;color:var(--text-mention-grey);font-size:14px;line-height:24px}
+  .col-candidatures p{margin:0}
+  .col-candidatures p.has-new{color:var(--text-title-grey);font-weight:500}
+
+  .actions-cell{display:flex;align-items:center;justify-content:flex-end;gap:4px;flex-wrap:nowrap}
+  .btn-row-action,.btn-icon{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:4px 12px;font-size:14px;line-height:24px;font-weight:500;color:var(--text-action-high-blue-france);background:var(--background-default-grey);box-shadow:inset 0 0 0 1px var(--border-default-grey);border:none;cursor:pointer;white-space:nowrap}
+  .btn-icon{padding:8px}
+  .btn-row-action:hover,.btn-icon:hover{background:var(--background-default-grey-hover)}
+  .btn-row-action:active,.btn-icon:active{background:var(--background-default-grey-active)}
+
+  .dropdown{position:relative}
+  .dropdown-panel{position:absolute;right:0;top:calc(100% + 4px);z-index:20;background:var(--background-default-grey);color:var(--text-title-grey);border:1px solid var(--border-default-grey);padding:8px;box-shadow:0 4px 6px rgba(0,0,18,.16);width:200px}
+  .dropdown-panel .item{padding:6px 8px;border-radius:4px;font-size:14px;cursor:pointer}
+  .dropdown-panel .item:hover{background:var(--background-alt-grey)}
+  .dropdown-panel .item.danger{color:var(--text-default-error)}
+
+  /* ---------- état vide ---------- */
+  .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:64px 24px;text-align:center}
+  .empty-state svg{color:var(--text-mention-grey)}
+  .empty-state p:first-of-type{margin:16px 0 0;font-weight:700;color:var(--text-title-grey)}
+  .empty-state p:last-of-type{margin:4px 0 0;color:var(--text-mention-grey)}
+
+  /* ---------- pagination ---------- */
+  .pagination-row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:24px}
+  .pagination-row .per-page-note{color:var(--text-mention-grey);font-size:14px}
+  nav.pagination ul{display:flex;align-items:center;gap:4px;list-style:none;margin:0;padding:0}
+  nav.pagination a{display:flex;align-items:center;justify-content:center;min-width:40px;height:40px;padding:0 8px;font-size:14px;color:var(--text-title-grey);text-decoration:none;background-image:none}
+  nav.pagination a:hover{background:var(--background-alt-grey)}
+  nav.pagination li.active a{background:var(--background-action-high-blue-france);color:var(--text-inverted-blue-france)}
+  nav.pagination li.disabled a{color:var(--text-mention-grey);pointer-events:none}
+
+  /* ---------- drawer d'aperçu (DrawerMission.vue) ---------- */
+  .drawer-overlay{position:fixed;inset:0;background:rgba(22,22,22,.48);z-index:40}
+  .drawer{position:fixed;top:0;right:0;bottom:0;width:100%;max-width:480px;background:var(--background-default-grey);box-shadow:-10px 0 25px -5px rgba(0,0,18,.25);z-index:41;overflow-y:auto}
+  .drawer-close{position:absolute;top:16px;right:16px;width:36px;height:36px;border-radius:50%;border:1px solid var(--border-default-grey);background:var(--background-default-grey);color:var(--text-mention-grey);display:flex;align-items:center;justify-content:center;cursor:pointer}
+  .drawer-close:hover{background:var(--background-default-grey-hover)}
+  .drawer-body{padding:64px 24px 24px}
+  .drawer-body h2{margin:0 0 8px;font-size:22px;line-height:28px;font-weight:800;color:var(--text-title-grey)}
+  .drawer-body .link-mission{font-size:12px;color:var(--text-action-high-blue-france);text-decoration:underline}
+  .drawer-badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+  .drawer-actions{display:flex;flex-wrap:wrap;gap:4px;margin-top:24px}
+  .drawer-sep{border-top:1px solid var(--border-default-grey);margin:24px 0}
+  .drawer-section h3{margin:0 0 8px;font-size:12px;text-transform:uppercase;font-weight:600;color:var(--text-mention-grey);letter-spacing:.02em}
+  .drawer-section p{margin:0;font-size:14px;color:var(--text-title-grey)}
+
+  [hidden]{display:none !important}
+
+  @media (max-width:640px){
+    .page-header{flex-direction:column;align-items:stretch}
+    .btn-cta{justify-content:center}
+  }
+</style>
+</head>
+<body>
+
+<header class="jva-header">
+  <div class="jva-header__row">
+    <div class="jva-header__brand">
+      <img src="ressources/rf.svg" alt="République Française" class="jva-header__rf">
+      <img src="ressources/jva_logohorizontal_bleu.svg" alt="JeVeuxAider.gouv.fr — Par la réserve civique" class="jva-header__logo">
+    </div>
+    <div class="jva-header__tools">
+      <a href="#" class="jva-header__tool-link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>Trouver une mission</a>
+      <button type="button" class="jva-header__icon-btn" aria-label="Messagerie"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v12H8l-4 4V4Z" stroke-linejoin="round"/></svg></button>
+      <button type="button" class="jva-header__icon-btn" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 10a6 6 0 1 1 12 0c0 4 1.5 5.5 1.5 5.5H4.5S6 14 6 10Z" stroke-linejoin="round"/><path d="M10 19a2 2 0 0 0 4 0"/></svg></button>
+      <button type="button" class="jva-header__profile">
+        <span class="jva-header__avatar">CP</span>
+        <span class="jva-header__profile-text"><strong>Camille Petit</strong><span>Responsable</span></span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="jva-header__menu">
+    <nav class="fr-nav" id="header-navigation" role="navigation" aria-label="Menu principal">
+      <ul class="fr-nav__list">
+        <li class="fr-nav__item"><a class="fr-nav__link" href="#">Tableau de bord</a></li>
+        <li class="fr-nav__item"><a class="fr-nav__link" href="#" aria-current="page">Mes missions</a></li>
+        <li class="fr-nav__item"><a class="fr-nav__link" href="#">Mon organisation</a></li>
+        <li class="fr-nav__item"><a class="fr-nav__link" href="#">Bénévoles</a></li>
+        <li class="fr-nav__item"><a class="fr-nav__link" href="#">Messagerie</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<div class="page">
+
+  <nav role="navigation" class="fr-breadcrumb" aria-label="Vous êtes ici :">
+    <div class="fr-collapse fr-collapse--expanded">
+      <ol class="fr-breadcrumb__list">
+        <li style="position:relative;bottom:5px"><a class="fr-breadcrumb__link" href="#" title="Accueil" style="color:var(--text-mention-grey)"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style="display:inline;vertical-align:middle"><path d="M12 3l9 8h-3v9h-5v-6H11v6H6v-9H3z"/></svg><span style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">Accueil</span></a></li>
+        <li class="fr-breadcrumb__item"><a class="fr-breadcrumb__link" aria-current="page">Mes missions</a></li>
+      </ol>
+    </div>
+  </nav>
+
+  <div class="page-header">
+    <div>
+      <h1>Mes missions</h1>
+      <p class="subtitle">34 missions publiées par Les Petits Colibris</p>
+    </div>
+    <button type="button" class="btn-cta">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+      Publier une mission
+    </button>
+  </div>
+
+  <div class="filters-card">
+    <div class="search-row">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+      <input type="text" id="search-input" placeholder="Rechercher une mission par titre ou par ID">
+    </div>
+
+    <div class="filters-row" id="filters-row">
+      <!-- Chaque filtre reprend le pattern BaseFilterSelectAdvanced (pill bleu clair
+           + chevron), avec un panneau à cocher — la vraie version gère aussi la
+           recherche dans les options (searchable), omise ici pour rester lisible. -->
+      <div class="filter-pill" data-filter="statut">
+        <button type="button" aria-expanded="false"><span>Statut</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <div class="filter-panel" hidden>
+          <label><input type="checkbox" value="Brouillon"> Brouillon</label>
+          <label><input type="checkbox" value="En attente de validation"> En attente de validation</label>
+          <label><input type="checkbox" value="Validée"> Validée</label>
+          <label><input type="checkbox" value="Refusée"> Refusée</label>
+          <label><input type="checkbox" value="Terminée"> Terminée</label>
+          <label><input type="checkbox" value="Annulée"> Annulée</label>
+        </div>
+      </div>
+
+      <div class="filter-pill" data-filter="inscriptions">
+        <button type="button" aria-expanded="false"><span>Inscriptions</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <div class="filter-panel" hidden>
+          <label><input type="checkbox" value="Ouvertes"> Ouvertes</label>
+          <label><input type="checkbox" value="En pause"> En pause</label>
+          <label><input type="checkbox" value="Fermées"> Fermées</label>
+        </div>
+      </div>
+
+      <div class="filter-pill" data-filter="ville">
+        <button type="button" aria-expanded="false"><span>Ville</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <div class="filter-panel" hidden>
+          <label><input type="checkbox" value="Angers"> Angers</label>
+          <label><input type="checkbox" value="Bordeaux"> Bordeaux</label>
+          <label><input type="checkbox" value="Lille"> Lille</label>
+          <label><input type="checkbox" value="Lyon"> Lyon</label>
+          <label><input type="checkbox" value="Marseille"> Marseille</label>
+          <label><input type="checkbox" value="Nantes"> Nantes</label>
+          <label><input type="checkbox" value="Rennes"> Rennes</label>
+          <label><input type="checkbox" value="Toulouse"> Toulouse</label>
+        </div>
+      </div>
+
+      <div class="filter-pill" data-filter="responsable">
+        <button type="button" aria-expanded="false"><span>Responsable</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <div class="filter-panel" hidden>
+          <label><input type="checkbox" value="Vous"> Vous</label>
+          <label><input type="checkbox" value="Céline Dubeauvais"> Céline Dubeauvais</label>
+          <label><input type="checkbox" value="Marc Lefèvre"> Marc Lefèvre</label>
+          <label><input type="checkbox" value="Amélie Torres"> Amélie Torres</label>
+          <label><input type="checkbox" value="Julien Roche"> Julien Roche</label>
+        </div>
+      </div>
+
+      <div class="filter-pill" data-filter="domaine">
+        <button type="button" aria-expanded="false"><span>Domaine</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <div class="filter-panel" hidden>
+          <label><input type="checkbox" value="Solidarité"> Solidarité</label>
+          <label><input type="checkbox" value="Éducation"> Éducation</label>
+          <label><input type="checkbox" value="Environnement"> Environnement</label>
+          <label><input type="checkbox" value="Culture"> Culture</label>
+          <label><input type="checkbox" value="Santé"> Santé</label>
+          <label><input type="checkbox" value="Sport"> Sport</label>
+        </div>
+      </div>
+
+      <!-- DsfrTag context="selectable" — bascule rapide plutôt qu'un filtre à
+           liste d'options, cf. réponse de Nicolas à la question "Filtres bonus". -->
+      <button type="button" id="tag-places" class="tag-places" style="display:inline-flex;align-items:center;justify-content:center;border-radius:9999px;background:var(--background-contrast-grey);color:var(--text-title-grey);padding:4px 12px;height:32px;font-size:14px;border:none;cursor:pointer;font-family:inherit">Places disponibles uniquement</button>
+
+      <button type="button" class="btn-reset" id="btn-reset" hidden>Réinitialiser les filtres</button>
+    </div>
+  </div>
+
+  <p class="results-line"><span id="results-count">10 missions affichées</span></p>
+
+  <div class="table-card">
+    <div class="table-scroll">
+      <table class="missions" id="missions-table">
+        <caption class="fr-sr-only">Liste des missions de l'organisation Les Petits Colibris</caption>
+        <thead>
+          <tr>
+            <th scope="col">Mission</th>
+            <th scope="col">Inscriptions</th>
+            <th scope="col">Candidatures</th>
+            <th scope="col" class="col-actions"><span class="fr-sr-only">Actions</span></th>
+          </tr>
+        </thead>
+        <tbody id="missions-tbody">
+
+          <tr data-title="Je rejoins l'équipe de restauration / buvette d'un festival / événement" data-id="48213" data-statut="Validée" data-inscriptions="Ouvertes" data-ville="Angers" data-responsable="Céline Dubeauvais" data-domaine="Solidarité" data-places-restantes="3">
+            <td class="col-mission">
+              <button type="button" class="mission-trigger" data-preview="48213">
+                <div class="mission-badges"><span class="badge badge--success"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-.997-6l7.07-7.071-1.414-1.414-5.656 5.657-2.829-2.829-1.414 1.414L11.003 16z"/></svg>Validée</span></div>
+                <p class="mission-title">Je rejoins l'équipe de restauration / buvette d'un festival / événement <span style="color:var(--text-mention-grey);font-weight:400">#48213</span></p>
+                <div class="mission-chips">
+                  <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s7-6.5 7-11.5A7 7 0 0 0 5 9.5C5 14.5 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.2"/></svg>Angers</span>
+                  <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="1"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>13 juillet 2025</span>
+                  <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c1.5-4 4.2-6 7-6s5.5 2 7 6"/></svg>Céline Dubeauvais</span>
+                </div>
+                <span class="btn-preview" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg>Aperçu</span>
+              </button>
+            </td>
+            <td class="col-inscriptions">
+              <span class="badge badge--gray">Inscriptions ouvertes</span>
+              <p class="places"><strong>3</strong> places restantes sur 12</p>
+            </td>
+            <td class="col-candidatures">
+              <p class="has-new">3 prioritaires</p>
+              <p class="has-new">3 nouvelles</p>
+            </td>
+            <td>
+              <div class="actions-cell">
+                <button type="button" class="btn-row-action">Trouver des bénévoles</button>
+                <button type="button" class="btn-icon" aria-label="Aperçu de la mission" data-preview="48213"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg></button>
+                <div class="dropdown">
+                  <button type="button" class="btn-icon" aria-label="Plus d'options" aria-expanded="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
+                  <div class="dropdown-panel" hidden>
+                    <div class="item">Voir la fiche publique</div>
+                    <div class="item">Dupliquer</div>
+                    <div class="item">Mettre en pause les inscriptions</div>
+                    <div class="item danger">Archiver</div>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+
+          <tr data-title="Distribution de colis alimentaires en centre-ville" data-id="51002" data-statut="Brouillon" data-inscriptions="Fermées" data-ville="Lyon" data-responsable="Marc Lefèvre" data-domaine="Solidarité" data-places-restantes="8">
+            <td class="col-mission">
+              <button type="button" class="mission-trigger" data-preview="51002">
+                <div class="mission-badges"><span class="badge badge--info"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>Brouillon</span></div>
+                <p class="mission-title">Distribution de colis alimentaires en centre-ville <span style="color:var(--text-mention-grey);font-weight:400">#51002</span></p>
+                <div class="mission-chips">
+                  <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s7-6.5 7-11.5A7 7 0 0 0 5 9.5C5 14.5 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.2"/></svg>Lyon</span>
+                  <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="1"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>2 août 2025</span>
+                  <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c1.5-4 4.2-6 7-6s5.5 2 7 6"/></svg>Marc Lefèvre</span>
+                </div>
+                <span class="btn-preview" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg>Aperçu</span>
+              </button>
+            </td>
+            <td class="col-inscriptions">
+              <span class="badge badge--gray">Pas encore publiée</span>
+              <p class="places">8 places à pourvoir</p>
+            </td>
+            <td class="col-candidatures">
+              <p>—</p>
+            </td>
+            <td>
+              <div class="actions-cell">
+                <button type="button" class="btn-row-action">Modifier</button>
+                <button type="button" class="btn-icon" aria-label="Aperçu de la mission" data-preview="51002"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg></button>
+                <div class="dropdown">
+                  <button type="button" class="btn-icon" aria-label="Plus d'options" aria-expanded="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
+                  <div class="dropdown-panel" hidden>
+                    <div class="item">Dupliquer</div>
+                    <div class="item danger">Supprimer le brouillon</div>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+
+          <tr data-title="Accompagnement scolaire pour élèves en difficulté" data-id="50877" data-statut="En attente de validation" data-inscriptions="Fermées" data-ville="Rennes" data-responsable="Amélie Torres" data-domaine="Éducation" data-places-restantes="6">
+            <td class="col-mission">
+              <button type="button" class="mission-trigger" data-preview="50877">
+                <div class="mission-badges"><span class="badge badge--warning"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12.866 3l9.526 16.5a1 1 0 01-.866 1.5H2.474a1 1 0 01-.866-1.5L11.134 3a1 1 0 011.732 0zM11 16v2h2v-2h-2zm0-7v5h2V9h-2z"/></svg>En attente de validation</span></div>
+                <p class="mission-title">Accompagnement scolaire pour élèves en difficulté <span style="color:var(--text-mention-grey);font-weight:400">#50877</span></p>
+                <div class="mission-chips">
+                  <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s7-6.5 7-11.5A7 7 0 0 0 5 9.5C5 14.5 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.2"/></svg>Rennes</span>
+                  <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="1"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>5 septembre 2025</span>
+                  <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c1.5-4 4.2-6 7-6s5.5 2 7 6"/></svg>Amélie Torres</span>
+                </div>
+                <span class="btn-preview" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg>Aperçu</span>
+              </button>
+            </td>
+            <td class="col-inscriptions">
+              <span class="badge badge--gray">En attente</span>
+              <p class="places">6 places à pourvoir</p>
+            </td>
+            <td class="col-candidatures">
+              <p>—</p>
+            </td>
+            <td>
+              <div class="actions-cell">
+                <button type="button" class="btn-row-action">Modifier</button>
+                <button type="button" class="btn-icon" aria-label="Aperçu de la mission" data-preview="50877"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg></button>
+                <div class="dropdown">
+                  <button type="button" class="btn-icon" aria-label="Plus d'options" aria-expanded="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
+                  <div class="dropdown-panel" hidden>
+                    <div class="item">Dupliquer</div>
+                    <div class="item danger">Annuler la demande</div>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+
+          <tr data-title="Sensibilisation au tri des déchets auprès du public" data-id="49650" data-statut="Validée" data-inscriptions="En pause" data-ville="Bordeaux" data-responsable="Julien Roche" data-domaine="Environnement" data-places-restantes="9">
+            <td class="col-mission">
+              <button type="button" class="mission-trigger" data-preview="49650">
+                <div class="mission-badges"><span class="badge badge--success"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-.997-6l7.07-7.071-1.414-1.414-5.656 5.657-2.829-2.829-1.414 1.414L11.003 16z"/></svg>Validée</span></div>
+                <p class="mission-title">Sensibilisation au tri des déchets auprès du public <span style="color:var(--text-mention-grey);font-weight:400">#49650</span></p>
+                <div class="mission-chips">
+                  <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s7-6.5 7-11.5A7 7 0 0 0 5 9.5C5 14.5 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.2"/></svg>Bordeaux</span>
+                  <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="1"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>20 juin 2025</span>
+                  <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c1.5-4 4.2-6 7-6s5.5 2 7 6"/></svg>Julien Roche</span>
+                </div>
+                <span class="btn-preview" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg>Aperçu</span>
+              </button>
+            </td>
+            <td class="col-inscriptions">
+              <span class="badge badge--gray">Inscriptions en pause</span>
+              <p class="places"><strong>9</strong> places restantes sur 15</p>
+            </td>
+            <td class="col-candidatures">
+              <p>1 prioritaire</p>
+              <p>0 nouvelle</p>
+            </td>
+            <td>
+              <div class="actions-cell">
+                <button type="button" class="btn-row-action">Ouvrir les inscriptions</button>
+                <button type="button" class="btn-icon" aria-label="Aperçu de la mission" data-preview="49650"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg></button>
+                <div class="dropdown">
+                  <button type="button" class="btn-icon" aria-label="Plus d'options" aria-expanded="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
+                  <div class="dropdown-panel" hidden>
+                    <div class="item">Voir la fiche publique</div>
+                    <div class="item">Modifier</div>
+                    <div class="item">Dupliquer</div>
+                    <div class="item danger">Archiver</div>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+
+          <tr data-title="Maraude et distribution de repas chauds" data-id="48990" data-statut="Validée" data-inscriptions="Ouvertes" data-ville="Marseille" data-responsable="Céline Dubeauvais" data-domaine="Solidarité" data-places-restantes="0">
+            <td class="col-mission">
+              <button type="button" class="mission-trigger" data-preview="48990">
+                <div class="mission-badges"><span class="badge badge--success"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-.997-6l7.07-7.071-1.414-1.414-5.656 5.657-2.829-2.829-1.414 1.414L11.003 16z"/></svg>Validée</span></div>
+                <p class="mission-title">Maraude et distribution de repas chauds <span style="color:var(--text-mention-grey);font-weight:400">#48990</span></p>
+                <div class="mission-chips">
+                  <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s7-6.5 7-11.5A7 7 0 0 0 5 9.5C5 14.5 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.2"/></svg>Marseille</span>
+                  <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="1"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>Tous les mardis</span>
+                  <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c1.5-4 4.2-6 7-6s5.5 2 7 6"/></svg>Céline Dubeauvais</span>
+                </div>
+                <span class="btn-preview" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg>Aperçu</span>
+              </button>
+            </td>
+            <td class="col-inscriptions">
+              <span class="badge badge--gray">Inscriptions ouvertes</span>
+              <p class="places"><strong>Complet</strong> — 0/20 places</p>
+            </td>
+            <td class="col-candidatures">
+              <p>0 prioritaire</p>
+              <p class="has-new">2 nouvelles</p>
+            </td>
+            <td>
+              <div class="actions-cell">
+                <button type="button" class="btn-row-action">Trouver des bénévoles</button>
+                <button type="button" class="btn-icon" aria-label="Aperçu de la mission" data-preview="48990"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg></button>
+                <div class="dropdown">
+                  <button type="button" class="btn-icon" aria-label="Plus d'options" aria-expanded="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
+                  <div class="dropdown-panel" hidden>
+                    <div class="item">Voir la fiche publique</div>
+                    <div class="item">Modifier</div>
+                    <div class="item">Dupliquer</div>
+                    <div class="item danger">Archiver</div>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+
+          <tr data-title="Collecte de vêtements pour familles sinistrées" data-id="47102" data-statut="Terminée" data-inscriptions="Fermées" data-ville="Toulouse" data-responsable="Marc Lefèvre" data-domaine="Solidarité" data-places-restantes="0">
+            <td class="col-mission">
+              <button type="button" class="mission-trigger" data-preview="47102">
+                <div class="mission-badges"><span class="badge badge--default">Terminée</span></div>
+                <p class="mission-title">Collecte de vêtements pour familles sinistrées <span style="color:var(--text-mention-grey);font-weight:400">#47102</span></p>
+                <div class="mission-chips">
+                  <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s7-6.5 7-11.5A7 7 0 0 0 5 9.5C5 14.5 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.2"/></svg>Toulouse</span>
+                  <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="1"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>10 mai 2025</span>
+                  <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c1.5-4 4.2-6 7-6s5.5 2 7 6"/></svg>Marc Lefèvre</span>
+                </div>
+                <span class="btn-preview" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg>Aperçu</span>
+              </button>
+            </td>
+            <td class="col-inscriptions">
+              <span class="badge badge--gray">Inscriptions fermées</span>
+              <p class="places">10/10 places pourvues</p>
+            </td>
+            <td class="col-candidatures">
+              <p>0 prioritaire</p>
+              <p>0 nouvelle</p>
+            </td>
+            <td>
+              <div class="actions-cell">
+                <button type="button" class="btn-row-action">Voir le bilan</button>
+                <button type="button" class="btn-icon" aria-label="Aperçu de la mission" data-preview="47102"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg></button>
+                <div class="dropdown">
+                  <button type="button" class="btn-icon" aria-label="Plus d'options" aria-expanded="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
+                  <div class="dropdown-panel" hidden>
+                    <div class="item">Voir la fiche publique</div>
+                    <div class="item">Dupliquer</div>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+
+          <tr data-title="Initiation à l'informatique pour seniors" data-id="46550" data-statut="Refusée" data-inscriptions="Fermées" data-ville="Lille" data-responsable="Amélie Torres" data-domaine="Éducation" data-places-restantes="5">
+            <td class="col-mission">
+              <button type="button" class="mission-trigger" data-preview="46550">
+                <div class="mission-badges"><span class="badge badge--error"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm3.536 12.121l-1.415 1.415L12 13.414l-2.121 2.122-1.415-1.415L10.586 12 8.464 9.879l1.415-1.415L12 10.586l2.121-2.122 1.415 1.415L13.414 12l2.122 2.121z"/></svg>Refusée</span></div>
+                <p class="mission-title">Initiation à l'informatique pour seniors <span style="color:var(--text-mention-grey);font-weight:400">#46550</span></p>
+                <div class="mission-chips">
+                  <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s7-6.5 7-11.5A7 7 0 0 0 5 9.5C5 14.5 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.2"/></svg>Lille</span>
+                  <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="1"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>15 avril 2025</span>
+                  <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c1.5-4 4.2-6 7-6s5.5 2 7 6"/></svg>Amélie Torres</span>
+                </div>
+                <span class="btn-preview" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg>Aperçu</span>
+              </button>
+            </td>
+            <td class="col-inscriptions">
+              <span class="badge badge--gray">Inscriptions fermées</span>
+              <p class="places">5 places à pourvoir</p>
+            </td>
+            <td class="col-candidatures">
+              <p>—</p>
+            </td>
+            <td>
+              <div class="actions-cell">
+                <button type="button" class="btn-row-action">Modifier</button>
+                <button type="button" class="btn-icon" aria-label="Aperçu de la mission" data-preview="46550"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg></button>
+                <div class="dropdown">
+                  <button type="button" class="btn-icon" aria-label="Plus d'options" aria-expanded="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
+                  <div class="dropdown-panel" hidden>
+                    <div class="item">Voir le motif du refus</div>
+                    <div class="item danger">Supprimer</div>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+
+          <tr data-title="Aide à la billetterie lors d'un tournoi sportif" data-id="45890" data-statut="Annulée" data-inscriptions="Fermées" data-ville="Nantes" data-responsable="Julien Roche" data-domaine="Sport" data-places-restantes="4">
+            <td class="col-mission">
+              <button type="button" class="mission-trigger" data-preview="45890">
+                <div class="mission-badges"><span class="badge badge--error"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm3.536 12.121l-1.415 1.415L12 13.414l-2.121 2.122-1.415-1.415L10.586 12 8.464 9.879l1.415-1.415L12 10.586l2.121-2.122 1.415 1.415L13.414 12l2.122 2.121z"/></svg>Annulée</span></div>
+                <p class="mission-title">Aide à la billetterie lors d'un tournoi sportif <span style="color:var(--text-mention-grey);font-weight:400">#45890</span></p>
+                <div class="mission-chips">
+                  <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s7-6.5 7-11.5A7 7 0 0 0 5 9.5C5 14.5 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.2"/></svg>Nantes</span>
+                  <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="1"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>2 mars 2025</span>
+                  <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c1.5-4 4.2-6 7-6s5.5 2 7 6"/></svg>Julien Roche</span>
+                </div>
+                <span class="btn-preview" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg>Aperçu</span>
+              </button>
+            </td>
+            <td class="col-inscriptions">
+              <span class="badge badge--gray">Inscriptions fermées</span>
+              <p class="places">4 places à pourvoir</p>
+            </td>
+            <td class="col-candidatures">
+              <p>—</p>
+            </td>
+            <td>
+              <div class="actions-cell">
+                <button type="button" class="btn-icon" aria-label="Aperçu de la mission" data-preview="45890"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg></button>
+                <div class="dropdown">
+                  <button type="button" class="btn-icon" aria-label="Plus d'options" aria-expanded="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
+                  <div class="dropdown-panel" hidden>
+                    <div class="item">Dupliquer</div>
+                    <div class="item danger">Supprimer</div>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+
+          <tr data-title="Animation d'ateliers créatifs pour enfants hospitalisés" data-id="51110" data-statut="Validée" data-inscriptions="Ouvertes" data-ville="Angers" data-responsable="Vous" data-domaine="Culture" data-places-restantes="4">
+            <td class="col-mission">
+              <button type="button" class="mission-trigger" data-preview="51110">
+                <div class="mission-badges"><span class="badge badge--success"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-.997-6l7.07-7.071-1.414-1.414-5.656 5.657-2.829-2.829-1.414 1.414L11.003 16z"/></svg>Validée</span></div>
+                <p class="mission-title">Animation d'ateliers créatifs pour enfants hospitalisés <span style="color:var(--text-mention-grey);font-weight:400">#51110</span></p>
+                <div class="mission-chips">
+                  <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s7-6.5 7-11.5A7 7 0 0 0 5 9.5C5 14.5 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.2"/></svg>Angers</span>
+                  <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="1"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>28 septembre 2025</span>
+                  <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c1.5-4 4.2-6 7-6s5.5 2 7 6"/></svg>Vous</span>
+                </div>
+                <span class="btn-preview" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg>Aperçu</span>
+              </button>
+            </td>
+            <td class="col-inscriptions">
+              <span class="badge badge--gray">Inscriptions ouvertes</span>
+              <p class="places"><strong>4</strong> places restantes sur 6</p>
+            </td>
+            <td class="col-candidatures">
+              <p class="has-new">2 prioritaires</p>
+              <p class="has-new">5 nouvelles</p>
+            </td>
+            <td>
+              <div class="actions-cell">
+                <button type="button" class="btn-row-action">Trouver des bénévoles</button>
+                <button type="button" class="btn-icon" aria-label="Aperçu de la mission" data-preview="51110"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg></button>
+                <div class="dropdown">
+                  <button type="button" class="btn-icon" aria-label="Plus d'options" aria-expanded="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
+                  <div class="dropdown-panel" hidden>
+                    <div class="item">Voir la fiche publique</div>
+                    <div class="item">Modifier</div>
+                    <div class="item">Dupliquer</div>
+                    <div class="item danger">Archiver</div>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+
+          <tr data-title="Sensibilisation aux gestes qui sauvent" data-id="50333" data-statut="Validée" data-inscriptions="Ouvertes" data-ville="Rennes" data-responsable="Vous" data-domaine="Santé" data-places-restantes="1">
+            <td class="col-mission">
+              <button type="button" class="mission-trigger" data-preview="50333">
+                <div class="mission-badges"><span class="badge badge--success"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-.997-6l7.07-7.071-1.414-1.414-5.656 5.657-2.829-2.829-1.414 1.414L11.003 16z"/></svg>Validée</span></div>
+                <p class="mission-title">Sensibilisation aux gestes qui sauvent <span style="color:var(--text-mention-grey);font-weight:400">#50333</span></p>
+                <div class="mission-chips">
+                  <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s7-6.5 7-11.5A7 7 0 0 0 5 9.5C5 14.5 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.2"/></svg>Rennes</span>
+                  <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="1"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>14 octobre 2025</span>
+                  <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c1.5-4 4.2-6 7-6s5.5 2 7 6"/></svg>Vous</span>
+                </div>
+                <span class="btn-preview" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg>Aperçu</span>
+              </button>
+            </td>
+            <td class="col-inscriptions">
+              <span class="badge badge--gray">Inscriptions ouvertes</span>
+              <p class="places"><strong>1</strong> place restante sur 10</p>
+            </td>
+            <td class="col-candidatures">
+              <p>1 prioritaire</p>
+              <p>0 nouvelle</p>
+            </td>
+            <td>
+              <div class="actions-cell">
+                <button type="button" class="btn-row-action">Trouver des bénévoles</button>
+                <button type="button" class="btn-icon" aria-label="Aperçu de la mission" data-preview="50333"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg></button>
+                <div class="dropdown">
+                  <button type="button" class="btn-icon" aria-label="Plus d'options" aria-expanded="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
+                  <div class="dropdown-panel" hidden>
+                    <div class="item">Voir la fiche publique</div>
+                    <div class="item">Modifier</div>
+                    <div class="item">Dupliquer</div>
+                    <div class="item danger">Archiver</div>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+
+    <div class="empty-state" id="empty-state" hidden>
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+      <p>Aucun résultat</p>
+      <p>Il n'y a aucune mission avec les filtres actuels</p>
+    </div>
+  </div>
+
+  <div class="pagination-row">
+    <p class="per-page-note">10 missions sur 34 · 10 par page</p>
+    <nav class="pagination" aria-label="Pagination">
+      <ul>
+        <li class="disabled"><a href="#">← Précédent</a></li>
+        <li class="active"><a href="#" aria-current="page">1</a></li>
+        <li><a href="#">2</a></li>
+        <li><a href="#">3</a></li>
+        <li><a href="#">4</a></li>
+        <li><a href="#">Suivant →</a></li>
+      </ul>
+    </nav>
+  </div>
+
+</div>
+
+<div class="drawer-overlay" id="drawer-overlay" hidden></div>
+<aside class="drawer" id="drawer" hidden aria-label="Aperçu de la mission" role="dialog" aria-modal="true">
+  <button type="button" class="drawer-close" id="drawer-close" aria-label="Fermer le volet">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+  </button>
+  <div class="drawer-body">
+    <h2 id="drawer-title">—</h2>
+    <a href="#" class="link-mission">Voir la mission</a>
+    <div class="drawer-badges" id="drawer-badges"></div>
+    <div class="drawer-actions">
+      <button type="button" class="btn-row-action">Détails</button>
+      <button type="button" class="btn-row-action">Modifier</button>
+    </div>
+    <div class="drawer-sep"></div>
+    <div class="drawer-section">
+      <h3>Ville</h3>
+      <p id="drawer-ville">—</p>
+    </div>
+    <div class="drawer-sep"></div>
+    <div class="drawer-section">
+      <h3>Responsable</h3>
+      <p id="drawer-responsable">—</p>
+    </div>
+    <div class="drawer-sep"></div>
+    <div class="drawer-section">
+      <h3>Domaine</h3>
+      <p id="drawer-domaine">—</p>
+    </div>
+  </div>
+</aside>
+
+<script>
+(function(){
+  var tbody = document.getElementById('missions-tbody');
+  var rows = Array.prototype.slice.call(tbody.querySelectorAll('tr'));
+  var searchInput = document.getElementById('search-input');
+  var resultsCount = document.getElementById('results-count');
+  var emptyState = document.getElementById('empty-state');
+  var tableScroll = document.querySelector('.table-scroll');
+  var resetBtn = document.getElementById('btn-reset');
+  var tagPlaces = document.getElementById('tag-places');
+
+  var state = { search: '', statut: [], inscriptions: [], ville: [], responsable: [], domaine: [], placesOnly: false };
+
+  function normalize(str){ return (str || '').toLowerCase(); }
+
+  function rowMatches(row){
+    var d = row.dataset;
+    if (state.search) {
+      var haystack = normalize(d.title) + ' ' + d.id;
+      if (haystack.indexOf(normalize(state.search)) === -1) return false;
+    }
+    if (state.statut.length && state.statut.indexOf(d.statut) === -1) return false;
+    if (state.inscriptions.length && state.inscriptions.indexOf(d.inscriptions) === -1) return false;
+    if (state.ville.length && state.ville.indexOf(d.ville) === -1) return false;
+    if (state.responsable.length && state.responsable.indexOf(d.responsable) === -1) return false;
+    if (state.domaine.length && state.domaine.indexOf(d.domaine) === -1) return false;
+    if (state.placesOnly && Number(d.placesRestantes) <= 0) return false;
+    return true;
+  }
+
+  function anyFilterActive(){
+    return !!(state.search || state.statut.length || state.inscriptions.length || state.ville.length || state.responsable.length || state.domaine.length || state.placesOnly);
+  }
+
+  function applyFilters(){
+    var visible = 0;
+    rows.forEach(function(row){
+      var match = rowMatches(row);
+      row.hidden = !match;
+      if (match) visible++;
+    });
+    resultsCount.textContent = visible + (visible === 1 ? ' mission affichée' : ' missions affichées') + (anyFilterActive() ? ' sur 10' : '');
+    tableScroll.hidden = visible === 0;
+    emptyState.hidden = visible !== 0;
+    resetBtn.hidden = !anyFilterActive();
+  }
+
+  searchInput.addEventListener('input', function(){
+    state.search = searchInput.value.trim();
+    applyFilters();
+  });
+
+  // ---- filtres à panneau à cocher (pattern BaseFilterSelectAdvanced) ----
+  var pills = Array.prototype.slice.call(document.querySelectorAll('.filter-pill'));
+  function closeAllPanels(except){
+    pills.forEach(function(pill){
+      if (pill === except) return;
+      pill.classList.remove('open');
+      pill.querySelector('.filter-panel').hidden = true;
+      pill.querySelector('button').setAttribute('aria-expanded', 'false');
+    });
+  }
+
+  pills.forEach(function(pill){
+    var key = pill.dataset.filter;
+    var trigger = pill.querySelector('button');
+    var panel = pill.querySelector('.filter-panel');
+    var label = trigger.querySelector('span');
+    var defaultLabel = label.textContent;
+
+    trigger.addEventListener('click', function(e){
+      e.stopPropagation();
+      var willOpen = panel.hidden;
+      closeAllPanels(willOpen ? pill : null);
+      panel.hidden = !willOpen;
+      pill.classList.toggle('open', willOpen);
+      trigger.setAttribute('aria-expanded', String(willOpen));
+    });
+
+    // Cocher plusieurs options sans que le panneau se referme à chaque clic
+    // (le listener global plus bas ferme tout sur un clic hors des filtres).
+    panel.addEventListener('click', function(e){ e.stopPropagation(); });
+
+    panel.addEventListener('change', function(){
+      var checked = Array.prototype.slice.call(panel.querySelectorAll('input:checked')).map(function(i){ return i.value; });
+      state[key] = checked;
+      label.textContent = checked.length ? defaultLabel + ' (' + checked.length + ')' : defaultLabel;
+      pill.classList.toggle('active', checked.length > 0);
+      applyFilters();
+    });
+  });
+
+  tagPlaces.addEventListener('click', function(){
+    state.placesOnly = !state.placesOnly;
+    tagPlaces.style.background = state.placesOnly ? 'var(--background-action-high-blue-france)' : 'var(--background-contrast-grey)';
+    tagPlaces.style.color = state.placesOnly ? 'var(--text-inverted-blue-france)' : 'var(--text-title-grey)';
+    tagPlaces.setAttribute('aria-pressed', String(state.placesOnly));
+    applyFilters();
+  });
+
+  resetBtn.addEventListener('click', function(){
+    state = { search: '', statut: [], inscriptions: [], ville: [], responsable: [], domaine: [], placesOnly: false };
+    searchInput.value = '';
+    pills.forEach(function(pill){
+      var panel = pill.querySelector('.filter-panel');
+      panel.querySelectorAll('input:checked').forEach(function(i){ i.checked = false; });
+      pill.classList.remove('active');
+      pill.querySelector('button span').textContent = pill.querySelector('button span').textContent.replace(/ \(\d+\)$/, '');
+    });
+    tagPlaces.style.background = 'var(--background-contrast-grey)';
+    tagPlaces.style.color = 'var(--text-title-grey)';
+    tagPlaces.setAttribute('aria-pressed', 'false');
+    applyFilters();
+  });
+
+  document.addEventListener('click', function(){ closeAllPanels(); });
+
+  // ---- menu "…" par ligne ----
+  var dropdowns = Array.prototype.slice.call(document.querySelectorAll('.dropdown'));
+  function closeAllDropdowns(except){
+    dropdowns.forEach(function(dd){
+      if (dd === except) return;
+      dd.querySelector('.dropdown-panel').hidden = true;
+      dd.querySelector('button').setAttribute('aria-expanded', 'false');
+    });
+  }
+  dropdowns.forEach(function(dd){
+    var trigger = dd.querySelector('button');
+    var panel = dd.querySelector('.dropdown-panel');
+    trigger.addEventListener('click', function(e){
+      e.stopPropagation();
+      var willOpen = panel.hidden;
+      closeAllDropdowns(willOpen ? dd : null);
+      panel.hidden = !willOpen;
+      trigger.setAttribute('aria-expanded', String(willOpen));
+    });
+  });
+  document.addEventListener('click', function(){ closeAllDropdowns(); });
+
+  // ---- volet d'aperçu (DrawerMission) ----
+  var overlay = document.getElementById('drawer-overlay');
+  var drawer = document.getElementById('drawer');
+  var drawerClose = document.getElementById('drawer-close');
+  var previewTriggers = Array.prototype.slice.call(document.querySelectorAll('[data-preview]'));
+
+  var badgeHtmlByStatut = {
+    'Validée': '<span class="badge badge--success"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-.997-6l7.07-7.071-1.414-1.414-5.656 5.657-2.829-2.829-1.414 1.414L11.003 16z"/></svg>Validée</span>',
+    'Brouillon': '<span class="badge badge--info"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>Brouillon</span>',
+    'En attente de validation': '<span class="badge badge--warning"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12.866 3l9.526 16.5a1 1 0 01-.866 1.5H2.474a1 1 0 01-.866-1.5L11.134 3a1 1 0 011.732 0zM11 16v2h2v-2h-2zm0-7v5h2V9h-2z"/></svg>En attente de validation</span>',
+    'Refusée': '<span class="badge badge--error"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm3.536 12.121l-1.415 1.415L12 13.414l-2.121 2.122-1.415-1.415L10.586 12 8.464 9.879l1.415-1.415L12 10.586l2.121-2.122 1.415 1.415L13.414 12l2.122 2.121z"/></svg>Refusée</span>',
+    'Terminée': '<span class="badge badge--default">Terminée</span>',
+    'Annulée': '<span class="badge badge--error"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm3.536 12.121l-1.415 1.415L12 13.414l-2.121 2.122-1.415-1.415L10.586 12 8.464 9.879l1.415-1.415L12 10.586l2.121-2.122 1.415 1.415L13.414 12l2.122 2.121z"/></svg>Annulée</span>'
+  };
+  var inscriptionsLabel = { 'Ouvertes': 'Inscriptions ouvertes', 'En pause': 'Inscriptions en pause', 'Fermées': 'Inscriptions fermées' };
+
+  function openDrawerFor(id){
+    var row = rows.filter(function(r){ return r.dataset.id === id; })[0];
+    if (!row) return;
+    var d = row.dataset;
+    document.getElementById('drawer-title').textContent = d.title + ' #' + d.id;
+    document.getElementById('drawer-ville').textContent = d.ville;
+    document.getElementById('drawer-responsable').textContent = d.responsable;
+    document.getElementById('drawer-domaine').textContent = d.domaine;
+    var badgesEl = document.getElementById('drawer-badges');
+    badgesEl.innerHTML = (badgeHtmlByStatut[d.statut] || '') +
+      '<span class="badge badge--gray">' + (inscriptionsLabel[d.inscriptions] || d.inscriptions) + '</span>';
+    overlay.hidden = false;
+    drawer.hidden = false;
+    drawerClose.focus();
+  }
+
+  function closeDrawer(){
+    overlay.hidden = true;
+    drawer.hidden = true;
+  }
+
+  previewTriggers.forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault();
+      openDrawerFor(el.getAttribute('data-preview'));
+    });
+  });
+  overlay.addEventListener('click', closeDrawer);
+  drawerClose.addEventListener('click', closeDrawer);
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') { closeDrawer(); closeAllPanels(); closeAllDropdowns(); }
+  });
+
+  applyFilters();
+})();
+</script>
+
+</body>
+</html>

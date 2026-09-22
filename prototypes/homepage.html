@@ -196,34 +196,53 @@
   .fr-collapse[hidden]{display:none}
   .fr-accordion p{margin:0;padding:0 1.5rem 1.5rem}
 
-  /* Bandeau minimal (hors sujet) : on masque juste la nav sur petit écran plutôt que
-     de construire un vrai menu mobile, qui n'est pas le sujet de ce prototype. */
-  .top-nav{display:none}
-  @media (min-width:1024px){ .top-nav{display:flex} }
+  /* ---------- header ----------
+     Maquette Figma "Composants JVA" › navigation/desktop/header/XL, variante
+     "Not logged in" (node 327:622) : bloc marque RF + logo JVA, à droite les
+     liens "Trouver une mission" / "Publier une mission" / "Mon compte"
+     (encadré). La nav du dessous est le composant DSFR standard "Navigation
+     principale" (https://www.systeme-de-design.gouv.fr/version-courante/fr/composants/navigation-principale),
+     classes fr-nav/fr-nav__list/fr-nav__link réelles du bundle dsfr.min.css —
+     l'état actif (aria-current="page") est stylé nativement par DSFR, aucun
+     CSS perso nécessaire pour ça. Items repris de la démo réelle
+     DsfrNavItemDsfrNavItem (design-system/composants/dsfrnavitemdsfrnavitem.html) :
+     "Particuliers" / "Associations". */
+  .jva-header{background:var(--background-default-grey);box-shadow:0 2px 3px rgba(0,0,18,.16);position:relative;z-index:30}
+  .jva-header__row{max-width:1440px;margin:0 auto;display:flex;align-items:center;gap:24px;padding:12px 24px;flex-wrap:wrap}
+  @media (min-width:1024px){.jva-header__row{gap:40px;padding:12px 120px 12px 104px;flex-wrap:nowrap}}
+  .jva-header__brand{display:flex;align-items:center;gap:16px;flex:none}
+  .jva-header__rf{height:48px;width:auto;flex:none}
+  .jva-header__logo{height:40px;width:auto;flex:none}
+  .jva-header__tools{display:flex;align-items:center;gap:16px;flex:1 1 auto;justify-content:flex-end;flex-wrap:wrap}
+  @media (min-width:1024px){.jva-header__tools{gap:24px}}
+  .jva-header__tool-link{display:inline-flex;align-items:center;gap:8px;padding:4px 12px;font-size:14px;font-weight:500;line-height:24px;color:var(--text-action-high-blue-france);text-decoration:none;background-image:none;white-space:nowrap}
+  .jva-header__tool-link--bordered{box-shadow:inset 0 0 0 1px var(--border-default-grey)}
+  .jva-header__menu{border-top:1px solid var(--border-default-grey);max-width:1440px;margin:0 auto;padding:0 24px}
+  @media (min-width:1024px){.jva-header__menu{padding:0 104px}}
+  .jva-header__menu .fr-nav__list{overflow-x:auto}
 </style>
 </head>
 <body>
 
-<!-- ============ BANDEAU MINIMAL (hors sujet du prototype — header/footer réels non
-     reproduits ici, seul le corps de la homepage est retravaillé) ============ -->
-<div style="background:#000091" class="text-white">
-  <div class="container" style="display:flex;align-items:center;gap:8px;padding:4px 0;font-size:12px">
-    <img src="ressources/rf.svg" alt="République Française" style="height:32px;width:auto">
-    <span style="opacity:.8">La plateforme publique du bénévolat</span>
-  </div>
-</div>
-<header class="bg-white shadow-lg relative">
-  <div class="container" style="display:flex;align-items:center;justify-content:space-between;padding:16px 0">
-    <img src="ressources/jva_logohorizontal_bleu.svg" alt="JeVeuxAider.gouv.fr" style="height:40px;width:auto">
-    <nav aria-label="Navigation principale" class="top-nav" style="align-items:center;gap:32px;font-size:16px;font-weight:500">
-      <a href="#" class="dsfr-link">Trouver une mission</a>
-      <a href="#" class="dsfr-link">Devenir bénévole</a>
-      <a href="#" class="dsfr-link">Publier une mission</a>
-    </nav>
-    <div style="display:flex;align-items:center;gap:12px">
-      <a href="#" class="font-medium transition-extended ease-out inline-flex items-center justify-center shadow-[inset_0_0_0_1px_#000091] bg-white text-jva-blue-500 hover:bg-[#F6F6F6] active:bg-[#EDEDED] px-4 py-2 text-base min-h-[42px]">Connexion</a>
-      <a href="#" class="font-medium transition-extended ease-out inline-flex items-center justify-center text-white bg-jva-blue-500 hover:bg-jva-blue-800 active:bg-jva-blue-900 px-4 py-2 text-base min-h-[42px]">Inscription</a>
+<header class="jva-header">
+  <div class="jva-header__row">
+    <div class="jva-header__brand">
+      <img src="ressources/rf.svg" alt="République Française" class="jva-header__rf">
+      <img src="ressources/jva_logohorizontal_bleu.svg" alt="JeVeuxAider.gouv.fr — Par la réserve civique" class="jva-header__logo">
     </div>
+    <div class="jva-header__tools">
+      <a href="#" class="jva-header__tool-link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>Trouver une mission</a>
+      <a href="#" class="jva-header__tool-link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Publier une mission</a>
+      <a href="#" class="jva-header__tool-link jva-header__tool-link--bordered"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c1.5-4 4.2-6 7-6s5.5 2 7 6"/></svg>Mon compte</a>
+    </div>
+  </div>
+  <div class="jva-header__menu">
+    <nav class="fr-nav" id="header-navigation" role="navigation" aria-label="Menu principal">
+      <ul class="fr-nav__list">
+        <li class="fr-nav__item"><a class="fr-nav__link" href="#" aria-current="page">Particuliers</a></li>
+        <li class="fr-nav__item"><a class="fr-nav__link" href="#">Associations</a></li>
+      </ul>
+    </nav>
   </div>
 </header>
 

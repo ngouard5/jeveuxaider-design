@@ -26,22 +26,34 @@
      sont repris avec leurs vraies classes ; le reste suit l'échelle
      typographique et les tokens couleur DSFR documentés. */
 
-  /* ---------- header ---------- */
-  .site-header{background:var(--background-default-grey);border-bottom:1px solid var(--border-default-grey)}
-  .rf-bar{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;max-width:1440px;margin:0 auto}
-  .rf-bloc-marque{display:flex;align-items:center;gap:16px}
-  .rf-bloc-marque img{height:64px;width:auto}
-  .rf-actions{display:flex;align-items:center;gap:24px;font-size:14px;font-weight:500;color:var(--text-action-high-blue-france)}
-  .rf-actions span{display:flex;align-items:center;gap:6px}
-  .app-nav{border-top:1px solid var(--border-default-grey);background:var(--background-alt-grey)}
-  .app-nav ul{list-style:none;display:flex;gap:32px;margin:0;padding:0 24px;max-width:1440px;margin:0 auto;height:56px;align-items:center}
-  /* background-image:none en plus de text-decoration:none : dsfr.min.css
-     souligne tout [href] par défaut via un dégradé en background-image (pas
-     juste text-decoration), voir GUIDE-PROTOTYPAGE.md Piège n°2. Nécessaire
-     ici car ces liens ne portent pas les classes de DsfrButton/DsfrLink qui
-     bénéficient déjà du correctif dans patches.css. */
-  .app-nav a{font-size:14px;font-weight:500;text-decoration:none;background-image:none;color:var(--text-title-grey)}
-  .app-nav li.active a{color:var(--text-action-high-blue-france);font-weight:700}
+  /* ---------- header ----------
+     Maquette Figma "Composants JVA" › navigation/desktop/header/XL, variante
+     "Logged In" (node 409:4656) : bloc marque RF + logo JVA, à droite un lien
+     "Trouver une mission", icônes messagerie/notifications, puis profil
+     (avatar + nom + rôle). La nav du dessous est le composant DSFR standard
+     "Navigation principale" (https://www.systeme-de-design.gouv.fr/version-courante/fr/composants/navigation-principale),
+     classes fr-nav/fr-nav__list/fr-nav__link réelles du bundle dsfr.min.css —
+     l'état actif (aria-current="page") est stylé nativement par DSFR, aucun
+     CSS perso nécessaire pour ça. */
+  .jva-header{background:var(--background-default-grey);box-shadow:0 2px 3px rgba(0,0,18,.16);position:relative;z-index:30}
+  .jva-header__row{max-width:1440px;margin:0 auto;display:flex;align-items:center;gap:24px;padding:12px 24px;flex-wrap:wrap}
+  @media (min-width:1024px){.jva-header__row{gap:40px;padding:12px 120px 12px 104px;flex-wrap:nowrap}}
+  .jva-header__brand{display:flex;align-items:center;gap:16px;flex:none}
+  .jva-header__rf{height:48px;width:auto;flex:none}
+  .jva-header__logo{height:40px;width:auto;flex:none}
+  .jva-header__tools{display:flex;align-items:center;gap:16px;flex:1 1 auto;justify-content:flex-end;flex-wrap:wrap}
+  @media (min-width:1024px){.jva-header__tools{gap:24px}}
+  .jva-header__tool-link{display:inline-flex;align-items:center;gap:8px;padding:4px 12px;font-size:14px;font-weight:500;line-height:24px;color:var(--text-action-high-blue-france);text-decoration:none;background-image:none;white-space:nowrap}
+  .jva-header__icon-btn{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border:none;background:none;color:var(--text-title-grey);cursor:pointer;padding:0}
+  .jva-header__icon-btn:hover{background:var(--background-default-grey-hover)}
+  .jva-header__profile{display:inline-flex;align-items:center;gap:12px;border:none;background:none;cursor:pointer;padding:0;font-family:inherit}
+  .jva-header__avatar{width:40px;height:40px;border-radius:50%;background:var(--background-action-high-blue-france);color:var(--text-inverted-blue-france);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500;flex:none}
+  .jva-header__profile-text{display:flex;flex-direction:column;align-items:flex-start;font-size:14px;line-height:20px}
+  .jva-header__profile-text strong{color:var(--text-title-grey);font-weight:700}
+  .jva-header__profile-text span{color:var(--text-mention-grey)}
+  .jva-header__menu{border-top:1px solid var(--border-default-grey);max-width:1440px;margin:0 auto;padding:0 24px}
+  @media (min-width:1024px){.jva-header__menu{padding:0 104px}}
+  .jva-header__menu .fr-nav__list{overflow-x:auto}
 
   /* ---------- page ---------- */
   .page{max-width:1440px;margin:0 auto;padding:40px 120px 80px}
@@ -176,28 +188,34 @@
 </head>
 <body>
 
-<header class="site-header">
-  <div class="rf-bar">
-    <div class="rf-bloc-marque">
-      <img src="ressources/rf.svg" alt="République Française">
-      <img src="ressources/jva_logohorizontal_bleu.svg" alt="JeVeuxAider.gouv.fr — Par la réserve civique" style="height:40px">
+<header class="jva-header">
+  <div class="jva-header__row">
+    <div class="jva-header__brand">
+      <img src="ressources/rf.svg" alt="République Française" class="jva-header__rf">
+      <img src="ressources/jva_logohorizontal_bleu.svg" alt="JeVeuxAider.gouv.fr — Par la réserve civique" class="jva-header__logo">
     </div>
-    <div class="rf-actions">
-      <span>🔍 Rechercher une mission</span>
-      <span>💬 Messagerie</span>
-      <span>🔔 Notifications</span>
-      <span>Mon compte ▾</span>
+    <div class="jva-header__tools">
+      <a href="#" class="jva-header__tool-link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>Trouver une mission</a>
+      <button type="button" class="jva-header__icon-btn" aria-label="Messagerie"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v12H8l-4 4V4Z" stroke-linejoin="round"/></svg></button>
+      <button type="button" class="jva-header__icon-btn" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 10a6 6 0 1 1 12 0c0 4 1.5 5.5 1.5 5.5H4.5S6 14 6 10Z" stroke-linejoin="round"/><path d="M10 19a2 2 0 0 0 4 0"/></svg></button>
+      <button type="button" class="jva-header__profile">
+        <span class="jva-header__avatar">CA</span>
+        <span class="jva-header__profile-text"><strong>Camille</strong><span>Bénévole</span></span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
     </div>
   </div>
-  <nav class="app-nav" aria-label="Navigation principale">
-    <ul>
-      <li class="active"><a href="#">Tableau de bord</a></li>
-      <li><a href="#">Mes missions</a></li>
-      <li><a href="#">Mes favoris</a></li>
-      <li><a href="#">Mon profil</a></li>
-      <li><a href="#">Mes disponibilités</a></li>
-    </ul>
-  </nav>
+  <div class="jva-header__menu">
+    <nav class="fr-nav" id="header-navigation" role="navigation" aria-label="Menu principal">
+      <ul class="fr-nav__list">
+        <li class="fr-nav__item"><a class="fr-nav__link" href="#" aria-current="page">Tableau de bord</a></li>
+        <li class="fr-nav__item"><a class="fr-nav__link" href="#">Mes missions</a></li>
+        <li class="fr-nav__item"><a class="fr-nav__link" href="#">Mes favoris</a></li>
+        <li class="fr-nav__item"><a class="fr-nav__link" href="#">Mon profil</a></li>
+        <li class="fr-nav__item"><a class="fr-nav__link" href="#">Mes disponibilités</a></li>
+      </ul>
+    </nav>
+  </div>
 </header>
 
 <div class="page">

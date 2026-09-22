@@ -23,10 +23,16 @@
   /* Composants réels repris pour cette page :
      - components/base/Table.vue + TableHead/TableHeadCell/TableRow/TableRowCell
        (structure <table>, cellule "Mission" avec pattern with-preview)
-     - components/ui/BadgeState.vue (mapping état → type de DsfrBadge)
+     - components/ui/BadgeState.vue (mapping état → type de DsfrBadge). "Terminée"
+       est aligné ici sur "Brouillon" (bleu info), à la demande de Nicolas — le
+       vrai composant le fait retomber dans le type "default" (rose) faute de
+       case dédié dans son switch, écart documenté sur uibadgestate.html, mais
+       ce n'est pas le rendu voulu.
      - components/BadgeOnline.vue → même famille de badge gris pour le statut
        des inscriptions (pas de state BadgeState dédié, donc DsfrBadge type="gray"
-       directement, cf. note "Figma seulement" sur uibadgestate.html)
+       directement, cf. note "Figma seulement" sur uibadgestate.html). Icône
+       ajoutée dans le badge (vert ouvertes / orange en pause ou fermées) pour
+       repérer l'état sans lire le texte — pas dans BadgeOnline.vue réel non plus.
      - components/dsfr/Badge.vue (couleurs exactes, via les vraies variables
        sémantiques DSFR plutôt que les hex recopiés du doc, pour le dark mode)
      - components/search/SearchFilter.vue, components/base/FilterSelectAdvanced.vue,
@@ -135,11 +141,12 @@
   .badge--warning{color:var(--text-default-warning);background:var(--background-contrast-warning)}
   .badge--error{color:var(--text-default-error);background:var(--background-contrast-error)}
   .badge--info{color:var(--text-default-info);background:var(--background-contrast-info)}
-  /* "Terminée" tombe dans le type "default" du vrai BadgeState.vue (rose), pas
-     bleu comme le dessine la maquette Figma — écart déjà signalé sur
-     uibadgestate.html. On reproduit ici le rendu réel du code. */
-  .badge--default{color:var(--purple-glycine-sun-319-moon-630);background:var(--purple-glycine-950-100)}
   .badge--gray{color:var(--text-default-grey);background:var(--background-contrast-grey);font-weight:700}
+  /* Icônes de statut des inscriptions (badge gris), pour repérer ouvert/en
+     pause/fermé sans lire le texte — vert = ouvertes, orange = en pause ou
+     fermées (formes différentes pour les distinguer). */
+  .badge--gray svg.icon-open{color:var(--text-default-success)}
+  .badge--gray svg.icon-closed,.badge--gray svg.icon-paused{color:var(--text-default-warning)}
 
   .mission-title{margin:0 0 8px;font-weight:700;font-size:16px;line-height:24px;color:var(--text-title-grey);text-align:left}
   .mission-chips{display:flex;gap:4px;flex-wrap:wrap}
@@ -152,9 +159,9 @@
   .col-inscriptions{width:200px}
   .col-inscriptions .places{margin:8px 0 0;color:var(--text-mention-grey);font-size:14px;line-height:24px}
   .col-inscriptions .places strong{color:var(--text-title-grey);font-weight:500}
-  .col-candidatures{width:140px;color:var(--text-mention-grey);font-size:14px;line-height:24px}
-  .col-candidatures p{margin:0}
-  .col-candidatures p.has-new{color:var(--text-title-grey);font-weight:500}
+  .col-participations{width:140px;color:var(--text-mention-grey);font-size:16px;line-height:24px}
+  .col-participations p{margin:0}
+  .col-participations p.has-new{color:var(--text-title-grey);font-weight:500}
 
   .actions-cell{display:flex;align-items:center;justify-content:flex-end;gap:4px;flex-wrap:nowrap}
   .btn-row-action,.btn-icon{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:4px 12px;font-size:14px;line-height:24px;font-weight:500;color:var(--text-action-high-blue-france);background:var(--background-default-grey);box-shadow:inset 0 0 0 1px var(--border-default-grey);border:none;cursor:pointer;white-space:nowrap}
@@ -345,7 +352,7 @@
           <tr>
             <th scope="col">Mission</th>
             <th scope="col">Inscriptions</th>
-            <th scope="col">Candidatures</th>
+            <th scope="col">Participations</th>
             <th scope="col" class="col-actions"><span class="fr-sr-only">Actions</span></th>
           </tr>
         </thead>
@@ -365,10 +372,10 @@
               </button>
             </td>
             <td class="col-inscriptions">
-              <span class="badge badge--gray">Inscriptions ouvertes</span>
+              <span class="badge badge--gray"><svg class="icon-open" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>Inscriptions ouvertes</span>
               <p class="places"><strong>3</strong> places restantes sur 12</p>
             </td>
-            <td class="col-candidatures">
+            <td class="col-participations">
               <p class="has-new">3 prioritaires</p>
               <p class="has-new">3 nouvelles</p>
             </td>
@@ -403,10 +410,10 @@
               </button>
             </td>
             <td class="col-inscriptions">
-              <span class="badge badge--gray">Pas encore publiée</span>
+              <span class="badge badge--gray"><svg class="icon-closed" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12.866 3l9.526 16.5a1 1 0 01-.866 1.5H2.474a1 1 0 01-.866-1.5L11.134 3a1 1 0 011.732 0zM11 16v2h2v-2h-2zm0-7v5h2V9h-2z"/></svg>Pas encore publiée</span>
               <p class="places">8 places à pourvoir</p>
             </td>
-            <td class="col-candidatures">
+            <td class="col-participations">
               <p>—</p>
             </td>
             <td>
@@ -438,10 +445,10 @@
               </button>
             </td>
             <td class="col-inscriptions">
-              <span class="badge badge--gray">En attente</span>
+              <span class="badge badge--gray"><svg class="icon-closed" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12.866 3l9.526 16.5a1 1 0 01-.866 1.5H2.474a1 1 0 01-.866-1.5L11.134 3a1 1 0 011.732 0zM11 16v2h2v-2h-2zm0-7v5h2V9h-2z"/></svg>En attente</span>
               <p class="places">6 places à pourvoir</p>
             </td>
-            <td class="col-candidatures">
+            <td class="col-participations">
               <p>—</p>
             </td>
             <td>
@@ -473,10 +480,10 @@
               </button>
             </td>
             <td class="col-inscriptions">
-              <span class="badge badge--gray">Inscriptions en pause</span>
+              <span class="badge badge--gray"><svg class="icon-paused" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2Zm3 7h-2v6h2V9Zm-4 0H9v6h2V9Z"/></svg>Inscriptions en pause</span>
               <p class="places"><strong>9</strong> places restantes sur 15</p>
             </td>
-            <td class="col-candidatures">
+            <td class="col-participations">
               <p>1 prioritaire</p>
               <p>0 nouvelle</p>
             </td>
@@ -511,10 +518,10 @@
               </button>
             </td>
             <td class="col-inscriptions">
-              <span class="badge badge--gray">Inscriptions ouvertes</span>
+              <span class="badge badge--gray"><svg class="icon-open" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>Inscriptions ouvertes</span>
               <p class="places"><strong>Complet</strong> — 0/20 places</p>
             </td>
-            <td class="col-candidatures">
+            <td class="col-participations">
               <p>0 prioritaire</p>
               <p class="has-new">2 nouvelles</p>
             </td>
@@ -538,7 +545,7 @@
           <tr data-title="Collecte de vêtements pour familles sinistrées" data-id="47102" data-statut="Terminée" data-inscriptions="Fermées" data-ville="Toulouse" data-responsable="Marc Lefèvre" data-domaine="Solidarité" data-places-restantes="0">
             <td class="col-mission">
               <button type="button" class="mission-trigger" data-preview="47102">
-                <div class="mission-badges"><span class="badge badge--default">Terminée</span></div>
+                <div class="mission-badges"><span class="badge badge--info"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>Terminée</span></div>
                 <p class="mission-title">Collecte de vêtements pour familles sinistrées <span style="color:var(--text-mention-grey);font-weight:400">#47102</span></p>
                 <div class="mission-chips">
                   <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s7-6.5 7-11.5A7 7 0 0 0 5 9.5C5 14.5 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.2"/></svg>Toulouse</span>
@@ -549,10 +556,10 @@
               </button>
             </td>
             <td class="col-inscriptions">
-              <span class="badge badge--gray">Inscriptions fermées</span>
+              <span class="badge badge--gray"><svg class="icon-closed" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12.866 3l9.526 16.5a1 1 0 01-.866 1.5H2.474a1 1 0 01-.866-1.5L11.134 3a1 1 0 011.732 0zM11 16v2h2v-2h-2zm0-7v5h2V9h-2z"/></svg>Inscriptions fermées</span>
               <p class="places">10/10 places pourvues</p>
             </td>
-            <td class="col-candidatures">
+            <td class="col-participations">
               <p>0 prioritaire</p>
               <p>0 nouvelle</p>
             </td>
@@ -585,10 +592,10 @@
               </button>
             </td>
             <td class="col-inscriptions">
-              <span class="badge badge--gray">Inscriptions fermées</span>
+              <span class="badge badge--gray"><svg class="icon-closed" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12.866 3l9.526 16.5a1 1 0 01-.866 1.5H2.474a1 1 0 01-.866-1.5L11.134 3a1 1 0 011.732 0zM11 16v2h2v-2h-2zm0-7v5h2V9h-2z"/></svg>Inscriptions fermées</span>
               <p class="places">5 places à pourvoir</p>
             </td>
-            <td class="col-candidatures">
+            <td class="col-participations">
               <p>—</p>
             </td>
             <td>
@@ -620,10 +627,10 @@
               </button>
             </td>
             <td class="col-inscriptions">
-              <span class="badge badge--gray">Inscriptions fermées</span>
+              <span class="badge badge--gray"><svg class="icon-closed" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12.866 3l9.526 16.5a1 1 0 01-.866 1.5H2.474a1 1 0 01-.866-1.5L11.134 3a1 1 0 011.732 0zM11 16v2h2v-2h-2zm0-7v5h2V9h-2z"/></svg>Inscriptions fermées</span>
               <p class="places">4 places à pourvoir</p>
             </td>
-            <td class="col-candidatures">
+            <td class="col-participations">
               <p>—</p>
             </td>
             <td>
@@ -654,10 +661,10 @@
               </button>
             </td>
             <td class="col-inscriptions">
-              <span class="badge badge--gray">Inscriptions ouvertes</span>
+              <span class="badge badge--gray"><svg class="icon-open" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>Inscriptions ouvertes</span>
               <p class="places"><strong>4</strong> places restantes sur 6</p>
             </td>
-            <td class="col-candidatures">
+            <td class="col-participations">
               <p class="has-new">2 prioritaires</p>
               <p class="has-new">5 nouvelles</p>
             </td>
@@ -692,10 +699,10 @@
               </button>
             </td>
             <td class="col-inscriptions">
-              <span class="badge badge--gray">Inscriptions ouvertes</span>
+              <span class="badge badge--gray"><svg class="icon-open" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>Inscriptions ouvertes</span>
               <p class="places"><strong>1</strong> place restante sur 10</p>
             </td>
-            <td class="col-candidatures">
+            <td class="col-participations">
               <p>1 prioritaire</p>
               <p>0 nouvelle</p>
             </td>
@@ -924,10 +931,15 @@
     'Brouillon': '<span class="badge badge--info"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>Brouillon</span>',
     'En attente de validation': '<span class="badge badge--warning"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12.866 3l9.526 16.5a1 1 0 01-.866 1.5H2.474a1 1 0 01-.866-1.5L11.134 3a1 1 0 011.732 0zM11 16v2h2v-2h-2zm0-7v5h2V9h-2z"/></svg>En attente de validation</span>',
     'Refusée': '<span class="badge badge--error"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm3.536 12.121l-1.415 1.415L12 13.414l-2.121 2.122-1.415-1.415L10.586 12 8.464 9.879l1.415-1.415L12 10.586l2.121-2.122 1.415 1.415L13.414 12l2.122 2.121z"/></svg>Refusée</span>',
-    'Terminée': '<span class="badge badge--default">Terminée</span>',
+    'Terminée': '<span class="badge badge--info"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>Terminée</span>',
     'Annulée': '<span class="badge badge--error"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm3.536 12.121l-1.415 1.415L12 13.414l-2.121 2.122-1.415-1.415L10.586 12 8.464 9.879l1.415-1.415L12 10.586l2.121-2.122 1.415 1.415L13.414 12l2.122 2.121z"/></svg>Annulée</span>'
   };
   var inscriptionsLabel = { 'Ouvertes': 'Inscriptions ouvertes', 'En pause': 'Inscriptions en pause', 'Fermées': 'Inscriptions fermées' };
+  var inscriptionsIcon = {
+    'Ouvertes': '<svg class="icon-open" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>',
+    'En pause': '<svg class="icon-paused" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2Zm3 7h-2v6h2V9Zm-4 0H9v6h2V9Z"/></svg>',
+    'Fermées': '<svg class="icon-closed" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12.866 3l9.526 16.5a1 1 0 01-.866 1.5H2.474a1 1 0 01-.866-1.5L11.134 3a1 1 0 011.732 0zM11 16v2h2v-2h-2zm0-7v5h2V9h-2z"/></svg>'
+  };
 
   function openDrawerFor(id){
     var row = rows.filter(function(r){ return r.dataset.id === id; })[0];
@@ -939,7 +951,7 @@
     document.getElementById('drawer-domaine').textContent = d.domaine;
     var badgesEl = document.getElementById('drawer-badges');
     badgesEl.innerHTML = (badgeHtmlByStatut[d.statut] || '') +
-      '<span class="badge badge--gray">' + (inscriptionsLabel[d.inscriptions] || d.inscriptions) + '</span>';
+      '<span class="badge badge--gray">' + (inscriptionsIcon[d.inscriptions] || '') + (inscriptionsLabel[d.inscriptions] || d.inscriptions) + '</span>';
     overlay.hidden = false;
     drawer.hidden = false;
     drawerClose.focus();

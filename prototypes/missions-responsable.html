@@ -39,14 +39,18 @@
        components/dsfr/Tag.vue (filtre "Places disponibles")
      - components/dsfr/Pagination.vue, components/custom/EmptyState.vue
      - components/dsfr/Button.vue / IconButton.vue, ui/dropdown-menu/* (menu "…")
-     - components/drawer/DrawerMission.vue (aperçu via l'icône œil)
+     - components/drawer/DrawerMission.vue (aperçu via le survol de la cellule)
      Source précise de la ligne de tableau (badges, colonnes, actions) :
      maquette Figma "Composants JVA" › Tableau / Thème Clair / Ligne mission
      (node 688:6008), demandée explicitement par Nicolas comme référence pour
      le comportement de clic. Elle montre que le TITRE n'est pas cliquable :
-     l'aperçu passe par une icône dédiée (œil) + le survol de la cellule
-     "Informations principales" (pattern with-preview documenté sur
-     basetablerowcell.html), jamais par un lien sur le titre lui-même. */
+     l'aperçu passe par le survol de la cellule "Informations principales"
+     (pattern with-preview documenté sur basetablerowcell.html), jamais par un
+     lien sur le titre lui-même. L'icône œil dans la colonne Actions
+     n'ouvre plus l'aperçu (demande explicite de Nicolas, écart
+     volontaire avec la maquette Figma qui la montrait comme second point
+     d'entrée) : elle est présente visuellement mais inerte au clic, seul le
+     survol/clic de la cellule "Informations principales" ouvre le volet. */
 
   /* ---------- header ----------
      Maquette Figma "Composants JVA" › navigation/desktop/header/XL, variante
@@ -125,7 +129,7 @@
   table.missions thead th.col-actions{text-align:right}
   table.missions tbody tr{border-bottom:1px solid var(--border-default-grey)}
   table.missions tbody tr:last-child{border-bottom:none}
-  table.missions tbody td{padding:16px;vertical-align:top}
+  table.missions tbody td{padding:16px;vertical-align:middle}
 
   /* Cellule "Informations principales" — pattern with-preview (basetablerowcell.html) :
      tout le bloc devient un déclencheur d'aperçu au survol/focus, avec un
@@ -159,9 +163,8 @@
   .col-inscriptions{width:200px}
   .col-inscriptions .places{margin:8px 0 0;color:var(--text-mention-grey);font-size:14px;line-height:24px}
   .col-inscriptions .places strong{color:var(--text-title-grey);font-weight:500}
-  .col-participations{width:140px;color:var(--text-mention-grey);font-size:16px;line-height:24px}
-  .col-participations p{margin:0}
-  .col-participations p.has-new{color:var(--text-title-grey);font-weight:500}
+  .col-participations{width:140px}
+  .col-participations p{margin:0;color:var(--text-mention-grey);font-weight:400;font-size:14px;line-height:24px}
 
   .actions-cell{display:flex;align-items:center;justify-content:flex-end;gap:4px;flex-wrap:nowrap}
   .btn-row-action,.btn-icon{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:4px 12px;font-size:14px;line-height:24px;font-weight:500;color:var(--text-action-high-blue-france);background:var(--background-default-grey);box-shadow:inset 0 0 0 1px var(--border-default-grey);border:none;cursor:pointer;white-space:nowrap}
@@ -181,14 +184,18 @@
   .empty-state p:first-of-type{margin:16px 0 0;font-weight:700;color:var(--text-title-grey)}
   .empty-state p:last-of-type{margin:4px 0 0;color:var(--text-mention-grey)}
 
-  /* ---------- pagination ---------- */
-  .pagination-row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:24px}
+  /* ---------- pagination ----------
+     Composant DSFR réel .fr-pagination (voir maquette Figma "DSFR — v1.15.0 —
+     Composants" › Pagination / Complète, node 17402:131207) : classes
+     fr-pagination/fr-pagination__list/fr-pagination__link réelles du bundle
+     dsfr.min.css. Un seul correctif nécessaire (piège cascade layers, voir
+     GUIDE-PROTOTYPAGE.md) : notre reset "a{color:inherit}" hors couche gagne
+     toujours contre la couleur du lien actif/désactivé posée par dsfr-base ;
+     on la restaure ici avec un sélecteur plus précis, hors couche aussi. */
+  .fr-pagination__link[aria-current]{color:var(--text-inverted-blue-france)}
+  .fr-pagination__link:not([aria-current]):not([href]){color:var(--text-disabled-grey)}
+  .pagination-row{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px;margin-top:24px}
   .pagination-row .per-page-note{color:var(--text-mention-grey);font-size:14px}
-  nav.pagination ul{display:flex;align-items:center;gap:4px;list-style:none;margin:0;padding:0}
-  nav.pagination a{display:flex;align-items:center;justify-content:center;min-width:40px;height:40px;padding:0 8px;font-size:14px;color:var(--text-title-grey);text-decoration:none;background-image:none}
-  nav.pagination a:hover{background:var(--background-alt-grey)}
-  nav.pagination li.active a{background:var(--background-action-high-blue-france);color:var(--text-inverted-blue-france)}
-  nav.pagination li.disabled a{color:var(--text-mention-grey);pointer-events:none}
 
   /* ---------- drawer d'aperçu (DrawerMission.vue) ---------- */
   .drawer-overlay{position:fixed;inset:0;background:rgba(22,22,22,.48);z-index:40}
@@ -368,7 +375,7 @@
                   <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="1"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>13 juillet 2025</span>
                   <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c1.5-4 4.2-6 7-6s5.5 2 7 6"/></svg>Céline Dubeauvais</span>
                 </div>
-                <span class="btn-preview" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg>Aperçu</span>
+                <span class="btn-preview" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M11 5H5V19H11V5ZM13 5V19H19V5H13ZM4 3H20C20.5523 3 21 3.44772 21 4V20C21 20.5523 20.5523 21 20 21H4C3.44772 21 3 20.5523 3 20V4C3 3.44772 3.44772 3 4 3Z"/></svg>Aperçu</span>
               </button>
             </td>
             <td class="col-inscriptions">
@@ -376,13 +383,13 @@
               <p class="places"><strong>3</strong> places restantes sur 12</p>
             </td>
             <td class="col-participations">
-              <p class="has-new">3 prioritaires</p>
-              <p class="has-new">3 nouvelles</p>
+              <p>3 prioritaires</p>
+              <p>3 nouvelles</p>
             </td>
             <td>
               <div class="actions-cell">
                 <button type="button" class="btn-row-action">Trouver des bénévoles</button>
-                <button type="button" class="btn-icon" aria-label="Aperçu de la mission" data-preview="48213"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg></button>
+                <button type="button" class="btn-icon" aria-label="Aperçu de la mission"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg></button>
                 <div class="dropdown">
                   <button type="button" class="btn-icon" aria-label="Plus d'options" aria-expanded="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
                   <div class="dropdown-panel" hidden>
@@ -406,20 +413,17 @@
                   <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="1"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>2 août 2025</span>
                   <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c1.5-4 4.2-6 7-6s5.5 2 7 6"/></svg>Marc Lefèvre</span>
                 </div>
-                <span class="btn-preview" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg>Aperçu</span>
+                <span class="btn-preview" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M11 5H5V19H11V5ZM13 5V19H19V5H13ZM4 3H20C20.5523 3 21 3.44772 21 4V20C21 20.5523 20.5523 21 20 21H4C3.44772 21 3 20.5523 3 20V4C3 3.44772 3.44772 3 4 3Z"/></svg>Aperçu</span>
               </button>
             </td>
-            <td class="col-inscriptions">
-              <span class="badge badge--gray"><svg class="icon-closed" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12.866 3l9.526 16.5a1 1 0 01-.866 1.5H2.474a1 1 0 01-.866-1.5L11.134 3a1 1 0 011.732 0zM11 16v2h2v-2h-2zm0-7v5h2V9h-2z"/></svg>Pas encore publiée</span>
-              <p class="places">8 places à pourvoir</p>
-            </td>
+            <td class="col-inscriptions"></td>
             <td class="col-participations">
               <p>—</p>
             </td>
             <td>
               <div class="actions-cell">
                 <button type="button" class="btn-row-action">Modifier</button>
-                <button type="button" class="btn-icon" aria-label="Aperçu de la mission" data-preview="51002"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg></button>
+                <button type="button" class="btn-icon" aria-label="Aperçu de la mission"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg></button>
                 <div class="dropdown">
                   <button type="button" class="btn-icon" aria-label="Plus d'options" aria-expanded="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
                   <div class="dropdown-panel" hidden>
@@ -441,20 +445,17 @@
                   <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="1"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>5 septembre 2025</span>
                   <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c1.5-4 4.2-6 7-6s5.5 2 7 6"/></svg>Amélie Torres</span>
                 </div>
-                <span class="btn-preview" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg>Aperçu</span>
+                <span class="btn-preview" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M11 5H5V19H11V5ZM13 5V19H19V5H13ZM4 3H20C20.5523 3 21 3.44772 21 4V20C21 20.5523 20.5523 21 20 21H4C3.44772 21 3 20.5523 3 20V4C3 3.44772 3.44772 3 4 3Z"/></svg>Aperçu</span>
               </button>
             </td>
-            <td class="col-inscriptions">
-              <span class="badge badge--gray"><svg class="icon-closed" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12.866 3l9.526 16.5a1 1 0 01-.866 1.5H2.474a1 1 0 01-.866-1.5L11.134 3a1 1 0 011.732 0zM11 16v2h2v-2h-2zm0-7v5h2V9h-2z"/></svg>En attente</span>
-              <p class="places">6 places à pourvoir</p>
-            </td>
+            <td class="col-inscriptions"></td>
             <td class="col-participations">
               <p>—</p>
             </td>
             <td>
               <div class="actions-cell">
                 <button type="button" class="btn-row-action">Modifier</button>
-                <button type="button" class="btn-icon" aria-label="Aperçu de la mission" data-preview="50877"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg></button>
+                <button type="button" class="btn-icon" aria-label="Aperçu de la mission"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg></button>
                 <div class="dropdown">
                   <button type="button" class="btn-icon" aria-label="Plus d'options" aria-expanded="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
                   <div class="dropdown-panel" hidden>
@@ -476,7 +477,7 @@
                   <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="1"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>20 juin 2025</span>
                   <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c1.5-4 4.2-6 7-6s5.5 2 7 6"/></svg>Julien Roche</span>
                 </div>
-                <span class="btn-preview" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg>Aperçu</span>
+                <span class="btn-preview" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M11 5H5V19H11V5ZM13 5V19H19V5H13ZM4 3H20C20.5523 3 21 3.44772 21 4V20C21 20.5523 20.5523 21 20 21H4C3.44772 21 3 20.5523 3 20V4C3 3.44772 3.44772 3 4 3Z"/></svg>Aperçu</span>
               </button>
             </td>
             <td class="col-inscriptions">
@@ -490,7 +491,7 @@
             <td>
               <div class="actions-cell">
                 <button type="button" class="btn-row-action">Ouvrir les inscriptions</button>
-                <button type="button" class="btn-icon" aria-label="Aperçu de la mission" data-preview="49650"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg></button>
+                <button type="button" class="btn-icon" aria-label="Aperçu de la mission"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg></button>
                 <div class="dropdown">
                   <button type="button" class="btn-icon" aria-label="Plus d'options" aria-expanded="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
                   <div class="dropdown-panel" hidden>
@@ -504,7 +505,7 @@
             </td>
           </tr>
 
-          <tr data-title="Maraude et distribution de repas chauds" data-id="48990" data-statut="Validée" data-inscriptions="Ouvertes" data-ville="Marseille" data-responsable="Céline Dubeauvais" data-domaine="Solidarité" data-places-restantes="0">
+          <tr data-title="Maraude et distribution de repas chauds" data-id="48990" data-statut="Validée" data-inscriptions="Fermées" data-ville="Marseille" data-responsable="Céline Dubeauvais" data-domaine="Solidarité" data-places-restantes="0">
             <td class="col-mission">
               <button type="button" class="mission-trigger" data-preview="48990">
                 <div class="mission-badges"><span class="badge badge--success"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-.997-6l7.07-7.071-1.414-1.414-5.656 5.657-2.829-2.829-1.414 1.414L11.003 16z"/></svg>Validée</span></div>
@@ -514,21 +515,21 @@
                   <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="1"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>Tous les mardis</span>
                   <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c1.5-4 4.2-6 7-6s5.5 2 7 6"/></svg>Céline Dubeauvais</span>
                 </div>
-                <span class="btn-preview" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg>Aperçu</span>
+                <span class="btn-preview" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M11 5H5V19H11V5ZM13 5V19H19V5H13ZM4 3H20C20.5523 3 21 3.44772 21 4V20C21 20.5523 20.5523 21 20 21H4C3.44772 21 3 20.5523 3 20V4C3 3.44772 3.44772 3 4 3Z"/></svg>Aperçu</span>
               </button>
             </td>
             <td class="col-inscriptions">
-              <span class="badge badge--gray"><svg class="icon-open" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>Inscriptions ouvertes</span>
-              <p class="places"><strong>Complet</strong> — 0/20 places</p>
+              <span class="badge badge--gray"><svg class="icon-closed" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12.866 3l9.526 16.5a1 1 0 01-.866 1.5H2.474a1 1 0 01-.866-1.5L11.134 3a1 1 0 011.732 0zM11 16v2h2v-2h-2zm0-7v5h2V9h-2z"/></svg>Inscriptions fermées</span>
+              <p class="places">Mission complète</p>
             </td>
             <td class="col-participations">
               <p>0 prioritaire</p>
-              <p class="has-new">2 nouvelles</p>
+              <p>2 nouvelles</p>
             </td>
             <td>
               <div class="actions-cell">
                 <button type="button" class="btn-row-action">Trouver des bénévoles</button>
-                <button type="button" class="btn-icon" aria-label="Aperçu de la mission" data-preview="48990"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg></button>
+                <button type="button" class="btn-icon" aria-label="Aperçu de la mission"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg></button>
                 <div class="dropdown">
                   <button type="button" class="btn-icon" aria-label="Plus d'options" aria-expanded="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
                   <div class="dropdown-panel" hidden>
@@ -552,13 +553,10 @@
                   <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="1"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>10 mai 2025</span>
                   <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c1.5-4 4.2-6 7-6s5.5 2 7 6"/></svg>Marc Lefèvre</span>
                 </div>
-                <span class="btn-preview" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg>Aperçu</span>
+                <span class="btn-preview" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M11 5H5V19H11V5ZM13 5V19H19V5H13ZM4 3H20C20.5523 3 21 3.44772 21 4V20C21 20.5523 20.5523 21 20 21H4C3.44772 21 3 20.5523 3 20V4C3 3.44772 3.44772 3 4 3Z"/></svg>Aperçu</span>
               </button>
             </td>
-            <td class="col-inscriptions">
-              <span class="badge badge--gray"><svg class="icon-closed" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12.866 3l9.526 16.5a1 1 0 01-.866 1.5H2.474a1 1 0 01-.866-1.5L11.134 3a1 1 0 011.732 0zM11 16v2h2v-2h-2zm0-7v5h2V9h-2z"/></svg>Inscriptions fermées</span>
-              <p class="places">10/10 places pourvues</p>
-            </td>
+            <td class="col-inscriptions"></td>
             <td class="col-participations">
               <p>0 prioritaire</p>
               <p>0 nouvelle</p>
@@ -566,7 +564,7 @@
             <td>
               <div class="actions-cell">
                 <button type="button" class="btn-row-action">Voir le bilan</button>
-                <button type="button" class="btn-icon" aria-label="Aperçu de la mission" data-preview="47102"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg></button>
+                <button type="button" class="btn-icon" aria-label="Aperçu de la mission"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg></button>
                 <div class="dropdown">
                   <button type="button" class="btn-icon" aria-label="Plus d'options" aria-expanded="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
                   <div class="dropdown-panel" hidden>
@@ -588,20 +586,17 @@
                   <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="1"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>15 avril 2025</span>
                   <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c1.5-4 4.2-6 7-6s5.5 2 7 6"/></svg>Amélie Torres</span>
                 </div>
-                <span class="btn-preview" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg>Aperçu</span>
+                <span class="btn-preview" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M11 5H5V19H11V5ZM13 5V19H19V5H13ZM4 3H20C20.5523 3 21 3.44772 21 4V20C21 20.5523 20.5523 21 20 21H4C3.44772 21 3 20.5523 3 20V4C3 3.44772 3.44772 3 4 3Z"/></svg>Aperçu</span>
               </button>
             </td>
-            <td class="col-inscriptions">
-              <span class="badge badge--gray"><svg class="icon-closed" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12.866 3l9.526 16.5a1 1 0 01-.866 1.5H2.474a1 1 0 01-.866-1.5L11.134 3a1 1 0 011.732 0zM11 16v2h2v-2h-2zm0-7v5h2V9h-2z"/></svg>Inscriptions fermées</span>
-              <p class="places">5 places à pourvoir</p>
-            </td>
+            <td class="col-inscriptions"></td>
             <td class="col-participations">
               <p>—</p>
             </td>
             <td>
               <div class="actions-cell">
                 <button type="button" class="btn-row-action">Modifier</button>
-                <button type="button" class="btn-icon" aria-label="Aperçu de la mission" data-preview="46550"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg></button>
+                <button type="button" class="btn-icon" aria-label="Aperçu de la mission"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg></button>
                 <div class="dropdown">
                   <button type="button" class="btn-icon" aria-label="Plus d'options" aria-expanded="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
                   <div class="dropdown-panel" hidden>
@@ -623,19 +618,16 @@
                   <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="1"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>2 mars 2025</span>
                   <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c1.5-4 4.2-6 7-6s5.5 2 7 6"/></svg>Julien Roche</span>
                 </div>
-                <span class="btn-preview" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg>Aperçu</span>
+                <span class="btn-preview" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M11 5H5V19H11V5ZM13 5V19H19V5H13ZM4 3H20C20.5523 3 21 3.44772 21 4V20C21 20.5523 20.5523 21 20 21H4C3.44772 21 3 20.5523 3 20V4C3 3.44772 3.44772 3 4 3Z"/></svg>Aperçu</span>
               </button>
             </td>
-            <td class="col-inscriptions">
-              <span class="badge badge--gray"><svg class="icon-closed" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12.866 3l9.526 16.5a1 1 0 01-.866 1.5H2.474a1 1 0 01-.866-1.5L11.134 3a1 1 0 011.732 0zM11 16v2h2v-2h-2zm0-7v5h2V9h-2z"/></svg>Inscriptions fermées</span>
-              <p class="places">4 places à pourvoir</p>
-            </td>
+            <td class="col-inscriptions"></td>
             <td class="col-participations">
               <p>—</p>
             </td>
             <td>
               <div class="actions-cell">
-                <button type="button" class="btn-icon" aria-label="Aperçu de la mission" data-preview="45890"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg></button>
+                <button type="button" class="btn-icon" aria-label="Aperçu de la mission"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg></button>
                 <div class="dropdown">
                   <button type="button" class="btn-icon" aria-label="Plus d'options" aria-expanded="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
                   <div class="dropdown-panel" hidden>
@@ -657,7 +649,7 @@
                   <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="1"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>28 septembre 2025</span>
                   <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c1.5-4 4.2-6 7-6s5.5 2 7 6"/></svg>Vous</span>
                 </div>
-                <span class="btn-preview" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg>Aperçu</span>
+                <span class="btn-preview" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M11 5H5V19H11V5ZM13 5V19H19V5H13ZM4 3H20C20.5523 3 21 3.44772 21 4V20C21 20.5523 20.5523 21 20 21H4C3.44772 21 3 20.5523 3 20V4C3 3.44772 3.44772 3 4 3Z"/></svg>Aperçu</span>
               </button>
             </td>
             <td class="col-inscriptions">
@@ -665,13 +657,13 @@
               <p class="places"><strong>4</strong> places restantes sur 6</p>
             </td>
             <td class="col-participations">
-              <p class="has-new">2 prioritaires</p>
-              <p class="has-new">5 nouvelles</p>
+              <p>2 prioritaires</p>
+              <p>5 nouvelles</p>
             </td>
             <td>
               <div class="actions-cell">
                 <button type="button" class="btn-row-action">Trouver des bénévoles</button>
-                <button type="button" class="btn-icon" aria-label="Aperçu de la mission" data-preview="51110"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg></button>
+                <button type="button" class="btn-icon" aria-label="Aperçu de la mission"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg></button>
                 <div class="dropdown">
                   <button type="button" class="btn-icon" aria-label="Plus d'options" aria-expanded="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
                   <div class="dropdown-panel" hidden>
@@ -695,7 +687,7 @@
                   <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="1"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>14 octobre 2025</span>
                   <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c1.5-4 4.2-6 7-6s5.5 2 7 6"/></svg>Vous</span>
                 </div>
-                <span class="btn-preview" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg>Aperçu</span>
+                <span class="btn-preview" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M11 5H5V19H11V5ZM13 5V19H19V5H13ZM4 3H20C20.5523 3 21 3.44772 21 4V20C21 20.5523 20.5523 21 20 21H4C3.44772 21 3 20.5523 3 20V4C3 3.44772 3.44772 3 4 3Z"/></svg>Aperçu</span>
               </button>
             </td>
             <td class="col-inscriptions">
@@ -709,7 +701,7 @@
             <td>
               <div class="actions-cell">
                 <button type="button" class="btn-row-action">Trouver des bénévoles</button>
-                <button type="button" class="btn-icon" aria-label="Aperçu de la mission" data-preview="50333"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg></button>
+                <button type="button" class="btn-icon" aria-label="Aperçu de la mission"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg></button>
                 <div class="dropdown">
                   <button type="button" class="btn-icon" aria-label="Plus d'options" aria-expanded="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
                   <div class="dropdown-panel" hidden>
@@ -736,14 +728,32 @@
 
   <div class="pagination-row">
     <p class="per-page-note">10 missions sur 34 · 10 par page</p>
-    <nav class="pagination" aria-label="Pagination">
-      <ul>
-        <li class="disabled"><a href="#">← Précédent</a></li>
-        <li class="active"><a href="#" aria-current="page">1</a></li>
-        <li><a href="#">2</a></li>
-        <li><a href="#">3</a></li>
-        <li><a href="#">4</a></li>
-        <li><a href="#">Suivant →</a></li>
+    <nav role="navigation" class="fr-pagination" aria-label="Pagination">
+      <ul class="fr-pagination__list">
+        <li>
+          <a class="fr-pagination__link fr-pagination__link--first" aria-disabled="true" role="link">Première page</a>
+        </li>
+        <li>
+          <a class="fr-pagination__link fr-pagination__link--prev fr-pagination__link--lg-label" aria-disabled="true" role="link">Page précédente</a>
+        </li>
+        <li>
+          <a class="fr-pagination__link" aria-current="page" title="Page 1" href="#">1</a>
+        </li>
+        <li>
+          <a class="fr-pagination__link" title="Page 2" href="#">2</a>
+        </li>
+        <li>
+          <a class="fr-pagination__link" title="Page 3" href="#">3</a>
+        </li>
+        <li>
+          <a class="fr-pagination__link" title="Page 4" href="#">4</a>
+        </li>
+        <li>
+          <a class="fr-pagination__link fr-pagination__link--next fr-pagination__link--lg-label" title="Page suivante" href="#">Page suivante</a>
+        </li>
+        <li>
+          <a class="fr-pagination__link fr-pagination__link--last" title="Dernière page" href="#">Dernière page</a>
+        </li>
       </ul>
     </nav>
   </div>
@@ -924,7 +934,7 @@
   var overlay = document.getElementById('drawer-overlay');
   var drawer = document.getElementById('drawer');
   var drawerClose = document.getElementById('drawer-close');
-  var previewTriggers = Array.prototype.slice.call(document.querySelectorAll('[data-preview]'));
+  var previewTriggers = Array.prototype.slice.call(document.querySelectorAll('.mission-trigger[data-preview]'));
 
   var badgeHtmlByStatut = {
     'Validée': '<span class="badge badge--success"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-.997-6l7.07-7.071-1.414-1.414-5.656 5.657-2.829-2.829-1.414 1.414L11.003 16z"/></svg>Validée</span>',

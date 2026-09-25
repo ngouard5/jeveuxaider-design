@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Prototype — Inscription responsable : organisation prête</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>document.documentElement.setAttribute("data-fr-theme", matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");</script>
+<style>
+  /* Feuilles DSFR chargées en cascade layers — voir design-system/GUIDE-PROTOTYPAGE.md. */
+  @import url("../design-system/compiled-reset.css") layer(tailwind-reset);
+  @import url("../design-system/dsfr.min.css") layer(dsfr-base);
+  @import url("../design-system/compiled.css") layer(dsfr-utilitaires);
+  @import url("../design-system/patches.css") layer(site-patches);
+
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font-family:Marianne,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--background-default-grey);font-synthesis:none}
+
+  /* ---- En-tête du tunnel d'inscription (nouvelle maquette) ----
+     N'existe pas encore dans le code : layouts/register-steps.vue utilise
+     aujourd'hui une colonne latérale + BaseSteps. Reproduit ici d'après la
+     maquette fournie (retour + logo carré + étape en cours + 3 barres). */
+  .tunnel-header{display:flex;align-items:center;gap:16px;padding:12px 24px;border-bottom:1px solid var(--border-default-grey)}
+  .tunnel-header .retour{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;color:var(--text-title-grey);background-image:none}
+  .tunnel-header .retour svg{fill:currentColor}
+  .tunnel-header .logo{height:44px;width:auto;display:block}
+  .tunnel-header .sep{align-self:stretch;width:1px;background:var(--border-default-grey)}
+  .steps{display:flex;flex-direction:column}
+  .steps__state{margin:0;font-size:14px;line-height:24px;color:var(--text-mention-grey)}
+  .steps__title{margin:0;font-size:20px;line-height:28px;font-weight:700;color:var(--text-title-grey)}
+  .steps__bars{display:flex;gap:8px;margin-top:8px}
+  .steps__bars span{width:130px;height:8px;background:var(--background-action-high-blue-france)}
+
+  /* ---- Contenu ---- */
+  .content{max-width:752px;margin:0 auto;padding:56px 24px 120px;display:flex;flex-direction:column;gap:32px}
+  .intro h1{margin:0}
+  .intro p{margin:4px 0 0;font-size:16px;line-height:24px;color:var(--text-mention-grey)}
+  .text-mention{margin:0;font-size:16px;line-height:24px;color:var(--text-mention-grey)}
+
+  /* DsfrAlert variant="info" (components/dsfr/Alert.vue : p-6 flex items-start
+     gap-4 border rounded bg-[#F5F7FF] border-[#CACAFB], icône text-[#0063CB]
+     w-8 h-8). Couleurs remplacées par leurs variables DSFR pour le dark mode. */
+  .alert{display:flex;align-items:flex-start;gap:16px;padding:24px;border:1px solid var(--border-action-low-blue-france);border-radius:4px;background:var(--background-alt-blue-france);color:var(--text-title-grey)}
+  .alert svg{flex:none;width:32px;height:32px;color:var(--text-default-info)}
+  .alert p{margin:0;font-size:16px;line-height:24px}
+  .alert .alert__title{font-weight:700;margin-bottom:8px}
+
+  /* DsfrButton size="lg" (px-6 py-2 text-lg min-h-[3rem]) — couleurs figées
+     du composant remplacées par les variables DSFR adaptatives (Piège n°3). */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:8px 24px;min-height:48px;font-size:18px;line-height:28px;font-weight:500;text-decoration:none;background-image:none;transition:background-color .15s ease-out;width:fit-content}
+  .btn svg{width:24px;height:24px;fill:currentColor;flex:none}
+  /* dsfr.min.css ajoute sa propre icône « lien externe » en ::after à tout
+     a[target=_blank] : doublon avec l'icône du bouton (visible uniquement
+     servi en HTTP — en file:// le mask-image DSFR est bloqué par CORS). */
+  .btn[target=_blank]::after{content:none}
+  /* type="primary" : text-white bg-jva-blue-500 hover:bg-jva-blue-800 active:bg-jva-blue-900 */
+  .btn--primary{color:var(--text-inverted-blue-france);background-color:var(--background-action-high-blue-france)}
+  .btn--primary:hover{background-color:var(--background-action-high-blue-france-hover)}
+  .btn--primary:active{background-color:var(--background-action-high-blue-france-active)}
+  /* type="secondary" : text-jva-blue-500 shadow-[inset_0_0_0_1px_#000091] bg-white hover:bg-[#F6F6F6] active:bg-[#EDEDED] */
+  .btn--secondary{color:var(--text-action-high-blue-france);background-color:var(--background-default-grey);box-shadow:inset 0 0 0 1px var(--border-action-high-blue-france)}
+  .btn--secondary:hover{background-color:var(--background-default-grey-hover)}
+  .btn--secondary:active{background-color:var(--background-default-grey-active)}
+  /* size="md" (px-4 py-2 text-base min-h-[42px]) */
+  .btn--md{padding:8px 16px;min-height:42px;font-size:16px;line-height:24px}
+  .btn--md svg{width:20px;height:20px}
+
+  .label-court{display:none}
+
+  /* ==========================================================================
+     VARIANTES — une seule visible à la fois (sélecteur en bas de page,
+     propre au prototype, absent de la vraie page).
+     ========================================================================== */
+  .variant{display:none;flex-direction:column;gap:32px}
+  body[data-variant="actuelle"] .variant--actuelle,
+  body[data-variant="a"] .variant--a,
+  body[data-variant="b"] .variant--b,
+  body[data-variant="c"] .variant--c{display:flex}
+
+  /* ---- Actuelle : 3 blocs bleu clair empilés (version précédente) ---- */
+  .block{padding:32px;background:var(--background-alt-blue-france)}
+  .block h2{margin:0}
+  .block p{margin:12px 0 24px;font-size:16px;line-height:24px;color:var(--text-mention-grey)}
+
+  /* ---- A : une action principale, une action secondaire ----
+     Carte principale : même contour que .fr-tile/.fr-card DSFR (bordure
+     grise 1px + trait bas 4px bleu France). Le guide sort de tout encadré. */
+  .card-main{padding:32px;background:var(--background-default-grey);box-shadow:inset 0 0 0 1px var(--border-default-grey),inset 0 -4px 0 0 var(--border-plain-blue-france)}
+  .card-main h2{margin:0 0 12px}
+  .card-main .text-mention{margin-bottom:24px}
+  .guide-row{display:flex;align-items:center;justify-content:space-between;gap:24px;padding-top:24px;border-top:1px solid var(--border-default-grey)}
+  .guide-row .btn{flex:none;white-space:nowrap}
+  .guide-row h2{margin:0 0 4px;font-size:18px;line-height:28px}
+
+  /* ---- B : deux tuiles côte à côte ----
+     Alerte : vrai composant DSFR .fr-alert--info (barre à gauche). Tuiles :
+     contour de .fr-tile DSFR, contenu aligné à gauche car elles portent un
+     bouton (une .fr-tile native est un lien entier centré). */
+  .variant--b .fr-alert p{margin:0}
+  .tiles{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  .tile{display:flex;flex-direction:column;gap:12px;padding:24px 24px 32px;background:var(--background-default-grey);box-shadow:inset 0 0 0 1px var(--border-default-grey),inset 0 -4px 0 0 var(--border-plain-blue-france)}
+  .tile__icon{width:40px;height:40px;fill:var(--text-action-high-blue-france)}
+  .tile h2{margin:0}
+  .tile .text-mention{flex:1;margin-bottom:12px}
+
+  /* ---- C : prochaines étapes ---- */
+  .next h2{margin:0 0 24px}
+  .timeline{list-style:none;margin:0;padding:0}
+  .timeline li{position:relative;display:flex;gap:20px;padding-bottom:32px}
+  .timeline li:last-child{padding-bottom:0}
+  /* trait vertical qui relie les pastilles */
+  .timeline li:not(:last-child)::before{content:"";position:absolute;left:19px;top:44px;bottom:4px;width:2px;background:var(--border-default-grey)}
+  .timeline__marker{flex:none;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:var(--text-action-high-blue-france);box-shadow:inset 0 0 0 2px var(--border-plain-blue-france);background:var(--background-default-grey)}
+  .timeline__marker--info{color:var(--text-default-info);box-shadow:none;background:var(--background-contrast-info)}
+  .timeline__marker svg{width:22px;height:22px;fill:currentColor}
+  .timeline__body{flex:1;padding-top:6px}
+  .timeline__title{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:0 0 4px;font-size:20px;line-height:28px;font-weight:700;color:var(--text-title-grey)}
+  .timeline__title .fr-badge{margin:0}
+  .timeline__body .text-mention{margin-bottom:16px}
+  .timeline li:first-child .text-mention{margin-bottom:0}
+
+  /* ---- Sélecteur de variante (prototype uniquement) ---- */
+  .switcher{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);display:flex;align-items:center;gap:4px;padding:6px 6px 6px 14px;background:var(--background-raised-grey);box-shadow:0 2px 12px rgba(0,0,18,.25);border-radius:999px;font-size:14px;color:var(--text-mention-grey);z-index:10;white-space:nowrap}
+  .switcher button{border:0;padding:6px 14px;border-radius:999px;background:transparent;color:var(--text-title-grey);font:inherit;font-weight:500;cursor:pointer}
+  .switcher button:hover{background:var(--background-default-grey-hover)}
+  .switcher button[aria-pressed="true"]{background:var(--background-action-high-blue-france);color:var(--text-inverted-blue-france)}
+
+  @media (max-width: 767px){
+    .label-long{display:none}
+    .label-court{display:inline}
+    .steps__title{font-size:16px;line-height:24px}
+    .tunnel-header{padding:8px 16px;gap:12px}
+    .tunnel-header .logo{height:36px}
+    .steps__bars span{width:auto;flex:1}
+    .steps{flex:1}
+    .content{padding:32px 16px 120px}
+    .intro h1{font-size:32px;line-height:40px}
+    .block,.card-main{padding:24px}
+    .btn{width:100%}
+    .guide-row{flex-direction:column;align-items:stretch}
+    .guide-row .btn{white-space:normal}
+    .tiles{grid-template-columns:1fr}
+    .timeline li{gap:16px}
+    .timeline__title{font-size:18px}
+    .switcher .switcher__label{display:none}
+  }
+</style>
+</head>
+<body data-variant="a">
+
+<header class="tunnel-header">
+  <a class="retour" href="#" aria-label="Retour">
+    <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.828 11H20v2H7.828l5.364 5.364-1.414 1.414L4 12l7.778-7.778 1.414 1.414L7.828 11Z"/></svg>
+  </a>
+  <!-- Logo blanc en dark mode : le logo bleu est illisible sur fond sombre -->
+  <picture>
+    <source srcset="../design-system/brand/jva-logo-carre-blanc.svg" media="(prefers-color-scheme: dark)">
+    <img class="logo" src="../design-system/brand/jva-logo-carre-bleu.svg" alt="JeVeuxAider.gouv.fr">
+  </picture>
+  <span class="sep" aria-hidden="true"></span>
+  <div class="steps" role="group" aria-label="Progression de l'inscription">
+    <p class="steps__state">Terminé</p>
+    <p class="steps__title">Votre organisation est prête</p>
+    <div class="steps__bars" aria-hidden="true"><span></span><span></span><span></span></div>
+  </div>
+</header>
+
+<main class="content">
+
+  <div class="intro">
+    <h1 class="fr-h1">Félicitations Nicolas !</h1>
+    <p>Votre organisation est prête pour la suite</p>
+  </div>
+
+  <!-- ====================== ACTUELLE ====================== -->
+  <div class="variant variant--actuelle">
+    <div class="alert" role="status">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="8" r="1" fill="currentColor"/><path d="M12 11v5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <div>
+        <p class="alert__title">C’est à nous de jouer !</p>
+        <p>Votre organisation va être vérifiée par notre équipe.</p>
+        <p>Vous recevrez un e-mail sous 7 jours ouvrés.</p>
+      </div>
+    </div>
+    <section class="block">
+      <h2 class="fr-h6">Suivez le guide</h2>
+      <p>Découvrez la plateforme et sa gestion simplifiée des candidatures de bénévoles.</p>
+      <a class="btn btn--secondary" href="https://app.livestorm.co/jeveuxaider/session-daccueil-associations" target="_blank" rel="noopener" title="Participer à la session d’accueil — nouvelle fenêtre">
+        <span class="label-long">Participer à la session d’accueil</span><span class="label-court">Session d’accueil</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6v2H5v11h11v-5h2v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6Zm11-3v8h-2V6.413l-7.793 7.794-1.414-1.414L17.585 5H13V3h8Z"/></svg>
+      </a>
+    </section>
+    <section class="block">
+      <h2 class="fr-h6">Publiez votre 1ère mission</h2>
+      <p>Proposez dès maintenant vos missions sur la plateforme et recrutez vos premiers bénévoles.</p>
+      <a class="btn btn--primary" href="#">C’est parti !</a>
+    </section>
+  </div>
+
+  <!-- ====================== A ====================== -->
+  <div class="variant variant--a">
+    <div class="alert" role="status">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="8" r="1" fill="currentColor"/><path d="M12 11v5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <div>
+        <p class="alert__title">C’est à nous de jouer !</p>
+        <p>Votre organisation va être vérifiée par notre équipe.</p>
+        <p>Vous recevrez un e-mail sous 7 jours ouvrés.</p>
+      </div>
+    </div>
+
+    <section class="card-main">
+      <h2 class="fr-h5">Publiez votre 1ère mission</h2>
+      <p class="text-mention">Proposez dès maintenant vos missions sur la plateforme et recrutez vos premiers bénévoles.</p>
+      <!-- Lien vers la publication de mission (le code actuel pointe vers /dashboard) -->
+      <a class="btn btn--primary" href="#">C’est parti !</a>
+    </section>
+
+    <section class="guide-row">
+      <div>
+        <h2>Suivez le guide</h2>
+        <p class="text-mention">Découvrez la plateforme et sa gestion simplifiée des candidatures de bénévoles.</p>
+      </div>
+      <a class="btn btn--secondary btn--md" href="https://app.livestorm.co/jeveuxaider/session-daccueil-associations" target="_blank" rel="noopener" title="Participer à la session d’accueil — nouvelle fenêtre">
+        Participer à la session d’accueil
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6v2H5v11h11v-5h2v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6Zm11-3v8h-2V6.413l-7.793 7.794-1.414-1.414L17.585 5H13V3h8Z"/></svg>
+      </a>
+    </section>
+  </div>
+
+  <!-- ====================== B ====================== -->
+  <div class="variant variant--b">
+    <div class="fr-alert fr-alert--info" role="status">
+      <h2 class="fr-alert__title">C’est à nous de jouer !</h2>
+      <p>Votre organisation va être vérifiée par notre équipe.</p>
+      <p>Vous recevrez un e-mail sous 7 jours ouvrés.</p>
+    </div>
+
+    <div class="tiles">
+      <section class="tile">
+        <!-- Icône Remix send-plane-line (design-system/icons/business) -->
+        <svg class="tile__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m21.727 2.957-5.454 19.086c-.15.529-.475.553-.717.07L11 13 1.923 9.37c-.51-.205-.504-.51.034-.689l19.086-6.362c.529-.176.832.12.684.638Zm-2.692 2.14L6.812 9.17h.001l5.636 2.255 3.04 6.082 3.546-12.41Z"/></svg>
+        <h2 class="fr-h6">Publiez votre 1ère mission</h2>
+        <p class="text-mention">Proposez dès maintenant vos missions sur la plateforme et recrutez vos premiers bénévoles.</p>
+        <a class="btn btn--primary" href="#">C’est parti !</a>
+      </section>
+      <section class="tile">
+        <!-- Icône Remix video-chat-line (design-system/icons/communication) -->
+        <svg class="tile__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 3a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H6.455L2 22.5V4a1 1 0 0 1 1-1h18Zm-1 2H4v13.385L5.763 17H20V5Zm-6 3v2.25L17 8v6l-3-2.25V14H7V8h7Z"/></svg>
+        <h2 class="fr-h6">Suivez le guide</h2>
+        <p class="text-mention">Découvrez la plateforme et sa gestion simplifiée des candidatures de bénévoles.</p>
+        <a class="btn btn--secondary" href="https://app.livestorm.co/jeveuxaider/session-daccueil-associations" target="_blank" rel="noopener" title="Participer à la session d’accueil — nouvelle fenêtre">
+          Session d’accueil
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6v2H5v11h11v-5h2v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6Zm11-3v8h-2V6.413l-7.793 7.794-1.414-1.414L17.585 5H13V3h8Z"/></svg>
+        </a>
+      </section>
+    </div>
+  </div>
+
+  <!-- ====================== C ====================== -->
+  <div class="variant variant--c">
+    <section class="next">
+      <h2 class="fr-h5">Et maintenant ?</h2>
+      <ol class="timeline">
+        <li>
+          <!-- Icône Remix time-line (design-system/icons/system) -->
+          <span class="timeline__marker timeline__marker--info" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2Zm0 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16Zm1 3v5h4v2h-6V7h2Z"/></svg></span>
+          <div class="timeline__body">
+            <h3 class="timeline__title">C’est à nous de jouer ! <span class="fr-badge fr-badge--info fr-badge--sm">En cours</span></h3>
+            <p class="text-mention">Votre organisation va être vérifiée par notre équipe. Vous recevrez un e-mail sous 7 jours ouvrés. En attendant, vous pouvez déjà avancer&nbsp;:</p>
+          </div>
+        </li>
+        <li>
+          <span class="timeline__marker" aria-hidden="true">1</span>
+          <div class="timeline__body">
+            <h3 class="timeline__title">Suivez le guide</h3>
+            <p class="text-mention">Découvrez la plateforme et sa gestion simplifiée des candidatures de bénévoles.</p>
+            <a class="btn btn--secondary" href="https://app.livestorm.co/jeveuxaider/session-daccueil-associations" target="_blank" rel="noopener" title="Participer à la session d’accueil — nouvelle fenêtre">
+              <span class="label-long">Participer à la session d’accueil</span><span class="label-court">Session d’accueil</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6v2H5v11h11v-5h2v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6Zm11-3v8h-2V6.413l-7.793 7.794-1.414-1.414L17.585 5H13V3h8Z"/></svg>
+            </a>
+          </div>
+        </li>
+        <li>
+          <span class="timeline__marker" aria-hidden="true">2</span>
+          <div class="timeline__body">
+            <h3 class="timeline__title">Publiez votre 1ère mission</h3>
+            <p class="text-mention">Proposez dès maintenant vos missions sur la plateforme et recrutez vos premiers bénévoles.</p>
+            <a class="btn btn--primary" href="#">C’est parti !</a>
+          </div>
+        </li>
+      </ol>
+    </section>
+  </div>
+
+</main>
+
+<!-- Sélecteur de variante — PROTOTYPE UNIQUEMENT, pas un élément de la page -->
+<div class="switcher" role="group" aria-label="Variante du prototype">
+  <span class="switcher__label">Variante</span>
+  <button type="button" data-v="actuelle">Actuelle</button>
+  <button type="button" data-v="a">A</button>
+  <button type="button" data-v="b">B</button>
+  <button type="button" data-v="c">C</button>
+</div>
+
+<script>
+  // Variante choisie via le hash (#a, #b, #c, #actuelle) pour pouvoir partager un lien direct.
+  const buttons = document.querySelectorAll('.switcher button');
+  function show(v){
+    if (!['actuelle','a','b','c'].includes(v)) v = 'a';
+    document.body.dataset.variant = v;
+    buttons.forEach(b => b.setAttribute('aria-pressed', b.dataset.v === v));
+  }
+  buttons.forEach(b => b.addEventListener('click', () => { history.replaceState(null, '', '#' + b.dataset.v); show(b.dataset.v); }));
+  show(location.hash.slice(1));
+</script>
+</body>
+</html>

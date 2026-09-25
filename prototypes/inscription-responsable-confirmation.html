@@ -93,10 +93,9 @@
   .guide-row h2{margin:0 0 4px;font-size:18px;line-height:28px}
 
   /* ---- B : deux tuiles côte à côte ----
-     Alerte : vrai composant DSFR .fr-alert--info (barre à gauche). Tuiles :
+     Alerte : DsfrAlert (composant custom JVA, voir .alert plus haut). Tuiles :
      contour de .fr-tile DSFR, contenu aligné à gauche car elles portent un
      bouton (une .fr-tile native est un lien entier centré). */
-  .variant--b .fr-alert p{margin:0}
   .tiles{display:grid;grid-template-columns:1fr 1fr;gap:24px}
   .tile{display:flex;flex-direction:column;gap:12px;padding:24px 24px 32px;background:var(--background-default-grey);box-shadow:inset 0 0 0 1px var(--border-default-grey),inset 0 -4px 0 0 var(--border-plain-blue-france)}
   .tile__icon{width:40px;height:40px;fill:var(--text-action-high-blue-france)}
@@ -110,8 +109,9 @@
   .timeline li:last-child{padding-bottom:0}
   /* trait vertical qui relie les pastilles */
   .timeline li:not(:last-child)::before{content:"";position:absolute;left:19px;top:44px;bottom:4px;width:2px;background:var(--border-default-grey)}
-  .timeline__marker{flex:none;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:var(--text-action-high-blue-france);box-shadow:inset 0 0 0 2px var(--border-plain-blue-france);background:var(--background-default-grey)}
-  .timeline__marker--info{color:var(--text-default-info);box-shadow:none;background:var(--background-contrast-info)}
+  /* Pastilles : fond « info » sans bordure, icône Remix au centre, identiques
+     pour toutes les étapes — c'est le badge « En cours » qui signale l'état. */
+  .timeline__marker{flex:none;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--text-default-info);background:var(--background-contrast-info)}
   .timeline__marker svg{width:22px;height:22px;fill:currentColor}
   .timeline__body{flex:1;padding-top:6px}
   .timeline__title{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:0 0 4px;font-size:20px;line-height:28px;font-weight:700;color:var(--text-title-grey)}
@@ -229,23 +229,26 @@
 
   <!-- ====================== B ====================== -->
   <div class="variant variant--b">
-    <div class="fr-alert fr-alert--info" role="status">
-      <h2 class="fr-alert__title">C’est à nous de jouer !</h2>
-      <p>Votre organisation va être vérifiée par notre équipe.</p>
-      <p>Vous recevrez un e-mail sous 7 jours ouvrés.</p>
+    <div class="alert" role="status">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="8" r="1" fill="currentColor"/><path d="M12 11v5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <div>
+        <p class="alert__title">C’est à nous de jouer !</p>
+        <p>Votre organisation va être vérifiée par notre équipe.</p>
+        <p>Vous recevrez un e-mail sous 7 jours ouvrés.</p>
+      </div>
     </div>
 
     <div class="tiles">
       <section class="tile">
-        <!-- Icône Remix send-plane-line (design-system/icons/business) -->
-        <svg class="tile__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m21.727 2.957-5.454 19.086c-.15.529-.475.553-.717.07L11 13 1.923 9.37c-.51-.205-.504-.51.034-.689l19.086-6.362c.529-.176.832.12.684.638Zm-2.692 2.14L6.812 9.17h.001l5.636 2.255 3.04 6.082 3.546-12.41Z"/></svg>
+        <!-- Icône Remix calendar-2-line (design-system/icons/business), comme en C -->
+        <svg class="tile__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 1v2h6V1h2v2h4a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h4V1h2Zm11 10H4v8h16v-8ZM8 13v2H6v-2h2Zm5 0v2h-2v-2h2Zm5 0v2h-2v-2h2ZM7 5H4v4h16V5h-3v2h-2V5H9v2H7V5Z"/></svg>
         <h2 class="fr-h6">Publiez votre 1ère mission</h2>
         <p class="text-mention">Proposez dès maintenant vos missions sur la plateforme et recrutez vos premiers bénévoles.</p>
         <a class="btn btn--primary" href="#">C’est parti !</a>
       </section>
       <section class="tile">
-        <!-- Icône Remix video-chat-line (design-system/icons/communication) -->
-        <svg class="tile__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 3a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H6.455L2 22.5V4a1 1 0 0 1 1-1h18Zm-1 2H4v13.385L5.763 17H20V5Zm-6 3v2.25L17 8v6l-3-2.25V14H7V8h7Z"/></svg>
+        <!-- Icône Remix live-line (design-system/icons/media), comme en C -->
+        <svg class="tile__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 4a1 1 0 0 1 1 1v4.2l5.213-3.65a.5.5 0 0 1 .787.41v12.08a.5.5 0 0 1-.787.41L17 14.8V19a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h14Zm-1 2H3v12h12V6ZM7.4 8.829a.4.4 0 0 1 .215.062l4.355 2.772a.4.4 0 0 1 0 .674L7.615 15.11A.4.4 0 0 1 7 14.77V9.23a.4.4 0 0 1 .4-.4v-.001ZM21 8.84l-4 2.8v.718l4 2.8V8.84Z"/></svg>
         <h2 class="fr-h6">Suivez le guide</h2>
         <p class="text-mention">Découvrez la plateforme et sa gestion simplifiée des candidatures de bénévoles.</p>
         <a class="btn btn--secondary" href="https://app.livestorm.co/jeveuxaider/session-daccueil-associations" target="_blank" rel="noopener" title="Participer à la session d’accueil — nouvelle fenêtre">
@@ -263,14 +266,15 @@
       <ol class="timeline">
         <li>
           <!-- Icône Remix time-line (design-system/icons/system) -->
-          <span class="timeline__marker timeline__marker--info" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2Zm0 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16Zm1 3v5h4v2h-6V7h2Z"/></svg></span>
+          <span class="timeline__marker" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2Zm0 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16Zm1 3v5h4v2h-6V7h2Z"/></svg></span>
           <div class="timeline__body">
             <h3 class="timeline__title">C’est à nous de jouer ! <span class="fr-badge fr-badge--info fr-badge--sm">En cours</span></h3>
             <p class="text-mention">Votre organisation va être vérifiée par notre équipe. Vous recevrez un e-mail sous 7 jours ouvrés. En attendant, vous pouvez déjà avancer&nbsp;:</p>
           </div>
         </li>
         <li>
-          <span class="timeline__marker" aria-hidden="true">1</span>
+          <!-- Icône Remix live-line (design-system/icons/media) -->
+          <span class="timeline__marker" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M16 4a1 1 0 0 1 1 1v4.2l5.213-3.65a.5.5 0 0 1 .787.41v12.08a.5.5 0 0 1-.787.41L17 14.8V19a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h14Zm-1 2H3v12h12V6ZM7.4 8.829a.4.4 0 0 1 .215.062l4.355 2.772a.4.4 0 0 1 0 .674L7.615 15.11A.4.4 0 0 1 7 14.77V9.23a.4.4 0 0 1 .4-.4v-.001ZM21 8.84l-4 2.8v.718l4 2.8V8.84Z"/></svg></span>
           <div class="timeline__body">
             <h3 class="timeline__title">Suivez le guide</h3>
             <p class="text-mention">Découvrez la plateforme et sa gestion simplifiée des candidatures de bénévoles.</p>
@@ -281,7 +285,8 @@
           </div>
         </li>
         <li>
-          <span class="timeline__marker" aria-hidden="true">2</span>
+          <!-- Icône Remix calendar-2-line (design-system/icons/business) -->
+          <span class="timeline__marker" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 1v2h6V1h2v2h4a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h4V1h2Zm11 10H4v8h16v-8ZM8 13v2H6v-2h2Zm5 0v2h-2v-2h2Zm5 0v2h-2v-2h2ZM7 5H4v4h16V5h-3v2h-2V5H9v2H7V5Z"/></svg></span>
           <div class="timeline__body">
             <h3 class="timeline__title">Publiez votre 1ère mission</h3>
             <p class="text-mention">Proposez dès maintenant vos missions sur la plateforme et recrutez vos premiers bénévoles.</p>

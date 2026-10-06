@@ -28,6 +28,7 @@ Avant d'écrire le markup d'un bouton, d'une carte, d'un tag, etc. :
 1. Un doc page existe déjà dans `design-system/composants/` → repartez de sa
    structure et de ses classes.
 2. Sinon, lisez le composant Vue source réel dans `jeveuxaider/frontend/`
+   (chemin local : voir `AGENTS.md`)
    (lecture seule — ne jamais modifier ni copier tel quel dans ce dépôt) et
    reproduisez sa structure ET ses valeurs exactes (classes Tailwind quand
    elles existent dans le bundle, valeurs hex/px reproduites à la main
@@ -281,18 +282,25 @@ pas de conflit. La règle à suivre selon le cas :
    pas. Répétez ce passage avec `color_scheme="light"` PUIS `"dark"` (voir
    Piège n°3) : un élément identique dans les deux captures qui ne devrait
    pas l'être trahit une couleur en dur.
-4. Propager au device avec `device_commit_files`, puis **vérifier le md5sum
-   des deux côtés** avant de committer — un `device_commit_files` peut
-   répondre "written" sans que le contenu ait réellement changé côté device
-   (observé sur ce dépôt) ; si les checksums ne correspondent pas, relancer
-   avec `force: true` et revérifier.
-5. Si `git commit`/`git status` échoue avec une erreur `index.lock` ou
-   `HEAD.lock` déjà existant alors qu'aucun autre processus git ne tourne
-   (`ps aux | grep git`), c'est un lock résiduel d'une commande précédente,
-   pas une vraie collision : supprimez les fichiers `*.lock` sous `.git/`
-   (et les `tmp_obj_*` sous `.git/objects/` si présents) puis recommittez.
-   Sur ce dépôt, ça demande la permission de suppression sur le dossier
-   connecté (observé et débloqué plusieurs fois).
+4. Nouveau prototype : ajoutez son lien dans `_includes/sidebar.html`
+   (section prototypes), comme pour les prototypes existants.
+
+### Uniquement si vous travaillez via Cowork (dossier connecté au device)
+
+Sans objet dans Claude Code, qui écrit directement sur le disque.
+
+- Propager au device avec `device_commit_files`, puis **vérifier le md5sum
+  des deux côtés** avant de committer — un `device_commit_files` peut
+  répondre "written" sans que le contenu ait réellement changé côté device
+  (observé sur ce dépôt) ; si les checksums ne correspondent pas, relancer
+  avec `force: true` et revérifier.
+- Si `git commit`/`git status` échoue avec une erreur `index.lock` ou
+  `HEAD.lock` déjà existant alors qu'aucun autre processus git ne tourne
+  (`ps aux | grep git`), c'est un lock résiduel d'une commande précédente,
+  pas une vraie collision : supprimez les fichiers `*.lock` sous `.git/`
+  (et les `tmp_obj_*` sous `.git/objects/` si présents) puis recommittez.
+  Sur ce dépôt, ça demande la permission de suppression sur le dossier
+  connecté (observé et débloqué plusieurs fois).
 
 ## Éditer une page de doc existante (composants, fondamentaux, gabarits, ressources)
 

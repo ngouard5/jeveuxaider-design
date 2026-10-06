@@ -48,7 +48,17 @@ actuel (https://www.systeme-de-design.gouv.fr/).
    pour tout nouveau prototype (il contient déjà le correctif cascade layers).
 4. Composants déjà documentés : **[`design-system/index.html`](design-system/index.html)**
    (164 composants réutilisables) — toujours vérifier si un composant existe
-   déjà avant d'en improviser un.
+   déjà avant d'en improviser un. **Y compris pour un prototype « rapide »** :
+   ouvrir la page de doc d'un composant prend une minute, un prototype fait
+   de composants inventés est à refaire. Si le temps manque, réduire le
+   périmètre de l'écran, jamais la fidélité des composants.
+5. Code source réel de l'app (lecture seule, jamais modifié) : sur le poste
+   de Nicolas, `~/Documents/Code/jeveuxaider/frontend/` (composants dans
+   `components/`, pages dans `pages/`, libellés et statuts dans
+   `plugins/labels.ts`). Ailleurs, demander le chemin à l'utilisateur plutôt
+   que de chercher sur tout le disque ou de s'en passer.
+6. Un nouveau prototype s'ajoute aussi à la navigation, dans
+   `_includes/sidebar.html` (section prototypes).
 
 ## Utiliser Figma (MCP)
 

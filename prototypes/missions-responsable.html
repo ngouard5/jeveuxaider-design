@@ -123,7 +123,10 @@
 
   /* ---------- tableau ---------- */
   .table-card{background:var(--background-default-grey);box-shadow:0 4px 6px rgba(0,0,18,.08);overflow:hidden}
-  .table-scroll{overflow-x:auto}
+  /* position:relative : sans elle, la <caption class="fr-sr-only"> (en
+     position:absolute) échappe à la boîte de défilement et élargit toute la
+     page à 968px sur mobile. */
+  .table-scroll{overflow-x:auto;position:relative}
   table.missions{width:100%;border-collapse:collapse;min-width:960px}
   table.missions thead th{background:var(--background-alt-grey);border-bottom:1px solid var(--border-default-grey);text-align:left;padding:12px 16px;font-size:14px;font-weight:700;color:var(--text-mention-grey);text-transform:uppercase;letter-spacing:.02em}
   table.missions thead th.col-actions{text-align:right}

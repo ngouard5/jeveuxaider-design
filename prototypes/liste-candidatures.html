@@ -1,0 +1,629 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Prototype — Candidatures d'une mission (responsable d'organisation)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>document.documentElement.setAttribute("data-fr-theme", matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");</script>
+<style>
+  /* Cascade layers — voir design-system/GUIDE-PROTOTYPAGE.md (base reprise
+     telle quelle de design-system/prototype-starter.html). Ordre : reset
+     Tailwind < dsfr-base < utilitaires Tailwind < patches < nos styles (hors
+     couche, toujours gagnants). */
+  @import url("../design-system/compiled-reset.css") layer(tailwind-reset);
+  @import url("../design-system/dsfr.min.css") layer(dsfr-base);
+  @import url("../design-system/compiled.css") layer(dsfr-utilitaires);
+  @import url("../design-system/patches.css") layer(site-patches);
+
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font-family:Marianne,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--background-warm-neutral);color:var(--text-default-grey);font-synthesis:none}
+  a{color:inherit}
+  button{font-family:inherit}
+
+  /* Sources réelles reprises pour cette page (code jeveuxaider/frontend, lecture seule) :
+     - pages/admin/participations/index.vue : écran réel de liste des
+       participations côté responsable (fil d'Ariane, titre "N participations",
+       bouton secondaire "Exporter" désactivé quand total = 0, recherche
+       "Recherche par prénom, nom ou e-mail", CustomEmptyState si total = 0).
+       ÉCART ASSUMÉ : la vraie page affiche chaque candidature en
+       CardParticipation (carte 1/3 mission – 2/3 bénévole) et ne la filtre
+       pas sur une mission dans le titre. Ici, la demande porte sur une liste
+       pour UNE mission avec colonnes nom / date / statut / actions : on
+       reprend donc la famille BaseTable (comme prototypes/missions-responsable.html),
+       la colonne mission devenant inutile.
+     - plugins/labels.ts › participation_workflow_states : les 5 statuts réels
+       (En attente de validation, En cours de traitement, Validée, Annulée,
+       Refusée) et participation_declined_reasons (motifs de refus).
+     - components/ui/BadgeState.vue / CardParticipation.vue : mapping statut →
+       type de DsfrBadge (success / warning / error), couleurs via les vraies
+       variables sémantiques DSFR (dark mode), comme missions-responsable.html.
+     - components/base/Avatar.vue (BaseAvatar initiales, size sm) ; date
+       relative "il y a 3 jours" comme CardParticipation ($dayjs().fromNow()).
+     - components/modal/ModalParticipationDeclineByResponsable.vue +
+       components/form/FormParticipationDecline.vue : modale de refus (titre,
+       phrase d'intro, radio "Raison" obligatoire, message optionnel, boutons
+       Annuler / Confirmer), rendue avec les classes DSFR fr-modal réelles.
+     - components/custom/EmptyState.vue (CustomEmptyState) : structure exacte
+       (icône 48px grise, titre gras, description grise, py-12 centré).
+     - Header, fil d'Ariane, filtre "Statut" (pattern BaseFilterSelectAdvanced),
+       boutons de ligne et menu "…" : repris tels quels de
+       prototypes/missions-responsable.html pour rester cohérent avec l'écran
+       parent "Mes missions". */
+
+  /* ---------- header (copié de missions-responsable.html) ---------- */
+  .jva-header{background:var(--background-default-grey);box-shadow:0 2px 3px rgba(0,0,18,.16);position:relative;z-index:30}
+  .jva-header__row{max-width:1440px;margin:0 auto;display:flex;align-items:center;gap:24px;padding:12px 24px;flex-wrap:wrap}
+  @media (min-width:1024px){.jva-header__row{gap:40px;padding:12px 120px 12px 104px;flex-wrap:nowrap}}
+  .jva-header__brand{display:flex;align-items:center;gap:16px;flex:none}
+  .jva-header__rf{height:48px;width:auto;flex:none}
+  .jva-header__logo{height:40px;width:auto;flex:none}
+  .jva-header__tools{display:flex;align-items:center;gap:16px;flex:1 1 auto;justify-content:flex-end;flex-wrap:wrap}
+  @media (min-width:1024px){.jva-header__tools{gap:24px}}
+  .jva-header__tool-link{display:inline-flex;align-items:center;gap:8px;padding:4px 12px;font-size:14px;font-weight:500;line-height:24px;color:var(--text-action-high-blue-france);text-decoration:none;background-image:none;white-space:nowrap}
+  .jva-header__icon-btn{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border:none;background:none;color:var(--text-title-grey);cursor:pointer;padding:0}
+  .jva-header__icon-btn:hover{background:var(--background-default-grey-hover)}
+  .jva-header__profile{display:inline-flex;align-items:center;gap:12px;border:none;background:none;cursor:pointer;padding:0;font-family:inherit}
+  .jva-header__avatar{width:40px;height:40px;border-radius:50%;background:var(--background-action-high-blue-france);color:var(--text-inverted-blue-france);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500;flex:none}
+  .jva-header__profile-text{display:flex;flex-direction:column;align-items:flex-start;font-size:14px;line-height:20px}
+  .jva-header__profile-text strong{color:var(--text-title-grey);font-weight:700}
+  .jva-header__profile-text span{color:var(--text-mention-grey)}
+  .jva-header__menu{border-top:1px solid var(--border-default-grey);max-width:1440px;margin:0 auto;padding:0 24px}
+  @media (min-width:1024px){.jva-header__menu{padding:0 104px}}
+  .jva-header__menu .fr-nav__list{overflow-x:auto}
+
+  /* ---------- page ---------- */
+  .page{max-width:1440px;margin:0 auto;padding:40px 24px 120px}
+  @media (min-width:1024px){.page{padding:40px 80px 120px}}
+  .fr-breadcrumb{margin:0 0 32px}
+
+  .page-header{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:32px}
+  .page-header h1{margin:0;color:var(--text-title-grey);font-size:32px;line-height:40px;font-weight:700}
+  .page-header .subtitle{margin:8px 0 0;color:var(--text-mention-grey);font-size:16px;line-height:24px}
+  .page-header .subtitle a{color:var(--text-action-high-blue-france)}
+  .page-header__actions{display:flex;gap:8px;flex-wrap:wrap}
+
+  /* DsfrButton type="secondary" (components/dsfr/Button.vue) — fond blanc,
+     bordure intérieure bleu France, via variables DSFR pour le dark mode. */
+  .btn-secondary{display:inline-flex;align-items:center;gap:8px;border:none;cursor:pointer;font-weight:500;font-size:16px;line-height:24px;padding:8px 16px;min-height:42px;color:var(--text-action-high-blue-france);background-color:var(--background-default-grey);box-shadow:inset 0 0 0 1px var(--border-action-high-blue-france)}
+  .btn-secondary:hover{background-color:var(--background-default-grey-hover)}
+  .btn-secondary:active{background-color:var(--background-default-grey-active)}
+  .btn-secondary:disabled{cursor:not-allowed;color:var(--text-disabled-grey);box-shadow:inset 0 0 0 1px var(--border-disabled-grey);background-color:var(--background-default-grey)}
+  /* DsfrButton type="primary" adaptatif (GUIDE-PROTOTYPAGE.md, Piège n°3). */
+  .btn-cta{display:inline-flex;align-items:center;gap:8px;border:none;cursor:pointer;font-weight:500;font-size:16px;line-height:24px;padding:8px 16px;min-height:42px;color:var(--text-inverted-blue-france);background-color:var(--background-action-high-blue-france);text-decoration:none;background-image:none}
+  .btn-cta:hover{background-color:var(--background-action-high-blue-france-hover)}
+  .btn-cta:active{background-color:var(--background-action-high-blue-france-active)}
+
+  /* ---------- barre de filtres (copiée de missions-responsable.html) ---------- */
+  .filters-card{background:var(--background-default-grey);box-shadow:0 4px 6px rgba(0,0,18,.08);padding:24px;margin-bottom:24px}
+  .search-row{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:2px solid var(--border-plain-grey);margin-bottom:16px;background:var(--background-contrast-grey)}
+  .search-row svg{flex:none;color:var(--text-mention-grey)}
+  .search-row input{border:none;outline:none;background:none;width:100%;font-size:16px;color:var(--text-title-grey)}
+  .search-row input::placeholder{color:var(--text-mention-grey)}
+  .filters-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+  .filter-pill{position:relative}
+  .filter-pill > button{display:inline-flex;align-items:center;border-radius:9999px;background:var(--background-open-blue-france);color:var(--text-action-high-blue-france);padding:4px 12px;height:32px;font-size:14px;border:none;cursor:pointer;max-width:240px;font-family:inherit}
+  .filter-pill > button:hover{background:var(--background-open-blue-france-hover)}
+  .filter-pill > button span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .filter-pill > button svg{margin-left:4px;flex:none;transition:transform .15s}
+  .filter-pill.open > button svg{transform:rotate(180deg)}
+  .filter-pill.active > button{background:var(--background-action-high-blue-france);color:var(--text-inverted-blue-france)}
+  .filter-panel{position:absolute;top:calc(100% + 4px);left:0;z-index:20;background:var(--background-default-grey);border:1px solid var(--border-default-grey);box-shadow:0 4px 6px rgba(0,0,18,.16);padding:8px;width:260px}
+  .filter-panel label{display:flex;align-items:center;gap:8px;padding:6px 8px;font-size:14px;color:var(--text-title-grey);cursor:pointer;border-radius:4px}
+  .filter-panel label:hover{background:var(--background-alt-grey)}
+  .filter-panel input[type=checkbox]{accent-color:var(--background-action-high-blue-france)}
+  .btn-reset{border:none;background:none;color:var(--text-mention-grey);font-size:14px;text-decoration:underline;background-image:none;cursor:pointer;padding:4px 8px}
+  .btn-reset:hover{color:var(--text-title-grey)}
+
+  .results-line{margin:0 0 12px;color:var(--text-mention-grey);font-size:14px;line-height:24px}
+
+  /* ---------- tableau (famille BaseTable, comme missions-responsable.html) ---------- */
+  .table-card{background:var(--background-default-grey);box-shadow:0 4px 6px rgba(0,0,18,.08)}
+  /* position:relative : sinon le <caption class="fr-sr-only"> (position
+     absolute) s'échappe du conteneur scrollable et crée un scroll horizontal
+     de toute la page sur mobile. */
+  .table-scroll{overflow-x:auto;position:relative}
+  table.candidatures{width:100%;border-collapse:collapse;min-width:820px}
+  table.candidatures thead th{background:var(--background-alt-grey);border-bottom:1px solid var(--border-default-grey);text-align:left;padding:12px 16px;font-size:14px;font-weight:700;color:var(--text-mention-grey);text-transform:uppercase;letter-spacing:.02em}
+  table.candidatures thead th.col-actions{text-align:right}
+  table.candidatures tbody tr{border-bottom:1px solid var(--border-default-grey)}
+  table.candidatures tbody tr:last-child{border-bottom:none}
+  table.candidatures tbody td{padding:16px;vertical-align:middle}
+
+  /* Cellule bénévole : BaseAvatar (initiales, size sm) + nom + e-mail. */
+  .benevole{display:flex;align-items:center;gap:16px}
+  .avatar{width:40px;height:40px;border-radius:50%;background:var(--background-action-high-blue-france);color:var(--text-inverted-blue-france);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500;flex:none;text-transform:uppercase}
+  .benevole__name{margin:0;font-weight:700;font-size:16px;line-height:24px;color:var(--text-title-grey)}
+  .benevole__meta{margin:0;font-size:14px;line-height:24px;color:var(--text-mention-grey)}
+
+  .col-date{width:200px}
+  .col-date p{margin:0;font-size:14px;line-height:24px}
+  .col-date .date{color:var(--text-title-grey)}
+  .col-date .relative{color:var(--text-mention-grey)}
+  .col-statut{width:240px}
+
+  /* DsfrBadge size sm — mêmes classes que missions-responsable.html. */
+  .badge{display:inline-flex;align-items:center;gap:4px;border-radius:4px;font-weight:700;text-transform:uppercase;padding:0 6px;font-size:12px;line-height:20px;white-space:nowrap}
+  .badge svg{flex:none}
+  .badge--success{color:var(--text-default-success);background:var(--background-contrast-success)}
+  .badge--warning{color:var(--text-default-warning);background:var(--background-contrast-warning)}
+  .badge--error{color:var(--text-default-error);background:var(--background-contrast-error)}
+
+  .actions-cell{display:flex;align-items:center;justify-content:flex-end;gap:4px;flex-wrap:nowrap}
+  /* Boutons de ligne = DsfrButton type="tertiary" size="sm" (copié de
+     missions-responsable.html). La variante --primary-action reprend le type
+     "secondary" (bordure bleue) pour l'action principale "Valider". */
+  .btn-row-action,.btn-icon{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:4px 12px;font-size:14px;line-height:24px;font-weight:500;color:var(--text-action-high-blue-france);background:var(--background-default-grey);box-shadow:inset 0 0 0 1px var(--border-default-grey);border:none;cursor:pointer;white-space:nowrap}
+  .btn-row-action--secondary{box-shadow:inset 0 0 0 1px var(--border-action-high-blue-france)}
+  .btn-icon{padding:8px}
+  .btn-row-action:hover,.btn-icon:hover{background:var(--background-default-grey-hover)}
+  .btn-row-action:active,.btn-icon:active{background:var(--background-default-grey-active)}
+
+  .dropdown{position:relative}
+  .dropdown-panel{position:absolute;right:0;top:calc(100% + 4px);z-index:20;background:var(--background-default-grey);color:var(--text-title-grey);border:1px solid var(--border-default-grey);padding:8px;box-shadow:0 4px 6px rgba(0,0,18,.16);width:220px}
+  .dropdown-panel .item{display:block;width:100%;text-align:left;border:none;background:none;color:inherit;padding:6px 8px;border-radius:4px;font-size:14px;cursor:pointer}
+  .dropdown-panel .item:hover{background:var(--background-alt-grey)}
+
+  /* ---------- états vides (CustomEmptyState, components/custom/EmptyState.vue) ---------- */
+  .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 24px;text-align:center}
+  .empty-state > svg{color:var(--text-mention-grey);height:48px;width:auto}
+  .empty-state__title{margin:16px 0 0;font-weight:700;color:var(--text-title-grey)}
+  .empty-state__desc{margin:4px 0 0;color:var(--text-mention-grey);max-width:520px;text-wrap:pretty}
+  .empty-state__actions{margin-top:24px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+
+  /* ---------- modale de refus (DSFR fr-modal) ---------- */
+  .fr-modal{background:rgba(22,22,22,.64)}
+  .fr-modal--opened{display:flex;align-items:center;justify-content:center;opacity:1;visibility:visible}
+  .decline-modal__body{background:var(--background-lifted-grey, var(--background-default-grey));max-width:560px;width:calc(100% - 32px);max-height:calc(100vh - 32px);overflow-y:auto;box-shadow:0 6px 18px rgba(0,0,18,.16)}
+  .decline-modal__header{display:flex;justify-content:flex-end;padding:16px 16px 0}
+  .decline-modal__close{display:inline-flex;align-items:center;gap:4px;border:none;background:none;color:var(--text-action-high-blue-france);font-size:14px;font-weight:500;line-height:24px;padding:4px 12px;cursor:pointer}
+  .decline-modal__close:hover{background:var(--background-default-grey-hover)}
+  .decline-modal__content{padding:0 32px 32px}
+  .decline-modal__content h1{display:flex;align-items:center;gap:8px;margin:0 0 16px;font-size:24px;line-height:32px;font-weight:700;color:var(--text-title-grey)}
+  .decline-modal__content > p{margin:0 0 16px;color:var(--text-default-grey)}
+  .decline-modal__required{font-size:14px;color:var(--text-mention-grey)}
+  .decline-modal__note{display:flex;gap:6px;margin:0 0 24px;font-size:14px;line-height:24px;color:var(--text-mention-grey)}
+  .decline-modal__note svg{flex:none;margin-top:4px;color:var(--text-action-high-blue-france)}
+  .decline-modal__footer{display:flex;justify-content:flex-end;gap:16px;padding:16px 32px;border-top:1px solid var(--border-default-grey);flex-wrap:wrap}
+  .field-error{margin:8px 0 0;color:var(--text-default-error);font-size:14px}
+
+  /* ---------- toast de confirmation (prototype) ---------- */
+  .toast{position:fixed;left:50%;bottom:80px;transform:translateX(-50%);background:var(--background-contrast-success);color:var(--text-default-success);font-size:14px;font-weight:500;padding:8px 16px;box-shadow:0 4px 12px rgba(0,0,18,.2);z-index:60}
+
+  /* ---------- sélecteur d'état — PROTOTYPE UNIQUEMENT (copié de
+     inscription-responsable-confirmation.html) ---------- */
+  .switcher{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);display:flex;align-items:center;gap:4px;padding:6px 6px 6px 14px;background:var(--background-raised-grey);box-shadow:0 2px 12px rgba(0,0,18,.25);border-radius:999px;font-size:14px;color:var(--text-mention-grey);z-index:50;white-space:nowrap}
+  .switcher button{border:0;padding:6px 14px;border-radius:999px;background:transparent;color:var(--text-title-grey);font:inherit;font-weight:500;cursor:pointer}
+  .switcher button:hover{background:var(--background-default-grey-hover)}
+  .switcher button[aria-pressed="true"]{background:var(--background-action-high-blue-france);color:var(--text-inverted-blue-france)}
+
+  [hidden]{display:none !important}
+
+  @media (max-width:640px){
+    .page-header{flex-direction:column;align-items:stretch}
+    .switcher .switcher__label{display:none}
+    .decline-modal__content{padding:0 16px 24px}
+    .decline-modal__footer{padding:16px}
+  }
+</style>
+</head>
+<body>
+
+<header class="jva-header">
+  <div class="jva-header__row">
+    <div class="jva-header__brand">
+      <img src="ressources/rf.svg" alt="République Française" class="jva-header__rf">
+      <img src="ressources/jva_logohorizontal_bleu.svg" alt="JeVeuxAider.gouv.fr — Par la réserve civique" class="jva-header__logo">
+    </div>
+    <div class="jva-header__tools">
+      <a href="#" class="jva-header__tool-link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>Trouver une mission</a>
+      <button type="button" class="jva-header__icon-btn" aria-label="Messagerie"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 4h16v12H8l-4 4V4Z" stroke-linejoin="round"/></svg></button>
+      <button type="button" class="jva-header__icon-btn" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6 10a6 6 0 1 1 12 0c0 4 1.5 5.5 1.5 5.5H4.5S6 14 6 10Z" stroke-linejoin="round"/><path d="M10 19a2 2 0 0 0 4 0"/></svg></button>
+      <button type="button" class="jva-header__profile">
+        <span class="jva-header__avatar">CP</span>
+        <span class="jva-header__profile-text"><strong>Camille Petit</strong><span>Responsable</span></span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="jva-header__menu">
+    <nav class="fr-nav" id="header-navigation" role="navigation" aria-label="Menu principal">
+      <ul class="fr-nav__list">
+        <li class="fr-nav__item"><a class="fr-nav__link" href="#">Tableau de bord</a></li>
+        <li class="fr-nav__item"><a class="fr-nav__link" href="missions-responsable.html" aria-current="page">Mes missions</a></li>
+        <li class="fr-nav__item"><a class="fr-nav__link" href="#">Mon organisation</a></li>
+        <li class="fr-nav__item"><a class="fr-nav__link" href="#">Bénévoles</a></li>
+        <li class="fr-nav__item"><a class="fr-nav__link" href="#">Messagerie</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main class="page" id="contenu">
+
+  <nav role="navigation" class="fr-breadcrumb" aria-label="Vous êtes ici :">
+    <div class="fr-collapse fr-collapse--expanded">
+      <ol class="fr-breadcrumb__list">
+        <li class="fr-breadcrumb__item"><a class="fr-breadcrumb__link" href="#">Tableau de bord</a></li>
+        <li class="fr-breadcrumb__item"><a class="fr-breadcrumb__link" href="missions-responsable.html">Mes missions</a></li>
+        <li class="fr-breadcrumb__item"><a class="fr-breadcrumb__link" href="#">Animation d'ateliers créatifs pour enfants hospitalisés</a></li>
+        <li class="fr-breadcrumb__item"><a class="fr-breadcrumb__link" aria-current="page">Candidatures</a></li>
+      </ol>
+    </div>
+  </nav>
+
+  <div class="page-header">
+    <div>
+      <h1 id="page-title">7 candidatures</h1>
+      <p class="subtitle">Pour la mission <a href="#">Animation d'ateliers créatifs pour enfants hospitalisés</a> · #51110</p>
+    </div>
+    <div class="page-header__actions">
+      <!-- Réel : DsfrButton type="secondary" icon="RiDownload2Line", désactivé si total = 0 -->
+      <button type="button" class="btn-secondary" id="btn-export">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 19h18v2H3v-2Zm10-5.828L19.071 7.1l1.414 1.414L12 17 3.515 8.515 4.929 7.1 11 13.17V2h2v11.172Z"/></svg>
+        Exporter
+      </button>
+    </div>
+  </div>
+
+  <!-- ===================== ÉTAT : AVEC CANDIDATURES ===================== -->
+  <section id="state-list" aria-labelledby="page-title">
+
+    <div class="filters-card">
+      <div class="search-row">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+        <input type="search" id="search-input" placeholder="Recherche par prénom, nom ou e-mail" aria-label="Rechercher une candidature">
+      </div>
+      <div class="filters-row">
+        <div class="filter-pill" data-filter="statut">
+          <button type="button" aria-expanded="false"><span>Statut</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <div class="filter-panel" hidden>
+            <label><input type="checkbox" value="En attente de validation"> En attente de validation</label>
+            <label><input type="checkbox" value="En cours de traitement"> En cours de traitement</label>
+            <label><input type="checkbox" value="Validée"> Validée</label>
+            <label><input type="checkbox" value="Refusée"> Refusée</label>
+            <label><input type="checkbox" value="Annulée"> Annulée</label>
+          </div>
+        </div>
+        <button type="button" class="btn-reset" id="btn-reset" hidden>Réinitialiser les filtres</button>
+      </div>
+    </div>
+
+    <p class="results-line" id="results-line" aria-live="polite">3 candidatures à traiter</p>
+
+    <div class="table-card">
+      <div class="table-scroll" id="table-scroll">
+        <table class="candidatures">
+          <caption class="fr-sr-only">Candidatures reçues pour la mission « Animation d'ateliers créatifs pour enfants hospitalisés »</caption>
+          <thead>
+            <tr>
+              <th scope="col">Bénévole</th>
+              <th scope="col">Candidature</th>
+              <th scope="col">Statut</th>
+              <th scope="col" class="col-actions"><span class="fr-sr-only">Actions</span></th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+
+      <!-- CustomEmptyState, valeurs par défaut du composant réel : filtres sans résultat -->
+      <div class="empty-state" id="empty-filtered" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+        <p class="empty-state__title">Aucun résultat trouvé</p>
+        <p class="empty-state__desc">Il n'y a aucun résultat avec les filtres actuels</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== ÉTAT : AUCUNE CANDIDATURE ===================== -->
+  <!-- CustomEmptyState avec title + slot description personnalisés (props réelles
+       du composant). Les boutons sous la description n'existent PAS dans
+       EmptyState.vue : ajoutés ici pour orienter vers la "recherche inversée"
+       (pages/admin/missions/[id]/trouver-des-benevoles) et le partage de la mission. -->
+  <section id="state-empty" class="table-card" hidden aria-labelledby="page-title">
+    <div class="empty-state">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2 22a8 8 0 1 1 16 0h-2a6 6 0 1 0-12 0H2Zm8-9c-3.315 0-6-2.685-6-6s2.685-6 6-6 6 2.685 6 6-2.685 6-6 6Zm0-2c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4Zm8.284 3.703A8.002 8.002 0 0 1 23 22h-2a6.001 6.001 0 0 0-3.537-5.473l.82-1.824Zm-.688-11.29A5.5 5.5 0 0 1 21 8.5a5.499 5.499 0 0 1-5 5.478v-2.013a3.5 3.5 0 0 0 1.041-6.609l.555-1.943Z"/></svg>
+      <p class="empty-state__title">Aucune candidature pour le moment</p>
+      <p class="empty-state__desc">Dès qu'un bénévole proposera son aide pour cette mission, sa candidature apparaîtra ici. Vous pourrez alors la valider, la refuser ou échanger avec lui par messagerie.</p>
+      <div class="empty-state__actions">
+        <a href="#" class="btn-cta">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+          Trouver des bénévoles
+        </a>
+        <a href="#" class="btn-secondary" style="text-decoration:none;background-image:none">Voir la mission en ligne</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ===================== MODALE DE REFUS ===================== -->
+<!-- ModalParticipationDeclineByResponsable + FormParticipationDecline (textes réels) -->
+<dialog class="fr-modal" id="decline-modal" aria-labelledby="decline-title" hidden>
+  <div class="decline-modal__body" role="document">
+    <div class="decline-modal__header">
+      <button type="button" class="decline-modal__close" data-close aria-controls="decline-modal">Fermer
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <form id="form-participation-decline" novalidate>
+      <div class="decline-modal__content">
+        <h1 id="decline-title">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10Zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm-1-5h2v2h-2v-2Zm0-8h2v6h-2V7Z"/></svg>
+          Refuser la participation
+        </h1>
+        <p>Vous êtes sur le point de refuser la participation de <strong id="decline-name">—</strong>.</p>
+        <p class="decline-modal__required">Les champs marqués d'un astérisque (*) sont obligatoires.</p>
+
+        <fieldset class="fr-fieldset" id="reason-fieldset" aria-describedby="reason-error">
+          <legend class="fr-fieldset__legend fr-text--regular">Raison *</legend>
+          <div class="fr-fieldset__element"><div class="fr-radio-group"><input type="radio" id="r1" name="reason" value="requirements_not_fulfilled"><label class="fr-label" for="r1">Le bénévole ne correspond pas aux besoins.</label></div></div>
+          <div class="fr-fieldset__element"><div class="fr-radio-group"><input type="radio" id="r2" name="reason" value="change_mind"><label class="fr-label" for="r2">Le bénévole a changé d'avis.</label></div></div>
+          <div class="fr-fieldset__element"><div class="fr-radio-group"><input type="radio" id="r3" name="reason" value="mission_terminated"><label class="fr-label" for="r3">La mission est terminée.</label></div></div>
+          <div class="fr-fieldset__element"><div class="fr-radio-group"><input type="radio" id="r4" name="reason" value="no_response"><label class="fr-label" for="r4">Le bénévole ne répond pas.</label></div></div>
+          <div class="fr-fieldset__element"><div class="fr-radio-group"><input type="radio" id="r5" name="reason" value="other"><label class="fr-label" for="r5">Autre</label></div></div>
+          <p class="field-error" id="reason-error" hidden>Sélectionnez une raison pour continuer.</p>
+        </fieldset>
+
+        <p class="decline-modal__note" id="note-terminated" hidden>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10Zm-1-11v6h2v-6h-2Zm0-4v2h2V7h-2Z"/></svg>
+          <span>Attention, cette mission est active !<br>Après avoir refusé cette participation, nous vous invitons à passer la mission au statut "Terminé" afin de clore le recrutement de nouveaux bénévoles.</span>
+        </p>
+
+        <div class="fr-input-group">
+          <label class="fr-label" for="content">Message pour le bénévole
+            <span class="fr-hint-text">La note sera visible par le bénévole</span>
+          </label>
+          <textarea class="fr-input" id="content" rows="3" placeholder="Ajoutez des précisions si nécessaire"></textarea>
+        </div>
+      </div>
+      <div class="decline-modal__footer">
+        <button type="button" class="btn-secondary" data-close>Annuler</button>
+        <button type="submit" class="btn-cta">Confirmer</button>
+      </div>
+    </form>
+  </div>
+</dialog>
+
+<div class="toast" id="toast" role="status" hidden></div>
+
+<!-- Sélecteur d'état — PROTOTYPE UNIQUEMENT, pas un élément de la page -->
+<div class="switcher" role="group" aria-label="État du prototype">
+  <span class="switcher__label">État</span>
+  <button type="button" data-v="liste">Avec candidatures</button>
+  <button type="button" data-v="vide">Aucune candidature</button>
+</div>
+
+<script>
+(function(){
+  // ---------- données de démo ----------
+  var candidatures = [
+    { id: 1, prenom: 'Léa', nom: 'Martin', email: 'lea.martin@exemple.fr', date: '5 oct. 2026', rel: 'Hier', statut: 'En attente de validation' },
+    { id: 2, prenom: 'Karim', nom: 'Benali', email: 'karim.benali@exemple.fr', date: '3 oct. 2026', rel: 'Il y a 3 jours', statut: 'En attente de validation' },
+    { id: 3, prenom: 'Sophie', nom: 'Nguyen', email: 's.nguyen@exemple.fr', date: '29 sept. 2026', rel: 'Il y a 7 jours', statut: 'En cours de traitement' },
+    { id: 4, prenom: 'Thomas', nom: 'Girard', email: 'thomas.girard@exemple.fr', date: '22 sept. 2026', rel: 'Il y a 14 jours', statut: 'Validée' },
+    { id: 5, prenom: 'Aïcha', nom: 'Diallo', email: 'aicha.diallo@exemple.fr', date: '18 sept. 2026', rel: 'Il y a 18 jours', statut: 'Validée' },
+    { id: 6, prenom: 'Julien', nom: 'Moreau', email: 'j.moreau@exemple.fr', date: '10 sept. 2026', rel: 'Il y a 26 jours', statut: 'Refusée' },
+    { id: 7, prenom: 'Margaux', nom: 'Lefebvre', email: 'margaux.l@exemple.fr', date: '2 sept. 2026', rel: 'Il y a 1 mois', statut: 'Annulée' }
+  ];
+
+  // Mapping réel BadgeState.vue / CardParticipation.vue (statut → type DsfrBadge)
+  var ICONS = {
+    success: '<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-.997-6l7.07-7.071-1.414-1.414-5.656 5.657-2.829-2.829-1.414 1.414L11.003 16z"/></svg>',
+    warning: '<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.866 3l9.526 16.5a1 1 0 01-.866 1.5H2.474a1 1 0 01-.866-1.5L11.134 3a1 1 0 011.732 0zM11 16v2h2v-2h-2zm0-7v5h2V9h-2z"/></svg>',
+    error: '<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm3.536 12.121l-1.415 1.415L12 13.414l-2.121 2.122-1.415-1.415L10.586 12 8.464 9.879l1.415-1.415L12 10.586l2.121-2.122 1.415 1.415L13.414 12l2.122 2.121z"/></svg>'
+  };
+  function badgeType(statut){
+    switch (statut) {
+      case 'Validée': return 'success';
+      case 'Refusée': case 'Annulée': return 'error';
+      default: return 'warning';
+    }
+  }
+  function badge(statut){
+    var t = badgeType(statut);
+    return '<span class="badge badge--' + t + '">' + ICONS[t] + statut + '</span>';
+  }
+  function isPending(s){ return s === 'En attente de validation' || s === 'En cours de traitement'; }
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+
+  var MORE_ICON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>';
+
+  function rowHtml(c){
+    var full = c.prenom + ' ' + c.nom;
+    var actions = '';
+    if (isPending(c.statut)) {
+      actions += '<button type="button" class="btn-row-action btn-row-action--secondary" data-action="valider" data-id="' + c.id + '" aria-label="Valider la candidature de ' + esc(full) + '">Valider</button>';
+      actions += '<button type="button" class="btn-row-action" data-action="refuser" data-id="' + c.id + '" aria-label="Refuser la candidature de ' + esc(full) + '">Refuser</button>';
+    } else if (c.statut === 'Validée') {
+      actions += '<button type="button" class="btn-row-action" data-action="message" aria-label="Envoyer un message à ' + esc(full) + '">Envoyer un message</button>';
+    }
+    var menu = '<button type="button" class="item">Voir le profil</button>' +
+      (c.statut !== 'Validée' ? '<button type="button" class="item">Voir la conversation</button>' : '') +
+      (c.statut === 'En attente de validation' ? '<button type="button" class="item" data-action="traitement" data-id="' + c.id + '">Passer en cours de traitement</button>' : '');
+    actions += '<div class="dropdown"><button type="button" class="btn-icon" aria-label="Plus d\'options pour ' + esc(full) + '" aria-expanded="false" aria-haspopup="true">' + MORE_ICON + '</button><div class="dropdown-panel" hidden>' + menu + '</div></div>';
+
+    return '<tr data-id="' + c.id + '">' +
+      '<td><div class="benevole"><span class="avatar" aria-hidden="true">' + c.prenom[0] + c.nom[0] + '</span><div>' +
+        '<p class="benevole__name">' + esc(full) + '</p>' +
+        '<p class="benevole__meta">' + esc(c.email) + '</p>' +
+      '</div></div></td>' +
+      '<td class="col-date"><p class="date">' + c.date + '</p><p class="relative">' + c.rel + '</p></td>' +
+      '<td class="col-statut">' + badge(c.statut) + '</td>' +
+      '<td><div class="actions-cell">' + actions + '</div></td>' +
+    '</tr>';
+  }
+
+  // ---------- rendu + filtres ----------
+  var tbody = document.getElementById('tbody');
+  var searchInput = document.getElementById('search-input');
+  var resultsLine = document.getElementById('results-line');
+  var tableScroll = document.getElementById('table-scroll');
+  var emptyFiltered = document.getElementById('empty-filtered');
+  var resetBtn = document.getElementById('btn-reset');
+  var pill = document.querySelector('.filter-pill');
+  var pillBtn = pill.querySelector('button');
+  var pillPanel = pill.querySelector('.filter-panel');
+  var pillLabel = pillBtn.querySelector('span');
+  var state = { search: '', statuts: [] };
+
+  function matches(c){
+    if (state.search) {
+      var hay = (c.prenom + ' ' + c.nom + ' ' + c.email).toLowerCase();
+      if (hay.indexOf(state.search.toLowerCase()) === -1) return false;
+    }
+    if (state.statuts.length && state.statuts.indexOf(c.statut) === -1) return false;
+    return true;
+  }
+
+  function plural(n, one, many){ return n + ' ' + (n > 1 ? many : one); }
+
+  function render(){
+    var visible = candidatures.filter(matches);
+    tbody.innerHTML = visible.map(rowHtml).join('');
+    var filtering = !!(state.search || state.statuts.length);
+    tableScroll.hidden = visible.length === 0;
+    emptyFiltered.hidden = visible.length !== 0;
+    resetBtn.hidden = !filtering;
+    var pending = candidatures.filter(function(c){ return isPending(c.statut); }).length;
+    resultsLine.textContent = filtering
+      ? plural(visible.length, 'candidature affichée', 'candidatures affichées') + ' sur ' + candidatures.length
+      : (pending ? plural(pending, 'candidature à traiter', 'candidatures à traiter') : 'Toutes les candidatures ont été traitées');
+    bindRowEvents();
+  }
+
+  searchInput.addEventListener('input', function(){ state.search = searchInput.value.trim(); render(); });
+
+  pillBtn.addEventListener('click', function(e){
+    e.stopPropagation();
+    var open = pillPanel.hidden;
+    pillPanel.hidden = !open;
+    pill.classList.toggle('open', open);
+    pillBtn.setAttribute('aria-expanded', String(open));
+  });
+  pillPanel.addEventListener('click', function(e){ e.stopPropagation(); });
+  pillPanel.addEventListener('change', function(){
+    state.statuts = Array.prototype.map.call(pillPanel.querySelectorAll('input:checked'), function(i){ return i.value; });
+    pillLabel.textContent = state.statuts.length ? 'Statut (' + state.statuts.length + ')' : 'Statut';
+    pill.classList.toggle('active', state.statuts.length > 0);
+    render();
+  });
+  resetBtn.addEventListener('click', function(){
+    state = { search: '', statuts: [] };
+    searchInput.value = '';
+    pillPanel.querySelectorAll('input').forEach(function(i){ i.checked = false; });
+    pillLabel.textContent = 'Statut';
+    pill.classList.remove('active');
+    render();
+  });
+
+  function closeMenus(){
+    pillPanel.hidden = true; pill.classList.remove('open'); pillBtn.setAttribute('aria-expanded', 'false');
+    document.querySelectorAll('.dropdown').forEach(function(dd){
+      dd.querySelector('.dropdown-panel').hidden = true;
+      dd.querySelector('button').setAttribute('aria-expanded', 'false');
+    });
+  }
+  document.addEventListener('click', closeMenus);
+
+  function find(id){ return candidatures.filter(function(c){ return c.id === Number(id); })[0]; }
+
+  function bindRowEvents(){
+    tbody.querySelectorAll('.dropdown').forEach(function(dd){
+      var trigger = dd.querySelector('button');
+      var panel = dd.querySelector('.dropdown-panel');
+      trigger.addEventListener('click', function(e){
+        e.stopPropagation();
+        var open = panel.hidden;
+        closeMenus();
+        panel.hidden = !open;
+        trigger.setAttribute('aria-expanded', String(open));
+      });
+    });
+    tbody.querySelectorAll('[data-action="valider"]').forEach(function(b){
+      b.addEventListener('click', function(){
+        var c = find(b.dataset.id); c.statut = 'Validée'; render();
+        toast('Candidature de ' + c.prenom + ' ' + c.nom + ' validée');
+      });
+    });
+    tbody.querySelectorAll('[data-action="traitement"]').forEach(function(b){
+      b.addEventListener('click', function(){ var c = find(b.dataset.id); c.statut = 'En cours de traitement'; render(); });
+    });
+    tbody.querySelectorAll('[data-action="refuser"]').forEach(function(b){
+      b.addEventListener('click', function(){ openDecline(find(b.dataset.id), b); });
+    });
+  }
+
+  // ---------- modale de refus ----------
+  var modal = document.getElementById('decline-modal');
+  var form = document.getElementById('form-participation-decline');
+  var reasonError = document.getElementById('reason-error');
+  var noteTerminated = document.getElementById('note-terminated');
+  var current = null, returnFocus = null;
+
+  function openDecline(c, trigger){
+    current = c; returnFocus = trigger;
+    form.reset(); reasonError.hidden = true; noteTerminated.hidden = true;
+    document.getElementById('decline-name').textContent = c.prenom + ' ' + c.nom;
+    modal.hidden = false;
+    modal.classList.add('fr-modal--opened');
+    modal.setAttribute('open', '');
+    modal.querySelector('input[name="reason"]').focus();
+  }
+  function closeDecline(){
+    modal.classList.remove('fr-modal--opened');
+    modal.removeAttribute('open');
+    modal.hidden = true;
+    if (returnFocus && document.body.contains(returnFocus)) returnFocus.focus();
+  }
+  modal.querySelectorAll('[data-close]').forEach(function(b){ b.addEventListener('click', closeDecline); });
+  modal.addEventListener('click', function(e){ if (e.target === modal) { /* prevent-click-outside, comme le composant réel */ } });
+  form.addEventListener('change', function(e){
+    if (e.target.name === 'reason') { reasonError.hidden = true; noteTerminated.hidden = e.target.value !== 'mission_terminated'; }
+  });
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    if (!form.querySelector('input[name="reason"]:checked')) { reasonError.hidden = false; return; }
+    current.statut = 'Refusée';
+    var name = current.prenom + ' ' + current.nom;
+    closeDecline(); render();
+    toast('Candidature de ' + name + ' refusée');
+  });
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') { if (!modal.hidden) closeDecline(); closeMenus(); }
+  });
+
+  // ---------- toast ----------
+  var toastEl = document.getElementById('toast'), toastTimer;
+  function toast(msg){
+    toastEl.textContent = msg; toastEl.hidden = false;
+    clearTimeout(toastTimer); toastTimer = setTimeout(function(){ toastEl.hidden = true; }, 3000);
+  }
+
+  // ---------- sélecteur d'état (prototype) — #liste ou #vide ----------
+  var stateList = document.getElementById('state-list');
+  var stateEmpty = document.getElementById('state-empty');
+  var exportBtn = document.getElementById('btn-export');
+  var title = document.getElementById('page-title');
+  var switchBtns = document.querySelectorAll('.switcher button');
+  function show(v){
+    if (v !== 'vide') v = 'liste';
+    var empty = v === 'vide';
+    stateList.hidden = empty;
+    stateEmpty.hidden = !empty;
+    exportBtn.disabled = empty; // réel : :disabled="total === 0"
+    title.textContent = empty ? '0 candidature' : plural(candidatures.length, 'candidature', 'candidatures');
+    switchBtns.forEach(function(b){ b.setAttribute('aria-pressed', String(b.dataset.v === v)); });
+  }
+  switchBtns.forEach(function(b){
+    b.addEventListener('click', function(){ history.replaceState(null, '', '#' + b.dataset.v); show(b.dataset.v); });
+  });
+
+  render();
+  show(location.hash.slice(1));
+})();
+</script>
+
+</body>
+</html>

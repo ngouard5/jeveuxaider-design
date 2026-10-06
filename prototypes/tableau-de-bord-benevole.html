@@ -184,6 +184,16 @@
     .blocs{flex-direction:column}
     .bloc-mise-en-avant{max-width:100%}
   }
+  /* Mobile : avec align-items:flex-start, les blocs prennent leur largeur
+     min-content (padding 40px + gap 32px + icône 64px ; photo 100px à côté
+     du texte dans « Le petit mot ») et débordaient de 44px à 375px — on les
+     étire, on resserre les marges internes et on empile photo et texte. */
+  @media (max-width:640px){
+    .blocs{align-items:stretch}
+    .actions-en-attente,.missions-en-attente,.mise-en-avant,.onboarding-profil{padding:24px}
+    .tache{gap:16px}
+    .mise-en-avant{flex-direction:column}
+  }
 </style>
 </head>
 <body>

@@ -1,41 +1,33 @@
 # Contexte pour Claude (ou tout autre agent) sur ce dépôt
 
 Ce fichier est lu automatiquement par les sessions Claude qui s'ouvrent sur ce
-dépôt. Il porte le contexte nécessaire pour travailler ici, indépendamment de
-tout compte ou Projet Claude personnel — quelqu'un qui clone ce dépôt et
-l'ouvre avec son propre compte doit retrouver ici l'essentiel de ce qu'il
-faut savoir avant de demander un prototype ou une page de doc.
+dépôt. Il dit qui on est et où trouver quoi, indépendamment de tout compte ou
+Projet Claude personnel — quelqu'un qui clone ce dépôt et l'ouvre avec son
+propre compte doit retrouver ici l'essentiel.
 
-## Le produit : JeVeuxAider.gouv.fr
+## Qui on est
 
-Plateforme publique du bénévolat. Fonctionne comme une marketplace : des
-organisations (associations, collectivités locales, organisations publiques
-ou privées à but non lucratif) publient des missions de bénévolat, et des
-bénévoles (tous publics) proposent leur aide. Les missions doivent être
-d'intérêt général (charte de la réserve civique).
+**JeVeuxAider.gouv.fr**, la plateforme publique du bénévolat : des
+organisations publient des missions d'intérêt général, des bénévoles
+proposent leur aide. Ton : chaleureux, mais institutionnel — c'est un service
+public.
 
-Fonctionnalités bénévoles : rechercher une mission (filtres), proposer son
-aide (candidater), échanger par messagerie avec les responsables de mission,
-créer des alertes (e-mail hebdomadaire des nouvelles missions correspondant
-aux critères).
+Rôle attendu de Claude : **Product Designer UX & UI**. Critiques d'idées ou de
+maquettes, propositions de solutions, wordings, questions qui font reculer sur
+le besoin utilisateur réel, maquettes dans le style DSFR actuel
+(https://www.systeme-de-design.gouv.fr/).
 
-Fonctionnalités responsables d'organisation : publier et gérer des missions,
-gérer la page de leur organisation (SEO), échanger par messagerie avec les
-bénévoles, gérer les participations/candidatures, rechercher des bénévoles
-pour une mission donnée et la leur proposer directement (« recherche
-inversée »).
+## Où trouver quoi
 
-Autres rôles : têtes de réseau (responsables qui rassemblent plusieurs
-organisations), référents départementaux/régionaux (modèrent organisations
-et missions, objectifs de mise en relation bénévoles/organisations),
-administrateurs (modération).
+| Pour… | Lire |
+|---|---|
+| Toute tâche de conception (critique, wording, parcours, maquette) | [`produit/contexte.md`](produit/contexte.md) (produit et rôles), [`produit/personae.md`](produit/personae.md) (qui sont les utilisateurs, liens vers les fiches Notion), [`produit/decisions.md`](produit/decisions.md) (arbitrages déjà pris) |
+| Tout texte d'interface | [`produit/redaction.md`](produit/redaction.md) (voix, lexique, règles d'écriture) |
+| Créer ou modifier un prototype ou une page de doc | La checklist ci-dessous |
+| Lire un composant dans Figma | [`design-system/GUIDE-FIGMA.md`](design-system/GUIDE-FIGMA.md) (règles de budget MCP) |
 
-Ton attendu : chaleureux, mais institutionnel — c'est un service public.
-
-Rôle attendu de Claude sur ce projet : Product Designer UX & UI. Critiques
-d'idées ou de maquettes, propositions de solutions, wordings, questions qui
-font reculer sur le besoin utilisateur réel, maquettes dans le style DSFR
-actuel (https://www.systeme-de-design.gouv.fr/).
+Un arbitrage pris en session (« on dit X, pas Y », « ce composant fait Z »)
+s'ajoute à `produit/decisions.md` pour ne pas avoir à le redemander.
 
 ## Avant de créer un prototype ou une page de doc
 
@@ -60,45 +52,11 @@ actuel (https://www.systeme-de-design.gouv.fr/).
 6. Un nouveau prototype s'ajoute aussi à la navigation, dans
    `_includes/sidebar.html` (section prototypes).
 
-## Utiliser Figma (MCP)
+## Architecture du dépôt
 
-Librairie de référence : [Composants JVA](https://www.figma.com/design/ibEVX5A5hRPDy3qEgWltuf/Composants-JVA).
-Toujours en repartir pour un lien de composant précis (`?node-id=...`) plutôt
-que de deviner un node id.
-
-Le budget MCP Figma est partagé et fini — une session qui explore une
-librairie entière sans discipline peut le griller avant même d'arriver à la
-tâche demandée. Règles à suivre à chaque fois :
-
-1. **`get_metadata` avant tout `get_design_context`, jamais l'inverse.** Le
-   metadata donne la liste des node ids en quelques lignes ; `get_design_context`
-   génère du code + un screenshot pour CHAQUE node — bien plus coûteux.
-2. **Jamais `get_design_context` sur un node racine ou un frame conteneur**
-   (une page entière, un frame qui regroupe plusieurs composants comme
-   « Tableaux » ou « Boutons »). Toujours descendre au composant précis via
-   le metadata d'abord, puis appeler `get_design_context` sur CE node-là.
-3. **Un composant = un appel `get_design_context`.** Jamais plusieurs appels
-   en rafale ou en parallèle « au cas où » sur des composants qu'on n'a pas
-   encore décidé de traiter — on regarde le résultat d'un composant avant de
-   décider s'il faut passer au suivant.
-4. **Si un frame contient plusieurs sous-composants** (ex. le frame
-   « Tableaux » contenait 2 gabarits de ligne + 2 jeux de badges), les
-   traiter un par un. Si le total dépasse 3-4 sous-composants distincts,
-   confirmer le périmètre avec l'utilisateur avant de tous les récupérer
-   plutôt que de les enchaîner sans prévenir.
-5. **Réutiliser un résultat déjà obtenu dans la conversation** plutôt que de
-   rappeler Figma pour la même information.
-6. `get_screenshot` sert à vérifier visuellement un rendu déjà construit,
-   jamais à remplacer `get_design_context` pour comprendre une structure.
-
-Voir aussi le principe de divergence Figma/code plus bas
-([`design-system/GUIDE-PROTOTYPAGE.md`](design-system/GUIDE-PROTOTYPAGE.md),
-section « Figma et code peuvent diverger ») : ce qu'on lit dans Figma décrit
-une intention de design, pas nécessairement ce que le code fait réellement —
-toujours vérifier les deux avant de documenter un composant.
-
-## Architecture du dépôt : deux mondes différents
-
+- **`produit/`** : le savoir sur le produit et ses utilisateurs (Markdown,
+  non publié sur le site). Les personae restent dans Notion, `personae.md`
+  n'en est que l'index.
 - **Les pages de doc** (`design-system/composants/*.html`,
   `fondamentaux/*.html`, `gabarits/*.html`, `homogenisation.html`,
   `migration-dsfr.html`, `guide-prompts.html`, `index.html`) sont générées
@@ -114,5 +72,7 @@ toujours vérifier les deux avant de documenter un composant.
 - **`design-system/patches.css`** centralise tous les correctifs pour les
   trous du bundle DSFR vendored (reset `.dsfr-link`, `@font-face` Marianne,
   etc.) — chargé par le layout Jekyll et par chaque prototype via
-  `_prototype-starter.html` → `prototype-starter.html`. Un nouveau correctif
-  de ce type va dans ce fichier, jamais copié-collé dans une page.
+  `prototype-starter.html`. Un nouveau correctif de ce type va dans ce
+  fichier, jamais copié-collé dans une page.
+- **`Claude outputs/`** (ignoré par git) : uniquement du jetable (captures,
+  essais). Un fichier qu'on veut retrouver dans un mois n'a rien à y faire.

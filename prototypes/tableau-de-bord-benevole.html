@@ -81,7 +81,7 @@
   .tache .texte{flex:1;min-width:0}
   .tache .texte p:first-child{margin:0;font-weight:700;color:var(--text-title-grey);font-size:16px;line-height:24px}
   .tache .texte p:last-child{margin:0;color:var(--text-mention-grey);font-size:14px;line-height:24px}
-  .tache .chevron{flex:none;width:24px;height:24px}
+  .tache .chevron{flex:none;width:24px;height:24px;color:var(--text-action-high-blue-france)} /* SVG en ligne + currentColor : l'ancien chevron-action.svg avait #000091 figé, invisible en sombre */
 
   /* ---------- missions en attente (CardParticipationBenevole.vue) ---------- */
   .missions-en-attente{padding:40px}
@@ -94,6 +94,18 @@
   .card-participation h3{margin:0;font-weight:700;color:var(--text-title-grey);font-size:16px;line-height:24px}
   .card-participation .infos{display:flex;gap:24px;flex-wrap:wrap}
   .card-participation .infos p{margin:0;color:var(--text-mention-grey);font-size:12px;line-height:20px}
+  /* Carte cliquable → messagerie de la participation (BoxUserWaitingParticipations.vue :
+     getCardLink = /messages/{conversation.id}, sinon la fiche mission). Le vrai composant
+     rend tout le bloc cliquable via .stretched-link (assets/css/main.css) mais ne le
+     signale qu'au survol (hover:shadow-md) : on ajoute le chevron des lignes « Actions en
+     attente » pour que la carte se lise comme cliquable au repos, y compris sur mobile. */
+  .card-participation{position:relative;padding-right:64px;transition:box-shadow .15s}
+  .card-participation:hover{box-shadow:0 4px 12px rgba(0,0,18,.16)}
+  .card-participation .stretched-link{color:inherit;background-image:none;text-decoration:none;outline:none}
+  .card-participation .stretched-link::before{content:"";position:absolute;inset:-1px;z-index:1}
+  .card-participation .stretched-link:focus-visible::before{outline:2px solid var(--border-active-blue-france);outline-offset:2px}
+  .card-participation:hover .stretched-link{text-decoration:underline}
+  .card-participation .chevron{position:absolute;right:24px;top:50%;width:24px;height:24px;margin-top:-12px;color:var(--text-action-high-blue-france)}
   .missions-en-attente .voir-plus{margin-top:20px;width:100%}
 
   /* ---------- mise en avant / "Le petit mot" (LePetitMot.vue) ---------- */
@@ -259,7 +271,7 @@
             <p>16 messages non lus</p>
             <p>Des personnes attendent votre réponse !</p>
           </div>
-          <img class="chevron" src="ressources/dashboard/chevron-action.svg" alt="">
+          <svg class="chevron" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.172 12L8.222 7.05L9.636 5.636L16 12L9.636 18.364L8.222 16.95L13.172 12Z"/></svg>
         </div>
         <div class="tache">
           <div class="icone" aria-hidden="true">💬</div>
@@ -267,7 +279,7 @@
             <p>16 messages non lus</p>
             <p>Des personnes attendent votre réponse !</p>
           </div>
-          <img class="chevron" src="ressources/dashboard/chevron-action.svg" alt="">
+          <svg class="chevron" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.172 12L8.222 7.05L9.636 5.636L16 12L9.636 18.364L8.222 16.95L13.172 12Z"/></svg>
         </div>
         <div class="tache">
           <div class="icone" aria-hidden="true">💬</div>
@@ -275,29 +287,31 @@
             <p>16 messages non lus</p>
             <p>Des personnes attendent votre réponse !</p>
           </div>
-          <img class="chevron" src="ressources/dashboard/chevron-action.svg" alt="">
+          <svg class="chevron" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.172 12L8.222 7.05L9.636 5.636L16 12L9.636 18.364L8.222 16.95L13.172 12Z"/></svg>
         </div>
       </section>
 
       <section class="card-section missions-en-attente">
         <h2>Missions en attente</h2>
         <div class="participations">
-          <!-- CardParticipationBenevole.vue : DsfrBadge(size=sm,type=warning) + h3 + date/lieu -->
+          <!-- CardParticipationBenevole.vue : DsfrBadge(size=sm,type=warning) + h3 (lien étiré vers la messagerie) + date/lieu + chevron -->
           <div class="card-participation">
             <span class="badge-warning"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.866 3l9.526 16.5a1 1 0 01-.866 1.5H2.474a1 1 0 01-.866-1.5L11.134 3a1 1 0 011.732 0zM11 16v2h2v-2h-2zm0-7v5h2V9h-2z"/></svg>en cours de traitement</span>
-            <h3>Je passe à l'action avec celles et ceux qui vivent<br>près de chez moi à Rennes</h3>
+            <h3><a href="#" class="stretched-link">Je passe à l'action avec celles et ceux qui vivent<br>près de chez moi à Rennes<span class="fr-sr-only"> — ouvrir la conversation</span></a></h3>
             <div class="infos">
               <p>🗓️ à partir du 1 juin 2022</p>
               <p>📍 Rennes (35700)</p>
             </div>
+            <svg class="chevron" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.172 12L8.222 7.05L9.636 5.636L16 12L9.636 18.364L8.222 16.95L13.172 12Z"/></svg>
           </div>
           <div class="card-participation">
             <span class="badge-warning"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.866 3l9.526 16.5a1 1 0 01-.866 1.5H2.474a1 1 0 01-.866-1.5L11.134 3a1 1 0 011.732 0zM11 16v2h2v-2h-2zm0-7v5h2V9h-2z"/></svg>en cours de traitement</span>
-            <h3>Je passe à l'action avec celles et ceux qui vivent<br>près de chez moi à Rennes</h3>
+            <h3><a href="#" class="stretched-link">Je passe à l'action avec celles et ceux qui vivent<br>près de chez moi à Rennes<span class="fr-sr-only"> — ouvrir la conversation</span></a></h3>
             <div class="infos">
               <p>🗓️ à partir du 1 juin 2022</p>
               <p>📍 Rennes (35700)</p>
             </div>
+            <svg class="chevron" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.172 12L8.222 7.05L9.636 5.636L16 12L9.636 18.364L8.222 16.95L13.172 12Z"/></svg>
           </div>
         </div>
         <a href="#" class="btn-secondary-lg voir-plus">Voir mes missions</a>

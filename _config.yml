@@ -5,6 +5,14 @@ baseurl: "/jeveuxaider-design"
 # (sauf _layouts/ et _includes/, réservés). outils/ contient des scripts
 # Python utilitaires, pas des pages : pas besoin qu'ils passent par le build,
 # mais les laisser copiés tels quels ne pose pas de problème non plus.
+# Serveur local (`jekyll serve`) uniquement, ignoré par GitHub Pages.
+# force_polling : la surveillance des fichiers par défaut (FSEvents) ne voit
+# aucune modification sur ce poste (chemin avec emoji et espaces, Ruby 4) ;
+# en polling, le site se régénère en ~2 s. livereload : le navigateur se
+# recharge tout seul après chaque régénération.
+force_polling: true
+livereload: true
+
 exclude:
   - "*.py"
   - "*.md"

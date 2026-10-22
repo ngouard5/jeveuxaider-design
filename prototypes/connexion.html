@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Connexion - JeVeuxAider.gouv.fr</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>document.documentElement.setAttribute("data-fr-theme", matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");</script>
+<style>
+  /* Feuilles DSFR chargées en cascade layers — voir prototype-starter.html et
+     design-system/GUIDE-PROTOTYPAGE.md. */
+  @import url("../design-system/compiled-reset.css") layer(tailwind-reset);
+  @import url("../design-system/dsfr.min.css") layer(dsfr-base);
+  @import url("../design-system/compiled.css") layer(dsfr-utilitaires);
+  @import url("../design-system/patches.css") layer(site-patches);
+
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font-family:Marianne,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--background-default-grey);color:var(--text-default-grey);font-synthesis:none}
+
+  /* ==========================================================================
+     Cible proposée : modèle DSFR « Page de connexion »
+     (systeme-de-design.gouv.fr › Modèles › Page de connexion), adapté au
+     contenu réel de pages/login.vue. Écarts assumés avec la prod :
+     - un seul écran e-mail + mot de passe (la prod fait e-mail › mot de passe
+       › code par e-mail) ;
+     - en-tête et pied de page présents (la prod utilise le layout « empty »
+       en deux colonnes avec photo) ;
+     - FranceConnect en tête (la prod le place sous « Première visite ? ») ;
+     - alerte d'erreur : variante error de DsfrAlert, « 🎨 Figma seulement »
+       (voir design-system/composants/dsfralert.html).
+     Les champs, boutons, alerte et FranceConnect utilisent les classes DSFR
+     natives (bundle v1.9.3 vendored) : ce sont les composants que
+     DsfrFormControl / DsfrInput / DsfrButton / CustomFranceConnect enveloppent.
+     ========================================================================== */
+
+  /* ---------- en-tête ----------
+     Repris de prototypes/homepage.html (LayoutHeader, Figma « navigation/
+     desktop/header/XL »), réduit au bloc-marque comme dans le modèle DSFR :
+     pas de navigation sur une page de connexion. */
+  .jva-header{background:var(--background-default-grey);box-shadow:0 2px 3px rgba(0,0,18,.16);position:relative;z-index:30}
+  .jva-header__row{max-width:1440px;margin:0 auto;display:flex;align-items:center;padding:12px 24px}
+  @media (min-width:1024px){.jva-header__row{padding:12px 120px 12px 104px}}
+  .jva-header__brand{display:flex;align-items:center;gap:16px;flex:none;background-image:none}
+  .jva-header__rf{height:48px;width:auto;flex:none}
+  .jva-header__logo{height:40px;width:auto;flex:none}
+
+  /* ---------- bloc de connexion ----------
+     Le modèle DSFR pose fr-background-alt--grey sur le bloc : cette classe
+     utilitaire n'est pas dans dsfr.min.css (elle vit dans utility.css, non
+     vendored), d'où la variable reprise à la main. */
+  .login-section{padding:40px 0 56px}
+  .login-block{background:var(--background-alt-grey);padding:32px 16px}
+  @media (min-width:768px){.login-block{padding:40px 56px}}
+  .login-block h1{margin:0 0 32px}
+
+  /* FranceConnect : texte d'accompagnement du slot #after de pages/login.vue */
+  .fc-note{font-size:14px;line-height:24px;color:var(--text-mention-grey);margin:16px 0 0}
+
+  .login-block .fr-hr-or{margin:32px 0}
+  .login-block .fr-fieldset{margin-bottom:0}
+  .login-block .fr-fieldset__legend h2{margin:0}
+  .mention-obligatoire{font-size:14px;color:var(--text-mention-grey);margin:0 0 8px}
+  .forgot{margin:16px 0 0}
+
+  /* Chargement du bouton : la prod affiche un spinner via la prop loading de
+     DsfrButton ; ici, libellé changé + aria-busy, suffisant pour le test. */
+  .fr-btn[aria-busy="true"]{cursor:progress}
+
+  /* ---------- première visite ---------- */
+  .signup{margin-top:40px;padding-top:32px;border-top:1px solid var(--border-default-grey)}
+  .signup h2{margin:0 0 24px}
+  /* Encart « Vous êtes une organisation ? » : bg-[#F6F6F6] p-6 de pages/login.vue,
+     ici sur fond alt donc inversé en fond par défaut pour rester visible. */
+  .orga{background:var(--background-default-grey);padding:24px;margin-top:24px;text-align:center}
+  .orga p{margin:0 0 16px;font-weight:500;color:var(--text-mention-grey)}
+  .signup .fr-btn{width:100%;justify-content:center}
+
+  /* Démo uniquement : retour après une connexion réussie */
+  .demo-success[hidden]{display:none}
+</style>
+</head>
+<body>
+
+<div class="fr-skiplinks">
+  <nav class="fr-container" role="navigation" aria-label="Accès rapide">
+    <ul class="fr-skiplinks__list">
+      <li><a class="fr-link" href="#contenu">Contenu</a></li>
+      <li><a class="fr-link" href="#pied-de-page">Pied de page</a></li>
+    </ul>
+  </nav>
+</div>
+
+<header class="jva-header" role="banner">
+  <div class="jva-header__row">
+    <a href="homepage.html" class="jva-header__brand" title="Accueil - JeVeuxAider.gouv.fr">
+      <img src="ressources/rf.svg" alt="République Française" class="jva-header__rf">
+      <img src="ressources/jva_logohorizontal_bleu.svg" alt="JeVeuxAider.gouv.fr — Par la réserve civique" class="jva-header__logo">
+    </a>
+  </div>
+</header>
+
+<main id="contenu" role="main" tabindex="-1">
+  <div class="fr-container login-section">
+    <div class="fr-grid-row fr-grid-row--center">
+      <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+        <div class="login-block">
+
+          <h1>Connexion à JeVeuxAider.gouv.fr</h1>
+
+          <!-- FranceConnect : components/custom/FranceConnect.vue -->
+          <div class="fr-connect-group">
+            <button class="fr-connect" type="button" id="btn-franceconnect">
+              <span class="fr-connect__login">S'identifier avec</span>
+              <span class="fr-connect__brand">FranceConnect</span>
+            </button>
+            <p>
+              <a href="https://franceconnect.gouv.fr/" target="_blank" rel="noopener" title="Qu'est-ce que FranceConnect ? - nouvelle fenêtre">Qu'est-ce que FranceConnect ?</a>
+            </p>
+            <p class="fc-note">FranceConnect est la solution proposée par l'État pour sécuriser et simplifier la connexion à plus de 700 services.</p>
+          </div>
+
+          <p class="fr-hr-or">ou</p>
+
+          <!-- Alerte d'erreur d'authentification : hors du formulaire, focus déplacé dessus -->
+          <div class="fr-alert fr-alert--error fr-mb-6v" id="auth-error" role="alert" tabindex="-1" hidden>
+            <h3 class="fr-alert__title">Adresse e-mail ou mot de passe incorrect</h3>
+            <p>Vérifiez votre saisie et réessayez. Si vous avez oublié votre mot de passe, vous pouvez le réinitialiser.</p>
+          </div>
+
+          <div class="fr-alert fr-alert--success fr-mb-6v demo-success" id="demo-success" role="status" tabindex="-1" hidden>
+            <h3 class="fr-alert__title">Identifiants acceptés (démo)</h3>
+            <p>En production, l'étape suivante est la saisie du code de connexion reçu par e-mail.</p>
+          </div>
+
+          <form id="login-form" novalidate>
+            <fieldset class="fr-fieldset" id="login-fieldset" aria-labelledby="login-legend login-mention">
+              <legend class="fr-fieldset__legend" id="login-legend">
+                <h2 class="fr-h5">Se connecter avec son compte</h2>
+              </legend>
+              <div class="fr-fieldset__element">
+                <p class="mention-obligatoire" id="login-mention">Sauf mention contraire, tous les champs sont obligatoires.</p>
+              </div>
+
+              <div class="fr-fieldset__element">
+                <div class="fr-input-group" id="email-group">
+                  <label class="fr-label" for="email">
+                    Adresse e-mail
+                    <span class="fr-hint-text">Format attendu : nom@domaine.fr</span>
+                  </label>
+                  <input class="fr-input" type="email" id="email" name="email" autocomplete="username" spellcheck="false" aria-required="true" aria-describedby="email-messages">
+                  <div class="fr-messages-group" id="email-messages" aria-live="polite"></div>
+                </div>
+              </div>
+
+              <div class="fr-fieldset__element">
+                <div class="fr-password fr-input-group" id="password-group">
+                  <label class="fr-label" for="password">Mot de passe</label>
+                  <div class="fr-input-wrap">
+                    <input class="fr-password__input fr-input" type="password" id="password" name="password" autocomplete="current-password" aria-required="true" aria-describedby="password-messages">
+                  </div>
+                  <div class="fr-messages-group" id="password-messages" aria-live="polite"></div>
+                  <div class="fr-password__checkbox fr-checkbox-group fr-checkbox-group--sm">
+                    <input type="checkbox" id="password-show" aria-label="Afficher le mot de passe">
+                    <label class="fr-password__checkbox fr-label" for="password-show">Afficher</label>
+                  </div>
+                  <p class="forgot">
+                    <a class="fr-link" href="#">Mot de passe oublié ?</a>
+                  </p>
+                </div>
+              </div>
+            </fieldset>
+
+            <ul class="fr-btns-group">
+              <li><button class="fr-btn" type="submit" id="btn-submit">Se connecter</button></li>
+            </ul>
+          </form>
+
+          <!-- « Première visite ? » : bloc existant de pages/login.vue, libellés
+               des boutons alignés sur produit/redaction.md (infinitif + « mon ») -->
+          <div class="signup">
+            <h2 class="fr-h5">Première visite ?</h2>
+            <a class="fr-btn fr-btn--secondary" href="inscription-benevole-etape-1.html">Créer mon espace bénévole</a>
+            <div class="orga">
+              <p>Vous êtes une organisation ?</p>
+              <a class="fr-btn fr-btn--tertiary" href="#">Inscrire mon organisation</a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Pied de page : fr-footer DSFR, contenu repris de components/layout/Footer.vue
+     (bloc marque, description, liens gouv, liens obligatoires). Les colonnes de
+     liens SEO de la prod (villes, organisations populaires) sont omises. -->
+<footer class="fr-footer" role="contentinfo" id="pied-de-page" tabindex="-1">
+  <div class="fr-container">
+    <div class="fr-footer__body">
+      <div class="fr-footer__brand fr-enlarge-link">
+        <a href="homepage.html" title="Accueil - JeVeuxAider.gouv.fr">
+          <p class="fr-logo">République<br>Française</p>
+        </a>
+      </div>
+      <div class="fr-footer__content">
+        <p class="fr-footer__content-desc">Trouvez une mission d'intérêt général auprès d'un organisme public ou associatif et faites vivre les valeurs de la République.</p>
+        <ul class="fr-footer__content-list">
+          <li class="fr-footer__content-item"><a class="fr-footer__content-link" target="_blank" rel="noopener" title="legifrance.gouv.fr - nouvelle fenêtre" href="https://legifrance.gouv.fr">legifrance.gouv.fr</a></li>
+          <li class="fr-footer__content-item"><a class="fr-footer__content-link" target="_blank" rel="noopener" title="gouvernement.fr - nouvelle fenêtre" href="https://gouvernement.fr">gouvernement.fr</a></li>
+          <li class="fr-footer__content-item"><a class="fr-footer__content-link" target="_blank" rel="noopener" title="service-public.fr - nouvelle fenêtre" href="https://service-public.fr">service-public.fr</a></li>
+          <li class="fr-footer__content-item"><a class="fr-footer__content-link" target="_blank" rel="noopener" title="data.gouv.fr - nouvelle fenêtre" href="https://www.data.gouv.fr">data.gouv.fr</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="fr-footer__bottom">
+      <ul class="fr-footer__bottom-list">
+        <li class="fr-footer__bottom-item"><a class="fr-footer__bottom-link" href="#">Accessibilité : totalement conforme</a></li>
+        <li class="fr-footer__bottom-item"><a class="fr-footer__bottom-link" href="#">Données personnelles</a></li>
+        <li class="fr-footer__bottom-item"><a class="fr-footer__bottom-link" href="#">Mentions légales</a></li>
+        <li class="fr-footer__bottom-item"><a class="fr-footer__bottom-link" href="#">CGU</a></li>
+        <li class="fr-footer__bottom-item"><a class="fr-footer__bottom-link" href="#">Plan du site</a></li>
+        <li class="fr-footer__bottom-item"><button type="button" class="fr-footer__bottom-link">Gestion des cookies</button></li>
+      </ul>
+      <div class="fr-footer__bottom-copy">
+        <p>Sauf mention contraire, tous les textes de ce site sont sous <a href="https://github.com/etalab/licence-ouverte/blob/master/LO.md" target="_blank" rel="noopener" title="licence etalab-2.0 - nouvelle fenêtre">licence etalab-2.0</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Interactions pour tester le parcours — pas une implémentation de référence.
+  // Démo : n'importe quelle adresse valide + le mot de passe ci-dessous passe ;
+  // tout autre mot de passe déclenche l'erreur d'authentification.
+  const MOT_DE_PASSE_DEMO = 'motdepasse';
+  const TITRE = 'Connexion - JeVeuxAider.gouv.fr';
+
+  const form = document.getElementById('login-form');
+  const email = document.getElementById('email');
+  const password = document.getElementById('password');
+  const showPassword = document.getElementById('password-show');
+  const submit = document.getElementById('btn-submit');
+  const authError = document.getElementById('auth-error');
+  const demoSuccess = document.getElementById('demo-success');
+
+  // DSFR JS n'est pas vendored : on reproduit le comportement de fr-password.
+  showPassword.addEventListener('change', () => {
+    password.type = showPassword.checked ? 'text' : 'password';
+  });
+
+  function setFieldError(input, groupId, message){
+    const group = document.getElementById(groupId);
+    const messages = document.getElementById(input.id + '-messages');
+    group.classList.toggle('fr-input-group--error', Boolean(message));
+    input.classList.toggle('fr-input--error', Boolean(message));
+    input.setAttribute('aria-invalid', message ? 'true' : 'false');
+    messages.innerHTML = message ? `<p class="fr-error-text" id="${input.id}-error">${message}</p>` : '';
+  }
+
+  function validate(){
+    const errors = [];
+    const valeurEmail = email.value.trim();
+    let emailMsg = '';
+    if (!valeurEmail) emailMsg = 'Saisissez votre adresse e-mail.';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(valeurEmail)) emailMsg = 'Saisissez une adresse e-mail au format nom@domaine.fr.';
+    setFieldError(email, 'email-group', emailMsg);
+    if (emailMsg) errors.push(email);
+
+    const passwordMsg = password.value ? '' : 'Saisissez votre mot de passe.';
+    setFieldError(password, 'password-group', passwordMsg);
+    if (passwordMsg) errors.push(password);
+    return errors;
+  }
+
+  // TODO prod : remplacer par authStore.login(formData) (store/auth), qui peut
+  // renvoyer un challenge de code par e-mail (étape « otp » de pages/login.vue).
+  function fakeLogin(){
+    return new Promise(resolve => setTimeout(() => resolve(password.value === MOT_DE_PASSE_DEMO), 1200));
+  }
+
+  function setLoading(loading){
+    submit.disabled = loading;
+    submit.setAttribute('aria-busy', loading ? 'true' : 'false');
+    submit.textContent = loading ? 'Connexion en cours…' : 'Se connecter';
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    authError.hidden = true;
+    demoSuccess.hidden = true;
+    document.title = TITRE;
+
+    const errors = validate();
+    if (errors.length){
+      document.title = 'Erreur - ' + TITRE;
+      errors[0].focus();
+      return;
+    }
+
+    setLoading(true);
+    const ok = await fakeLogin();
+    setLoading(false);
+
+    if (!ok){
+      document.title = 'Erreur - ' + TITRE;
+      authError.hidden = false;
+      authError.focus();
+      return;
+    }
+
+    document.title = TITRE;
+    demoSuccess.hidden = false;
+    demoSuccess.focus();
+  });
+</script>
+</body>
+</html>

@@ -80,12 +80,11 @@
   .msg-filter-btn svg{width:32px;height:32px}
   .msg-filter-btn__count{position:absolute;top:-4px;right:-8px;min-width:20px;padding:2px 6px;border-radius:999px;background:#E41E3F;color:#fff;font-size:10px;line-height:12px;font-weight:700;display:inline-flex;justify-content:center}
 
-  /* ---------- NOUVEAU : « Tout marquer comme lu », onglet Non lus ----------
-     Sous la recherche et les filtres, affiché seulement dans l'onglet
-     « Non lus » : l'action porte exactement sur la liste affichée (non lues
-     × filtres appliqués), donc pas besoin de compteur ; le nombre est donné
-     dans la modale de confirmation. Après confirmation, la liste se vide
-     sur l'état vide réel de l'app. Composant réel : DsfrButton type
+  /* ---------- NOUVEAU : « Tout marquer comme lu » ----------
+     Sous la recherche et les filtres, dans tous les onglets, masqué quand
+     il n'y a plus de non lues. L'action porte sur les conversations non
+     lues avec les filtres appliqués ; pas de compteur, le nombre est donné
+     dans la modale de confirmation. Composant réel : DsfrButton type
      secondary size sm icon RiCheckDoubleLine. */
   .msg-bulk{display:flex;align-items:center;padding:12px 24px;border-bottom:1px solid var(--border-default-grey);flex:none}
   /* components/dsfr/Tag.vue, size sm : px-2 py-0.5 text-xs h-6 rounded-full */
@@ -286,11 +285,11 @@
       <!-- components/messaging/ConversationsTabs.vue (rôle responsable) -->
       <nav class="msg-tabs" aria-label="Navigation des conversations">
         <ol>
-          <li><button type="button" class="msg-tab" data-tab="all" aria-pressed="false" aria-label="Voir tous les messages" title="Voir tous les messages">
+          <li><button type="button" class="msg-tab" data-tab="all" aria-pressed="true" aria-label="Voir tous les messages" title="Voir tous les messages">
             <svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 8.99374C2 5.68349 4.67654 3 8.00066 3H15.9993C19.3134 3 22 5.69478 22 8.99374V21H8.00066C4.68659 21 2 18.3052 2 15.0063V8.99374ZM20 19V8.99374C20 6.79539 18.2049 5 15.9993 5H8.00066C5.78458 5 4 6.78458 4 8.99374V15.0063C4 17.2046 5.79512 19 8.00066 19H20ZM14 11H16V13H14V11ZM8 11H10V13H8V11Z"/></svg>
             <span>Tous</span>
           </button></li>
-          <li><button type="button" class="msg-tab" data-tab="unread" aria-pressed="true" aria-label="Voir les messages non lus" title="Voir les messages non lus">
+          <li><button type="button" class="msg-tab" data-tab="unread" aria-pressed="false" aria-label="Voir les messages non lus" title="Voir les messages non lus">
             <svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="M16.1 3C16.0344 3.32311 16 3.65753 16 4C16 4.34247 16.0344 4.67689 16.1 5H4.51146L12.0619 11.662L17.1098 7.14141C17.5363 7.66888 18.0679 8.10787 18.6728 8.42652L12.0718 14.338L4 7.21594V19H20V8.89998C20.3231 8.96557 20.6575 9 21 9C21.3425 9 21.6769 8.96557 22 8.89998V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V4C2 3.44772 2.44772 3 3 3H16.1ZM21 1C22.6569 1 24 2.34315 24 4C24 5.65685 22.6569 7 21 7C19.3431 7 18 5.65685 18 4C18 2.34315 19.3431 1 21 1Z"/></svg>
             <span>Non lus</span>
           </button></li>
@@ -323,7 +322,7 @@
           </button>
         </div>
 
-        <!-- NOUVEAU : seulement dans l'onglet « Non lus » -->
+        <!-- NOUVEAU -->
         <div class="msg-bulk" id="bulk">
           <button type="button" class="dsfr-btn dsfr-btn--secondary dsfr-btn--sm" id="bulk-btn">
             <svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="M11.602 13.7599L13.014 15.1719L21.4795 6.7063L22.8938 8.12051L13.014 18.0003L6.65 11.6363L8.06421 10.2221L10.189 12.3469L11.6025 13.7594L11.602 13.7599ZM11.6037 10.9322L16.5563 5.97949L17.9666 7.38977L13.014 12.3424L11.6037 10.9322ZM8.77698 16.5873L7.36396 18.0003L1 11.6363L2.41421 10.2221L3.82723 11.6352L3.82604 11.6363L8.77698 16.5873Z"/></svg>
@@ -424,7 +423,6 @@
         <h3 id="modal-title">Marquer <span data-count>487</span> conversations comme lues&nbsp;?</h3>
       </div>
       <p>Toutes les conversations non lues affichées dans la liste seront marquées comme lues.</p>
-      <p>Seule votre messagerie est concernée&nbsp;: les autres responsables de l’organisation gardent leurs messages non lus.</p>
     </div>
     <div class="modal__footer">
       <button type="button" class="dsfr-btn dsfr-btn--secondary dsfr-btn--md" data-close>Annuler</button>
@@ -451,8 +449,7 @@
   // hors filtre. Le compteur du header, lui, est global (525).
   var HORS_FILTRE = 38;
   var unreadInFilter = 487;
-  // Le prototype s'ouvre sur l'onglet « Non lus », où vit le bouton.
-  var state = { tab: 'unread', activeId: 5, snapshot: null };
+  var state = { tab: 'all', activeId: 5, snapshot: null };
 
   var MISSION = 'Collecte nationale des Banques Alimentaires 2026';
   var conversations = [
@@ -510,7 +507,7 @@
     var global = HORS_FILTRE + unreadInFilter;
     // HeaderMessagerie.vue : pluralize(unreadMessagesCount, 'nouveau message', 'nouveaux messages')
     $('header-count').textContent = global === 0 ? 'Aucun nouveau message' : fmt(global) + (global > 1 ? ' nouveaux messages' : ' nouveau message');
-    $('bulk').hidden = state.tab !== 'unread' || unreadInFilter === 0;
+    $('bulk').hidden = unreadInFilter === 0;
     document.querySelectorAll('#modal [data-count]').forEach(function (el) { el.textContent = fmt(unreadInFilter); });
   }
 
@@ -580,8 +577,9 @@
     unreadInFilter = 0;
     $('modal').hidden = true;
     render();
-    $('empty').setAttribute('tabindex', '-1');
-    $('empty').focus();
+    // Bouton masqué : focus sur l'état vide (Non lus) ou sur la 1re conversation (Tous)
+    if (!$('empty').hidden) { $('empty').setAttribute('tabindex', '-1'); $('empty').focus(); }
+    else { var first = document.querySelector('.teaser__title'); if (first) first.focus(); }
     $('toast').hidden = false;
     clearTimeout(toastTimer);
     toastTimer = setTimeout(hideToast, 6000);

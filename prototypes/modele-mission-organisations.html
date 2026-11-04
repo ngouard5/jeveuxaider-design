@@ -1,0 +1,530 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Prototype — Modèle de mission, organisations concernées</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>document.documentElement.setAttribute("data-fr-theme", matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");</script>
+<style>
+  /* Cascade layers — voir design-system/GUIDE-PROTOTYPAGE.md. */
+  @import url("../design-system/compiled-reset.css") layer(tailwind-reset);
+  @import url("../design-system/dsfr.min.css") layer(dsfr-base);
+  @import url("../design-system/compiled.css") layer(dsfr-utilitaires);
+  @import url("../design-system/patches.css") layer(site-patches);
+
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font-family:Marianne,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--background-warm-neutral);color:var(--text-default-grey);font-synthesis:none}
+  button,input,select{font-family:inherit}
+
+  /* Sources réelles reproduites (lecture seule, jeveuxaider/frontend) :
+     - pages/admin/contenus/modeles-mission/add.vue (breadcrumb, actions)
+     - components/section/mission-template/HeaderActions.vue (titre + boutons)
+     - components/form/FormMissionTemplate.vue (grille lg:5 colonnes, 3 + 2)
+     - components/base/Box.vue (bg-white shadow-lg, padding lg / sm)
+     - components/base/Heading.vue (niveaux 1 et 3)
+     - components/dsfr/FormControl.vue, Input.vue, Select.vue, RichEditor.vue
+     - components/base/FormInfo.vue (info bleue 12px)
+     - components/base/Toggle.vue (switch « Hors ligne »)
+     - components/base/role-radio-group + custom/OptionCard.vue (cartes Oui/Non)
+     - components/dsfr/CheckboxGroup.vue (cases à cocher, NOUVEAU BLOC)
+     Couleurs : variables DSFR sémantiques (dark mode), jamais d'hex en dur. */
+
+  /* ---------- header ----------
+     Maquette Figma "Composants JVA" › navigation/desktop/header/XL, variante
+     "Logged In" (node 409:4656) : bloc marque RF + logo JVA, à droite un lien
+     "Trouver une mission", icônes messagerie/notifications, puis profil
+     (avatar + nom + rôle). La nav du dessous est le composant DSFR standard
+     "Navigation principale" (https://www.systeme-de-design.gouv.fr/version-courante/fr/composants/navigation-principale),
+     classes fr-nav/fr-nav__list/fr-nav__link réelles du bundle dsfr.min.css —
+     l'état actif (aria-current="page") est stylé nativement par DSFR, aucun
+     CSS perso nécessaire pour ça. */
+  .jva-header{background:var(--background-default-grey);box-shadow:0 2px 3px rgba(0,0,18,.16);position:relative;z-index:30}
+  .jva-header__row{max-width:1440px;margin:0 auto;display:flex;align-items:center;gap:24px;padding:12px 24px;flex-wrap:wrap}
+  @media (min-width:1024px){.jva-header__row{gap:40px;padding:12px 120px 12px 104px;flex-wrap:nowrap}}
+  .jva-header__brand{display:flex;align-items:center;gap:16px;flex:none}
+  .jva-header__rf{height:48px;width:auto;flex:none}
+  .jva-header__logo{height:40px;width:auto;flex:none}
+  .jva-header__tools{display:flex;align-items:center;gap:16px;flex:1 1 auto;justify-content:flex-end;flex-wrap:wrap}
+  @media (min-width:1024px){.jva-header__tools{gap:24px}}
+  .jva-header__tool-link{display:inline-flex;align-items:center;gap:8px;padding:4px 12px;font-size:14px;font-weight:500;line-height:24px;color:var(--text-action-high-blue-france);text-decoration:none;background-image:none;white-space:nowrap}
+  .jva-header__icon-btn{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border:none;background:none;color:var(--text-title-grey);cursor:pointer;padding:0}
+  .jva-header__icon-btn:hover{background:var(--background-default-grey-hover)}
+  .jva-header__profile{display:inline-flex;align-items:center;gap:12px;border:none;background:none;cursor:pointer;padding:0;font-family:inherit}
+  .jva-header__avatar{width:40px;height:40px;border-radius:50%;background:var(--background-action-high-blue-france);color:var(--text-inverted-blue-france);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500;flex:none}
+  .jva-header__profile-text{display:flex;flex-direction:column;align-items:flex-start;font-size:14px;line-height:20px}
+  .jva-header__profile-text strong{color:var(--text-title-grey);font-weight:700}
+  .jva-header__profile-text span{color:var(--text-mention-grey)}
+  .jva-header__menu{border-top:1px solid var(--border-default-grey);max-width:1440px;margin:0 auto;padding:0 24px}
+  @media (min-width:1024px){.jva-header__menu{padding:0 104px}}
+  .jva-header__menu .fr-nav__list{overflow-x:auto}
+  /* En-tête : copie de prototypes/missions-responsable.html, menu admin réel
+     (components/section/header/HeaderMobile.vue, rôle admin : aucune entrée
+     active sur /admin/contenus). Pied de page : copie de connexion.html. */
+
+  /* fr-footer n'a pas de fond propre : sans ça il hérite du fond beige de la page. */
+  .fr-footer{background:var(--background-default-grey)}
+
+  .container{max-width:1280px;margin:0 auto;padding:0 16px}
+  @media (min-width:768px){.container{padding:0 32px}}
+
+  .fr-breadcrumb{margin:24px 0 16px}
+
+  /* ---------- HeaderActions ---------- */
+  /* sticky z-40 top-0 py-4 ; épinglée : bg-white shadow-lg z-50 */
+  .sticky-sentinel{height:1px;margin-bottom:-1px}
+  .header-sticky{position:sticky;top:0;z-index:40;padding:16px 0;transition:box-shadow .15s}
+  .header-sticky.is-pinned{z-index:50;background:var(--background-default-grey);box-shadow:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -4px rgba(0,0,0,.1)}
+  .header-actions{display:flex;flex-direction:column}
+  @media (min-width:1024px){.header-actions{flex-direction:row;justify-content:space-between;align-items:flex-start}
+    .is-pinned .header-actions{align-items:center}}
+  .header-actions h1{margin:0 16px 0 0;color:var(--text-title-grey);font-size:24px;line-height:32px;font-weight:800}
+  @media (min-width:640px){.header-actions h1{font-size:36px;line-height:40px}
+    .is-pinned .header-actions h1{font-size:24px;line-height:32px}}
+  /* flex-col sm:flex-row gap-3 mt-4 lg:mt-0 */
+  .header-actions__btns{display:flex;flex-direction:column;gap:12px;margin-top:16px}
+  @media (min-width:640px){.header-actions__btns{flex-direction:row}}
+  @media (min-width:1024px){.header-actions__btns{margin-top:0}}
+  .header-sep{margin:0;padding:0;border:none;border-top:1px solid var(--border-default-grey)}
+
+  /* DsfrButton md (px-4 py-2 text-base min-h-[42px]) */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:8px 16px;min-height:42px;font-size:16px;line-height:24px;font-weight:500;border:none;cursor:pointer}
+  .btn--primary{background:var(--background-action-high-blue-france);color:var(--text-inverted-blue-france)}
+  .btn--primary:hover{background:var(--background-action-high-blue-france-hover)}
+  .btn--primary:active{background:var(--background-action-high-blue-france-active)}
+  .btn--secondary{background:transparent;color:var(--text-action-high-blue-france);box-shadow:inset 0 0 0 1px var(--border-action-high-blue-france)}
+  .btn--secondary:hover{background:var(--background-default-grey-hover)}
+  .btn--secondary:active{background:var(--background-default-grey-active)}
+
+  /* ---------- FormMissionTemplate : grille ---------- */
+  .form-grid{display:grid;grid-template-columns:1fr;gap:32px;margin:32px 0 56px}
+  @media (min-width:1024px){.form-grid{grid-template-columns:3fr 2fr}}
+  .col{display:flex;flex-direction:column;gap:32px;min-width:0}
+
+  /* BaseBox shadow */
+  .box{background:var(--background-default-grey);box-shadow:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -4px rgba(0,0,0,.1);padding:24px}
+  @media (min-width:640px){.box{padding:32px}}
+  @media (min-width:1024px){.box{padding:40px}}
+  @media (min-width:1280px){.box{padding:48px}}
+  .box--sm{padding:24px}
+  @media (min-width:1024px){.box--sm{padding:32px}}
+
+  .h3{margin:0 0 32px;color:var(--text-title-grey);font-size:20px;line-height:28px;font-weight:800}
+  @media (min-width:640px){.h3{font-size:22px}}
+  .h3--mb4{margin-bottom:16px}
+
+  .stack-10 > * + *{margin-top:40px}
+  .stack-8 > * + *{margin-top:32px}
+  .stack-6 > * + *{margin-top:24px}
+
+  /* DsfrFormControl */
+  .label{display:block;color:var(--text-label-grey);margin-bottom:8px;font-size:16px;line-height:24px}
+  .req{color:var(--text-default-error)}
+  .desc{margin:-4px 0 8px;font-size:12px;line-height:20px;color:var(--text-mention-grey)}
+  .info{display:flex;align-items:flex-start;gap:8px;margin-top:8px;font-size:12px;line-height:20px;color:var(--text-default-info)}
+  .info svg{flex:none;margin-top:2px}
+  .error{display:flex;align-items:center;gap:6px;margin-top:8px;font-size:12px;line-height:20px;color:var(--text-default-error)}
+  .error[hidden]{display:none}
+
+  .input,.select{width:100%;border:none;border-radius:4px 4px 0 0;background:var(--background-contrast-grey);box-shadow:inset 0 -2px 0 0 var(--border-plain-grey);padding:12px;font-size:16px;line-height:24px;color:var(--text-default-grey)}
+  .select-wrap{position:relative}
+  .select{appearance:none;padding-right:40px;font-style:italic;color:var(--text-mention-grey)}
+  .select-wrap svg{position:absolute;right:14px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--text-title-grey)}
+  .grid-2{display:grid;grid-template-columns:1fr;gap:16px}
+  @media (min-width:640px){.grid-2{grid-template-columns:1fr 1fr}}
+
+  /* DsfrRichEditor */
+  .rte{border-bottom:2px solid var(--border-plain-grey)}
+  .rte__bar{display:flex;align-items:center;gap:6px;background:var(--background-alt-grey);padding:6px 8px;color:var(--text-title-grey)}
+  .rte__bar span{width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:15px}
+  .rte__sep{width:1px!important;height:18px!important;background:var(--border-default-grey)}
+  .rte__body{background:var(--background-contrast-grey);min-height:64px;padding:20px 24px;color:var(--text-mention-grey);font-size:14px}
+
+  /* CustomOptionCard (via BaseRoleRadioGroup) */
+  .options{display:grid;grid-template-columns:1fr;gap:16px}
+  @media (min-width:1024px){.options--2{grid-template-columns:1fr 1fr}}
+  .option{all:unset;box-sizing:border-box;display:block;position:relative;cursor:pointer;padding:2px;background:var(--border-default-grey);transition:background .15s linear}
+  .option:hover{background:var(--border-action-high-blue-france)}
+  .option:focus-visible{outline:2px solid var(--border-action-high-blue-france);outline-offset:2px}
+  .option[aria-checked="true"]{background:var(--border-action-high-blue-france)}
+  .option__inner{background:var(--background-default-grey);padding:24px;height:100%}
+  .option[aria-checked="true"] .option__inner{background:var(--background-alt-blue-france)}
+  .option__title{font-weight:700;margin-bottom:8px;color:var(--text-title-grey)}
+  .option[aria-checked="true"] .option__title{color:var(--text-action-high-blue-france)}
+  .option__desc{font-size:14px;line-height:24px;color:var(--text-mention-grey)}
+  .option__check{position:absolute;top:12px;right:12px;color:var(--text-action-high-blue-france);display:none}
+  .option[aria-checked="true"] .option__check{display:block}
+
+  /* BaseToggle */
+  .toggle{display:flex;align-items:flex-start;gap:16px}
+  .toggle__col{display:flex;flex-direction:column;width:70px}
+  .toggle__btn{position:relative;display:inline-flex;flex-shrink:0;width:40px;height:24px;border:1px solid var(--border-action-high-blue-france);border-radius:9999px;background:var(--background-default-grey);cursor:pointer;padding:0;transition:background .2s}
+  .toggle__btn[aria-checked="true"]{background:var(--background-action-high-blue-france)}
+  .toggle__knob{position:relative;top:-1px;left:-1px;width:24px;height:24px;border-radius:9999px;background:var(--background-default-grey);border:1px solid var(--border-action-high-blue-france);display:inline-flex;align-items:center;justify-content:center;transition:transform .2s;color:var(--text-action-high-blue-france)}
+  .toggle__knob svg{display:none}
+  .toggle__btn[aria-checked="true"] .toggle__knob{transform:translateX(16px)}
+  .toggle__btn[aria-checked="true"] .toggle__knob svg{display:block}
+  .toggle__state{font-size:12px;line-height:1;margin:6px 2px 0;color:var(--text-action-high-blue-france)}
+  .toggle__label{color:var(--text-default-grey)}
+
+  /* AlgoliaInputAutocomplete variant dsfr */
+  .search{position:relative}
+  .search svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-default-grey);pointer-events:none}
+  .search .input{padding-left:44px}
+
+  .muted-p{margin:0;font-size:14px;line-height:24px;color:var(--text-mention-grey)}
+  .strong-p{margin:32px 0 0;font-weight:700;color:var(--text-title-grey)}
+
+  /* ---------- NOUVEAU BLOC : Organisations concernées ---------- */
+  .fieldset{border:none;margin:0;padding:0;min-width:0}
+  .legend{padding:0;color:var(--text-label-grey);font-size:16px;line-height:24px;margin-bottom:8px}
+  /* DsfrCheckboxGroup : input natif + accent DSFR (même approche que
+     missions-responsable.html, la version @tailwindcss/forms n'étant pas
+     dans le bundle partiel). */
+  .checks{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+  .check{display:flex;align-items:flex-start;gap:12px;cursor:pointer;color:var(--text-default-grey);font-size:16px;line-height:24px}
+  .check input{flex:none;width:16px;height:16px;margin:4px 0 0;accent-color:var(--background-action-high-blue-france);cursor:pointer}
+  .check small{display:block;font-size:12px;line-height:20px;color:var(--text-mention-grey)}
+  .subgroup{margin:4px 0 8px 28px;padding-left:16px;border-left:2px solid var(--border-default-grey)}
+  .subgroup[hidden]{display:none}
+  .subgroup .legend{font-size:14px;line-height:24px;font-weight:700;margin:0}
+  .subgroup .desc{margin:0 0 4px}
+  .subgroup .check{font-size:14px}
+  .reveal{margin-top:24px}
+  .reveal[hidden]{display:none}
+  .fieldset.has-error{padding-left:12px;border-left:2px solid var(--border-plain-error)}
+
+
+  /* Toast de démo */
+  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--background-contrast-success);color:var(--text-default-success);padding:12px 20px;font-weight:500;box-shadow:0 4px 12px rgba(0,0,18,.2)}
+  .toast[hidden]{display:none}
+</style>
+</head>
+<body>
+
+<header class="jva-header">
+  <div class="jva-header__row">
+    <div class="jva-header__brand">
+      <img src="ressources/rf.svg" alt="République Française" class="jva-header__rf">
+      <img src="ressources/jva_logohorizontal_bleu.svg" alt="JeVeuxAider.gouv.fr — Par la réserve civique" class="jva-header__logo">
+    </div>
+    <div class="jva-header__tools">
+      <a href="#" class="jva-header__tool-link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>Trouver une mission</a>
+      <button type="button" class="jva-header__icon-btn" aria-label="Messagerie"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v12H8l-4 4V4Z" stroke-linejoin="round"/></svg></button>
+      <button type="button" class="jva-header__icon-btn" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 10a6 6 0 1 1 12 0c0 4 1.5 5.5 1.5 5.5H4.5S6 14 6 10Z" stroke-linejoin="round"/><path d="M10 19a2 2 0 0 0 4 0"/></svg></button>
+      <button type="button" class="jva-header__profile">
+        <span class="jva-header__avatar">CP</span>
+        <span class="jva-header__profile-text"><strong>Camille Petit</strong><span>Administrateur</span></span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="jva-header__menu">
+    <nav class="fr-nav" id="header-navigation" role="navigation" aria-label="Menu principal">
+      <ul class="fr-nav__list">
+        <li class="fr-nav__item"><a class="fr-nav__link" href="#">Tableau de bord</a></li>
+        <li class="fr-nav__item"><a class="fr-nav__link" href="#">Organisations</a></li>
+        <li class="fr-nav__item"><a class="fr-nav__link" href="#">Missions</a></li>
+        <li class="fr-nav__item"><a class="fr-nav__link" href="#">Participations</a></li>
+        <li class="fr-nav__item"><a class="fr-nav__link" href="#">Utilisateurs</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="contenuprincipal">
+  <div class="container">
+    <nav role="navigation" class="fr-breadcrumb" aria-label="vous êtes ici :">
+      <ol class="fr-breadcrumb__list">
+        <li><a class="fr-breadcrumb__link" href="#">Administration</a></li>
+        <li><span class="fr-breadcrumb__link">Contenus</span></li>
+        <li><a class="fr-breadcrumb__link" href="#">Modèles de mission</a></li>
+        <li><a class="fr-breadcrumb__link" aria-current="page">Nouveau modèle</a></li>
+      </ol>
+    </nav>
+  </div>
+
+  <!-- HeaderActions.vue : barre sticky pleine largeur (sticky top-0 py-4),
+       épinglée = fond blanc + shadow-lg, titre réduit à text-2xl. -->
+  <div class="sticky-sentinel" id="sticky-sentinel" aria-hidden="true"></div>
+  <div class="header-sticky" id="header-sticky">
+    <div class="container">
+      <div class="header-actions">
+        <h1>Créer un nouveau modèle de mission</h1>
+        <div class="header-actions__btns">
+          <button type="button" class="btn btn--secondary" data-submit>Enregistrer</button>
+          <button type="button" class="btn btn--primary" data-submit>Soumettre à validation</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <hr class="header-sep">
+
+    <div class="form-grid">
+      <!-- ================= Colonne principale (lg:col-span-3) ================= -->
+      <div class="col">
+        <section class="box">
+          <h2 class="h3">Informations générales</h2>
+          <div class="stack-10">
+            <div>
+              <label class="label" for="title">Titre <span class="req">*</span></label>
+              <p class="desc" id="title-desc">Il s’agit du titre principal affiché sur la page de la mission.</p>
+              <input class="input" id="title" aria-describedby="title-desc title-info">
+              <p class="info" id="title-info"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.5 2.5h-15c-1.1 0-2 .9-2 2v15c0 1.1.9 2 2 2h15c1.1 0 2-.9 2-2v-15c0-1.1-.9-2-2-2zM13 17h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>Rédigez le titre à la première personne du singulier du point de vue du bénévole</p>
+            </div>
+
+            <div class="grid-2">
+              <div>
+                <label class="label" for="domaine">Domaine d'action principal <span class="req">*</span></label>
+                <div class="select-wrap"><select class="select" id="domaine"><option>Sélectionner un domaine</option></select><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 13.17l4.95-4.95 1.41 1.42L12 16 5.64 9.64l1.41-1.42z"/></svg></div>
+              </div>
+              <div>
+                <label class="label" for="domaine2">Domaine d'action secondaire</label>
+                <div class="select-wrap"><select class="select" id="domaine2"><option>Sélectionner un domaine</option></select><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 13.17l4.95-4.95 1.41 1.42L12 16 5.64 9.64l1.41-1.42z"/></svg></div>
+              </div>
+            </div>
+
+            <div>
+              <p class="label">Présentation de la mission <span class="req">*</span></p>
+              <p class="desc">Décrivez la mission en quelques lignes pour que le bénévole comprenne ce que vous attendez.</p>
+              <div class="rte"><div class="rte__bar" aria-hidden="true"><span><b>B</b></span><span><i>I</i></span><span class="rte__sep"></span><span><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><circle cx="5" cy="7" r="1.3" fill="currentColor"/><circle cx="5" cy="12" r="1.3" fill="currentColor"/><circle cx="5" cy="17" r="1.3" fill="currentColor"/><path d="M9 7h11M9 12h11M9 17h11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span><span><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><text x="1" y="9" font-size="6" fill="currentColor">1</text><text x="1" y="15" font-size="6" fill="currentColor">2</text><path d="M9 7h11M9 12h11M9 17h11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span><span class="rte__sep"></span><span><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M9 8L5 12l4 4M5 12h9a5 5 0 0 1 0 10h-1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M15 8l4 4-4 4M19 12h-9a5 5 0 0 0 0 10h1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div><div class="rte__body">Décrivez la mission en quelques mots...</div></div>
+            </div>
+
+            <div>
+              <p class="label">Objectif de la mission <span class="req">*</span></p>
+              <div class="rte"><div class="rte__bar" aria-hidden="true"><span><b>B</b></span><span><i>I</i></span><span class="rte__sep"></span><span><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><circle cx="5" cy="7" r="1.3" fill="currentColor"/><circle cx="5" cy="12" r="1.3" fill="currentColor"/><circle cx="5" cy="17" r="1.3" fill="currentColor"/><path d="M9 7h11M9 12h11M9 17h11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span><span><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><text x="1" y="9" font-size="6" fill="currentColor">1</text><text x="1" y="15" font-size="6" fill="currentColor">2</text><path d="M9 7h11M9 12h11M9 17h11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span><span class="rte__sep"></span><span><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M9 8L5 12l4 4M5 12h9a5 5 0 0 1 0 10h-1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M15 8l4 4-4 4M19 12h-9a5 5 0 0 0 0 10h1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div><div class="rte__body">Décrivez la mission en quelques mots...</div></div>
+            </div>
+
+            <div>
+              <div class="grid-2">
+                <div>
+                  <label class="label" for="act1">Activité principale</label>
+                  <div class="select-wrap"><select class="select" id="act1"><option>Sélectionner une activité</option></select><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 13.17l4.95-4.95 1.41 1.42L12 16 5.64 9.64l1.41-1.42z"/></svg></div>
+                </div>
+                <div>
+                  <label class="label" for="act2">Activité secondaire</label>
+                  <div class="select-wrap"><select class="select" id="act2"><option>Sélectionner une activité</option></select><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 13.17l4.95-4.95 1.41 1.42L12 16 5.64 9.64l1.41-1.42z"/></svg></div>
+                </div>
+              </div>
+              <p class="info"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.5 2.5h-15c-1.1 0-2 .9-2 2v15c0 1.1.9 2 2 2h15c1.1 0 2-.9 2-2v-15c0-1.1-.9-2-2-2zM13 17h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>Nous vous suggérons automatiquement une activité adaptée au contenu de votre modèle de mission !</p>
+            </div>
+
+            <div>
+              <p class="label" id="minors-label">Les missions créées à partir de ce modèle peuvent-elles être ouvertes aux mineurs (à partir de 16 ans) ? <span class="req">*</span></p>
+              <div class="options options--2" role="radiogroup" aria-labelledby="minors-label" data-radiogroup>
+                <button type="button" class="option" role="radio" aria-checked="false"><svg class="option__check" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-.997-6l7.07-7.071-1.414-1.414-5.656 5.657-2.829-2.829-1.414 1.414L11.003 16z"/></svg><div class="option__inner"><div class="option__title">Oui</div><div class="option__desc">Le responsable de la mission peut choisir d’ouvrir la mission aux bénévoles mineurs (16 ans et plus)</div></div></button>
+                <button type="button" class="option" role="radio" aria-checked="false"><svg class="option__check" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-.997-6l7.07-7.071-1.414-1.414-5.656 5.657-2.829-2.829-1.414 1.414L11.003 16z"/></svg><div class="option__inner"><div class="option__title">Non</div><div class="option__desc">Les missions sont réservées aux bénévoles majeurs (18 ans et plus)</div></div></button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ NOUVEAU BLOC ============
+             Interrupteur BaseToggle (même composant que « Hors ligne ») qui
+             révèle les statuts autorisés. Multi-sélection en cases à cocher
+             (DsfrCheckboxGroup) plutôt qu'en tags : les tags sélectionnables
+             sont réservés aux filtres de recherche dans le produit. -->
+        <section class="box" aria-labelledby="access-title">
+          <h2 class="h3" id="access-title">Organisations autorisées à utiliser ce modèle</h2>
+          <div class="toggle">
+            <div class="toggle__col">
+              <button type="button" class="toggle__btn" role="switch" aria-checked="false" aria-labelledby="restrict-label" aria-controls="restrict" id="restrict-toggle"><span class="toggle__knob"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
+              <span class="toggle__state" id="restrict-state">Désactivé</span>
+            </div>
+            <label class="toggle__label" id="restrict-label" for="restrict-toggle">Restreindre à certains types d’organisation</label>
+          </div>
+
+          <div class="reveal" id="restrict" hidden>
+            <fieldset class="fieldset" id="statuts" aria-describedby="statuts-error">
+              <legend class="legend">Types d’organisations autorisés <span class="req">*</span></legend>
+              <div class="checks">
+                <label class="check"><input type="checkbox" name="statut" value="Association">Association</label>
+                <label class="check"><input type="checkbox" name="statut" value="Collectivité" id="cb-collectivite" aria-controls="collectivite-types">Collectivité territoriale</label>
+                <fieldset class="fieldset subgroup" id="collectivite-types" hidden>
+                  <legend class="legend">Types de collectivité</legend>
+                  <div class="checks">
+                    <label class="check"><input type="checkbox" name="ct" value="communes" checked>Commune (mairie)</label>
+                    <label class="check"><input type="checkbox" name="ct" value="CCAS ou CIAS" checked>CCAS ou CIAS</label>
+                    <label class="check"><input type="checkbox" name="ct" value="intercommunalités" checked>Intercommunalité</label>
+                    <label class="check"><input type="checkbox" name="ct" value="départements" checked>Département</label>
+                    <label class="check"><input type="checkbox" name="ct" value="régions" checked>Région</label>
+                    <label class="check"><input type="checkbox" name="ct" value="autres collectivités" checked>Autre collectivité</label>
+                  </div>
+                </fieldset>
+                <label class="check"><input type="checkbox" name="statut" value="Organisation publique">Organisation publique</label>
+                <label class="check"><input type="checkbox" name="statut" value="Organisation privée">Organisation privée</label>
+                <label class="check"><input type="checkbox" name="statut" value="Autre">Autre</label>
+              </div>
+              <p class="error" id="statuts-error" hidden><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M12 8v5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="16" r="1" fill="currentColor"/></svg>Cochez au moins un type d’organisation, ou désactivez la restriction.</p>
+            </fieldset>
+          </div>
+        </section>
+      </div>
+
+      <!-- ================= Colonne latérale (lg:col-span-2) ================= -->
+      <div class="col">
+        <section class="box box--sm">
+          <h2 class="h3">Paramètres</h2>
+          <div class="stack-8">
+            <div>
+              <div class="toggle">
+                <div class="toggle__col">
+                  <button type="button" class="toggle__btn" role="switch" aria-checked="false" aria-labelledby="pub-label" aria-describedby="pub-desc" id="pub"><span class="toggle__knob"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
+                  <span class="toggle__state" id="pub-state">Désactivé</span>
+                </div>
+                <label class="toggle__label" id="pub-label" for="pub">Hors ligne</label>
+              </div>
+              <p class="desc" id="pub-desc" style="margin:8px 0 0">Pour rendre le modèle accessible</p>
+            </div>
+            <div>
+              <label class="label" for="tags">Ajouter les tags liés à ce modèle de mission</label>
+              <div class="search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="6" stroke="currentColor" stroke-width="1.8"/><path d="M15 15l5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><input class="input" id="tags" placeholder="Recherche par mots clés..."></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="box">
+          <h2 class="h3 h3--mb4">Aide à la création de mission</h2>
+          <p class="muted-p">Indiquez la configuration la plus probable d’une mission utilisant ce modèle. Cela sera ajouté sous la forme de recommandation lors de la création de missions avec ce modèle.</p>
+          <p class="strong-p">Les missions de ce modèle seront-elles le plus souvent :</p>
+          <div class="stack-6" style="margin-top:24px">
+            <div>
+              <label class="label" for="reco1">Régulières ou ponctuelles ? <span class="req">*</span></label>
+              <div class="select-wrap"><select class="select" id="reco1"><option>Ça dépend</option><option>Ponctuelles</option><option>Régulières</option></select><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 13.17l4.95-4.95 1.41 1.42L12 16 5.64 9.64l1.41-1.42z"/></svg></div>
+            </div>
+            <div>
+              <label class="label" for="reco2">Sur place ou à distance ? <span class="req">*</span></label>
+              <div class="select-wrap"><select class="select" id="reco2"><option>Ça dépend</option><option>Sur place</option><option>À distance</option></select><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 13.17l4.95-4.95 1.41 1.42L12 16 5.64 9.64l1.41-1.42z"/></svg></div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Pied de page : fr-footer DSFR, contenu repris de components/layout/Footer.vue
+     (bloc marque, description, liens gouv, liens obligatoires). Les colonnes de
+     liens SEO de la prod (villes, organisations populaires) sont omises. -->
+<footer class="fr-footer" role="contentinfo" id="pied-de-page" tabindex="-1">
+  <div class="fr-container">
+    <div class="fr-footer__body">
+      <div class="fr-footer__brand fr-enlarge-link">
+        <a href="homepage.html" title="Accueil - JeVeuxAider.gouv.fr">
+          <p class="fr-logo">République<br>Française</p>
+        </a>
+      </div>
+      <div class="fr-footer__content">
+        <p class="fr-footer__content-desc">Trouvez une mission d'intérêt général auprès d'un organisme public ou associatif et faites vivre les valeurs de la République.</p>
+        <ul class="fr-footer__content-list">
+          <li class="fr-footer__content-item"><a class="fr-footer__content-link" target="_blank" rel="noopener" title="legifrance.gouv.fr - nouvelle fenêtre" href="https://legifrance.gouv.fr">legifrance.gouv.fr</a></li>
+          <li class="fr-footer__content-item"><a class="fr-footer__content-link" target="_blank" rel="noopener" title="gouvernement.fr - nouvelle fenêtre" href="https://gouvernement.fr">gouvernement.fr</a></li>
+          <li class="fr-footer__content-item"><a class="fr-footer__content-link" target="_blank" rel="noopener" title="service-public.fr - nouvelle fenêtre" href="https://service-public.fr">service-public.fr</a></li>
+          <li class="fr-footer__content-item"><a class="fr-footer__content-link" target="_blank" rel="noopener" title="data.gouv.fr - nouvelle fenêtre" href="https://www.data.gouv.fr">data.gouv.fr</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="fr-footer__bottom">
+      <ul class="fr-footer__bottom-list">
+        <li class="fr-footer__bottom-item"><a class="fr-footer__bottom-link" href="#">Accessibilité : totalement conforme</a></li>
+        <li class="fr-footer__bottom-item"><a class="fr-footer__bottom-link" href="#">Données personnelles</a></li>
+        <li class="fr-footer__bottom-item"><a class="fr-footer__bottom-link" href="#">Mentions légales</a></li>
+        <li class="fr-footer__bottom-item"><a class="fr-footer__bottom-link" href="#">CGU</a></li>
+        <li class="fr-footer__bottom-item"><a class="fr-footer__bottom-link" href="#">Plan du site</a></li>
+        <li class="fr-footer__bottom-item"><button type="button" class="fr-footer__bottom-link">Gestion des cookies</button></li>
+      </ul>
+      <div class="fr-footer__bottom-copy">
+        <p>Sauf mention contraire, tous les textes de ce site sont sous <a href="https://github.com/etalab/licence-ouverte/blob/master/LO.md" target="_blank" rel="noopener" title="licence etalab-2.0 - nouvelle fenêtre">licence etalab-2.0</a></p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" hidden>Modifications enregistrées</div>
+
+<script>
+  // Radios en cartes (BaseRoleRadioGroup)
+  function bindRadioGroup(group, onChange){
+    const opts = [...group.querySelectorAll('[role=radio]')];
+    opts.forEach(o => o.addEventListener('click', () => {
+      opts.forEach(x => x.setAttribute('aria-checked', x === o ? 'true' : 'false'));
+      onChange && onChange(o.dataset.value);
+    }));
+  }
+  document.querySelectorAll('[data-radiogroup]').forEach(g => bindRadioGroup(g));
+
+  // Toggle « Hors ligne / En ligne »
+  const pub = document.getElementById('pub');
+  pub.addEventListener('click', () => {
+    const on = pub.getAttribute('aria-checked') !== 'true';
+    pub.setAttribute('aria-checked', on);
+    document.getElementById('pub-state').textContent = on ? 'Activé' : 'Désactivé';
+    document.getElementById('pub-label').textContent = on ? 'En ligne' : 'Hors ligne';
+  });
+
+  // Barre d'actions épinglée (équivalent de composables/useStickyObserver) :
+  // la barre est « pinned » dès que la sentinelle placée juste au-dessus sort
+  // de l'écran.
+  const sticky = document.getElementById('header-sticky');
+  new IntersectionObserver(([e]) => sticky.classList.toggle('is-pinned', !e.isIntersecting))
+    .observe(document.getElementById('sticky-sentinel'));
+
+  // ---------- Nouveau bloc ----------
+  const restrict = document.getElementById('restrict');
+  const statuts = document.getElementById('statuts');
+  const err = document.getElementById('statuts-error');
+  const cbColl = document.getElementById('cb-collectivite');
+  const ctGroup = document.getElementById('collectivite-types');
+  const ctBoxes = [...ctGroup.querySelectorAll('input')];
+  let mode = 'all';
+
+  // Filtre sur .checked et pas sur :checked : Chromium exclut de :checked une
+  // case en état indeterminate (cas « Collectivité » partiellement cochée).
+  function checkedStatuts(){ return [...statuts.querySelectorAll('input[name=statut]')].filter(i => i.checked).map(i => i.value); }
+
+  function render(){
+    restrict.hidden = mode !== 'some';
+    ctGroup.hidden = !cbColl.checked;
+    const n = ctBoxes.filter(b => b.checked).length;
+    cbColl.indeterminate = cbColl.checked && n > 0 && n < ctBoxes.length;
+  }
+
+  const rt = document.getElementById('restrict-toggle');
+  rt.addEventListener('click', () => {
+    const on = rt.getAttribute('aria-checked') !== 'true';
+    rt.setAttribute('aria-checked', on);
+    document.getElementById('restrict-state').textContent = on ? 'Activé' : 'Désactivé';
+    mode = on ? 'some' : 'all'; clearError(); render();
+  });
+
+  statuts.addEventListener('change', e => {
+    const t = e.target;
+    if (t === cbColl){
+      // Cocher le parent = tous les types ; le décocher = aucun.
+      ctBoxes.forEach(b => b.checked = cbColl.checked);
+    } else if (t.name === 'ct'){
+      const n = ctBoxes.filter(b => b.checked).length;
+      cbColl.checked = n > 0; // plus aucun type = collectivités exclues
+    }
+    if (checkedStatuts().length) clearError();
+    render();
+  });
+
+  function clearError(){ err.hidden = true; statuts.classList.remove('has-error'); statuts.removeAttribute('aria-invalid'); }
+
+  document.querySelectorAll('[data-submit]').forEach(b => b.addEventListener('click', () => {
+    if (mode === 'some' && !checkedStatuts().length){
+      err.hidden = false; statuts.classList.add('has-error'); statuts.setAttribute('aria-invalid', 'true');
+      statuts.scrollIntoView({behavior:'smooth', block:'center'});
+      statuts.querySelector('input').focus({preventScroll:true});
+      return;
+    }
+    const t = document.getElementById('toast'); t.hidden = false; setTimeout(() => t.hidden = true, 2500);
+  }));
+
+  render();
+</script>
+</body>
+</html>

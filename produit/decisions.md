@@ -35,3 +35,14 @@ sur Figma. En prod, `Terminée` tombe encore dans le badge rose par défaut (pas
 de `case` dans `components/ui/BadgeState.vue`) ; le correctif reste à faire
 côté app. Voir `design-system/composants/uibadgestate.html` et
 `prototypes/missions-responsable.html`.
+
+## Support et modération
+
+**04/11/2026 — Le bouton qui confirme une action irréversible nomme l'action.**
+« Fusionner les doublons », pas « Confirmer » ni « Valider », sur la page et
+dans la modale de confirmation. Exemple :
+`prototypes/fusion-doublons-organisations.html`.
+
+**04/11/2026 — Date de création d'une organisation sans l'heure.** « Créée le
+4 mars 2021 » : l'heure n'aide pas à départager des doublons. Exemple :
+`prototypes/fusion-doublons-organisations.html`.

@@ -1,0 +1,715 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Prototype — Fusion des doublons d'organisations (support)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>document.documentElement.setAttribute("data-fr-theme", matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");</script>
+<style>
+  /* Cascade layers — voir design-system/GUIDE-PROTOTYPAGE.md. Ordre : reset
+     Tailwind < dsfr-base < utilitaires Tailwind < patches < nos styles (hors
+     couche, toujours gagnants). */
+  @import url("../design-system/compiled-reset.css") layer(tailwind-reset);
+  @import url("../design-system/dsfr.min.css") layer(dsfr-base);
+  @import url("../design-system/compiled.css") layer(dsfr-utilitaires);
+  @import url("../design-system/patches.css") layer(site-patches);
+
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font-family:Marianne,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--background-warm-neutral);color:var(--text-default-grey);font-synthesis:none}
+  a{color:inherit}
+  button{font-family:inherit}
+  svg.ri{fill:currentColor;flex:none}
+  [hidden]{display:none !important}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+  /* Sources de ce prototype
+     - Maquettes Figma « Admin - Statistiques » (P0g4Dw8nQMoiVpFBiG07fD) :
+       liste 1860:23992, doublon ouvert 1860:26529, page de fusion 1860:28104,
+       modale 1868:26951, page de confirmation 1869:25112.
+     - Page réelle (version actuelle, sans fusion) :
+       pages/support/contents/doublons-organisations.vue + layout support.vue,
+       features/support/components/DoublonOrganisationListItem.vue,
+       components/menu/SidebarSupportMenu.vue (+ others/SidebarMenuItem.vue).
+     - Le transfert lui-même existe déjà, en version manuelle :
+       pages/support/actions/transfert-organisation.vue (BaseAlertDialog +
+       toast « Le transfert a été effectué ! »). Ce prototype en est la
+       version guidée depuis la liste des doublons.
+     - Composants repris d'autres prototypes du dépôt : en-tête connecté
+       (missions-responsable.html), BaseAlertDialog + Toaster sonner
+       (messagerie-tout-marquer-lu.html), DsfrButton (components/dsfr/Button.vue :
+       sm px-3 py-1 min-h 34 / md px-4 py-2 min-h 42 / lg px-6 py-2 text-lg
+       min-h 48), DsfrBadge type error (components/dsfr/Badge.vue),
+       DsfrCheckboxBoolean (components/dsfr/CheckboxBoolean.vue),
+       DsfrPagination (classes fr-pagination réelles). */
+
+  /* ---------- header (copie de missions-responsable.html) ----------
+     Variante Figma de l'espace support : nav Tableau de bord / Organisations /
+     Missions / Participations / Utilisateurs, puis à droite Administration
+     et Support (actif). Profil « Caro, Modérateur ». */
+  .jva-header{background:var(--background-default-grey);box-shadow:0 2px 3px rgba(0,0,18,.16);position:relative;z-index:30}
+  .jva-header__row{max-width:1440px;margin:0 auto;display:flex;align-items:center;gap:24px;padding:12px 24px;flex-wrap:wrap;border-bottom:1px solid var(--border-default-grey)}
+  @media (min-width:1024px){.jva-header__row{gap:40px;padding:12px 120px 12px 104px;flex-wrap:nowrap}}
+  .jva-header__brand{display:flex;align-items:center;gap:16px;flex:none}
+  .jva-header__rf{height:48px;width:auto;flex:none}
+  .jva-header__logo{height:40px;width:auto;flex:none}
+  .jva-header__tools{display:flex;align-items:center;gap:16px;flex:1 1 auto;justify-content:flex-end;flex-wrap:wrap}
+  @media (min-width:1024px){.jva-header__tools{gap:24px}}
+  .jva-header__quick{display:flex;align-items:center;gap:8px}
+  .jva-header__tool-link{display:inline-flex;align-items:center;gap:8px;padding:4px 12px 4px 8px;font-size:14px;font-weight:500;line-height:24px;color:var(--text-action-high-blue-france);text-decoration:none;background-image:none;white-space:nowrap}
+  .jva-header__tool-link:hover{background:var(--background-default-grey-hover)}
+  .jva-header__icon-btn{position:relative;display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border:none;background:none;color:var(--text-action-high-blue-france);cursor:pointer;padding:0}
+  .jva-header__icon-btn:hover{background:var(--background-default-grey-hover)}
+  .jva-header__count{position:absolute;top:-4px;right:-4px;min-width:16px;height:16px;border-radius:72px;background:var(--red-marianne-425-625-hover);color:var(--text-inverted-grey);font-size:8px;font-weight:700;line-height:16px;text-align:center}
+  .jva-header__profile{display:inline-flex;align-items:center;gap:12px;border:none;background:none;cursor:pointer;padding:0;font-family:inherit;color:var(--text-title-grey)}
+  .jva-header__avatar{width:40px;height:40px;border-radius:50%;background:var(--background-action-high-blue-france);color:var(--text-inverted-blue-france);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500;flex:none}
+  .jva-header__profile-text{display:flex;flex-direction:column;align-items:flex-start;font-size:14px;line-height:20px}
+  .jva-header__profile-text strong{color:var(--text-title-grey);font-weight:700}
+  .jva-header__profile-text span{color:var(--text-mention-grey)}
+  .jva-header__menu{max-width:1440px;margin:0 auto;padding:0 24px}
+  @media (min-width:1024px){.jva-header__menu{padding:0 104px}}
+  .jva-header__menu .fr-nav__list{overflow-x:auto}
+  .jva-header__menu .fr-nav__item--end{margin-left:auto}
+  .jva-header__menu .fr-nav__link{display:inline-flex;align-items:center;gap:8px}
+
+  /* ---------- layout support (layouts/support.vue) ----------
+     Figma : contenu 1200px (120px de marge à 1440), menu latéral 282px,
+     24px de gouttière, zone de contenu 894px. */
+  .page{max-width:1440px;margin:0 auto;padding:32px 24px 80px}
+  @media (min-width:1024px){.page{padding:32px 120px 80px}}
+  .fr-breadcrumb{margin:0 0 40px}
+  .layout{display:grid;grid-template-columns:1fr;gap:24px}
+  @media (min-width:1024px){.layout{grid-template-columns:282px minmax(0,1fr)}}
+  .aside{display:none}
+  @media (min-width:1024px){.aside{display:block}}
+
+  /* Menu latéral (SidebarMenuSection + SidebarMenuItem). Tailles Figma
+     (16px) plutôt que le text-sm du code actuel. Figma retire aussi l'entrée
+     « Transfert organisation », remplacée par ce parcours. */
+  .side-menu{position:sticky;top:32px;display:flex;flex-direction:column;gap:8px}
+  .side-menu h3{margin:0;padding:12px 0;font-size:16px;line-height:24px;font-weight:700;color:var(--text-title-grey)}
+  .side-menu ul{list-style:none;margin:0;padding:0 0 16px}
+  .side-menu a{display:flex;align-items:center;padding:12px 0;font-size:16px;line-height:24px;font-weight:500;color:var(--text-mention-grey);text-decoration:none;background-image:none}
+  .side-menu a span{padding:0 0 0 0;border-left:2px solid transparent}
+  .side-menu a:hover{color:var(--text-title-grey);background:var(--background-default-grey-hover)}
+  .side-menu a[aria-current="page"]{color:var(--text-active-blue-france)}
+  .side-menu a[aria-current="page"] span{border-left-color:var(--border-active-blue-france);padding-left:8px}
+
+  /* ---------- en-tête de page (BaseSectionHeading) ---------- */
+  .page-header{margin:0 0 40px}
+  .page-header h1{margin:0;font-size:40px;line-height:48px;font-weight:700;color:var(--text-title-grey)}
+  .page-header h1:focus{outline:none}
+  .page-header p{margin:8px 0 0;font-size:20px;line-height:28px;color:var(--text-mention-grey)}
+  @media (max-width:767.98px){.page-header h1{font-size:32px;line-height:40px}.page-header p{font-size:18px}}
+
+  /* ---------- recherche (DsfrInput size lg, icône RiSearchLine) ---------- */
+  .search{display:flex;align-items:center;gap:6px;padding:8px 16px;background:var(--background-contrast-grey);border-radius:4px 4px 0 0;box-shadow:inset 0 -2px 0 0 var(--border-plain-grey);margin-bottom:32px}
+  .search input{flex:1;min-width:0;border:none;outline:none;background:none;font-size:16px;line-height:24px;color:var(--text-title-grey);font-family:inherit}
+  .search input::placeholder{color:var(--text-mention-grey);font-style:italic}
+  .search svg{width:16px;height:16px;color:var(--text-action-high-blue-france)}
+  .search:focus-within{outline:2px solid #0a76f6;outline-offset:2px}
+
+  .results-count{margin:0 0 16px;font-size:16px;line-height:24px;color:var(--text-mention-grey)}
+
+  /* ---------- liste des doublons (DoublonOrganisationListItem) ---------- */
+  .doublons{list-style:none;margin:0;padding:0;box-shadow:0 4px 6px rgba(0,0,18,.16)}
+  .doublon{background:var(--background-default-grey);border-bottom:1px solid var(--border-default-grey)}
+  .doublon:last-child{border-bottom:none}
+  .doublon__toggle{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:24px;width:100%;padding:16px 24px;cursor:pointer}
+  .doublon__toggle:hover{background:var(--background-default-grey-hover)}
+  .doublon__toggle:focus-visible{outline:2px solid #0a76f6;outline-offset:-2px}
+  .doublon__name{flex:1;min-width:0;font-size:18px;line-height:28px;font-weight:700;color:var(--text-title-grey)}
+  .doublon__count{display:inline-flex;align-items:center;gap:4px;font-size:16px;line-height:24px;font-weight:500;color:var(--text-action-high-blue-france);white-space:nowrap}
+  .doublon__count svg{width:16px;height:16px}
+  .doublon__panel{display:flex;flex-direction:column;align-items:flex-end;gap:24px;padding:0 24px 16px}
+  .doublon__items{display:flex;flex-direction:column;gap:8px;width:100%}
+
+  /* Carte d'occurrence (Figma « Doublon Item Orga ») */
+  .orga{background:var(--background-alt-grey);padding:16px;display:flex;flex-direction:column;gap:16px}
+  .orga__main{display:flex;align-items:center;gap:24px}
+  .orga__info{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
+  .orga__name-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .orga__name{margin:0;font-size:16px;line-height:24px;font-weight:500;color:var(--text-title-grey)}
+  .orga__meta{margin:0;font-size:14px;line-height:24px;color:var(--text-mention-grey)}
+  .orga__actions{display:flex;gap:8px;flex:none}
+  .orga__stats{border-top:1px solid var(--border-default-grey);padding-top:16px}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none}
+  .tag{display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border-radius:16px;background:var(--background-contrast-grey);color:var(--text-label-grey);font-size:14px;line-height:24px;white-space:nowrap}
+  @media (max-width:639.98px){.orga__main{flex-direction:column;align-items:stretch;gap:16px}.orga__actions{flex-wrap:wrap}}
+
+  /* DsfrBadge type error + icône */
+  .badge{display:inline-flex;align-items:center;gap:4px;padding:0 6px;border-radius:4px;font-size:12px;line-height:20px;font-weight:700;text-transform:uppercase;white-space:nowrap}
+  .badge svg{width:12px;height:12px}
+  .badge--error{color:var(--text-default-error);background:var(--background-contrast-error)}
+
+  /* ---------- DsfrButton ---------- */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;font-weight:500;cursor:pointer;text-decoration:none;background-image:none;white-space:nowrap;transition:background-color .15s ease-out}
+  .btn:focus-visible{outline:2px solid #0a76f6;outline-offset:2px}
+  .btn svg{width:16px;height:16px}
+  /* dsfr.min.css ajoute une icône « lien externe » à tout [target=_blank] :
+     pas voulue sur les boutons « Détails » (l'œil suffit). */
+  .btn[target=_blank]::after{content:none}
+  .btn--sm{padding:4px 12px;font-size:14px;line-height:24px;min-height:32px}
+  .btn--sm.btn--icon-left{padding-left:8px}
+  .btn--md{padding:8px 16px;font-size:16px;line-height:24px;min-height:40px}
+  .btn--md-lg{padding:8px 16px;font-size:18px;line-height:28px;min-height:44px}
+  .btn--lg{padding:10px 24px;font-size:18px;line-height:28px;min-height:48px}
+  .btn--primary{background:var(--background-action-high-blue-france);color:var(--text-inverted-blue-france)}
+  .btn--primary:hover{background:var(--background-action-high-blue-france-hover)}
+  .btn--primary:active{background:var(--background-action-high-blue-france-active)}
+  .btn--primary:disabled{background:var(--background-disabled-grey);color:var(--text-disabled-grey);cursor:not-allowed}
+  .btn--secondary{background:transparent;color:var(--text-action-high-blue-france);box-shadow:inset 0 0 0 1px var(--border-action-high-blue-france)}
+  .btn--secondary:hover{background:var(--background-default-grey-hover)}
+  .btn--secondary:active{background:var(--background-default-grey-active)}
+  .btn--tertiary{background:var(--background-default-grey);color:var(--text-action-high-blue-france);box-shadow:inset 0 0 0 1px var(--border-default-grey)}
+  .btn--tertiary:hover{background:var(--background-default-grey-hover)}
+  .btn--tertiary:active{background:var(--background-default-grey-active)}
+  .btn--tertiary-no-outline{background:transparent;color:var(--text-action-high-blue-france)}
+  .btn--tertiary-no-outline:hover{background:var(--background-default-grey-hover)}
+
+  /* ---------- pagination (DsfrPagination) ---------- */
+  .fr-pagination__link[aria-current]{color:var(--text-inverted-blue-france)}
+  .fr-pagination__link:not([aria-current]):not([href]){color:var(--text-disabled-grey)}
+  .pagination-row{display:flex;justify-content:center;margin-top:32px}
+
+  /* ---------- page de fusion / confirmation ---------- */
+  .card{background:var(--background-default-grey);box-shadow:0 4px 6px rgba(0,0,18,.16);padding:40px;display:flex;flex-direction:column;align-items:center;gap:32px}
+  @media (max-width:767.98px){.card{padding:24px 16px}}
+  .section{width:100%;display:flex;flex-direction:column;gap:16px}
+  .section__head h2{margin:0;font-size:22px;line-height:28px;font-weight:700;color:var(--text-title-grey)}
+  .section__head p{margin:8px 0 0;font-size:14px;line-height:24px;color:var(--text-mention-grey)}
+  .section__list{display:flex;flex-direction:column;gap:8px}
+  .transfer-arrow{display:flex;align-items:center;gap:8px;margin:0;font-size:22px;line-height:28px;font-weight:700;color:var(--text-mention-grey)}
+  .transfer-arrow svg{width:32px;height:32px}
+  .actions{width:100%;display:flex;justify-content:flex-end;gap:16px;flex-wrap:wrap}
+  @media (max-width:639.98px){.actions{flex-direction:column-reverse}.actions .btn{width:100%}}
+  .success-head{width:100%}
+  .success-head h2{margin:0;font-size:28px;line-height:36px;font-weight:700;color:var(--text-title-grey)}
+  .success-head h2:focus{outline:none}
+  .success-head p{margin:16px 0 0;font-size:16px;line-height:24px;color:var(--text-title-grey)}
+
+  /* ---------- BaseAlertDialog (doc : basealertdialog.html) ----------
+     Mise en page Figma : 792px, « Fermer » en haut à droite, contenu 32px
+     entre blocs, zone d'action séparée par une bordure, boutons à droite. */
+  .modal{position:fixed;inset:0;z-index:70;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(22,22,22,.64)}
+  .modal__box{width:100%;max-width:792px;max-height:calc(100vh - 32px);display:flex;flex-direction:column;background:var(--background-lifted-grey);box-shadow:0 6px 18px rgba(0,0,18,.16)}
+  .modal__scroll{overflow-y:auto;padding:16px 16px 32px}
+  .modal__close-row{display:flex;justify-content:flex-end}
+  .modal__content{display:flex;flex-direction:column;gap:32px;padding:16px 16px 0}
+  .modal__title{display:flex;align-items:center;gap:8px}
+  .modal__title svg{width:32px;height:32px;color:var(--text-title-grey)}
+  .modal__title h2{margin:0;font-size:24px;line-height:32px;font-weight:700;color:var(--text-title-grey)}
+  .modal__content p{margin:0;font-size:16px;line-height:24px;color:var(--text-title-grey)}
+  .modal__footer{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:16px;padding:32px;border-top:1px solid var(--border-default-grey)}
+  @media (max-width:639.98px){.modal{align-items:flex-end;padding:0}.modal__box{max-height:100vh}.modal__footer{padding:16px}}
+
+  /* Alerte d'avertissement. 🎨 Figma seulement : components/dsfr/Alert.vue
+     n'a que les variantes info et success (voir design-system/composants/
+     dsfralert.html). Couleurs Figma = orange terre battue 975 / 850, via
+     les tokens DSFR correspondants pour suivre le dark mode. */
+  .alert{display:flex;align-items:center;gap:16px;padding:24px;border:1px solid var(--border-action-low-orange-terre-battue);border-radius:4px;background:var(--background-alt-orange-terre-battue)}
+  .alert svg{width:32px;height:32px;color:var(--text-default-warning)}
+  .alert p{margin:0}
+
+  /* DsfrCheckboxBoolean : case 24px, bordure bleue, coins 4px */
+  .checkbox{display:flex;align-items:flex-start;gap:8px;cursor:pointer;font-size:16px;line-height:24px;color:var(--text-title-grey)}
+  .checkbox input{appearance:none;-webkit-appearance:none;margin:0;flex:none;width:24px;height:24px;border:1px solid var(--border-action-high-blue-france);border-radius:4px;background:var(--background-default-grey);cursor:pointer;display:grid;place-content:center}
+  .checkbox input:checked{background:var(--background-action-high-blue-france)}
+  .checkbox input:checked::after{content:"";width:12px;height:7px;border-left:2px solid var(--text-inverted-blue-france);border-bottom:2px solid var(--text-inverted-blue-france);transform:translateY(-2px) rotate(-45deg)}
+  .checkbox input:focus-visible{outline:2px solid #0a76f6;outline-offset:2px}
+
+  /* Choix de la destination (« Changer ») — Figma 1868:25083, DSFR
+     « Bouton radio riche - Groupe » : légende, cartes blanches bordées,
+     bordure bleue sur la carte cochée, radio 16px, badge info
+     « Recommandée » sur la plus ancienne, chiffres sous un séparateur
+     alignés sur le texte (décalage 28px). */
+  .choice-group{border:0;margin:0;padding:0;display:flex;flex-direction:column;gap:16px;min-width:0}
+  .choice-group legend{padding:0;margin:0 0 16px;font-size:16px;line-height:24px;color:var(--text-label-grey)}
+  .choice-list{display:flex;flex-direction:column;gap:16px}
+  .choice{display:flex;flex-direction:column;background:var(--background-default-grey);border:1px solid var(--border-default-grey);cursor:pointer}
+  .choice:hover{background:var(--background-default-grey-hover)}
+  .choice:has(input:checked){border-color:var(--border-active-blue-france)}
+  .choice:has(input:focus-visible){outline:2px solid #0a76f6;outline-offset:2px}
+  .choice__main{display:flex;align-items:flex-start;gap:12px;padding:12px 16px}
+  .choice__main .orga__info{flex:1;min-width:0}
+  .choice__main .orga__name-row{gap:4px}
+  .choice input{appearance:none;-webkit-appearance:none;margin:4px 0 0;width:16px;height:16px;flex:none;border-radius:50%;box-shadow:inset 0 0 0 1px var(--border-action-high-blue-france);background:var(--background-default-grey);cursor:pointer}
+  .choice input:checked{background:radial-gradient(circle,var(--background-active-blue-france) 0 4px,transparent 4.5px)}
+  .choice__stats{margin:0 16px;padding:16px 0 16px 28px;border-top:1px solid var(--border-default-grey)}
+  .badge--info{color:var(--text-default-info);background:var(--background-contrast-info)}
+  .modal__title--icon svg{color:var(--text-title-grey)}
+
+  /* ---------- Toaster sonner (Figma 1869:25923) ---------- */
+  /* Figma : sous la barre de navigation, aligné à droite du contenu. */
+  .toast{position:fixed;top:24px;right:16px;z-index:80;width:358px;max-width:calc(100% - 32px);display:flex;align-items:center;gap:8px;padding:24px 40px 24px 24px;background:var(--background-contrast-success);color:var(--text-default-success);box-shadow:0 6px 9px rgba(0,0,18,.16);font-size:14px;line-height:24px;font-weight:500}
+  @media (min-width:1024px){.toast{top:194px}}
+  .toast > svg{width:16px;height:16px}
+  .toast p{margin:0;flex:1}
+  .toast__close{position:absolute;top:8px;right:8px;width:16px;height:16px;padding:0;display:flex;align-items:center;justify-content:center;border:0;background:transparent;color:inherit;cursor:pointer}
+  .toast__close svg{width:16px;height:16px}
+</style>
+</head>
+<body>
+
+<header class="jva-header">
+  <div class="jva-header__row">
+    <div class="jva-header__brand">
+      <img src="ressources/rf.svg" alt="République Française" class="jva-header__rf">
+      <img src="ressources/jva_logohorizontal_bleu.svg" alt="JeVeuxAider.gouv.fr — Par la réserve civique" class="jva-header__logo">
+    </div>
+    <div class="jva-header__tools">
+      <div class="jva-header__quick">
+        <a href="#" class="jva-header__tool-link"><svg class="ri" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.031 16.617l4.283 4.282-1.415 1.415-4.282-4.283A8.96 8.96 0 0 1 11 20c-4.968 0-9-4.032-9-9s4.032-9 9-9 9 4.032 9 9a8.96 8.96 0 0 1-1.969 5.617zm-2.006-.742A6.977 6.977 0 0 0 18 11c0-3.868-3.133-7-7-7-3.868 0-7 3.132-7 7 0 3.867 3.132 7 7 7a6.977 6.977 0 0 0 4.875-1.975l.15-.15z"/></svg>Trouver une mission</a>
+        <button type="button" class="jva-header__icon-btn" aria-label="Messagerie"><svg class="ri" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.291 20.824L2 22l1.176-5.291A9.956 9.956 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10a9.956 9.956 0 0 1-4.709-1.176zm.29-2.113l.653.35A7.955 7.955 0 0 0 12 20a8 8 0 1 0-8-8c0 1.334.325 2.618.94 3.766l.349.653-.655 2.947 2.947-.655z"/></svg></button>
+        <button type="button" class="jva-header__icon-btn" aria-label="Notifications, 3 non lues"><svg class="ri" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 17h2v2H2v-2h2v-7a8 8 0 1 1 16 0v7zm-2 0v-7a6 6 0 1 0-12 0v7h12zm-9 4h6v2H9v-2z"/></svg><span class="jva-header__count" aria-hidden="true">3</span></button>
+      </div>
+      <button type="button" class="jva-header__profile">
+        <span class="jva-header__avatar" aria-hidden="true">Ca</span>
+        <span class="jva-header__profile-text"><strong>Caro</strong><span>Modérateur</span></span>
+        <svg class="ri" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 13.172l4.95-4.95 1.414 1.414L12 16 5.636 9.636 7.05 8.222z"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="jva-header__menu">
+    <nav class="fr-nav" role="navigation" aria-label="Menu principal">
+      <ul class="fr-nav__list">
+        <li class="fr-nav__item"><a class="fr-nav__link" href="#">Tableau de bord</a></li>
+        <li class="fr-nav__item"><a class="fr-nav__link" href="#">Organisations</a></li>
+        <li class="fr-nav__item"><a class="fr-nav__link" href="#">Missions</a></li>
+        <li class="fr-nav__item"><a class="fr-nav__link" href="#">Participations</a></li>
+        <li class="fr-nav__item"><a class="fr-nav__link" href="#">Utilisateurs</a></li>
+        <li class="fr-nav__item fr-nav__item--end"><a class="fr-nav__link" href="#"><svg class="ri" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 14v2a6 6 0 0 0-6 6H4a8 8 0 0 1 8-8zm0-1c-3.315 0-6-2.685-6-6s2.685-6 6-6 6 2.685 6 6-2.685 6-6 6zm0-2c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm2.595 7.812a3.51 3.51 0 0 1 0-1.623l-.992-.573 1-1.732.992.573A3.496 3.496 0 0 1 17 14.645V13.5h2v1.145c.532.158 1.012.44 1.405.812l.992-.573 1 1.732-.992.573a3.51 3.51 0 0 1 0 1.622l.992.573-1 1.732-.992-.573a3.496 3.496 0 0 1-1.405.812V22.5h-2v-1.145a3.496 3.496 0 0 1-1.405-.812l-.992.573-1-1.732.992-.572zM18 19.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/></svg>Administration</a></li>
+        <li class="fr-nav__item"><a class="fr-nav__link" href="#liste" aria-current="page"><svg class="ri" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 8a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-1.062A8.001 8.001 0 0 1 12 23v-2a6 6 0 0 0 6-6V9A6 6 0 1 0 6 9v7H3a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h1.062a8.001 8.001 0 0 1 15.876 0H21zM7.76 15.785l1.06-1.696A5.972 5.972 0 0 0 12 15a5.972 5.972 0 0 0 3.18-.911l1.06 1.696A7.963 7.963 0 0 1 12 17a7.963 7.963 0 0 1-4.24-1.215z"/></svg>Support</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<div class="page">
+
+  <nav role="navigation" class="fr-breadcrumb" aria-label="Vous êtes ici :">
+    <div class="fr-collapse fr-collapse--expanded">
+      <ol class="fr-breadcrumb__list" id="breadcrumb"></ol>
+    </div>
+  </nav>
+
+  <div class="layout">
+    <aside class="aside">
+      <nav class="side-menu" role="navigation" aria-label="Menu de support">
+        <div><h3 id="sm-referents">Référents</h3><ul aria-labelledby="sm-referents"><li><a href="#"><span>Actions en attente</span></a></li><li><a href="#"><span>Logs des activités</span></a></li></ul></div>
+        <div><h3 id="sm-responsables">Responsables</h3><ul aria-labelledby="sm-responsables"><li><a href="#"><span>Participations à modérer</span></a></li><li><a href="#"><span>Missions périmées</span></a></li></ul></div>
+        <div><h3 id="sm-contenus">Contenus</h3><ul aria-labelledby="sm-contenus"><li><a href="#"><span>Doublons de territoires</span></a></li><li><a href="#liste" aria-current="page"><span>Doublons d’organisations</span></a></li></ul></div>
+        <div><h3 id="sm-actions">Actions</h3><ul aria-labelledby="sm-actions"><li><a href="#"><span>Réinitialisation mot de passe</span></a></li><li><a href="#"><span>Réinitialisation d’un utilisateur</span></a></li><li><a href="#"><span>Rechercher un utilisateur archivé</span></a></li></ul></div>
+      </nav>
+    </aside>
+
+    <main id="contenu" class="content">
+
+      <!-- ================= Vue 1 : liste des doublons ================= -->
+      <section id="view-list" aria-labelledby="h-list">
+        <div class="page-header">
+          <h1 id="h-list" tabindex="-1">Doublons d’organisations</h1>
+          <p>Organisations validées en double</p>
+        </div>
+
+        <div class="search">
+          <input type="search" id="search" placeholder="Recherche par mots clés..." aria-label="Rechercher une organisation en double">
+          <svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.031 16.617l4.283 4.282-1.415 1.415-4.282-4.283A8.96 8.96 0 0 1 11 20c-4.968 0-9-4.032-9-9s4.032-9 9-9 9 4.032 9 9a8.96 8.96 0 0 1-1.969 5.617zm-2.006-.742A6.977 6.977 0 0 0 18 11c0-3.868-3.133-7-7-7-3.868 0-7 3.132-7 7 0 3.867 3.132 7 7 7a6.977 6.977 0 0 0 4.875-1.975l.15-.15z"/></svg>
+        </div>
+
+        <p class="results-count" id="results-count" aria-live="polite"></p>
+        <ul class="doublons" id="doublons"></ul>
+
+        <div class="pagination-row" id="pagination">
+          <nav role="navigation" class="fr-pagination" aria-label="Pagination">
+            <ul class="fr-pagination__list">
+              <li><a class="fr-pagination__link fr-pagination__link--first" aria-disabled="true" role="link">Première page</a></li>
+              <li><a class="fr-pagination__link fr-pagination__link--prev fr-pagination__link--lg-label" aria-disabled="true" role="link">Précédent</a></li>
+              <li><a class="fr-pagination__link" aria-current="page" title="Page 1" href="#liste">1</a></li>
+              <li><a class="fr-pagination__link" title="Page 2" href="#liste">2</a></li>
+              <li><a class="fr-pagination__link" title="Page 3" href="#liste">3</a></li>
+              <li><a class="fr-pagination__link" title="Page 4" href="#liste">4</a></li>
+              <li><a class="fr-pagination__link" title="Page 5" href="#liste">5</a></li>
+              <li><a class="fr-pagination__link" title="Page 6" href="#liste">6</a></li>
+              <li><a class="fr-pagination__link" title="Page 7" href="#liste">7</a></li>
+              <li><a class="fr-pagination__link">…</a></li>
+              <li><a class="fr-pagination__link" title="Page 132" href="#liste">132</a></li>
+              <li><a class="fr-pagination__link fr-pagination__link--next fr-pagination__link--lg-label" title="Page suivante" href="#liste">Suivant</a></li>
+              <li><a class="fr-pagination__link fr-pagination__link--last" title="Dernière page" href="#liste">Dernière page</a></li>
+            </ul>
+          </nav>
+        </div>
+      </section>
+
+      <!-- ================= Vue 2 : page de fusion ================= -->
+      <section id="view-merge" aria-labelledby="h-merge" hidden>
+        <div class="page-header">
+          <h1 id="h-merge" tabindex="-1">Fusionner des doublons</h1>
+          <p>Transférer les responsables, missions et participations d’organisations vers une autre</p>
+        </div>
+        <div class="card">
+          <div class="section">
+            <div class="section__head">
+              <h2 id="merge-sources-title"></h2>
+              <p>Leurs responsables, missions et participations seront transférés vers l’organisation de destination.</p>
+            </div>
+            <div class="section__list" id="merge-sources"></div>
+          </div>
+          <p class="transfer-arrow">Transfert vers <svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 16.172l5.364-5.364 1.414 1.414L12 20l-7.778-7.778 1.414-1.414L11 16.172V4h2z"/></svg></p>
+          <div class="section">
+            <div class="section__head">
+              <h2>Organisation de destination</h2>
+              <p>Pour des questions de référencement dans les moteurs de recherche, nous vous conseillons de choisir l’organisation la plus ancienne.</p>
+            </div>
+            <div id="merge-target"></div>
+          </div>
+          <div class="actions">
+            <a href="#liste" class="btn btn--tertiary btn--lg">Retour à la liste</a>
+            <button type="button" class="btn btn--primary btn--lg" id="btn-validate">Fusionner les doublons</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= Vue 3 : confirmation ================= -->
+      <section id="view-done" aria-labelledby="h-done" hidden>
+        <div class="page-header">
+          <h1 id="h-done">Fusionner des doublons</h1>
+          <p>Transférer les responsables, missions et participations d’organisations vers une autre</p>
+        </div>
+        <div class="card">
+          <div class="success-head">
+            <h2 id="done-title" tabindex="-1"></h2>
+            <p>Les responsables ont reçu un e-mail les informant du transfert.</p>
+          </div>
+          <div class="section">
+            <div class="section__head"><h2 id="done-sources-title"></h2></div>
+            <div class="section__list" id="done-sources"></div>
+          </div>
+          <p class="transfer-arrow">Transférées vers <svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 16.172l5.364-5.364 1.414 1.414L12 20l-7.778-7.778 1.414-1.414L11 16.172V4h2z"/></svg></p>
+          <div class="section">
+            <div class="section__head"><h2>Organisation de destination</h2></div>
+            <div id="done-target"></div>
+          </div>
+          <div class="actions">
+            <a href="#liste" class="btn btn--tertiary btn--lg">Retour à la liste</a>
+            <button type="button" class="btn btn--secondary btn--lg" id="btn-next">Traiter le doublon suivant</button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- ================= Modale : confirmation de la fusion ================= -->
+<div class="modal" id="modal-confirm" role="dialog" aria-modal="true" aria-labelledby="confirm-title" hidden>
+  <div class="modal__box">
+    <div class="modal__scroll">
+      <div class="modal__close-row">
+        <button type="button" class="btn btn--tertiary-no-outline btn--sm" data-close>Fermer
+          <svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 10.6 4.95-4.96 1.4 1.4L13.42 12l4.96 4.95-1.4 1.4L12 13.42l-4.95 4.96-1.4-1.4L10.58 12 5.63 7.05l1.4-1.4z"/></svg>
+        </button>
+      </div>
+      <div class="modal__content">
+        <div class="modal__title">
+          <svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="M12.866 3l9.526 16.5a1 1 0 0 1-.866 1.5H2.474a1 1 0 0 1-.866-1.5L11.134 3a1 1 0 0 1 1.732 0zm-8.66 16h15.588L12 5.5 4.206 19zM11 16h2v2h-2v-2zm0-7h2v5h-2V9z"/></svg>
+          <h2 id="confirm-title"></h2>
+        </div>
+        <p id="confirm-intro"></p>
+        <p id="confirm-detail"></p>
+        <p><strong>Les organisations transférées seront désinscrites de la plateforme.</strong></p>
+        <div class="alert">
+          <svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="M12.866 3l9.526 16.5a1 1 0 0 1-.866 1.5H2.474a1 1 0 0 1-.866-1.5L11.134 3a1 1 0 0 1 1.732 0zm-8.66 16h15.588L12 5.5 4.206 19zM11 16h2v2h-2v-2zm0-7h2v5h-2V9z"/></svg>
+          <p><strong>Ce transfert est irréversible et ne peut être annulé.</strong><br>Assurez-vous d’avoir prévenu chacun des responsables et d’avoir obtenu leur accord.</p>
+        </div>
+        <label class="checkbox"><input type="checkbox" id="confirm-check"><span>Je confirme avoir informé les responsables des organisations concernées</span></label>
+      </div>
+    </div>
+    <div class="modal__footer">
+      <button type="button" class="btn btn--secondary btn--md" data-close>Annuler</button>
+      <button type="button" class="btn btn--primary btn--md" id="btn-confirm" disabled>Fusionner les doublons</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================= Modale : changer l'organisation de destination =================
+     Figma 1868:25083 « Page de fusion - Changer de destination ». -->
+<div class="modal" id="modal-target" role="dialog" aria-modal="true" aria-labelledby="target-title" hidden>
+  <div class="modal__box">
+    <div class="modal__scroll">
+      <div class="modal__close-row">
+        <button type="button" class="btn btn--tertiary-no-outline btn--sm" data-close>Fermer
+          <svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 10.6 4.95-4.96 1.4 1.4L13.42 12l4.96 4.95-1.4 1.4L12 13.42l-4.95 4.96-1.4-1.4L10.58 12 5.63 7.05l1.4-1.4z"/></svg>
+        </button>
+      </div>
+      <div class="modal__content">
+        <div class="modal__title">
+          <svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="M11.95 7.95l-1.414 1.414L8 6.828 8 20H6V6.828L3.465 9.364 2.05 7.95 7 3l4.95 4.95zm10 8.1L17 21l-4.95-4.95 1.414-1.414 2.537 2.536L16 4h2v13.172l2.536-2.536 1.414 1.414z"/></svg>
+          <h2 id="target-title">Choisir l’organisation de destination</h2>
+        </div>
+        <fieldset class="choice-group">
+          <legend>Quelle organisation va récupérer les responsables, missions et participations des autres&nbsp;?</legend>
+          <div class="choice-list" id="target-choices"></div>
+        </fieldset>
+      </div>
+    </div>
+    <div class="modal__footer">
+      <button type="button" class="btn btn--secondary btn--md" data-close>Annuler</button>
+      <button type="button" class="btn btn--primary btn--md" id="btn-target">Choisir cette organisation</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden>
+  <svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-.997-6 7.07-7.071-1.414-1.414-5.656 5.657-2.829-2.829-1.414 1.414L11.003 16z"/></svg>
+  <p>La fusion a bien été effectuée</p>
+  <button type="button" class="toast__close" id="toast-close" aria-label="Fermer la notification">
+    <svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 10.6 4.95-4.96 1.4 1.4L13.42 12l4.96 4.95-1.4 1.4L12 13.42l-4.95 4.96-1.4-1.4L10.58 12 5.63 7.05l1.4-1.4z"/></svg>
+  </button>
+</div>
+
+<script>
+  var $ = function (id) { return document.getElementById(id); };
+  var ICON = {
+    right: '<svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="M13.172 12l-4.95-4.95 1.414-1.414L16 12l-6.364 6.364-1.414-1.414z"/></svg>',
+    down: '<svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 13.172l4.95-4.95 1.414 1.414L12 16 5.636 9.636 7.05 8.222z"/></svg>',
+    eye: '<svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="M1.181 12C2.121 6.88 6.608 3 12 3c5.392 0 9.878 3.88 10.819 9-.94 5.12-5.427 9-10.819 9-5.392 0-9.878-3.88-10.819-9zM12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0-2a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/></svg>',
+    swap: '<svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="M11.95 7.95l-1.414 1.414L8 6.828 8 20H6V6.828L3.465 9.364 2.05 7.95 7 3l4.95 4.95zm10 8.1L17 21l-4.95-4.95 1.414-1.414 2.537 2.536L16 4h2v13.172l2.536-2.536 1.414 1.414z"/></svg>',
+    error: '<svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-11.414L9.172 7.757 7.757 9.172 10.586 12l-2.829 2.828 1.415 1.415L12 13.414l2.828 2.829 1.415-1.415L13.414 12l2.829-2.828-1.415-1.415L12 10.586z"/></svg>'
+  };
+  var MOIS = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+
+  // ---------- Données fictives ----------
+  // 100% Handinamique : données exactes de la maquette Figma. Les autres
+  // doublons sont générés (2 occurrences chacun), de façon stable.
+  var TOTAL = 395;
+  var NAMES = ['ABC Formation','Accorderie du Genevois','ACEL de Trappes','Action Contre La Faim','Action Femmes Grand Sud','Actions 56','Actisce','Adapah 55 - Amaelles','Adapei 07','Adef Résidences','ADMR','Afef Toulouse','AFTC 13','Agirabdc','Agir pour l’Environnement'];
+  var CITIES = ['Paris 75011','Annemasse 74100','Trappes 78190','Lyon 69007','Marseille 13001','Vannes 56000','Rennes 35000','Bar-le-Duc 55000','Privas 07000','Cachan 94230','Nantes 44000','Toulouse 31000','Aix-en-Provence 13100','Bordeaux 33000','Lille 59000'];
+
+  var doublons = [{
+    name: '100% Handinamique',
+    occ: [
+      { id: 8743, date: [2021, 2, 4], rna: 'W123456789', siret: '775 688 732', city: 'Pantin 93500', resp: 1, missions: 5, parts: 43 },
+      { id: 11700, date: [2023, 9, 27], rna: 'NC', siret: 'NC', city: 'Pantin 93500', resp: 2, missions: 13, parts: 156 },
+      { id: 12261, date: [2025, 1, 15], rna: 'W123456789', siret: 'NC', city: 'Pantin 93500', resp: 2, missions: 13, parts: 156 }
+    ]
+  }];
+  NAMES.forEach(function (name, i) {
+    var a = 3000 + i * 617, b = 10400 + i * 389;
+    var rna = 'W' + (561000000 + i * 1234567);
+    doublons.push({ name: name, occ: [
+      { id: a, date: [2019 + (i % 4), i % 12, 3 + i], rna: rna, siret: (300 + i * 7) + ' 412 ' + (100 + i * 3), city: CITIES[i], resp: 1 + (i % 3), missions: 2 + (i * 5) % 17, parts: 12 + (i * 37) % 210 },
+      { id: b, date: [2023 + (i % 3), (i + 5) % 12, 8 + i], rna: i % 2 ? rna : 'NC', siret: 'NC', city: CITIES[i], resp: 1, missions: 1 + (i * 3) % 6, parts: (i * 11) % 40 }
+    ]});
+  });
+  doublons.forEach(function (d) {
+    d.target = oldest(d.occ).id; // conseil Figma : la plus ancienne par défaut
+  });
+
+  var state = { open: 0, query: '', current: null, pendingTarget: null, done: null };
+
+  // ---------- Utilitaires ----------
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function ts(o) { return o.date[0] * 10000 + o.date[1] * 100 + o.date[2]; }
+  function oldest(list) { return list.slice().sort(function (x, y) { return ts(x) - ts(y); })[0]; }
+  function fmtDate(o) { return o.date[2] + (o.date[2] === 1 ? 'er' : '') + ' ' + MOIS[o.date[1]] + ' ' + o.date[0]; }
+  function tagsRow(o) { return '<ul class="tags"><li class="tag">RNA ' + esc(o.rna) + '</li><li class="tag">SIRET ' + esc(o.siret) + '</li><li class="tag">' + esc(o.city) + '</li></ul>'; }
+  function statsRow(s) {
+    return '<ul class="tags"><li class="tag">👤 ' + plural(s.resp, 'responsable') + '</li>' +
+      '<li class="tag">📋 ' + plural(s.missions, 'mission') + '</li>' +
+      '<li class="tag">🤝 ' + plural(s.parts, 'participation') + '</li></ul>';
+  }
+  function plural(n, s, p) { return fmtNum(n) + ' ' + (n > 1 ? (p || s + 's') : s); }
+  function fmtNum(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' '); }
+  function ids(list) {
+    var t = list.map(function (o) { return '<strong>#' + o.id + '</strong>'; });
+    return t.length === 1 ? t[0] : t.slice(0, -1).join(', ') + ' et ' + t[t.length - 1];
+  }
+  function byId(d, id) { return d.occ.filter(function (o) { return o.id === id; })[0]; }
+  function sources(d) { return d.occ.filter(function (o) { return o.id !== d.target; }).sort(function (x, y) { return ts(x) - ts(y); }); }
+
+  // Carte d'occurrence. opts : { stats, change, unsubscribed, stats override }
+  function orgaCard(d, o, opts) {
+    opts = opts || {};
+    var s = opts.totals || o;
+    return '<div class="orga">' +
+      '<div class="orga__main">' +
+        '<div class="orga__info">' +
+          '<div><div class="orga__name-row"><p class="orga__name">' + esc(d.name) + '</p>' +
+            (opts.unsubscribed ? '<span class="badge badge--error">' + ICON.error + 'Désinscrite</span>' : '') +
+          '</div><p class="orga__meta">#' + o.id + ' · Créée le ' + fmtDate(o) + '</p></div>' +
+          tagsRow(o) +
+        '</div>' +
+        '<div class="orga__actions">' +
+          '<a class="btn btn--tertiary btn--sm btn--icon-left" href="#" target="_blank" rel="noopener" aria-label="Détails de l’organisation #' + o.id + ' (nouvel onglet)">' + ICON.eye + 'Détails</a>' +
+          (opts.change ? '<button type="button" class="btn btn--tertiary btn--sm btn--icon-left" id="btn-change">' + ICON.swap + 'Changer</button>' : '') +
+        '</div>' +
+      '</div>' +
+      (opts.stats ? '<div class="orga__stats">' + statsRow(s) + '</div>' : '') +
+    '</div>';
+  }
+
+  // ---------- Vue liste ----------
+  function renderList() {
+    var q = state.query.trim().toLowerCase();
+    var visible = doublons.filter(function (d) { return !q || d.name.toLowerCase().indexOf(q) !== -1; });
+    $('results-count').textContent = q ? plural(visible.length, 'résultat') : plural(TOTAL, 'résultat');
+    $('pagination').hidden = !!q;
+    $('doublons').innerHTML = visible.map(function (d) {
+      var i = doublons.indexOf(d), open = state.open === i;
+      return '<li class="doublon">' +
+        '<button type="button" class="doublon__toggle" aria-expanded="' + open + '" aria-controls="panel-' + i + '" data-i="' + i + '">' +
+          '<span class="doublon__name">' + esc(d.name) + '</span>' +
+          '<span class="doublon__count">' + plural(d.occ.length, 'occurrence') + (open ? ICON.down : ICON.right) + '</span>' +
+        '</button>' +
+        (open ? '<div class="doublon__panel" id="panel-' + i + '">' +
+          '<div class="doublon__items">' + d.occ.slice().sort(function (x, y) { return ts(x) - ts(y); }).map(function (o) { return orgaCard(d, o); }).join('') + '</div>' +
+          '<a class="btn btn--secondary btn--md-lg" href="#fusion/' + i + '">Fusionner ces doublons</a>' +
+        '</div>' : '') +
+      '</li>';
+    }).join('') || '<li class="doublon" style="padding:24px;color:var(--text-mention-grey)">Aucune organisation en double ne correspond à votre recherche.</li>';
+  }
+  $('doublons').addEventListener('click', function (e) {
+    var t = e.target.closest('.doublon__toggle');
+    if (!t) return;
+    var i = Number(t.dataset.i);
+    state.open = state.open === i ? null : i;
+    renderList();
+    var again = document.querySelector('.doublon__toggle[data-i="' + i + '"]');
+    if (again) again.focus();
+  });
+  $('search').addEventListener('input', function (e) { state.query = e.target.value; renderList(); });
+
+  // ---------- Vue fusion ----------
+  function renderMerge() {
+    var d = doublons[state.current], src = sources(d);
+    $('merge-sources-title').textContent = src.length > 1 ? src.length + ' organisations vont être transférées' : '1 organisation va être transférée';
+    $('merge-sources').innerHTML = src.map(function (o) { return orgaCard(d, o, { stats: true }); }).join('');
+    $('merge-target').innerHTML = orgaCard(d, byId(d, d.target), { stats: true, change: true });
+    $('btn-change').addEventListener('click', openTargetModal);
+  }
+
+  // Choix de la destination
+  function openTargetModal() {
+    var d = doublons[state.current], old = oldest(d.occ).id;
+    state.pendingTarget = d.target;
+    $('target-choices').innerHTML = d.occ.slice().sort(function (x, y) { return ts(x) - ts(y); }).map(function (o) {
+      return '<label class="choice">' +
+        '<span class="choice__main"><input type="radio" name="target" value="' + o.id + '"' + (o.id === d.target ? ' checked' : '') + '>' +
+          '<span class="orga__info">' +
+            '<span><span class="orga__name-row"><span class="orga__name">' + esc(d.name) + '</span>' +
+              (o.id === old ? '<span class="badge badge--info">Recommandée</span>' : '') + '</span>' +
+            '<span class="orga__meta" style="display:block">#' + o.id + ' · Créée le ' + fmtDate(o) + '</span></span>' +
+            tagsRow(o) +
+          '</span></span>' +
+        '<span class="choice__stats">' + statsRow(o) + '</span>' +
+      '</label>';
+    }).join('');
+    openModal('modal-target');
+  }
+  $('btn-target').addEventListener('click', function () {
+    var c = document.querySelector('input[name="target"]:checked');
+    doublons[state.current].target = Number(c.value);
+    closeModal();
+    renderMerge();
+    $('btn-change').focus();
+  });
+
+  // Confirmation
+  $('btn-validate').addEventListener('click', function () {
+    var d = doublons[state.current], src = sources(d);
+    $('confirm-title').textContent = 'Confirmer la fusion de ' + d.name + ' ?';
+    $('confirm-intro').innerHTML = 'Vous êtes sur le point de fusionner les doublons de <strong>' + esc(d.name) + '.</strong>';
+    $('confirm-detail').innerHTML = 'Les responsables, missions et participations ' +
+      (src.length > 1 ? 'des organisations ' : 'de l’organisation ') + ids(src) +
+      ' seront transférés vers l’organisation <strong>#' + d.target + '.</strong>';
+    $('confirm-check').checked = false;
+    $('btn-confirm').disabled = true;
+    openModal('modal-confirm');
+  });
+  $('confirm-check').addEventListener('change', function (e) { $('btn-confirm').disabled = !e.target.checked; });
+  $('btn-confirm').addEventListener('click', function () {
+    var i = state.current, d = doublons[i];
+    state.done = { d: d, next: doublons[i + 1] ? i : (doublons.length > 1 ? 0 : null) };
+    doublons.splice(i, 1);
+    TOTAL--;
+    state.open = null;
+    closeModal(true);
+    location.hash = '#confirmation';
+    showToast();
+  });
+
+  // ---------- Vue confirmation ----------
+  function renderDone() {
+    var d = state.done.d, src = sources(d), tgt = byId(d, d.target);
+    var totals = d.occ.reduce(function (a, o) { return { resp: a.resp + o.resp, missions: a.missions + o.missions, parts: a.parts + o.parts }; }, { resp: 0, missions: 0, parts: 0 });
+    $('done-title').textContent = '✅ Fusion confirmée pour ' + d.name;
+    $('done-sources-title').textContent = src.length > 1 ? src.length + ' organisations transférées' : '1 organisation transférée';
+    $('done-sources').innerHTML = src.map(function (o) { return orgaCard(d, o, { unsubscribed: true }); }).join('');
+    $('done-target').innerHTML = orgaCard(d, tgt, { stats: true, totals: totals });
+    $('btn-next').hidden = state.done.next === null;
+  }
+  $('btn-next').addEventListener('click', function () {
+    state.open = state.done.next;
+    location.hash = '#fusion/' + state.done.next;
+  });
+
+  // ---------- Modales ----------
+  var lastFocus = null, openId = null;
+  function openModal(id) {
+    lastFocus = document.activeElement; openId = id;
+    $(id).hidden = false;
+    $(id).querySelector('[data-close]').focus();
+  }
+  function closeModal(silent) {
+    if (!openId) return;
+    $(openId).hidden = true; openId = null;
+    if (!silent && lastFocus && document.contains(lastFocus)) lastFocus.focus();
+  }
+  document.querySelectorAll('[data-close]').forEach(function (b) { b.addEventListener('click', function () { closeModal(); }); });
+  document.querySelectorAll('.modal').forEach(function (m) { m.addEventListener('click', function (e) { if (e.target === m) closeModal(); }); });
+  document.addEventListener('keydown', function (e) {
+    if (!openId) return;
+    if (e.key === 'Escape') closeModal();
+    if (e.key === 'Tab') { // piège de focus
+      var f = $(openId).querySelectorAll('button:not(:disabled), input, a[href]');
+      var first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+  });
+
+  // ---------- Toast ----------
+  var toastTimer;
+  function hideToast() { clearTimeout(toastTimer); $('toast').hidden = true; }
+  function showToast() { $('toast').hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(hideToast, 6000); }
+  $('toast-close').addEventListener('click', hideToast);
+
+  // ---------- Routage (ancres, pour que « retour » du navigateur marche) ----------
+  var CRUMB_HOME = '<li style="position:relative;bottom:5px"><a class="fr-breadcrumb__link" href="#" title="Accueil" style="color:var(--text-mention-grey)"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style="display:inline;vertical-align:middle" aria-hidden="true"><path d="M12 3l9 8h-3v9h-5v-6H11v6H6v-9H3z"/></svg><span class="sr-only">Accueil</span></a></li>' +
+    '<li class="fr-breadcrumb__item"><a class="fr-breadcrumb__link" href="#liste">Support</a></li>' +
+    '<li class="fr-breadcrumb__item"><a class="fr-breadcrumb__link">Contenus</a></li>';
+  function route() {
+    var h = location.hash, view = 'list', focus = 'h-list';
+    var m = h.match(/^#fusion\/(\d+)$/);
+    if (m && doublons[Number(m[1])]) { state.current = Number(m[1]); view = 'merge'; focus = 'h-merge'; }
+    else if (h === '#confirmation' && state.done) { view = 'done'; focus = 'done-title'; }
+    $('view-list').hidden = view !== 'list';
+    $('view-merge').hidden = view !== 'merge';
+    $('view-done').hidden = view !== 'done';
+    if (view !== 'done') hideToast();
+    $('breadcrumb').innerHTML = CRUMB_HOME + (view === 'list'
+      ? '<li class="fr-breadcrumb__item"><a class="fr-breadcrumb__link" aria-current="page">Doublons d’organisations</a></li>'
+      : '<li class="fr-breadcrumb__item"><a class="fr-breadcrumb__link" href="#liste">Doublons d’organisations</a></li><li class="fr-breadcrumb__item"><a class="fr-breadcrumb__link" aria-current="page">Fusionner des doublons</a></li>');
+    if (view === 'list') renderList();
+    if (view === 'merge') renderMerge();
+    if (view === 'done') renderDone();
+    window.scrollTo(0, 0);
+    if (h) $(focus).focus({ preventScroll: true });
+  }
+  window.addEventListener('hashchange', route);
+  route();
+</script>
+
+</body>
+</html>

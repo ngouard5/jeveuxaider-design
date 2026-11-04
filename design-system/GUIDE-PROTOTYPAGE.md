@@ -282,8 +282,9 @@ pas de conflit. La règle à suivre selon le cas :
    pas. Répétez ce passage avec `color_scheme="light"` PUIS `"dark"` (voir
    Piège n°3) : un élément identique dans les deux captures qui ne devrait
    pas l'être trahit une couleur en dur.
-4. Nouveau prototype : ajoutez son lien dans `_includes/sidebar.html`
-   (section prototypes), comme pour les prototypes existants.
+4. Nouveau prototype : ajoutez son lien dans `design-system/prototypes.html`,
+   dans le groupe du rôle concerné (le menu latéral pointe vers cette page,
+   il ne liste plus les prototypes un par un).
 
 ### Uniquement si vous travaillez via Cowork (dossier connecté au device)
 

@@ -49,8 +49,9 @@ s'ajoute à `produit/decisions.md` pour ne pas avoir à le redemander.
    `components/`, pages dans `pages/`, libellés et statuts dans
    `plugins/labels.ts`). Ailleurs, demander le chemin à l'utilisateur plutôt
    que de chercher sur tout le disque ou de s'en passer.
-6. Un nouveau prototype s'ajoute aussi à la navigation, dans
-   `_includes/sidebar.html` (section prototypes).
+6. Un nouveau prototype s'ajoute aussi à la page
+   [`design-system/prototypes.html`](design-system/prototypes.html), dans le
+   groupe du rôle concerné (le menu latéral n'a qu'un lien vers cette page).
 
 ## Architecture du dépôt
 

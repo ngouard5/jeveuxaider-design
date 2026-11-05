@@ -128,9 +128,10 @@
   .orga{background:var(--background-alt-grey);padding:16px;display:flex;flex-direction:column;gap:16px}
   .orga__main{display:flex;align-items:center;gap:24px}
   .orga__info{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
+  .orga__meta{margin:0;font-size:14px;line-height:24px;color:var(--text-mention-grey)}
+  .tag.tag--nc{color:var(--text-mention-grey)}
   .orga__name-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
   .orga__name{margin:0;font-size:16px;line-height:24px;font-weight:500;color:var(--text-title-grey)}
-  .orga__meta{margin:0;font-size:14px;line-height:24px;color:var(--text-mention-grey)}
   .orga__actions{display:flex;gap:8px;flex:none}
   .orga__stats{border-top:1px solid var(--border-default-grey);padding-top:16px}
   .tags{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none}
@@ -261,9 +262,9 @@
   .choice__main{display:flex;align-items:flex-start;gap:12px;padding:12px 16px}
   .choice__main .orga__info{flex:1;min-width:0}
   .choice__main .orga__name-row{gap:4px}
+  .choice__stats{margin:0 16px;padding:12px 0 12px 28px;border-top:1px solid var(--border-default-grey);display:flex;flex-direction:column;gap:4px}
   .choice input{appearance:none;-webkit-appearance:none;margin:4px 0 0;width:16px;height:16px;flex:none;border-radius:50%;box-shadow:inset 0 0 0 1px var(--border-action-high-blue-france);background:var(--background-default-grey);cursor:pointer}
   .choice input:checked{background:radial-gradient(circle,var(--background-active-blue-france) 0 4px,transparent 4.5px)}
-  .choice__stats{margin:0 16px;padding:12px 0 12px 28px;border-top:1px solid var(--border-default-grey);display:flex;flex-direction:column;gap:4px}
   .badge--info{color:var(--text-default-info);background:var(--background-contrast-info)}
   .modal__title--icon svg{color:var(--text-title-grey)}
 
@@ -562,7 +563,7 @@
     { key: 'siret', label: function (v) { return 'SIRET ' + v; } },
     { key: 'city', label: function (v) { return v; } }
   ];
-  function tagsRow(o) { return '<ul class="tags">' + COMPARED.map(function (f) { return '<li class="tag">' + esc(f.label(o[f.key])) + '</li>'; }).join('') + '</ul>'; }
+  function tagsRow(o) { return '<ul class="tags">' + COMPARED.map(function (f) { return '<li class="tag' + (o[f.key] === 'NC' ? ' tag--nc' : '') + '">' + esc(f.label(o[f.key])) + '</li>'; }).join('') + '</ul>'; }
   function list(names) { return names.length === 1 ? names[0] : names.slice(0, -1).join(', ') + ' et ' + names[names.length - 1]; }
   function union(d) {
     var seen = [];
@@ -604,21 +605,26 @@
   }
   // « Camille Petit » → « Camille P » (page de succès, Figma 05/11/2026)
   function abbrev(n) { var p = n.split(' '); return p.length > 1 ? p[0] + ' ' + p[p.length - 1].charAt(0) : n; }
+  function badgeFor(d, o, opts) {
+    var old = oldest(d.occ).id;
+    return (opts.role === 'keep' ? '<span class="badge badge--success">À garder</span>'
+        : opts.role === 'merge' ? '<span class="badge badge--warning">À fusionner et désinscrire</span>'
+        : opts.validated ? '<span class="badge badge--success">' + ICON.check + 'Validée</span>'
+        : o.id === old && !opts.unsubscribed ? '<span class="badge badge--info">' + (opts.recommend ? 'Recommandée' : 'La plus ancienne') + '</span>' : '') +
+      (opts.unsubscribed ? '<span class="badge badge--error">' + ICON.error + 'Désinscrite</span>' : '');
+  }
+  // Carte homogène : numéro, date et badges sur la 1re ligne, tags d'identité (« NC »
+  // en gris pour repérer ce qui manque), séparateur, tags d'activité.
   function orgaCard(d, o, opts) {
     opts = opts || {};
-    var old = oldest(d.occ).id;
     var missions = opts.missions != null ? opts.missions : o.missions, parts = opts.parts != null ? opts.parts : o.parts;
     var people = opts.people || o.people;
+    if (opts.abbrev) people = people.map(abbrev);
     return '<div class="orga' + (opts.target ? ' orga--target' : '') + '">' +
       '<div class="orga__main">' +
         '<div class="orga__info">' +
-          '<div><div class="orga__name-row"><h3 class="orga__title">#' + o.id + '<span class="sr-only"> · ' + esc(d.name) + '</span></h3>' +
-            (opts.role === 'keep' ? '<span class="badge badge--success">À garder</span>'
-              : opts.role === 'merge' ? '<span class="badge badge--warning">À fusionner et désinscrire</span>'
-              : opts.validated ? '<span class="badge badge--success">' + ICON.check + 'Validée</span>'
-              : o.id === old && !opts.unsubscribed ? '<span class="badge badge--info">' + (opts.recommend ? 'Recommandée' : 'La plus ancienne') + '</span>' : '') +
-            (opts.unsubscribed ? '<span class="badge badge--error">' + ICON.error + 'Désinscrite</span>' : '') +
-          '</div><p class="orga__meta">Créée le ' + fmtDate(o) + '</p></div>' +
+          '<div class="orga__name-row"><h3 class="orga__title">#' + o.id + '<span class="sr-only"> · ' + esc(d.name) + '</span></h3>' +
+            '<span class="orga__meta">· Créée le ' + fmtDate(o) + '</span>' + badgeFor(d, o, opts) + '</div>' +
           tagsRow(o) +
         '</div>' +
         '<div class="orga__actions">' +
@@ -626,7 +632,7 @@
           (opts.change ? '<button type="button" class="btn btn--tertiary btn--sm btn--icon-left" id="btn-change">' + ICON.swap + 'Changer</button>' : '') +
         '</div>' +
       '</div>' +
-      (opts.noStats ? '' : '<div class="orga__stats">' + activityRow(opts.abbrev ? people.map(abbrev) : people, missions, parts) + '</div>') +
+      (opts.noStats ? '' : '<div class="orga__stats">' + activityRow(people, missions, parts) + '</div>') +
     '</div>';
   }
   function sortedOcc(d) { return d.occ.slice().sort(function (x, y) { return ts(x) - ts(y); }); }
@@ -683,10 +689,10 @@
       return '<label class="choice">' +
         '<span class="choice__main"><input type="radio" name="target" value="' + o.id + '"' + (o.id === d.target ? ' checked' : '') + '>' +
           '<span class="orga__info">' +
-            '<span><span class="orga__name-row"><span class="orga__title">#' + o.id + '</span>' +
+            '<span class="orga__name-row"><span class="orga__title">#' + o.id + '</span>' +
+              '<span class="orga__meta">· Créée le ' + fmtDate(o) + '</span>' +
               (o.id === old ? '<span class="badge badge--info">Recommandée</span>' : '') + '</span>' +
-            '<span class="orga__meta" style="display:block">Créée le ' + fmtDate(o) + '</span></span>' +
-            tagsRow(o) +
+            tagsRow(o).replace(/<(\/?)(ul|li)\b/g, '<$1span') +
           '</span></span>' +
         '<span class="choice__stats">' + activityRow(o.people, o.missions, o.parts).replace(/<(\/?)(ul|li)\b/g, '<$1span') + '</span>' +
       '</label>';

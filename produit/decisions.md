@@ -50,9 +50,11 @@ côté app. Voir `design-system/composants/uibadgestate.html` et
 **04/11/2026, revu le 05/11/2026 — Fusion de doublons : une carte homogène
 qui nomme les responsables.** Les référents vont pouvoir fusionner. Ils
 doivent avoir l'accord des responsables avant, donc la carte montre leurs
-noms, pas un compteur. Carte : numéro en titre, date de création, une ligne de
-tags d'identité (RNA, SIRET, ville), puis une ligne de tags d'activité
-(responsables, missions, participations), y compris dans la liste. On a
+noms, pas un compteur. Carte : numéro, date de création et badges sur la
+première ligne, une ligne de tags d'identité (RNA, SIRET, ville, les « NC » en gris
+pour repérer ce qui manque), un séparateur, une ligne de tags d'activité
+(responsables, missions, participations), y compris dans la liste. Essayé le
+05/11/2026 : en-tête sur une ligne et activité en texte gris, abandonné. On a
 essayé de ne montrer que les différences et d'ajouter un bilan sur la page :
 plus difficile à lire, abandonné. Page de fusion (05/11/2026, croquis de
 Nicolas) : les organisations à fusionner forment un groupe lié (cartes

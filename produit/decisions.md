@@ -39,10 +39,45 @@ côté app. Voir `design-system/composants/uibadgestate.html` et
 ## Support et modération
 
 **04/11/2026 — Le bouton qui confirme une action irréversible nomme l'action.**
-« Fusionner les doublons », pas « Confirmer » ni « Valider », sur la page et
-dans la modale de confirmation. Exemple :
+« Fusionner les doublons » sur la page, « Confirmer la fusion » dans la modale
+(Figma, 05/11/2026), jamais « Confirmer » ou « Valider » seul. Exemple :
 `prototypes/fusion-doublons-organisations.html`.
 
 **04/11/2026 — Date de création d'une organisation sans l'heure.** « Créée le
 4 mars 2021 » : l'heure n'aide pas à départager des doublons. Exemple :
 `prototypes/fusion-doublons-organisations.html`.
+
+**04/11/2026, revu le 05/11/2026 — Fusion de doublons : une carte homogène
+qui nomme les responsables.** Les référents vont pouvoir fusionner. Ils
+doivent avoir l'accord des responsables avant, donc la carte montre leurs
+noms, pas un compteur. Carte : numéro en titre, date de création, une ligne de
+tags d'identité (RNA, SIRET, ville), puis une ligne de tags d'activité
+(responsables, missions, participations), y compris dans la liste. On a
+essayé de ne montrer que les différences et d'ajouter un bilan sur la page :
+plus difficile à lire, abandonné. Page de fusion (05/11/2026, croquis de
+Nicolas) : les organisations à fusionner forment un groupe lié (cartes
+reliées par un pont, badge avertissement « À fusionner et désinscrire »), une flèche
+porte ce qui est transféré, cumulé en 3 tags quel que soit le nombre
+d'organisations (responsables, missions, participations), puis
+l'organisation gardée (badge vert « À garder », sans icône pour ne pas le
+confondre avec le statut « Validée » ; « Recommandée » reste bleu info, c'est
+un conseil, pas une décision). Badge avertissement (orange) plutôt que rouge : le
+rouge DSFR dit « erreur », pas « action prévue ». La liste et la modale
+« Changer » restent triées par ancienneté (la gardée en premier) : elles
+servent à comparer, pas à montrer le mouvement. Le bilan (qui devient
+co-responsable, champs complétés) est dans la confirmation. La plus ancienne est gardée par défaut (référencement),
+« Changer » reste possible. Exemple :
+`prototypes/fusion-doublons-organisations.html`.
+
+**04/11/2026 — À la fusion, les champs vides de l'organisation gardée sont
+complétés par les autres, jamais écrasés.** Rien n'est perdu : les autres
+organisations sont désinscrites, pas supprimées. Hypothèse à valider côté
+technique : quels champs exactement (logo, description, site, RNA, SIRET dans
+le prototype).
+
+**04/11/2026 — La confirmation de fusion parle de l'effet sur les personnes.**
+Pas d'alerte orange « irréversible » : un encadré d'information dit qui
+devient co-responsable et combien de missions chacun verra. La case confirme
+l'accord des responsables (« Les responsables ont donné leur accord pour
+cette fusion », sans le nombre), pas seulement qu'ils ont été prévenus. Ils reçoivent un e-mail une fois la fusion
+faite.

@@ -8,3 +8,4 @@ _site/
 
 # Worktrees de test des sous-agents Claude
 .claude/worktrees/
+.superpowers/

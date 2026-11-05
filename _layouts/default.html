@@ -61,6 +61,10 @@ h4{font-size:.8rem;text-transform:uppercase;letter-spacing:.04em;color:var(--mut
 .nav-section{margin-bottom:.2rem}
 .nav-toggle{display:flex;align-items:center;justify-content:space-between;gap:.4rem;width:100%;background:none;border:none;font:inherit;font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:1rem 1.25rem .3rem;font-weight:700;cursor:pointer;text-align:left}
 .nav-toggle:hover{color:var(--fg)}
+/* Lien direct au même niveau que les sections (Vue d'ensemble, Prototypes) */
+.sidebar a.nav-link{display:block;font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:1rem 1.25rem .3rem;font-weight:700;text-decoration:none;background-image:none}
+.sidebar a.nav-link:hover{color:var(--fg)}
+.sidebar a.nav-link.active{color:var(--link)}
 .nav-toggle .chevron{display:inline-block;font-size:.65rem;transition:transform .15s}
 .nav-toggle[aria-expanded="true"] .chevron{transform:rotate(90deg)}
 .nav-sublist{padding:0}
@@ -156,6 +160,16 @@ a[target="_blank"]:after{content:none}
 .cat-card li{margin:.15rem 0}
 .cat-card a{font-size:.88rem;text-decoration:none}
 .cat-card a:hover{text-decoration:underline}
+/* Variante « liste de liens » (page Prototypes) : une ligne cliquable par
+   lien, séparées par un filet, sans le soulignement [href] de DSFR. */
+.cat-card--links h3{line-height:1.25}
+.cat-card--links ul{margin:.75rem -1.3rem 0}
+.cat-card--links li{margin:0;border-top:1px solid var(--border)}
+.cat-card--links a{display:flex;align-items:center;justify-content:space-between;gap:.75rem;padding:.65rem 1.3rem;font-size:.9rem;line-height:1.4;text-decoration:none;background-image:none}
+.cat-card--links a::after{content:"›";color:var(--muted);font-size:1.1rem;line-height:1}
+.cat-card--links a:hover{text-decoration:none;background:var(--background-alt-grey-hover)}
+.cat-card--links a:hover::after{color:var(--link)}
+.cat-card--links a:focus-visible{outline:2px solid #0a76f6;outline-offset:-2px}
 .homog h3{margin-top:2rem}
 .homog .group{border:1px solid var(--border);border-radius:8px;padding:1rem 1.25rem;margin-bottom:1rem;background:var(--card)}
 .homog .files{font-size:.82rem;color:var(--muted)}

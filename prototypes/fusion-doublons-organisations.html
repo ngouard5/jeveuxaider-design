@@ -121,7 +121,7 @@
   .doublon__name{flex:1;min-width:0;font-size:18px;line-height:28px;font-weight:700;color:var(--text-title-grey)}
   .doublon__count{display:inline-flex;align-items:center;gap:4px;font-size:16px;line-height:24px;font-weight:500;color:var(--text-action-high-blue-france);white-space:nowrap}
   .doublon__count svg{width:16px;height:16px}
-  .doublon__panel{display:flex;flex-direction:column;align-items:flex-end;gap:24px;padding:0 24px 16px}
+  .doublon__panel{display:flex;flex-direction:column;align-items:flex-end;gap:16px;padding:0 24px 16px}
   .doublon__items{display:flex;flex-direction:column;gap:8px;width:100%}
 
   /* Carte d'occurrence (Figma « Doublon Item Orga ») */
@@ -141,6 +141,24 @@
   .badge{display:inline-flex;align-items:center;gap:4px;padding:0 6px;border-radius:4px;font-size:12px;line-height:20px;font-weight:700;text-transform:uppercase;white-space:nowrap}
   .badge svg{width:12px;height:12px}
   .badge--error{color:var(--text-default-error);background:var(--background-contrast-error)}
+  .badge--success{color:var(--text-default-success);background:var(--background-contrast-success)}
+  /* DsfrBadge type warning : « attention » sans dire « erreur » (le rouge) */
+  .badge--warning{color:var(--text-default-warning);background:var(--background-contrast-warning)}
+
+  /* Groupe lié : les cartes à fusionner se touchent par un « pont » gris */
+  .merge-group{display:flex;flex-direction:column;gap:10px}
+  .merge-group .orga{position:relative}
+  .merge-group .orga + .orga::before{content:"";position:absolute;left:50%;top:-10px;width:24px;height:10px;margin-left:-12px;background:var(--background-alt-grey)}
+  /* Flèche : ce qui est transféré gravite à gauche, la flèche au centre */
+  .merge-flow{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px;padding:8px 0}
+  .merge-flow__payload{grid-column:1;flex-direction:column;align-items:flex-end;gap:8px}
+  .merge-flow__arrow{grid-column:2;color:var(--border-default-blue-france)}
+  @media (max-width:639.98px){.merge-flow{grid-template-columns:1fr auto}.merge-flow__payload{align-items:flex-start}}
+  /* Nom de l'association en tête de la page de fusion (comme la ligne de la liste) */
+  .merge-head{width:100%;display:flex;align-items:baseline;justify-content:space-between;gap:16px}
+  .merge-head h2{margin:0;font-size:22px;line-height:28px;font-weight:700;color:var(--text-title-grey)}
+  .merge-head p{margin:0;font-size:16px;line-height:24px;color:var(--text-mention-grey);white-space:nowrap}
+  .note{margin:8px 0 0;font-size:14px;line-height:24px;color:var(--text-mention-grey)}
 
   /* ---------- DsfrButton ---------- */
   .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;font-weight:500;cursor:pointer;text-decoration:none;background-image:none;white-space:nowrap;transition:background-color .15s ease-out}
@@ -179,14 +197,12 @@
   .section__head h2{margin:0;font-size:22px;line-height:28px;font-weight:700;color:var(--text-title-grey)}
   .section__head p{margin:8px 0 0;font-size:14px;line-height:24px;color:var(--text-mention-grey)}
   .section__list{display:flex;flex-direction:column;gap:8px}
-  .transfer-arrow{display:flex;align-items:center;gap:8px;margin:0;font-size:22px;line-height:28px;font-weight:700;color:var(--text-mention-grey)}
-  .transfer-arrow svg{width:32px;height:32px}
   .actions{width:100%;display:flex;justify-content:flex-end;gap:16px;flex-wrap:wrap}
   @media (max-width:639.98px){.actions{flex-direction:column-reverse}.actions .btn{width:100%}}
   .success-head{width:100%}
   .success-head h2{margin:0;font-size:28px;line-height:36px;font-weight:700;color:var(--text-title-grey)}
   .success-head h2:focus{outline:none}
-  .success-head p{margin:16px 0 0;font-size:16px;line-height:24px;color:var(--text-title-grey)}
+  .success-head p{margin:16px 0 0;font-size:16px;line-height:24px;color:var(--text-mention-grey)}
 
   /* ---------- BaseAlertDialog (doc : basealertdialog.html) ----------
      Mise en page Figma : 792px, « Fermer » en haut à droite, contenu 32px
@@ -203,13 +219,24 @@
   .modal__footer{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:16px;padding:32px;border-top:1px solid var(--border-default-grey)}
   @media (max-width:639.98px){.modal{align-items:flex-end;padding:0}.modal__box{max-height:100vh}.modal__footer{padding:16px}}
 
-  /* Alerte d'avertissement. 🎨 Figma seulement : components/dsfr/Alert.vue
-     n'a que les variantes info et success (voir design-system/composants/
-     dsfralert.html). Couleurs Figma = orange terre battue 975 / 850, via
-     les tokens DSFR correspondants pour suivre le dark mode. */
-  .alert{display:flex;align-items:center;gap:16px;padding:24px;border:1px solid var(--border-action-low-orange-terre-battue);border-radius:4px;background:var(--background-alt-orange-terre-battue)}
-  .alert svg{width:32px;height:32px;color:var(--text-default-warning)}
+  /* DsfrAlert variant="info" (components/dsfr/Alert.vue : p-6, gap-4,
+     bordure, coins arrondis, bg #F5F7FF / bordure #CACAFB → tokens DSFR
+     bleu France pour le dark mode). Remplace l'alerte orange « irréversible »
+     de Figma : la confirmation parle de l'effet sur les responsables. */
+  .alert{display:flex;align-items:center;gap:16px;padding:24px;border:1px solid var(--border-default-blue-france);border-radius:4px;background:var(--background-alt-blue-france)}
+  .alert svg{width:32px;height:32px;color:var(--text-default-info)}
   .alert p{margin:0}
+  .alert p + p{margin-top:0}
+  .alert .muted{color:var(--text-mention-grey);font-size:14px}
+
+  /* ---------- Itération « simplifier » (04/11 puis 05/11/2026) ----------
+     Carte homogène : titre = numéro, date dessous, tags d'identité, puis
+     tags d'activité avec les responsables nommés (c'est eux que le référent
+     contacte). Le bilan de la fusion est dans la modale de confirmation. */
+  .orga__title{margin:0;font-size:18px;line-height:28px;font-weight:700;color:var(--text-title-grey)}
+  /* Figma 05/11/2026 : fond bleu clair, sans bordure */
+  .orga--target{background:var(--background-alt-blue-france)}
+  .orga--target .tag{background:var(--background-open-blue-france)}
 
   /* DsfrCheckboxBoolean : case 24px, bordure bleue, coins 4px */
   .checkbox{display:flex;align-items:flex-start;gap:8px;cursor:pointer;font-size:16px;line-height:24px;color:var(--text-title-grey)}
@@ -225,6 +252,7 @@
      alignés sur le texte (décalage 28px). */
   .choice-group{border:0;margin:0;padding:0;display:flex;flex-direction:column;gap:16px;min-width:0}
   .choice-group legend{padding:0;margin:0 0 16px;font-size:16px;line-height:24px;color:var(--text-label-grey)}
+  .choice-group .legend-hint{display:block;margin-top:4px;font-size:14px;line-height:24px;color:var(--text-mention-grey)}
   .choice-list{display:flex;flex-direction:column;gap:16px}
   .choice{display:flex;flex-direction:column;background:var(--background-default-grey);border:1px solid var(--border-default-grey);cursor:pointer}
   .choice:hover{background:var(--background-default-grey-hover)}
@@ -235,7 +263,7 @@
   .choice__main .orga__name-row{gap:4px}
   .choice input{appearance:none;-webkit-appearance:none;margin:4px 0 0;width:16px;height:16px;flex:none;border-radius:50%;box-shadow:inset 0 0 0 1px var(--border-action-high-blue-france);background:var(--background-default-grey);cursor:pointer}
   .choice input:checked{background:radial-gradient(circle,var(--background-active-blue-france) 0 4px,transparent 4.5px)}
-  .choice__stats{margin:0 16px;padding:16px 0 16px 28px;border-top:1px solid var(--border-default-grey)}
+  .choice__stats{margin:0 16px;padding:12px 0 12px 28px;border-top:1px solid var(--border-default-grey);display:flex;flex-direction:column;gap:4px}
   .badge--info{color:var(--text-default-info);background:var(--background-contrast-info)}
   .modal__title--icon svg{color:var(--text-title-grey)}
 
@@ -348,20 +376,25 @@
           <p>Transférer les responsables, missions et participations d’organisations vers une autre</p>
         </div>
         <div class="card">
-          <div class="section">
-            <div class="section__head">
-              <h2 id="merge-sources-title"></h2>
-              <p>Leurs responsables, missions et participations seront transférés vers l’organisation de destination.</p>
-            </div>
-            <div class="section__list" id="merge-sources"></div>
+          <!-- Itération « fusion visible » (05/11/2026, croquis de Nicolas) :
+               les organisations à fusionner forment un groupe lié, la flèche
+               porte ce qui est transféré (cumulé, toujours 3 tags), puis la
+               gardée. La liste et la modale « Changer » restent triées par
+               ancienneté : elles servent à comparer, pas à montrer le mouvement. -->
+          <div class="merge-head">
+            <h2 id="merge-name"></h2>
+            <p id="merge-count"></p>
           </div>
-          <p class="transfer-arrow">Transfert vers <svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 16.172l5.364-5.364 1.414 1.414L12 20l-7.778-7.778 1.414-1.414L11 16.172V4h2z"/></svg></p>
           <div class="section">
-            <div class="section__head">
-              <h2>Organisation de destination</h2>
-              <p>Pour des questions de référencement dans les moteurs de recherche, nous vous conseillons de choisir l’organisation la plus ancienne.</p>
+            <h2 class="sr-only" id="merge-sources-title"></h2>
+            <div class="merge-group" id="merge-sources"></div>
+            <div class="merge-flow">
+              <ul class="tags merge-flow__payload" id="merge-payload" aria-label="Transféré vers l’organisation gardée"></ul>
+              <svg class="merge-flow__arrow" width="40" height="120" viewBox="0 0 40 120" aria-hidden="true"><path d="M20 3 V113 M4 97 L20 115 L36 97" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </div>
+            <h2 class="sr-only">Organisation gardée</h2>
             <div id="merge-target"></div>
+            <p class="note">Nous vous conseillons de garder la plus ancienne : sa page est la mieux référencée dans les moteurs de recherche.</p>
           </div>
           <div class="actions">
             <a href="#liste" class="btn btn--tertiary btn--lg">Retour à la liste</a>
@@ -379,15 +412,18 @@
         <div class="card">
           <div class="success-head">
             <h2 id="done-title" tabindex="-1"></h2>
-            <p>Les responsables ont reçu un e-mail les informant du transfert.</p>
+            <p id="done-intro"></p>
           </div>
+          <!-- Même ordre que la page de fusion : groupe désinscrit, flèche avec
+               ce qui a été transféré, organisation gardée (validée). -->
           <div class="section">
-            <div class="section__head"><h2 id="done-sources-title"></h2></div>
-            <div class="section__list" id="done-sources"></div>
-          </div>
-          <p class="transfer-arrow">Transférées vers <svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 16.172l5.364-5.364 1.414 1.414L12 20l-7.778-7.778 1.414-1.414L11 16.172V4h2z"/></svg></p>
-          <div class="section">
-            <div class="section__head"><h2>Organisation de destination</h2></div>
+            <h2 class="sr-only" id="done-sources-title"></h2>
+            <div class="merge-group" id="done-sources"></div>
+            <div class="merge-flow">
+              <ul class="tags merge-flow__payload" id="done-payload" aria-label="Transféré à l’organisation gardée"></ul>
+              <svg class="merge-flow__arrow" width="40" height="120" viewBox="0 0 40 120" aria-hidden="true"><path d="M20 3 V113 M4 97 L20 115 L36 97" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <h2 class="sr-only">Organisation gardée</h2>
             <div id="done-target"></div>
           </div>
           <div class="actions">
@@ -415,19 +451,21 @@
           <svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="M12.866 3l9.526 16.5a1 1 0 0 1-.866 1.5H2.474a1 1 0 0 1-.866-1.5L11.134 3a1 1 0 0 1 1.732 0zm-8.66 16h15.588L12 5.5 4.206 19zM11 16h2v2h-2v-2zm0-7h2v5h-2V9z"/></svg>
           <h2 id="confirm-title"></h2>
         </div>
-        <p id="confirm-intro"></p>
         <p id="confirm-detail"></p>
-        <p><strong>Les organisations transférées seront désinscrites de la plateforme.</strong></p>
         <div class="alert">
-          <svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="M12.866 3l9.526 16.5a1 1 0 0 1-.866 1.5H2.474a1 1 0 0 1-.866-1.5L11.134 3a1 1 0 0 1 1.732 0zm-8.66 16h15.588L12 5.5 4.206 19zM11 16h2v2h-2v-2zm0-7h2v5h-2V9z"/></svg>
-          <p><strong>Ce transfert est irréversible et ne peut être annulé.</strong><br>Assurez-vous d’avoir prévenu chacun des responsables et d’avoir obtenu leur accord.</p>
+          <svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM11 7h2v2h-2V7zm0 4h2v6h-2v-6z"/></svg>
+          <div>
+            <p><strong>Ce que ça change pour les responsables</strong></p>
+            <p id="confirm-people"></p>
+            <p class="muted" id="confirm-more"></p>
+          </div>
         </div>
-        <label class="checkbox"><input type="checkbox" id="confirm-check"><span>Je confirme avoir informé les responsables des organisations concernées</span></label>
+        <label class="checkbox"><input type="checkbox" id="confirm-check"><span id="confirm-check-label"></span></label>
       </div>
     </div>
     <div class="modal__footer">
       <button type="button" class="btn btn--secondary btn--md" data-close>Annuler</button>
-      <button type="button" class="btn btn--primary btn--md" id="btn-confirm" disabled>Fusionner les doublons</button>
+      <button type="button" class="btn btn--primary btn--md" id="btn-confirm" disabled>Confirmer la fusion</button>
     </div>
   </div>
 </div>
@@ -448,7 +486,7 @@
           <h2 id="target-title">Choisir l’organisation de destination</h2>
         </div>
         <fieldset class="choice-group">
-          <legend>Quelle organisation va récupérer les responsables, missions et participations des autres&nbsp;?</legend>
+          <legend>Quelle organisation va récupérer les responsables, missions et participations des autres&nbsp;?<span class="legend-hint">Nous vous conseillons de garder la plus ancienne&nbsp;: sa page est la mieux référencée dans les moteurs de recherche.</span></legend>
           <div class="choice-list" id="target-choices"></div>
         </fieldset>
       </div>
@@ -475,6 +513,7 @@
     down: '<svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 13.172l4.95-4.95 1.414 1.414L12 16 5.636 9.636 7.05 8.222z"/></svg>',
     eye: '<svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="M1.181 12C2.121 6.88 6.608 3 12 3c5.392 0 9.878 3.88 10.819 9-.94 5.12-5.427 9-10.819 9-5.392 0-9.878-3.88-10.819-9zM12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0-2a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/></svg>',
     swap: '<svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="M11.95 7.95l-1.414 1.414L8 6.828 8 20H6V6.828L3.465 9.364 2.05 7.95 7 3l4.95 4.95zm10 8.1L17 21l-4.95-4.95 1.414-1.414 2.537 2.536L16 4h2v13.172l2.536-2.536 1.414 1.414z"/></svg>',
+    check: '<svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-.997-6 7.07-7.071-1.414-1.414-5.656 5.657-2.829-2.829-1.414 1.414L11.003 16z"/></svg>',
     error: '<svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-11.414L9.172 7.757 7.757 9.172 10.586 12l-2.829 2.828 1.415 1.415L12 13.414l2.828 2.829 1.415-1.415L13.414 12l2.829-2.828-1.415-1.415L12 10.586z"/></svg>'
   };
   var MOIS = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
@@ -486,20 +525,24 @@
   var NAMES = ['ABC Formation','Accorderie du Genevois','ACEL de Trappes','Action Contre La Faim','Action Femmes Grand Sud','Actions 56','Actisce','Adapah 55 - Amaelles','Adapei 07','Adef Résidences','ADMR','Afef Toulouse','AFTC 13','Agirabdc','Agir pour l’Environnement'];
   var CITIES = ['Paris 75011','Annemasse 74100','Trappes 78190','Lyon 69007','Marseille 13001','Vannes 56000','Rennes 35000','Bar-le-Duc 55000','Privas 07000','Cachan 94230','Nantes 44000','Toulouse 31000','Aix-en-Provence 13100','Bordeaux 33000','Lille 59000'];
 
+  // Responsables : noms fictifs (le vrai écran affichera les vrais comptes).
+  // Champs « récupérables » (logo, description, site) : hypothèse à valider
+  // avec l'équipe technique, ainsi que RNA et SIRET quand ils manquent.
+  var PEOPLE = ['Thomas Bernard','Sophie Laurent','Nadia Benali','Paul Girard','Inès Roux','Hugo Lambert','Emma Faure','Lucas Mercier','Chloé Garnier','Mehdi Saïdi','Anne Leroy','Yann Le Goff','Fatou Diallo','Marc Dubois','Sarah Cohen','Olivier Brun'];
   var doublons = [{
     name: '100% Handinamique',
     occ: [
-      { id: 8743, date: [2021, 2, 4], rna: 'W123456789', siret: '775 688 732', city: 'Pantin 93500', resp: 1, missions: 5, parts: 43 },
-      { id: 11700, date: [2023, 9, 27], rna: 'NC', siret: 'NC', city: 'Pantin 93500', resp: 2, missions: 13, parts: 156 },
-      { id: 12261, date: [2025, 1, 15], rna: 'W123456789', siret: 'NC', city: 'Pantin 93500', resp: 2, missions: 13, parts: 156 }
+      { id: 8743, date: [2021, 2, 4], rna: 'W123456789', siret: '775 688 732', city: 'Pantin 93500', people: ['Camille Petit'], missions: 13, parts: 156, logo: false, description: false, site: false },
+      { id: 11700, date: [2023, 9, 27], rna: 'NC', siret: 'NC', city: 'Pantin 93500', people: ['Karim Haddad', 'Julie Morel'], missions: 5, parts: 89, logo: false, description: true, site: true },
+      { id: 12261, date: [2025, 1, 15], rna: 'W123456789', siret: 'NC', city: 'Pantin 93500', people: ['Léa Fontenois'], missions: 2, parts: 10, logo: true, description: true, site: false }
     ]
   }];
   NAMES.forEach(function (name, i) {
     var a = 3000 + i * 617, b = 10400 + i * 389;
     var rna = 'W' + (561000000 + i * 1234567);
     doublons.push({ name: name, occ: [
-      { id: a, date: [2019 + (i % 4), i % 12, 3 + i], rna: rna, siret: (300 + i * 7) + ' 412 ' + (100 + i * 3), city: CITIES[i], resp: 1 + (i % 3), missions: 2 + (i * 5) % 17, parts: 12 + (i * 37) % 210 },
-      { id: b, date: [2023 + (i % 3), (i + 5) % 12, 8 + i], rna: i % 2 ? rna : 'NC', siret: 'NC', city: CITIES[i], resp: 1, missions: 1 + (i * 3) % 6, parts: (i * 11) % 40 }
+      { id: a, date: [2019 + (i % 4), i % 12, 3 + i], rna: rna, siret: (300 + i * 7) + ' 412 ' + (100 + i * 3), city: CITIES[i], people: [PEOPLE[i % 16]], missions: 2 + (i * 5) % 17, parts: 12 + (i * 37) % 210, logo: i % 3 !== 0, description: true, site: i % 2 === 0 },
+      { id: b, date: [2023 + (i % 3), (i + 5) % 12, 8 + i], rna: i % 2 ? rna : 'NC', siret: 'NC', city: CITIES[i], people: [PEOPLE[(i + 5) % 16]], missions: 1 + (i * 3) % 6, parts: (i * 11) % 40, logo: true, description: i % 2 === 0, site: true }
     ]});
   });
   doublons.forEach(function (d) {
@@ -513,11 +556,33 @@
   function ts(o) { return o.date[0] * 10000 + o.date[1] * 100 + o.date[2]; }
   function oldest(list) { return list.slice().sort(function (x, y) { return ts(x) - ts(y); })[0]; }
   function fmtDate(o) { return o.date[2] + (o.date[2] === 1 ? 'er' : '') + ' ' + MOIS[o.date[1]] + ' ' + o.date[0]; }
-  function tagsRow(o) { return '<ul class="tags"><li class="tag">RNA ' + esc(o.rna) + '</li><li class="tag">SIRET ' + esc(o.siret) + '</li><li class="tag">' + esc(o.city) + '</li></ul>'; }
-  function statsRow(s) {
-    return '<ul class="tags"><li class="tag">👤 ' + plural(s.resp, 'responsable') + '</li>' +
-      '<li class="tag">📋 ' + plural(s.missions, 'mission') + '</li>' +
-      '<li class="tag">🤝 ' + plural(s.parts, 'participation') + '</li></ul>';
+  // Tags d'identité, dans l'ordre de la maquette Figma.
+  var COMPARED = [
+    { key: 'rna', label: function (v) { return 'RNA ' + v; } },
+    { key: 'siret', label: function (v) { return 'SIRET ' + v; } },
+    { key: 'city', label: function (v) { return v; } }
+  ];
+  function tagsRow(o) { return '<ul class="tags">' + COMPARED.map(function (f) { return '<li class="tag">' + esc(f.label(o[f.key])) + '</li>'; }).join('') + '</ul>'; }
+  function list(names) { return names.length === 1 ? names[0] : names.slice(0, -1).join(', ') + ' et ' + names[names.length - 1]; }
+  function union(d) {
+    var seen = [];
+    d.occ.forEach(function (o) { o.people.forEach(function (p) { if (seen.indexOf(p) === -1) seen.push(p); }); });
+    return seen;
+  }
+  // Champs vides de la gardée, complétés depuis la plus ancienne des autres qui l'a.
+  var GAINABLE = [
+    { key: 'rna', label: 'Numéro RNA', empty: function (o) { return o.rna === 'NC'; } },
+    { key: 'siret', label: 'Numéro SIRET', empty: function (o) { return o.siret === 'NC'; } },
+    { key: 'logo', label: 'Logo', empty: function (o) { return !o.logo; } },
+    { key: 'description', label: 'Description', empty: function (o) { return !o.description; } },
+    { key: 'site', label: 'Site internet', empty: function (o) { return !o.site; } }
+  ];
+  function gains(d) {
+    var tgt = byId(d, d.target), src = sources(d);
+    return GAINABLE.filter(function (f) { return f.empty(tgt); }).map(function (f) {
+      var from = src.filter(function (o) { return !f.empty(o); })[0];
+      return from ? { label: f.label, from: from.id, value: f.key === 'rna' || f.key === 'siret' ? from[f.key] : null } : null;
+    }).filter(Boolean);
   }
   function plural(n, s, p) { return fmtNum(n) + ' ' + (n > 1 ? (p || s + 's') : s); }
   function fmtNum(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' '); }
@@ -528,16 +593,32 @@
   function byId(d, id) { return d.occ.filter(function (o) { return o.id === id; })[0]; }
   function sources(d) { return d.occ.filter(function (o) { return o.id !== d.target; }).sort(function (x, y) { return ts(x) - ts(y); }); }
 
-  // Carte d'occurrence. opts : { stats, change, unsubscribed, stats override }
+  // Carte d'occurrence homogène (itération du 05/11/2026) : titre = numéro,
+  // date dessous, une ligne de tags d'identité, un séparateur, une ligne de
+  // tags d'activité (responsables nommés, missions, participations).
+  // opts : { target, change, unsubscribed, people, missions, parts }
+  function activityRow(people, missions, parts) {
+    return '<ul class="tags"><li class="tag">👤 <span class="sr-only">Responsables : </span>' + people.map(esc).join(' · ') + '</li>' +
+      '<li class="tag">📋 ' + plural(missions, 'mission') + '</li>' +
+      '<li class="tag">🤝 ' + plural(parts, 'participation') + '</li></ul>';
+  }
+  // « Camille Petit » → « Camille P » (page de succès, Figma 05/11/2026)
+  function abbrev(n) { var p = n.split(' '); return p.length > 1 ? p[0] + ' ' + p[p.length - 1].charAt(0) : n; }
   function orgaCard(d, o, opts) {
     opts = opts || {};
-    var s = opts.totals || o;
-    return '<div class="orga">' +
+    var old = oldest(d.occ).id;
+    var missions = opts.missions != null ? opts.missions : o.missions, parts = opts.parts != null ? opts.parts : o.parts;
+    var people = opts.people || o.people;
+    return '<div class="orga' + (opts.target ? ' orga--target' : '') + '">' +
       '<div class="orga__main">' +
         '<div class="orga__info">' +
-          '<div><div class="orga__name-row"><p class="orga__name">' + esc(d.name) + '</p>' +
+          '<div><div class="orga__name-row"><h3 class="orga__title">#' + o.id + '<span class="sr-only"> · ' + esc(d.name) + '</span></h3>' +
+            (opts.role === 'keep' ? '<span class="badge badge--success">À garder</span>'
+              : opts.role === 'merge' ? '<span class="badge badge--warning">À fusionner et désinscrire</span>'
+              : opts.validated ? '<span class="badge badge--success">' + ICON.check + 'Validée</span>'
+              : o.id === old && !opts.unsubscribed ? '<span class="badge badge--info">' + (opts.recommend ? 'Recommandée' : 'La plus ancienne') + '</span>' : '') +
             (opts.unsubscribed ? '<span class="badge badge--error">' + ICON.error + 'Désinscrite</span>' : '') +
-          '</div><p class="orga__meta">#' + o.id + ' · Créée le ' + fmtDate(o) + '</p></div>' +
+          '</div><p class="orga__meta">Créée le ' + fmtDate(o) + '</p></div>' +
           tagsRow(o) +
         '</div>' +
         '<div class="orga__actions">' +
@@ -545,9 +626,11 @@
           (opts.change ? '<button type="button" class="btn btn--tertiary btn--sm btn--icon-left" id="btn-change">' + ICON.swap + 'Changer</button>' : '') +
         '</div>' +
       '</div>' +
-      (opts.stats ? '<div class="orga__stats">' + statsRow(s) + '</div>' : '') +
+      (opts.noStats ? '' : '<div class="orga__stats">' + activityRow(opts.abbrev ? people.map(abbrev) : people, missions, parts) + '</div>') +
     '</div>';
   }
+  function sortedOcc(d) { return d.occ.slice().sort(function (x, y) { return ts(x) - ts(y); }); }
+  function totals(d) { return d.occ.reduce(function (a, o) { return { missions: a.missions + o.missions, parts: a.parts + o.parts }; }, { missions: 0, parts: 0 }); }
 
   // ---------- Vue liste ----------
   function renderList() {
@@ -563,7 +646,7 @@
           '<span class="doublon__count">' + plural(d.occ.length, 'occurrence') + (open ? ICON.down : ICON.right) + '</span>' +
         '</button>' +
         (open ? '<div class="doublon__panel" id="panel-' + i + '">' +
-          '<div class="doublon__items">' + d.occ.slice().sort(function (x, y) { return ts(x) - ts(y); }).map(function (o) { return orgaCard(d, o); }).join('') + '</div>' +
+          '<div class="doublon__items">' + sortedOcc(d).map(function (o) { return orgaCard(d, o); }).join('') + '</div>' +
           '<a class="btn btn--secondary btn--md-lg" href="#fusion/' + i + '">Fusionner ces doublons</a>' +
         '</div>' : '') +
       '</li>';
@@ -582,10 +665,13 @@
 
   // ---------- Vue fusion ----------
   function renderMerge() {
-    var d = doublons[state.current], src = sources(d);
-    $('merge-sources-title').textContent = src.length > 1 ? src.length + ' organisations vont être transférées' : '1 organisation va être transférée';
-    $('merge-sources').innerHTML = src.map(function (o) { return orgaCard(d, o, { stats: true }); }).join('');
-    $('merge-target').innerHTML = orgaCard(d, byId(d, d.target), { stats: true, change: true });
+    var d = doublons[state.current], src = sources(d), tgt = byId(d, d.target);
+    $('merge-target').innerHTML = orgaCard(d, tgt, { target: true, change: true, role: 'keep', abbrev: true });
+    $('merge-sources-title').textContent = (src.length > 1 ? src.length + ' organisations à fusionner' : '1 organisation à fusionner') + ' dans #' + tgt.id + ', puis à désinscrire';
+    $('merge-sources').innerHTML = src.map(function (o) { return orgaCard(d, o, { role: 'merge', noStats: true }); }).join('');
+    $('merge-payload').innerHTML = payload(d);
+    $('merge-name').textContent = d.name;
+    $('merge-count').textContent = plural(d.occ.length, 'occurrence');
     $('btn-change').addEventListener('click', openTargetModal);
   }
 
@@ -597,12 +683,12 @@
       return '<label class="choice">' +
         '<span class="choice__main"><input type="radio" name="target" value="' + o.id + '"' + (o.id === d.target ? ' checked' : '') + '>' +
           '<span class="orga__info">' +
-            '<span><span class="orga__name-row"><span class="orga__name">' + esc(d.name) + '</span>' +
+            '<span><span class="orga__name-row"><span class="orga__title">#' + o.id + '</span>' +
               (o.id === old ? '<span class="badge badge--info">Recommandée</span>' : '') + '</span>' +
-            '<span class="orga__meta" style="display:block">#' + o.id + ' · Créée le ' + fmtDate(o) + '</span></span>' +
+            '<span class="orga__meta" style="display:block">Créée le ' + fmtDate(o) + '</span></span>' +
             tagsRow(o) +
           '</span></span>' +
-        '<span class="choice__stats">' + statsRow(o) + '</span>' +
+        '<span class="choice__stats">' + activityRow(o.people, o.missions, o.parts).replace(/<(\/?)(ul|li)\b/g, '<$1span') + '</span>' +
       '</label>';
     }).join('');
     openModal('modal-target');
@@ -617,12 +703,20 @@
 
   // Confirmation
   $('btn-validate').addEventListener('click', function () {
-    var d = doublons[state.current], src = sources(d);
-    $('confirm-title').textContent = 'Confirmer la fusion de ' + d.name + ' ?';
-    $('confirm-intro').innerHTML = 'Vous êtes sur le point de fusionner les doublons de <strong>' + esc(d.name) + '.</strong>';
-    $('confirm-detail').innerHTML = 'Les responsables, missions et participations ' +
-      (src.length > 1 ? 'des organisations ' : 'de l’organisation ') + ids(src) +
-      ' seront transférés vers l’organisation <strong>#' + d.target + '.</strong>';
+    var d = doublons[state.current], src = sources(d), tgt = byId(d, d.target), all = union(d), t = totals(d);
+    var newcomers = all.filter(function (p) { return tgt.people.indexOf(p) === -1; });
+    $('confirm-title').textContent = 'Fusionner les doublons de ' + d.name + ' ?';
+    $('confirm-detail').innerHTML = (src.length > 1 ? src.length + ' organisations seront fusionnées' : '1 organisation sera fusionnée') +
+      ' dans <strong>#' + tgt.id + '</strong>, puis désinscrite' + (src.length > 1 ? 's' : '') + '.';
+    $('confirm-people').textContent = newcomers.length
+      ? list(newcomers) + (newcomers.length > 1 ? ' deviendront co-responsables' : ' deviendra co-responsable') +
+        ' de l’organisation #' + tgt.id + ' avec ' + list(tgt.people) + '. Chacun verra les ' + fmtNum(t.missions) + ' missions de l’organisation.'
+      : list(tgt.people) + ' verra les ' + fmtNum(t.missions) + ' missions de l’organisation.';
+    var g = gains(d);
+    $('confirm-more').textContent = (g.length
+      ? 'Les champs vides de l’organisation gardée seront complétés avec ceux des autres (ici : ' + g.map(function (x) { return x.label.charAt(0).toLowerCase() + x.label.slice(1); }).join(', ') + '). '
+      : '') + 'Les responsables recevront un e-mail une fois la fusion faite.';
+    $('confirm-check-label').textContent = 'Les responsables ont donné leur accord pour cette fusion';
     $('confirm-check').checked = false;
     $('btn-confirm').disabled = true;
     openModal('modal-confirm');
@@ -640,13 +734,22 @@
   });
 
   // ---------- Vue confirmation ----------
+  // Ce qui transite par la flèche : responsables qui rejoignent la gardée,
+  // total des missions et participations transférées (3 tags au plus).
+  function payload(d) {
+    var src = sources(d), tgt = byId(d, d.target), moved = [], m = 0, pa = 0;
+    src.forEach(function (o) { m += o.missions; pa += o.parts; o.people.forEach(function (x) { if (moved.indexOf(x) === -1 && tgt.people.indexOf(x) === -1) moved.push(x); }); });
+    return (moved.length ? '<li class="tag">👤 <span class="sr-only">Responsables : </span>' + moved.map(abbrev).map(esc).join(' · ') + '</li>' : '') +
+      '<li class="tag">📋 +' + plural(m, 'mission') + '</li><li class="tag">🤝 +' + plural(pa, 'participation') + '</li>';
+  }
   function renderDone() {
-    var d = state.done.d, src = sources(d), tgt = byId(d, d.target);
-    var totals = d.occ.reduce(function (a, o) { return { resp: a.resp + o.resp, missions: a.missions + o.missions, parts: a.parts + o.parts }; }, { resp: 0, missions: 0, parts: 0 });
+    var d = state.done.d, src = sources(d), tgt = byId(d, d.target), t = totals(d), all = union(d);
     $('done-title').textContent = '✅ Fusion confirmée pour ' + d.name;
+    $('done-intro').textContent = 'Les responsables ont reçu un e-mail les informant de la fusion.';
     $('done-sources-title').textContent = src.length > 1 ? src.length + ' organisations transférées' : '1 organisation transférée';
-    $('done-sources').innerHTML = src.map(function (o) { return orgaCard(d, o, { unsubscribed: true }); }).join('');
-    $('done-target').innerHTML = orgaCard(d, tgt, { stats: true, totals: totals });
+    $('done-sources').innerHTML = src.map(function (o) { return orgaCard(d, o, { unsubscribed: true, noStats: true }); }).join('');
+    $('done-payload').innerHTML = payload(d);
+    $('done-target').innerHTML = orgaCard(d, tgt, { target: true, validated: true, abbrev: true, people: all, missions: t.missions, parts: t.parts });
     $('btn-next').hidden = state.done.next === null;
   }
   $('btn-next').addEventListener('click', function () {

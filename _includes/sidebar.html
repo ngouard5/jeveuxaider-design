@@ -3,9 +3,9 @@
     <a href="{{ '/design-system/index.html' | relative_url }}">Design System JeVeuxAider.gouv.fr<span class="tag">164 composants réutilisables</span></a>
   </div>
   <nav>
-    <ul>
-      <li><a class="item{% if page.url == '/design-system/' %} active{% endif %}" href="{{ '/design-system/index.html' | relative_url }}">Vue d'ensemble</a></li>
-    </ul>
+    <div class="nav-section">
+      <a class="nav-link{% if page.url == '/design-system/' or page.url == '/design-system/index.html' %} active{% endif %}" href="{{ '/design-system/index.html' | relative_url }}"{% if page.url == '/design-system/' or page.url == '/design-system/index.html' %} aria-current="page"{% endif %}>Vue d'ensemble</a>
+    </div>
 
     <div class="nav-section">
       <button class="nav-toggle" type="button" aria-expanded="{% if page.url contains '/design-system/fondamentaux/' %}true{% else %}false{% endif %}" aria-controls="nav-fondamentaux">Fondamentaux <span class="chevron" aria-hidden="true">▸</span></button>
@@ -26,9 +26,9 @@
       </div>
     </div>
 
-    <ul>
-      <li><a class="item{% if page.url == '/design-system/prototypes.html' %} active{% endif %}" href="{{ '/design-system/prototypes.html' | relative_url }}">Prototypes</a></li>
-    </ul>
+    <div class="nav-section">
+      <a class="nav-link{% if page.url == '/design-system/prototypes.html' %} active{% endif %}" href="{{ '/design-system/prototypes.html' | relative_url }}"{% if page.url == '/design-system/prototypes.html' %} aria-current="page"{% endif %}>Prototypes</a>
+    </div>
 
     <div class="nav-section sidebar-foot">
       <button class="nav-toggle" type="button" aria-expanded="{% if page.url == '/design-system/homogenisation.html' or page.url == '/design-system/migration-dsfr.html' or page.url == '/design-system/guide-prompts.html' %}true{% else %}false{% endif %}" aria-controls="nav-ressources">Ressources <span class="chevron" aria-hidden="true">▸</span></button>

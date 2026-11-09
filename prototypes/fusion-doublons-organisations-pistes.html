@@ -1,0 +1,619 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Fusion des doublons — pistes visuelles</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>document.documentElement.setAttribute("data-fr-theme", matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");</script>
+<style>
+  /* Cascade layers — voir design-system/GUIDE-PROTOTYPAGE.md. */
+  @import url("../design-system/compiled-reset.css") layer(tailwind-reset);
+  @import url("../design-system/dsfr.min.css") layer(dsfr-base);
+  @import url("../design-system/compiled.css") layer(dsfr-utilitaires);
+  @import url("../design-system/patches.css") layer(site-patches);
+
+  /* Exploration du 09/11/2026 à partir de la variante de Nicolas (« Garder »
+     sur les autres organisations au lieu de « Changer » + modale). Objectifs :
+     1. choisir l'organisation gardée en un clic, sans modale ;
+     2. rendre visible ce qui est transféré (et d'où ça vient).
+     On s'autorise à sortir des composants DSFR, mais toutes les couleurs
+     restent des variables DSFR (dark mode). Les 3 pistes partagent le même
+     état : « Garder » dans une piste se retrouve dans les autres. */
+
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font-family:Marianne,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--background-warm-neutral);color:var(--text-default-grey);font-synthesis:none}
+  button{font-family:inherit}
+  svg.ri{fill:currentColor;flex:none}
+  [hidden]{display:none !important}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+  /* Couleurs d'origine : attachées à l'organisation (pas à son rôle), pour
+     suivre « d'où ça vient » quand on change l'organisation gardée. */
+  .c0{--c:var(--background-action-high-blue-france);--c-soft:var(--background-contrast-blue-france);--c-text:var(--text-label-blue-france)}
+  .c1{--c:var(--background-action-high-purple-glycine);--c-soft:var(--background-contrast-purple-glycine);--c-text:var(--text-label-purple-glycine)}
+  .c2{--c:var(--background-action-high-green-archipel);--c-soft:var(--background-contrast-green-archipel);--c-text:var(--text-label-green-archipel)}
+  .c3{--c:var(--background-action-high-orange-terre-battue);--c-soft:var(--background-contrast-orange-terre-battue);--c-text:var(--text-label-orange-terre-battue)}
+  .c4{--c:var(--background-action-high-pink-tuile);--c-soft:var(--background-contrast-pink-tuile);--c-text:var(--text-label-pink-tuile)}
+
+  /* Sélecteur du nombre de doublons (stress test) */
+  .count-switch{display:inline-flex;align-items:center;gap:8px;margin:0 0 16px;font-size:14px;color:var(--text-mention-grey)}
+  .count-switch button{all:unset;cursor:pointer;padding:4px 12px;border-radius:16px;font-size:14px;line-height:24px;color:var(--text-action-high-blue-france);box-shadow:inset 0 0 0 1px var(--border-default-grey);background:var(--background-default-grey)}
+  .count-switch button[aria-pressed="true"]{background:var(--background-action-high-blue-france);color:var(--text-inverted-blue-france);box-shadow:none}
+  .count-switch button:focus-visible{outline:2px solid #0a76f6;outline-offset:2px}
+
+  /* ---------- cadre d'exploration ---------- */
+  .board{max-width:1100px;margin:0 auto;padding:40px 16px 80px}
+  .board__head h1{margin:0;font-size:32px;line-height:40px;font-weight:700;color:var(--text-title-grey)}
+  .board__head p{margin:8px 0 0;font-size:16px;line-height:24px;color:var(--text-mention-grey);max-width:720px}
+  .switch{display:flex;flex-wrap:wrap;gap:8px;margin:24px 0 16px;padding:0;list-style:none}
+  .switch button{all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;gap:2px;padding:10px 16px;border-radius:8px;background:var(--background-default-grey);box-shadow:inset 0 0 0 1px var(--border-default-grey);min-width:200px}
+  .switch button:hover{background:var(--background-default-grey-hover)}
+  .switch button:focus-visible{outline:2px solid #0a76f6;outline-offset:2px}
+  .switch button[aria-selected="true"]{box-shadow:inset 0 0 0 2px var(--border-active-blue-france);background:var(--background-alt-blue-france)}
+  .switch b{font-size:16px;line-height:24px;color:var(--text-title-grey)}
+  .switch span{font-size:13px;line-height:20px;color:var(--text-mention-grey)}
+  .rationale{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:8px 24px;margin:0 0 24px;font-size:14px;line-height:22px;color:var(--text-mention-grey)}
+  .rationale strong{color:var(--text-title-grey)}
+  .rationale p{margin:0}
+
+  .card{background:var(--background-default-grey);box-shadow:0 4px 6px rgba(0,0,18,.16);padding:40px;border-radius:2px}
+  @media (max-width:767.98px){.card{padding:24px 16px}}
+  .card__head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:32px}
+  .card__head h2{margin:0;font-size:24px;line-height:32px;font-weight:700;color:var(--text-title-grey)}
+  .card__head p{margin:0;font-size:14px;line-height:24px;color:var(--text-mention-grey)}
+  .actions{display:flex;justify-content:flex-end;gap:16px;flex-wrap:wrap;margin-top:32px}
+  @media (max-width:639.98px){.actions{flex-direction:column-reverse}.actions .btn{width:100%}}
+  .note{margin:16px 0 0;font-size:14px;line-height:24px;color:var(--text-mention-grey)}
+
+  /* ---------- briques communes ---------- */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;font-weight:500;cursor:pointer;text-decoration:none;white-space:nowrap;transition:background-color .15s ease-out}
+  .btn:focus-visible{outline:2px solid #0a76f6;outline-offset:2px}
+  .btn svg{width:16px;height:16px}
+  .btn--sm{padding:4px 12px;font-size:14px;line-height:24px;min-height:32px}
+  .btn--lg{padding:10px 24px;font-size:18px;line-height:28px;min-height:48px}
+  .btn--primary{background:var(--background-action-high-blue-france);color:var(--text-inverted-blue-france)}
+  .btn--primary:hover{background:var(--background-action-high-blue-france-hover)}
+  .btn--secondary{background:transparent;color:var(--text-action-high-blue-france);box-shadow:inset 0 0 0 1px var(--border-action-high-blue-france)}
+  .btn--secondary:hover{background:var(--background-default-grey-hover)}
+  .btn--tertiary{background:var(--background-default-grey);color:var(--text-action-high-blue-france);box-shadow:inset 0 0 0 1px var(--border-default-grey)}
+  .btn--tertiary:hover{background:var(--background-default-grey-hover)}
+  .btn--ghost{background:transparent;color:var(--text-action-high-blue-france)}
+  .btn--ghost:hover{background:var(--background-default-grey-hover)}
+
+  .badge{display:inline-flex;align-items:center;gap:4px;padding:0 6px;border-radius:4px;font-size:12px;line-height:20px;font-weight:700;text-transform:uppercase;white-space:nowrap}
+  .badge--warning{color:var(--text-default-warning);background:var(--background-contrast-warning)}
+  .badge--success{color:var(--text-default-success);background:var(--background-contrast-success)}
+  .badge--info{color:var(--text-default-info);background:var(--background-contrast-info)}
+
+  .tags{display:flex;flex-wrap:wrap;gap:6px;margin:0;padding:0;list-style:none}
+  .tag{display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:16px;background:var(--background-contrast-grey);color:var(--text-label-grey);font-size:13px;line-height:22px;white-space:nowrap}
+  .tag--nc{color:var(--text-mention-grey)}
+  .id{font-size:18px;line-height:28px;font-weight:700;color:var(--text-title-grey)}
+  .date{font-size:14px;line-height:24px;color:var(--text-mention-grey)}
+
+  .avatars{display:flex;padding-left:8px}
+  .avatar{width:32px;height:32px;margin-left:-8px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700;color:var(--text-inverted-grey);background:var(--c);box-shadow:0 0 0 2px var(--background-default-grey)}
+
+  @keyframes pop{0%{transform:scale(.96);opacity:.4}100%{transform:none;opacity:1}}
+  .pop{animation:pop .35s ease-out}
+  @media (prefers-reduced-motion:reduce){.pop{animation:none}}
+
+  /* =====================================================================
+     PISTE A — Convergence : les doublons à gauche, des flux animés qui
+     convergent vers l'organisation gardée à droite. Chaque flux porte sa
+     propre charge ; la gardée affiche le résultat (avant → après).
+     ===================================================================== */
+  .conv{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 120px minmax(0,1.15fr);align-items:center}
+  .conv__flows{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+  .conv__flows path{fill:none;stroke:var(--border-plain-blue-france);stroke-width:2.5;stroke-dasharray:2 9;stroke-linecap:round;animation:flow 1.1s linear infinite}
+  .conv__flows circle{fill:var(--border-plain-blue-france)}
+  @keyframes flow{to{stroke-dashoffset:-11}}
+  @media (prefers-reduced-motion:reduce){.conv__flows path{animation:none}}
+  .conv__sources{grid-column:1;display:flex;flex-direction:column;gap:20px}
+  .conv__target{grid-column:3}
+  @media (max-width:860px){
+    .conv{grid-template-columns:1fr;gap:56px}
+    .conv__target{grid-column:1}
+  }
+  .src{position:relative;z-index:1;background:var(--background-default-grey);border:1px dashed var(--border-default-grey);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px}
+  .src__top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .src__top .btn{margin-left:auto}
+  .src__payload{display:flex;flex-wrap:wrap;gap:6px;padding-top:10px;border-top:1px solid var(--border-default-grey)}
+  .src__payload .lbl{width:100%;font-size:12px;line-height:16px;font-weight:700;text-transform:uppercase;letter-spacing:.02em;color:var(--text-mention-grey)}
+  .chip-out{display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:16px;font-size:13px;line-height:22px;background:var(--background-alt-blue-france);color:var(--text-action-high-blue-france);box-shadow:inset 0 0 0 1px var(--border-default-blue-france)}
+  .tgt{position:relative;z-index:1;border-radius:16px;background:var(--background-alt-blue-france);box-shadow:inset 0 0 0 2px var(--border-active-blue-france),0 8px 24px rgba(0,0,145,.10);padding:24px;display:flex;flex-direction:column;gap:16px}
+  .tgt__top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .tgt__top .btn{margin-left:auto}
+  .tgt .tag{background:var(--background-open-blue-france)}
+  .tgt__kicker{font-size:12px;line-height:16px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text-action-high-blue-france)}
+  .kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  .kpi{background:var(--background-default-grey);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:4px;min-width:0}
+  .kpi__val{font-size:28px;line-height:32px;font-weight:800;color:var(--text-title-grey)}
+  .kpi__lbl{font-size:13px;line-height:18px;color:var(--text-mention-grey)}
+  .kpi__delta{font-size:13px;line-height:18px;color:var(--text-mention-grey)}
+  .kpi__delta b{color:var(--text-default-success)}
+  .tgt__people{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:14px;line-height:22px;color:var(--text-label-grey)}
+  .tgt__people .avatar{--c:var(--background-action-high-blue-france)}
+  .tgt__people .avatar.is-new{--c:var(--background-action-high-blue-cumulus)}
+  .gains{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px;color:var(--text-mention-grey)}
+  .gain{display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:16px;background:var(--background-contrast-success);color:var(--text-default-success);font-size:13px;line-height:22px}
+
+  /* =====================================================================
+     PISTE D — Convergence verticale : les doublons en lignes compactes,
+     un rail qui les rassemble (graphe de fusion), la charge cumulée portée
+     par le rail, puis la gardée en bas avec le résultat.
+     ===================================================================== */
+  .vert{position:relative}
+  .vert__rail{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+  .vert__rail path{fill:none;stroke:var(--border-plain-blue-france);stroke-width:2.5;stroke-linecap:round;stroke-dasharray:2 9;animation:flow 1.1s linear infinite}
+  .vert__rail .head{stroke-dasharray:none;animation:none;stroke-linejoin:round}
+  .vert__rail circle{fill:var(--border-plain-blue-france)}
+  @media (prefers-reduced-motion:reduce){.vert__rail path{animation:none}}
+  .vlist{list-style:none;margin:0;padding:0 0 0 56px;display:flex;flex-direction:column;gap:8px}
+  .vrow{position:relative;z-index:1;display:flex;align-items:center;gap:8px 16px;flex-wrap:wrap;padding:12px 12px 12px 16px;border-radius:10px;background:var(--background-alt-grey)}
+  .vrow__id{display:flex;align-items:baseline;gap:6px;min-width:190px}
+  .vrow__id .id{font-size:16px;line-height:24px}
+  .vrow__what{flex:1;min-width:200px;font-size:14px;line-height:22px;color:var(--text-mention-grey)}
+  .vrow__what b{font-weight:500;color:var(--text-label-grey)}
+  .vrow .btn{margin-left:auto}
+  .vlist__hint{margin:0 0 8px 56px;font-size:12px;line-height:16px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text-default-warning)}
+  .vpay{position:relative;z-index:1;margin-left:56px;padding:28px 0;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .vpay .lbl{font-size:14px;line-height:22px;color:var(--text-mention-grey);margin-right:4px}
+  .vtgt{position:relative;z-index:1;border-radius:16px;background:var(--background-alt-blue-france);box-shadow:inset 0 0 0 2px var(--border-active-blue-france),0 8px 24px rgba(0,0,145,.10);padding:24px;display:flex;flex-direction:column;gap:16px}
+  .vtgt .tag{background:var(--background-open-blue-france)}
+  .vtgt .kpis{grid-template-columns:repeat(3,minmax(0,160px))}
+  .vtgt__line{margin:0;font-size:14px;line-height:22px;color:var(--text-label-grey)}
+  @media (max-width:639.98px){.vtgt .kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.vrow__id{min-width:0}}
+
+  /* =====================================================================
+     PISTE B — Origines en couleur : chaque organisation a sa couleur ;
+     le bilan montre, en barres empilées, ce que la gardée regroupe et
+     d'où vient chaque morceau.
+     ===================================================================== */
+  .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+  .tile{position:relative;border-radius:12px;background:var(--background-default-grey);box-shadow:inset 0 0 0 1px var(--border-default-grey);padding:20px 16px 16px;display:flex;flex-direction:column;gap:10px;overflow:hidden;transition:transform .2s ease,box-shadow .2s ease}
+  .tile::before{content:"";position:absolute;inset:0 0 auto;height:6px;background:var(--c)}
+  .tile__top{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+  .tile__foot{margin-top:auto;padding-top:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .tile--keep{box-shadow:inset 0 0 0 2px var(--c),0 10px 24px rgba(0,0,18,.12);transform:translateY(-4px)}
+  .tile--keep .tile__state{color:var(--c-text);background:var(--c-soft)}
+  .tile__state{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:16px;font-size:14px;line-height:22px;font-weight:700}
+  .tile--merge .tile__state{color:var(--text-default-warning);background:var(--background-contrast-warning);font-weight:500;font-size:13px}
+  .tile .btn{margin-left:auto}
+
+  .recap{margin-top:32px;border-radius:16px;background:var(--background-alt-grey);padding:24px;display:flex;flex-direction:column;gap:20px}
+  .recap h3{margin:0;font-size:20px;line-height:28px;font-weight:700;color:var(--text-title-grey)}
+  .recap h3 small{display:block;font-size:14px;line-height:22px;font-weight:400;color:var(--text-mention-grey)}
+  .row{display:grid;grid-template-columns:140px minmax(0,1fr) 90px;gap:16px;align-items:center}
+  @media (max-width:639.98px){.row{grid-template-columns:1fr auto}.row .bar,.row .people{grid-column:1 / -1;grid-row:2}}
+  .row__lbl{font-size:14px;line-height:22px;font-weight:500;color:var(--text-label-grey)}
+  .row__total{text-align:right;font-size:22px;line-height:28px;font-weight:800;color:var(--text-title-grey)}
+  .bar{display:flex;height:32px;border-radius:8px;overflow:hidden;gap:2px;background:var(--background-default-grey)}
+  .seg{background:var(--c);color:var(--text-inverted-grey);font-size:13px;font-weight:700;display:flex;align-items:center;padding:0 8px;min-width:28px;white-space:nowrap;overflow:hidden;transition:flex-grow .4s ease}
+  .seg--keep{background:var(--c);box-shadow:inset 0 0 0 999px rgba(255,255,255,0)}
+  .people{display:flex;flex-wrap:wrap;gap:8px}
+  .person{display:inline-flex;align-items:center;gap:6px;padding:2px 10px 2px 2px;border-radius:20px;background:var(--background-default-grey);font-size:14px;line-height:22px;color:var(--text-label-grey)}
+  .person .avatar{width:26px;height:26px;margin:0;font-size:11px;box-shadow:none}
+  .fills{display:flex;flex-wrap:wrap;gap:8px}
+  .fill{display:inline-flex;align-items:center;gap:6px;padding:2px 10px;border-radius:16px;background:var(--background-default-grey);font-size:13px;line-height:22px;color:var(--text-label-grey)}
+  .dot{width:10px;height:10px;border-radius:50%;background:var(--c);flex:none}
+  .legend{display:flex;flex-wrap:wrap;gap:16px;font-size:13px;color:var(--text-mention-grey)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+
+  /* =====================================================================
+     PISTE C — Table de fusion : une colonne par organisation, une colonne
+     « Résultat ». Ce qui part est marqué →, ce qui est ignoré est barré,
+     ce qui complète la fiche est signalé dans le résultat.
+     ===================================================================== */
+  .tbl-wrap{overflow-x:auto;border-radius:12px;box-shadow:inset 0 0 0 1px var(--border-default-grey)}
+  .tbl{width:100%;border-collapse:separate;border-spacing:0;font-size:14px;line-height:22px;min-width:720px}
+  .tbl th,.tbl td{padding:10px 14px;text-align:left;vertical-align:middle;border-bottom:1px solid var(--border-default-grey)}
+  .tbl tbody tr:last-child th,.tbl tbody tr:last-child td{border-bottom:0}
+  .tbl thead th{vertical-align:top;padding-top:16px;padding-bottom:14px}
+  .tbl tbody th{font-weight:500;color:var(--text-mention-grey);white-space:nowrap;width:1%}
+  .tbl .col-keep{background:var(--background-alt-blue-france)}
+  .tbl thead .col-keep{box-shadow:inset 0 3px 0 var(--border-active-blue-france)}
+  .tbl .col-res{background:var(--background-contrast-success);color:var(--text-title-grey);font-weight:700}
+  .tbl thead .col-res{box-shadow:inset 0 3px 0 var(--border-plain-success)}
+  .th-org{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+  .th-org .id{font-size:16px;line-height:24px}
+  .th-res{font-size:16px;line-height:24px;color:var(--text-default-success);font-weight:700}
+  .th-res small{display:block;font-weight:400;font-size:13px;color:var(--text-mention-grey)}
+  .move{color:var(--text-action-high-blue-france);font-weight:500}
+  .move::after{content:" →";font-weight:700}
+  .skip{color:var(--text-mention-grey);text-decoration:line-through}
+  .nc{color:var(--text-mention-grey)}
+  .from{display:block;font-size:12px;line-height:16px;font-weight:400;color:var(--text-default-success)}
+  .sum-sep{color:var(--text-mention-grey);font-weight:400}
+  .tbl-legend{display:flex;flex-wrap:wrap;gap:16px;margin-top:12px;font-size:13px;color:var(--text-mention-grey)}
+</style>
+</head>
+<body>
+<div class="board">
+  <div class="board__head">
+    <h1>Fusion des doublons : pistes visuelles</h1>
+    <p>Trois façons de montrer qui est gardée et ce qui est transféré. Dans chaque piste, « Garder » se clique directement sur une autre organisation : plus de modale « Changer ». Le choix est partagé entre les pistes.</p>
+  </div>
+
+  <ul class="switch" role="tablist" aria-label="Pistes">
+    <li><button role="tab" aria-selected="true" aria-controls="p-a" data-p="a"><b>A · Convergence</b><span>Flux animés vers la gardée</span></button></li>
+    <li><button role="tab" aria-selected="false" aria-controls="p-d" data-p="d"><b>A′ · Convergence verticale</b><span>Doublons, puis la gardée</span></button></li>
+    <li><button role="tab" aria-selected="false" aria-controls="p-b" data-p="b"><b>B · Origines en couleur</b><span>Barres empilées par organisation</span></button></li>
+    <li><button role="tab" aria-selected="false" aria-controls="p-c" data-p="c"><b>C · Table de fusion</b><span>Comparer ligne à ligne</span></button></li>
+  </ul>
+
+  <div class="count-switch" role="group" aria-label="Nombre d’organisations en double">
+    Exemple avec
+    <button type="button" data-n="3" aria-pressed="true">3 doublons</button>
+    <button type="button" data-n="5" aria-pressed="false">5 doublons</button>
+  </div>
+
+  <div class="rationale" id="rationale"></div>
+
+  <!-- ================= PISTE A ================= -->
+  <section class="card" id="p-a" role="tabpanel" aria-labelledby="h-a">
+    <div class="card__head"><h2 id="h-a">100% Handinamique</h2><p class="js-count"></p></div>
+    <div class="conv" id="conv">
+      <svg class="conv__flows" id="conv-flows" aria-hidden="true"></svg>
+      <div class="conv__sources" id="conv-sources"></div>
+      <div class="conv__target" id="conv-target"></div>
+    </div>
+    <p class="note">Nous vous conseillons de garder la plus ancienne : sa page est la mieux référencée dans les moteurs de recherche.</p>
+    <div class="actions"><button class="btn btn--tertiary btn--lg">Retour à la liste</button><button class="btn btn--primary btn--lg">Fusionner les doublons</button></div>
+  </section>
+
+  <!-- ================= PISTE A′ (verticale) ================= -->
+  <section class="card" id="p-d" role="tabpanel" aria-labelledby="h-d" hidden>
+    <div class="card__head"><h2 id="h-d">100% Handinamique</h2><p class="js-count"></p></div>
+    <div class="vert" id="vert">
+      <svg class="vert__rail" id="vert-rail" aria-hidden="true"></svg>
+      <p class="vlist__hint" id="vert-hint"></p>
+      <ul class="vlist" id="vert-list"></ul>
+      <div class="vpay" id="vert-pay"></div>
+      <div id="vert-target"></div>
+    </div>
+    <p class="note">Nous vous conseillons de garder la plus ancienne : sa page est la mieux référencée dans les moteurs de recherche.</p>
+    <div class="actions"><button class="btn btn--tertiary btn--lg">Retour à la liste</button><button class="btn btn--primary btn--lg">Fusionner les doublons</button></div>
+  </section>
+
+  <!-- ================= PISTE B ================= -->
+  <section class="card" id="p-b" role="tabpanel" aria-labelledby="h-b" hidden>
+    <div class="card__head"><h2 id="h-b">100% Handinamique</h2><p class="js-count"></p></div>
+    <div class="tiles" id="tiles"></div>
+    <div class="recap" id="recap"></div>
+    <div class="actions"><button class="btn btn--tertiary btn--lg">Retour à la liste</button><button class="btn btn--primary btn--lg">Fusionner les doublons</button></div>
+  </section>
+
+  <!-- ================= PISTE C ================= -->
+  <section class="card" id="p-c" role="tabpanel" aria-labelledby="h-c" hidden>
+    <div class="card__head"><h2 id="h-c">100% Handinamique</h2><p class="js-count"></p></div>
+    <div class="tbl-wrap"><table class="tbl" id="tbl"></table></div>
+    <div class="tbl-legend">
+      <span><span class="move">5</span> transféré</span>
+      <span><span class="skip">W123456789</span> ignoré (déjà renseigné)</span>
+      <span><span class="from" style="display:inline">de #11700</span> complète la fiche</span>
+    </div>
+    <p class="note">Nous vous conseillons de garder la plus ancienne : sa page est la mieux référencée dans les moteurs de recherche.</p>
+    <div class="actions"><button class="btn btn--tertiary btn--lg">Retour à la liste</button><button class="btn btn--primary btn--lg">Fusionner les doublons</button></div>
+  </section>
+</div>
+
+<script>
+  var $ = function (id) { return document.getElementById(id); };
+  var EYE = '<svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="M1.181 12C2.121 6.88 6.608 3 12 3c5.392 0 9.878 3.88 10.819 9-.94 5.12-5.427 9-10.819 9-5.392 0-9.878-3.88-10.819-9zM12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0-2a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/></svg>';
+  var PIN = '<svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-.997-6 7.07-7.071-1.414-1.414-5.656 5.657-2.829-2.829-1.414 1.414L11.003 16z"/></svg>';
+
+  // Données de la maquette (capture du 09/11/2026). Ordre = ancienneté.
+  // Le cas « 5 doublons » ajoute #10412 et #12907 (fictifs) pour tester
+  // la tenue des pistes quand le groupe grossit.
+  var ALL = [
+    { id: 8743,  date: '4 mars 2021',      t: 20210304, rna: 'W123456789', siret: '775 688 732', city: 'Pantin 93500', people: ['Camille P'],           missions: 13, parts: 156, logo: false, description: false, site: false },
+    { id: 10412, date: '18 janvier 2022',  t: 20220118, rna: 'W123456789', siret: 'NC',          city: 'Pantin 93500', people: ['Malik B'],             missions: 4,  parts: 37,  logo: true,  description: false, site: false, extra: true },
+    { id: 11700, date: '12 juin 2023',     t: 20230612, rna: 'NC',         siret: 'NC',          city: 'Pantin 93500', people: ['Karim H', 'Julie M'], missions: 5,  parts: 89,  logo: false, description: true,  site: true },
+    { id: 12261, date: '10 décembre 2025', t: 20251210, rna: 'W123456789', siret: 'NC',          city: 'Pantin 93500', people: ['Léa F'],               missions: 2,  parts: 10,  logo: true,  description: true,  site: false },
+    { id: 12907, date: '2 septembre 2026', t: 20260902, rna: 'NC',         siret: 'NC',          city: 'Pantin 93500', people: ['Sophie L'],            missions: 0,  parts: 0,   logo: false, description: true,  site: false, extra: true }
+  ];
+  ALL.forEach(function (o, i) { o.c = 'c' + i; });
+  var ORGS, OLDEST;
+  var state = { target: null, piste: 'a', flash: null };
+  function setCount(n) {
+    ORGS = ALL.filter(function (o) { return n === 5 || !o.extra; });
+    OLDEST = ORGS[0].id;
+    if (!ORGS.some(function (o) { return o.id === state.target; })) state.target = OLDEST;
+  }
+  setCount(3);
+
+  var FIELDS = [
+    { key: 'rna', label: 'RNA', id: true, empty: function (o) { return o.rna === 'NC'; } },
+    { key: 'siret', label: 'SIRET', id: true, empty: function (o) { return o.siret === 'NC'; } },
+    { key: 'logo', label: 'Logo', empty: function (o) { return !o.logo; } },
+    { key: 'description', label: 'Description', empty: function (o) { return !o.description; } },
+    { key: 'site', label: 'Site internet', empty: function (o) { return !o.site; } }
+  ];
+
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function fmt(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' '); }
+  function pl(n, s) { return fmt(n) + ' ' + s + (n > 1 ? 's' : ''); }
+  function target() { return ORGS.filter(function (o) { return o.id === state.target; })[0]; }
+  function sources() { return ORGS.filter(function (o) { return o.id !== state.target; }); }
+  function initials(n) { return n.split(' ').map(function (p) { return p.charAt(0); }).join('').toUpperCase(); }
+  function sum(list, k) { return list.reduce(function (a, o) { return a + o[k]; }, 0); }
+  function idTags(o) {
+    return '<ul class="tags">' +
+      '<li class="tag' + (o.rna === 'NC' ? ' tag--nc' : '') + '">RNA ' + o.rna + '</li>' +
+      '<li class="tag' + (o.siret === 'NC' ? ' tag--nc' : '') + '">SIRET ' + o.siret + '</li>' +
+      '<li class="tag">' + o.city + '</li></ul>';
+  }
+  // Champs vides de la gardée, complétés par la plus ancienne des autres qui l'a.
+  function gains() {
+    var t = target();
+    return FIELDS.filter(function (f) { return f.empty(t); }).map(function (f) {
+      var from = sources().filter(function (o) { return !f.empty(o); })[0];
+      return from ? { f: f, from: from } : null;
+    }).filter(Boolean);
+  }
+  function keepBtn(o, cls) {
+    return '<button type="button" class="btn btn--sm ' + (cls || 'btn--secondary') + '" data-keep="' + o.id + '" aria-label="Garder l’organisation #' + o.id + ' à la place">' + PIN + 'Garder celle-ci</button>';
+  }
+  function detailsBtn(o) { return '<button type="button" class="btn btn--sm btn--ghost" aria-label="Détails de #' + o.id + '">' + EYE + 'Détails</button>'; }
+  function recoBadge(o) { return o.id === OLDEST ? '<span class="badge badge--info">La plus ancienne</span>' : ''; }
+
+  // ======================= PISTE A =======================
+  function renderA() {
+    var t = target(), src = sources();
+    $('conv-sources').innerHTML = src.map(function (o) {
+      return '<article class="src' + (state.flash === o.id ? ' pop' : '') + '" data-node="' + o.id + '">' +
+        '<div class="src__top"><span class="id">#' + o.id + '</span><span class="date">· ' + o.date + '</span>' + recoBadge(o) + '</div>' +
+        '<div class="src__top"><span class="badge badge--warning">Fusionnée puis désinscrite</span>' + keepBtn(o, 'btn--ghost') + '</div>' +
+        idTags(o) +
+        '<div class="src__payload"><span class="lbl">Transfère</span>' +
+          '<span class="chip-out">👤 ' + o.people.map(esc).join(' · ') + '</span>' +
+          '<span class="chip-out">📋 ' + pl(o.missions, 'mission') + '</span>' +
+          '<span class="chip-out">🤝 ' + pl(o.parts, 'participation') + '</span>' +
+        '</div></article>';
+    }).join('');
+
+    var allPeople = [];
+    ORGS.forEach(function (o) { o.people.forEach(function (p) { allPeople.push({ n: p, isNew: o.id !== t.id }); }); });
+    var newPeople = allPeople.filter(function (p) { return p.isNew; });
+    var g = gains();
+    var m = sum(ORGS, 'missions'), p = sum(ORGS, 'parts');
+    $('conv-target').innerHTML =
+      '<article class="tgt' + (state.flash === t.id ? ' pop' : '') + '" data-node="' + t.id + '">' +
+        '<span class="tgt__kicker">Organisation gardée</span>' +
+        '<div class="tgt__top"><span class="id" style="font-size:22px">#' + t.id + '</span><span class="date">· Créée le ' + t.date + '</span>' + recoBadge(t) + detailsBtn(t) + '</div>' +
+        idTags(t) +
+        '<div class="kpis">' +
+          kpi(allPeople.length, 'responsables', t.people.length) +
+          kpi(m, 'missions', t.missions) +
+          kpi(p, 'participations', t.parts) +
+        '</div>' +
+        '<div class="tgt__people"><div class="avatars">' +
+          allPeople.map(function (x) { return '<span class="avatar' + (x.isNew ? ' is-new' : '') + '" title="' + esc(x.n) + '">' + initials(x.n) + '</span>'; }).join('') +
+        '</div><span><strong>' + newPeople.map(function (x) { return esc(x.n); }).join(', ') + '</strong> ' + (newPeople.length > 1 ? 'deviennent co-responsables' : 'devient co-responsable') + '</span></div>' +
+        (g.length ? '<div class="gains"><span>Fiche complétée :</span>' + g.map(function (x) { return '<span class="gain">+ ' + x.f.label + '</span>'; }).join('') + '</div>' : '') +
+      '</article>';
+    requestAnimationFrame(drawFlows);
+  }
+  function kpi(after, lbl, before) {
+    return '<div class="kpi"><span class="kpi__val">' + fmt(after) + '</span><span class="kpi__lbl">' + lbl + '</span>' +
+      '<span class="kpi__delta">' + fmt(before) + ' <b>+' + fmt(after - before) + '</b></span></div>';
+  }
+  // Courbes de Bézier : du bord droit de chaque doublon au bord gauche de la
+  // gardée (ou du bas vers le haut quand tout est empilé, sous 860px).
+  function drawFlows() {
+    var box = $('conv'), svg = $('conv-flows');
+    if (box.offsetParent === null) return;
+    var b = box.getBoundingClientRect();
+    var tEl = $('conv-target').firstElementChild.getBoundingClientRect();
+    var stacked = tEl.top > $('conv-sources').getBoundingClientRect().bottom - 1;
+    var out = '';
+    Array.prototype.forEach.call($('conv-sources').children, function (el, i, arr) {
+      var r = el.getBoundingClientRect(), x1, y1, x2, y2, d;
+      if (stacked) {
+        x1 = r.left + r.width / 2 - b.left; y1 = r.bottom - b.top;
+        x2 = tEl.left + tEl.width * (i + 1) / (arr.length + 1) - b.left; y2 = tEl.top - b.top;
+        if (i < arr.length - 1) return; // empilé : un seul flux, depuis le dernier
+        x2 = tEl.left + tEl.width / 2 - b.left;
+        d = 'M' + x1 + ' ' + y1 + ' L' + x2 + ' ' + (y2 - 6);
+      } else {
+        x1 = r.right - b.left; y1 = r.top + r.height / 2 - b.top;
+        x2 = tEl.left - b.left; y2 = tEl.top + tEl.height * (i + 1) / (arr.length + 1) - b.top;
+        var mx = (x1 + x2) / 2;
+        d = 'M' + x1 + ' ' + y1 + ' C' + mx + ' ' + y1 + ' ' + mx + ' ' + y2 + ' ' + (x2 - 6) + ' ' + y2;
+      }
+      out += '<circle cx="' + x1 + '" cy="' + y1 + '" r="4"/><path d="' + d + '"/>' +
+        (stacked ? '<path d="M' + (x2 - 7) + ' ' + (y2 - 14) + ' L' + x2 + ' ' + (y2 - 5) + ' L' + (x2 + 7) + ' ' + (y2 - 14) + '" style="stroke-dasharray:none;animation:none"/>'
+                 : '<path d="M' + (x2 - 13) + ' ' + (y2 - 7) + ' L' + (x2 - 4) + ' ' + y2 + ' L' + (x2 - 13) + ' ' + (y2 + 7) + '" style="stroke-dasharray:none;animation:none"/>');
+    });
+    svg.innerHTML = out;
+  }
+
+  // ======================= PISTE A′ (verticale) =======================
+  // Une ligne par doublon (ce qu'il apporte en texte, les zéros omis), la
+  // charge cumulée en 3 tags sur le rail, la gardée avec le résultat.
+  function renderD() {
+    var t = target(), src = sources();
+    $('vert-hint').textContent = (src.length > 1 ? 'Fusionnées puis désinscrites' : 'Fusionnée puis désinscrite') + ' · ' + src.length;
+    $('vert-list').innerHTML = src.map(function (o) {
+      var what = ['<b>' + o.people.map(esc).join(', ') + '</b>'];
+      if (o.missions) what.push(pl(o.missions, 'mission'));
+      if (o.parts) what.push(pl(o.parts, 'participation'));
+      return '<li class="vrow' + (state.flash === o.id ? ' pop' : '') + '">' +
+        '<span class="vrow__id"><span class="id">#' + o.id + '</span><span class="date">' + o.date + '</span></span>' +
+        '<span class="vrow__what">' + what.join(' · ') + '</span>' +
+        recoBadge(o) + keepBtn(o, 'btn--ghost') + '</li>';
+    }).join('');
+    var newPeople = [];
+    src.forEach(function (o) { newPeople = newPeople.concat(o.people); });
+    var m = sum(src, 'missions'), p = sum(src, 'parts');
+    $('vert-pay').innerHTML = '<span class="lbl">Transféré vers #' + t.id + '</span>' +
+      '<span class="chip-out">👤 ' + pl(newPeople.length, 'responsable') + '</span>' +
+      '<span class="chip-out">📋 ' + pl(m, 'mission') + '</span>' +
+      '<span class="chip-out">🤝 ' + pl(p, 'participation') + '</span>';
+    var g = gains();
+    $('vert-target').innerHTML =
+      '<article class="vtgt' + (state.flash === t.id ? ' pop' : '') + '">' +
+        '<span class="tgt__kicker">Organisation gardée</span>' +
+        '<div class="tgt__top"><span class="id" style="font-size:22px">#' + t.id + '</span><span class="date">· Créée le ' + t.date + '</span>' + recoBadge(t) + '<span style="margin-left:auto">' + detailsBtn(t) + '</span></div>' +
+        idTags(t) +
+        '<div class="kpis">' +
+          kpi(t.people.length + newPeople.length, 'responsables', t.people.length) +
+          kpi(t.missions + m, 'missions', t.missions) +
+          kpi(t.parts + p, 'participations', t.parts) +
+        '</div>' +
+        '<p class="vtgt__line"><strong>' + newPeople.map(esc).join(', ') + '</strong> ' + (newPeople.length > 1 ? 'deviennent co-responsables' : 'devient co-responsable') + ' avec ' + t.people.map(esc).join(', ') + '.</p>' +
+        (g.length ? '<div class="gains"><span>Fiche complétée :</span>' + g.map(function (x) { return '<span class="gain">+ ' + x.f.label + '</span>'; }).join('') + '</div>' : '') +
+      '</article>';
+    requestAnimationFrame(drawRail);
+  }
+  // Rail à x=24 : un coude depuis chaque ligne, un tronc qui descend jusqu'au
+  // haut de la carte gardée, une pointe de flèche.
+  function drawRail() {
+    var box = $('vert');
+    if (box.offsetParent === null) return;
+    var b = box.getBoundingClientRect(), X = 24, out = '';
+    var rows = $('vert-list').children;
+    if (!rows.length) { $('vert-rail').innerHTML = ''; return; }
+    var firstY = 0;
+    Array.prototype.forEach.call(rows, function (el, i) {
+      var r = el.getBoundingClientRect(), y = r.top + r.height / 2 - b.top, x1 = r.left - b.left;
+      if (i === 0) firstY = y;
+      out += '<circle cx="' + x1 + '" cy="' + y + '" r="4"/>' +
+        '<path d="M' + x1 + ' ' + y + ' H' + (X + 14) + ' Q' + X + ' ' + y + ' ' + X + ' ' + (y + 14) + '"/>';
+    });
+    var endY = $('vert-target').getBoundingClientRect().top - b.top - 4;
+    out += '<path d="M' + X + ' ' + (firstY + 14) + ' V' + endY + '"/>' +
+      '<path class="head" d="M' + (X - 8) + ' ' + (endY - 10) + ' L' + X + ' ' + endY + ' L' + (X + 8) + ' ' + (endY - 10) + '"/>';
+    $('vert-rail').innerHTML = out;
+  }
+
+  // ======================= PISTE B =======================
+  function renderB() {
+    var t = target(), src = sources();
+    $('tiles').innerHTML = ORGS.map(function (o) {
+      var keep = o.id === t.id;
+      return '<article class="tile ' + o.c + (keep ? ' tile--keep' : ' tile--merge') + (state.flash === o.id ? ' pop' : '') + '">' +
+        '<div class="tile__top"><span class="id">#' + o.id + '</span>' + recoBadge(o) + '</div>' +
+        '<span class="date">Créée le ' + o.date + '</span>' +
+        idTags(o) +
+        '<div class="tile__foot">' +
+          (keep ? '<span class="tile__state">' + PIN + 'Gardée</span>'
+                : '<span class="tile__state">Fusionnée puis désinscrite</span>' + keepBtn(o, 'btn--tertiary')) +
+        '</div></article>';
+    }).join('');
+
+    var ordered = [t].concat(src); // la gardée en premier dans les barres
+    var m = sum(ORGS, 'missions'), p = sum(ORGS, 'parts');
+    var g = gains();
+    $('recap').innerHTML =
+      '<h3>Après la fusion, #' + t.id + ' regroupe<small>' + src.map(function (o) { return '#' + o.id; }).join(' et ') + ' seront désinscrites. Rien n’est supprimé.</small></h3>' +
+      '<div class="row"><span class="row__lbl">Responsables</span><div class="people">' +
+        ordered.map(function (o) { return o.people.map(function (n) { return '<span class="person ' + o.c + '"><span class="avatar">' + initials(n) + '</span>' + esc(n) + '</span>'; }).join(''); }).join('') +
+      '</div><span class="row__total">' + ordered.reduce(function (a, o) { return a + o.people.length; }, 0) + '</span></div>' +
+      barRow('Missions', 'missions', ordered, m) +
+      barRow('Participations', 'parts', ordered, p) +
+      (g.length ? '<div class="row"><span class="row__lbl">Fiche complétée</span><div class="fills">' +
+        g.map(function (x) { return '<span class="fill ' + x.from.c + '"><span class="dot"></span>' + x.f.label + ' <span class="date" style="font-size:12px">de #' + x.from.id + '</span></span>'; }).join('') +
+      '</div><span></span></div>' : '') +
+      '<div class="legend">' + ordered.map(function (o) { return '<span class="' + o.c + '"><span class="dot"></span>#' + o.id + (o.id === t.id ? ' (gardée)' : '') + '</span>'; }).join('') + '</div>';
+  }
+  function barRow(lbl, k, ordered, total) {
+    return '<div class="row"><span class="row__lbl">' + lbl + '</span><div class="bar" role="img" aria-label="' + lbl + ' : ' + ordered.map(function (o) { return o[k] + ' de #' + o.id; }).join(', ') + '">' +
+      ordered.map(function (o) { return '<span class="seg ' + o.c + '" style="flex-grow:' + o[k] + '" title="#' + o.id + ' : ' + o[k] + '">' + fmt(o[k]) + '</span>'; }).join('') +
+      '</div><span class="row__total">' + fmt(total) + '</span></div>';
+  }
+
+  // ======================= PISTE C =======================
+  function renderC() {
+    var t = target(), g = gains();
+    var gainOf = {}; g.forEach(function (x) { gainOf[x.f.key] = x.from; });
+    var cols = ORGS; // ordre d'ancienneté : la table sert à comparer
+    var head = '<thead><tr><th scope="col"><span class="sr-only">Champ</span></th>' +
+      cols.map(function (o) {
+        var keep = o.id === t.id;
+        return '<th scope="col" class="' + (keep ? 'col-keep' : '') + '"><div class="th-org"><span class="id">#' + o.id + '</span><span class="date">' + o.date + '</span>' + recoBadge(o) +
+          (keep ? '<span class="badge badge--success">À garder</span>' : keepBtn(o, 'btn--secondary')) + '</div></th>';
+      }).join('') +
+      '<th scope="col" class="col-res"><span class="th-res">Résultat<small>#' + t.id + ' après fusion</small></span></th></tr></thead>';
+
+    function fieldRow(f) {
+      var res = gainOf[f.key];
+      var cells = cols.map(function (o) {
+        var keep = o.id === t.id, emp = f.empty(o);
+        var v = f.id ? o[f.key] : (emp ? '—' : '✓');
+        var cls = emp ? 'nc' : keep ? '' : (res === o ? 'move' : 'skip');
+        if (f.id && emp) v = 'NC';
+        return '<td class="' + (keep ? 'col-keep' : '') + '"><span class="' + cls + '">' + v + '</span></td>';
+      }).join('');
+      var rv = !f.empty(t) ? (f.id ? t[f.key] : '✓') : res ? (f.id ? res[f.key] : '✓') + '<span class="from">de #' + res.id + '</span>' : '<span class="nc">NC</span>';
+      return '<tr><th scope="row">' + f.label + '</th>' + cells + '<td class="col-res">' + rv + '</td></tr>';
+    }
+    function countRow(lbl, k, unit) {
+      var cells = cols.map(function (o) {
+        var keep = o.id === t.id;
+        return '<td class="' + (keep ? 'col-keep' : '') + '"><span class="' + (keep ? '' : 'move') + '">' + fmt(o[k]) + '</span></td>';
+      }).join('');
+      return '<tr><th scope="row">' + lbl + '</th>' + cells + '<td class="col-res">' + fmt(sum(ORGS, k)) + ' <span class="sum-sep">' + unit + '</span></td></tr>';
+    }
+    var peopleRow = '<tr><th scope="row">Responsables</th>' + cols.map(function (o) {
+      var keep = o.id === t.id;
+      return '<td class="' + (keep ? 'col-keep' : '') + '"><span class="' + (keep ? '' : 'move') + '">' + o.people.map(esc).join(', ') + '</span></td>';
+    }).join('') + '<td class="col-res">' + [t].concat(sources()).map(function (o) { return o.people.map(esc).join(', '); }).join(', ') + '</td></tr>';
+    var cityRow = '<tr><th scope="row">Ville</th>' + cols.map(function (o) { return '<td class="' + (o.id === t.id ? 'col-keep' : '') + '">' + o.city + '</td>'; }).join('') + '<td class="col-res">' + t.city + '</td></tr>';
+
+    $('tbl').innerHTML = head + '<tbody>' +
+      peopleRow + countRow('Missions', 'missions', '') + countRow('Participations', 'parts', '') +
+      fieldRow(FIELDS[0]) + fieldRow(FIELDS[1]) + cityRow + fieldRow(FIELDS[2]) + fieldRow(FIELDS[3]) + fieldRow(FIELDS[4]) +
+      '</tbody>';
+  }
+
+  // ======================= commun =======================
+  var RATIONALE = {
+    a: ['<strong>Ce qui marche :</strong> le mouvement se lit sans légende ; la gardée montre directement le résultat (avant → après) et qui devient co-responsable.',
+        '<strong>Limite :</strong> à 5 doublons, la colonne de gauche s’allonge et la gardée flotte au milieu ; les avatars de responsables deviennent illisibles ; sur mobile tout s’empile et on perd l’effet de convergence.'],
+    d: ['<strong>Ce qui marche :</strong> une ligne par doublon, un seul rail, une seule carte détaillée ; tient à 5 doublons sans s’allonger, et se lit pareil sur mobile.',
+        '<strong>Limite :</strong> les doublons n’affichent plus leurs RNA / SIRET (à retrouver dans « Détails ») : à valider si les référents en ont besoin pour choisir.'],
+    b: ['<strong>Ce qui marche :</strong> on voit d’où vient chaque mission, chaque responsable, chaque champ complété ; les cartes restent dans l’ordre d’ancienneté, seule la mise en avant bouge.',
+        '<strong>Limite :</strong> les couleurs d’organisation sont un nouveau code à apprendre, et c’est un retour au « bilan sur la page » écarté le 05/11 (cette fois en graphique).'],
+    c: ['<strong>Ce qui marche :</strong> exhaustif et sans ambiguïté sur chaque champ (transféré, ignoré, complété) ; c’est le modèle des outils de fusion de CRM.',
+        '<strong>Limite :</strong> moins engageant, dense, défilement horizontal sur mobile ; à réserver si les référents doivent vérifier champ par champ.']
+  };
+  function render() {
+    Array.prototype.forEach.call(document.querySelectorAll('.js-count'), function (el) { el.textContent = ORGS.length + ' organisations en double'; });
+    $('rationale').innerHTML = RATIONALE[state.piste].map(function (s) { return '<p>' + s + '</p>'; }).join('');
+    renderA(); renderD(); renderB(); renderC();
+    state.flash = null;
+  }
+  document.addEventListener('click', function (e) {
+    var k = e.target.closest('[data-keep]');
+    if (k) { state.target = +k.getAttribute('data-keep'); state.flash = state.target; render(); return; }
+    var nb = e.target.closest('[data-n]');
+    if (nb) {
+      setCount(+nb.getAttribute('data-n'));
+      Array.prototype.forEach.call(document.querySelectorAll('[data-n]'), function (b) { b.setAttribute('aria-pressed', b === nb); });
+      render(); return;
+    }
+    var tab = e.target.closest('[role=tab]');
+    if (tab) {
+      state.piste = tab.getAttribute('data-p');
+      Array.prototype.forEach.call(document.querySelectorAll('[role=tab]'), function (b) {
+        var on = b === tab; b.setAttribute('aria-selected', on); $(b.getAttribute('aria-controls')).hidden = !on;
+      });
+      render();
+    }
+  });
+  new ResizeObserver(function () { drawFlows(); }).observe($('conv'));
+  new ResizeObserver(function () { drawRail(); }).observe($('vert'));
+  // Lien direct : ?n=5 ouvre le cas à 5 doublons.
+  var n0 = /[?&]n=5\b/.test(location.search) ? 5 : 3;
+  // Lien direct vers une piste : ?p=d
+  var p0 = (location.search.match(/[?&]p=([abcd])\b/) || [])[1];
+  if (p0) { state.piste = p0; Array.prototype.forEach.call(document.querySelectorAll('[role=tab]'), function (b) { var on = b.getAttribute('data-p') === p0; b.setAttribute('aria-selected', on); $(b.getAttribute('aria-controls')).hidden = !on; }); }
+  setCount(n0);
+  Array.prototype.forEach.call(document.querySelectorAll('[data-n]'), function (b) { b.setAttribute('aria-pressed', +b.getAttribute('data-n') === n0); });
+  render();
+</script>
+</body>
+</html>

@@ -71,15 +71,40 @@ co-responsable, champs complétés) est dans la confirmation. La plus ancienne e
 « Changer » reste possible. Exemple :
 `prototypes/fusion-doublons-organisations.html`.
 
+**09/11/2026 — Fusion de doublons : « Garder celle-ci » sur chaque doublon,
+plus de modale « Changer ».** La page a deux zones l'une au-dessus de
+l'autre, titrées par un badge : « Organisations à désinscrire » (badge
+orange, zone en pointillé, cartes grises complètes — identité et activité —
+avec « Détails » et « Garder celle-ci », sans badge par carte), une flèche,
+puis « Organisation à garder » (badge vert, zone blanche bordée de bleu
+clair, carte bleu clair, badge « La plus ancienne », conseil de garder la
+plus ancienne). Les tags d'activité de la gardée montrent ce qui arrive,
+un « + » par responsable ajouté : « Camille P + Léa F + Karim H + Julie M »,
+« 13 missions +7 », « 156 participations +99 ». Une seule appellation dans les textes :
+« l'organisation gardée ». Ordre : de la plus récente à la plus ancienne,
+dans la liste des doublons comme dans la zone « à désinscrire » (remplace
+le tri par ancienneté du 05/11). Figma : 2220:14639. La page de confirmation reprend
+les deux zones : « Organisations désinscrites » (badge rouge, cartes sans
+activité ni bouton) et « Organisation gardée » (badge vert, carte « Validée »
+avec les totaux après fusion, sans « + »). Explorées puis écartées (maquette de Nicolas
+retenue) : flux convergents horizontaux, rail vertical façon graphe de
+fusion, barres empilées colorées par organisation, table de fusion champ
+par champ — voir `prototypes/fusion-doublons-organisations-pistes.html`.
+
 **04/11/2026 — À la fusion, les champs vides de l'organisation gardée sont
 complétés par les autres, jamais écrasés.** Rien n'est perdu : les autres
 organisations sont désinscrites, pas supprimées. Hypothèse à valider côté
 technique : quels champs exactement (logo, description, site, RNA, SIRET dans
 le prototype).
 
-**04/11/2026 — La confirmation de fusion parle de l'effet sur les personnes.**
+**04/11/2026, simplifié le 09/11/2026 — La confirmation de fusion parle de
+l'effet sur les personnes.** Encadré « Ce que ça change pour les
+responsables », une seule phrase : « Karim H, Julie M et Léa F deviendront
+co-responsables de l'organisation #8743 avec Camille P. Ils resteront
+responsables de leurs missions et pourront voir celles des autres. » Plus
+de mention des champs complétés ni de l'e-mail dans la modale.
 Pas d'alerte orange « irréversible » : un encadré d'information dit qui
-devient co-responsable et combien de missions chacun verra. La case confirme
+devient co-responsable et ce que ça change pour eux. La case confirme
 l'accord des responsables (« Les responsables ont donné leur accord pour
 cette fusion », sans le nombre), pas seulement qu'ils ont été prévenus. Ils reçoivent un e-mail une fois la fusion
 faite.

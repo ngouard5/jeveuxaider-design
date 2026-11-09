@@ -118,7 +118,21 @@
   .doublon__toggle{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:24px;width:100%;padding:16px 24px;cursor:pointer}
   .doublon__toggle:hover{background:var(--background-default-grey-hover)}
   .doublon__toggle:focus-visible{outline:2px solid #0a76f6;outline-offset:-2px}
-  .doublon__name{flex:1;min-width:0;font-size:18px;line-height:28px;font-weight:700;color:var(--text-title-grey)}
+  .doublon__name{flex:1;min-width:0;display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px;font-size:18px;line-height:28px;font-weight:700;color:var(--text-title-grey)}
+  /* Critères de détection (09/11/2026) : nom + code postal, ou RNA + code
+     postal. Le critère s'affiche sur le groupe ; quand les noms diffèrent,
+     les autres noms suivent en gris et chaque carte montre son nom à côté
+     de l'id. */
+  .doublon__alias{font-size:14px;line-height:24px;font-weight:400;color:var(--text-mention-grey)}
+  .doublon__actions{display:flex;flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:8px 16px}
+  .badge--grey{color:var(--text-mention-grey);background:var(--background-contrast-grey)}
+  /* Filtre par critère : DsfrTag sélectionnable, taille MD (Tag.vue :
+     px-3 py-1 text-sm h-8). Le groupe garde aria-label « Critère de détection ». */
+  .filters{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:-16px 0 24px}
+  .filters button{all:unset;box-sizing:border-box;cursor:pointer;display:inline-flex;align-items:center;height:32px;padding:4px 12px;border-radius:16px;font-size:14px;line-height:20px;color:var(--text-action-high-blue-france);background:var(--background-open-blue-france)}
+  .filters button:hover{background:var(--background-open-blue-france-hover)}
+  .filters button[aria-pressed="true"]{background:var(--background-active-blue-france);color:var(--text-inverted-blue-france)}
+  .filters button:focus-visible{outline:2px solid #0a76f6;outline-offset:2px}
   .doublon__count{display:inline-flex;align-items:center;gap:4px;font-size:16px;line-height:24px;font-weight:500;color:var(--text-action-high-blue-france);white-space:nowrap}
   .doublon__count svg{width:16px;height:16px}
   .doublon__panel{display:flex;flex-direction:column;align-items:flex-end;gap:16px;padding:0 24px 16px}
@@ -135,7 +149,9 @@
   .orga__actions{display:flex;gap:8px;flex:none}
   .orga__stats{border-top:1px solid var(--border-default-grey);padding-top:16px}
   .tags{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none}
-  .tag{display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border-radius:16px;background:var(--background-contrast-grey);color:var(--text-label-grey);font-size:14px;line-height:24px;white-space:nowrap}
+  /* DsfrTag size="sm" (components/dsfr/Tag.vue : px-2 py-0.5 text-xs h-6),
+     partout dans ce prototype (09/11/2026). */
+  .tag{display:inline-flex;align-items:center;gap:4px;height:24px;padding:2px 8px;border-radius:12px;background:var(--background-contrast-grey);color:var(--text-label-grey);font-size:12px;line-height:16px;white-space:nowrap}
   @media (max-width:639.98px){.orga__main{flex-direction:column;align-items:stretch;gap:16px}.orga__actions{flex-wrap:wrap}}
 
   /* DsfrBadge type error + icône */
@@ -242,6 +258,7 @@
      tags d'activité avec les responsables nommés (c'est eux que le référent
      contacte). Le bilan de la fusion est dans la modale de confirmation. */
   .orga__title{margin:0;font-size:18px;line-height:28px;font-weight:700;color:var(--text-title-grey)}
+  .orga__title-name{font-weight:500}
   /* Figma 05/11/2026 : fond bleu clair, sans bordure */
   .orga--target{background:var(--background-alt-blue-france)}
   .orga--target .tag{background:var(--background-open-blue-france)}
@@ -353,7 +370,8 @@
           <svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.031 16.617l4.283 4.282-1.415 1.415-4.282-4.283A8.96 8.96 0 0 1 11 20c-4.968 0-9-4.032-9-9s4.032-9 9-9 9 4.032 9 9a8.96 8.96 0 0 1-1.969 5.617zm-2.006-.742A6.977 6.977 0 0 0 18 11c0-3.868-3.133-7-7-7-3.868 0-7 3.132-7 7 0 3.867 3.132 7 7 7a6.977 6.977 0 0 0 4.875-1.975l.15-.15z"/></svg>
         </div>
 
-        <p class="results-count" id="results-count" aria-live="polite"></p>
+        <div class="filters" role="group" aria-label="Critère de détection" id="filters"></div>
+        <p class="results-count" id="results-count" aria-live="polite" tabindex="-1"></p>
         <ul class="doublons" id="doublons"></ul>
 
         <div class="pagination-row" id="pagination">
@@ -399,7 +417,7 @@
           <div class="zones">
             <section class="zone zone--merge" aria-labelledby="merge-sources-title">
               <div class="zone__head">
-                <h3 class="badge badge--warning" id="merge-sources-title"></h3>
+                <h3 class="badge badge--error" id="merge-sources-title"></h3>
                 <p>Leurs responsables, missions et participations seront transférés vers l’organisation gardée.</p>
               </div>
               <div class="zone__list" id="merge-sources"></div>
@@ -433,12 +451,13 @@
           </div>
           <!-- Même mise en page que la page de fusion (09/11/2026) : zone des
                organisations désinscrites (badge rouge), flèche, zone de
-               l'organisation gardée avec ses totaux après fusion. -->
+               l'organisation gardée avec ses totaux après fusion.
+               Figma 2239:37020 : badges de zone sans phrase, pas de badge
+               sur les cartes. -->
           <div class="zones">
             <section class="zone zone--merge" aria-labelledby="done-sources-title">
               <div class="zone__head">
                 <h3 class="badge badge--error" id="done-sources-title"></h3>
-                <p id="done-sources-text"></p>
               </div>
               <div class="zone__list" id="done-sources"></div>
             </section>
@@ -446,7 +465,6 @@
             <section class="zone zone--keep" aria-labelledby="done-target-title">
               <div class="zone__head">
                 <h3 class="badge badge--success" id="done-target-title">Organisation gardée</h3>
-                <p id="done-target-text"></p>
               </div>
               <div id="done-target"></div>
             </section>
@@ -459,6 +477,29 @@
       </section>
 
     </main>
+  </div>
+</div>
+
+<!-- ================= Modale : ce ne sont pas des doublons / retirer du groupe =================
+     BaseAlertDialog, même gabarit que la confirmation de fusion. Titre = la
+     question, texte = la conséquence, bouton qui nomme l'action. -->
+<div class="modal" id="modal-notdup" role="dialog" aria-modal="true" aria-labelledby="notdup-title" hidden>
+  <div class="modal__box">
+    <div class="modal__scroll">
+      <div class="modal__close-row">
+        <button type="button" class="btn btn--tertiary-no-outline btn--sm" data-close>Fermer
+          <svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 10.6 4.95-4.96 1.4 1.4L13.42 12l4.96 4.95-1.4 1.4L12 13.42l-4.95 4.96-1.4-1.4L10.58 12 5.63 7.05l1.4-1.4z"/></svg>
+        </button>
+      </div>
+      <div class="modal__content">
+        <div class="modal__title"><h2 id="notdup-title"></h2></div>
+        <p id="notdup-detail"></p>
+      </div>
+    </div>
+    <div class="modal__footer">
+      <button type="button" class="btn btn--secondary btn--md" data-close>Annuler</button>
+      <button type="button" class="btn btn--primary btn--md" id="btn-notdup">Ne plus proposer</button>
+    </div>
   </div>
 </div>
 
@@ -496,7 +537,7 @@
 
 <div class="toast" id="toast" role="status" aria-live="polite" hidden>
   <svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-.997-6 7.07-7.071-1.414-1.414-5.656 5.657-2.829-2.829-1.414 1.414L11.003 16z"/></svg>
-  <p>La fusion a bien été effectuée</p>
+  <p id="toast-text">La fusion a bien été effectuée</p>
   <button type="button" class="toast__close" id="toast-close" aria-label="Fermer la notification">
     <svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 10.6 4.95-4.96 1.4 1.4L13.42 12l4.96 4.95-1.4 1.4L12 13.42l-4.95 4.96-1.4-1.4L10.58 12 5.63 7.05l1.4-1.4z"/></svg>
   </button>
@@ -541,11 +582,42 @@
       { id: b, date: [2023 + (i % 3), (i + 5) % 12, 8 + i], rna: i % 2 ? rna : 'NC', siret: 'NC', city: CITIES[i], people: [PEOPLE[(i + 5) % 16]], missions: 1 + (i * 3) % 6, parts: (i * 11) % 40, logo: true, description: i % 2 === 0, site: true }
     ]});
   });
+  // Doublon détecté par RNA + code postal, avec des noms différents
+  // (règle ajoutée le 09/11/2026). Données fictives.
+  doublons.splice(1, 0, {
+    name: 'Association Solidarité Pantinoise', criterion: 'rna',
+    occ: [
+      { id: 5120, name: 'Association Solidarité Pantinoise', date: [2020, 8, 14], rna: 'W931002345', siret: '812 334 501', city: 'Pantin 93500', people: ['Mathieu Renaud'], missions: 8, parts: 64, logo: true, description: true, site: false },
+      { id: 7318, name: 'ASP Pantin', date: [2021, 10, 3], rna: 'W931002345', siret: 'NC', city: 'Pantin 93500', people: ['Nora Ziani'], missions: 3, parts: 21, logo: false, description: false, site: false },
+      { id: 9902, name: 'Solidarité Pantinoise', date: [2022, 4, 19], rna: 'W931002345', siret: '812 334 501', city: 'Pantin 93500', people: ['Mathieu Renaud', 'Hélène Morin'], missions: 4, parts: 30, logo: true, description: true, site: true },
+      { id: 11032, name: 'Solidarité Pantin', date: [2024, 2, 7], rna: 'W931002345', siret: 'NC', city: 'Pantin 93500', people: ['Yanis Ferhat'], missions: 0, parts: 0, logo: false, description: true, site: false },
+      { id: 12740, name: 'Solidarité Pantin', date: [2026, 0, 22], rna: 'W931002345', siret: 'NC', city: 'Pantin 93500', people: ['Aïcha Benali'], missions: 1, parts: 3, logo: false, description: true, site: true }
+    ]
+  });
   doublons.forEach(function (d) {
+    d.criterion = d.criterion || 'name';
+    d.occ.forEach(function (o) { o.name = o.name || d.name; });
     d.target = oldest(d.occ).id; // conseil Figma : la plus ancienne par défaut
   });
+  var CRITERIA = { name: 'Même nom', rna: 'Même RNA' };
+  // Noms distincts du groupe, celui de la plus ancienne en premier.
+  function names(d) {
+    var out = [];
+    d.occ.slice().sort(function (x, y) { return ts(x) - ts(y); }).forEach(function (o) { if (out.indexOf(o.name) === -1) out.push(o.name); });
+    return out;
+  }
+  function namesDiffer(d) { return names(d).length > 1; }
+  function title(d) { return names(d)[0]; }
+  // « aussi « Solidarité Pantin » » ; au-delà d'un autre nom, on compte
+  // (« aussi « ASP Pantin » et 2 autres noms ») : jusqu'à 5 organisations
+  // par groupe RNA, la liste complète est sur les cartes.
+  function aliasHtml(d) {
+    var o = names(d).slice(1);
+    if (!o.length) return '';
+    return '<span class="doublon__alias" title="' + esc(o.join(', ')) + '">aussi « ' + esc(o[0]) + ' »' + (o.length > 1 ? ' et ' + plural(o.length - 1, 'autre nom', 'autres noms') : '') + '</span>';
+  }
 
-  var state = { open: 0, query: '', current: null, pendingTarget: null, done: null };
+  var state = { open: 0, query: '', criterion: 'all', current: null, pendingTarget: null, done: null };
 
   // ---------- Utilitaires ----------
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
@@ -619,12 +691,15 @@
     return '<div class="orga' + (opts.target ? ' orga--target' : '') + '">' +
       '<div class="orga__main">' +
         '<div class="orga__info">' +
-          '<div class="orga__name-row"><h3 class="orga__title">#' + o.id + '<span class="sr-only"> · ' + esc(d.name) + '</span></h3>' +
+          // Noms différents dans le groupe : le nom suit l'id sur la même ligne.
+          '<div class="orga__name-row"><h3 class="orga__title">#' + o.id +
+            (namesDiffer(d) ? ' <span class="orga__title-name">· ' + esc(o.name) + '</span>' : '<span class="sr-only"> · ' + esc(o.name) + '</span>') + '</h3>' +
             '<span class="orga__meta">· Créée le ' + fmtDate(o) + '</span>' + badgeFor(d, o, opts) + '</div>' +
           tagsRow(o) +
         '</div>' +
         '<div class="orga__actions">' +
           '<a class="btn btn--tertiary btn--sm btn--icon-left" href="#" target="_blank" rel="noopener" aria-label="Détails de l’organisation #' + o.id + ' (nouvel onglet)">' + ICON.eye + 'Détails</a>' +
+          (opts.remove ? '<button type="button" class="btn btn--tertiary btn--sm" data-remove="' + o.id + '" aria-label="Retirer l’organisation #' + o.id + ' de ce groupe de doublons">Retirer du groupe</button>' : '') +
           (opts.keep ? '<button type="button" class="btn btn--tertiary btn--sm btn--icon-left" data-keep="' + o.id + '" aria-label="Garder l’organisation #' + o.id + ' à la place">' + ICON.swap + 'Garder celle-ci</button>' : '') +
         '</div>' +
       '</div>' +
@@ -638,30 +713,90 @@
   // ---------- Vue liste ----------
   function renderList() {
     var q = state.query.trim().toLowerCase();
-    var visible = doublons.filter(function (d) { return !q || d.name.toLowerCase().indexOf(q) !== -1; });
-    $('results-count').textContent = q ? plural(visible.length, 'résultat') : plural(TOTAL, 'résultat');
-    $('pagination').hidden = !!q;
+    var visible = doublons.filter(function (d) {
+      return (state.criterion === 'all' || d.criterion === state.criterion) &&
+        (!q || names(d).some(function (n) { return n.toLowerCase().indexOf(q) !== -1; }));
+    });
+    var filtered = q || state.criterion !== 'all';
+    $('results-count').textContent = filtered ? plural(visible.length, 'résultat') : plural(TOTAL, 'résultat');
+    $('pagination').hidden = !!filtered;
+    $('filters').innerHTML =
+      [['all', 'Tous'], ['name', CRITERIA.name], ['rna', CRITERIA.rna]].map(function (c) {
+        return '<button type="button" data-crit="' + c[0] + '" aria-pressed="' + (state.criterion === c[0]) + '">' + c[1] + '</button>';
+      }).join('');
     $('doublons').innerHTML = visible.map(function (d) {
       var i = doublons.indexOf(d), open = state.open === i;
       return '<li class="doublon">' +
         '<button type="button" class="doublon__toggle" aria-expanded="' + open + '" aria-controls="panel-' + i + '" data-i="' + i + '">' +
-          '<span class="doublon__name">' + esc(d.name) + '</span>' +
+          '<span class="doublon__name">' + esc(title(d)) +
+            aliasHtml(d) +
+            '<span class="badge badge--grey" title="Critère de détection, avec le même code postal">' + CRITERIA[d.criterion] + '</span></span>' +
           '<span class="doublon__count">' + plural(d.occ.length, 'occurrence') + (open ? ICON.down : ICON.right) + '</span>' +
         '</button>' +
         (open ? '<div class="doublon__panel" id="panel-' + i + '">' +
-          '<div class="doublon__items">' + sortedOcc(d).map(function (o) { return orgaCard(d, o); }).join('') + '</div>' +
-          '<a class="btn btn--secondary btn--md-lg" href="#fusion/' + i + '">Fusionner ces doublons</a>' +
+          '<div class="doublon__items">' + sortedOcc(d).map(function (o) { return orgaCard(d, o, { remove: d.occ.length > 2 }); }).join('') + '</div>' +
+          '<div class="doublon__actions">' +
+            '<button type="button" class="btn btn--tertiary-no-outline btn--md" data-notdup="' + i + '">Ce ne sont pas des doublons</button>' +
+            '<a class="btn btn--secondary btn--md" href="#fusion/' + i + '">Fusionner ces doublons</a>' +
+          '</div>' +
         '</div>' : '') +
       '</li>';
     }).join('') || '<li class="doublon" style="padding:24px;color:var(--text-mention-grey)">Aucune organisation en double ne correspond à votre recherche.</li>';
   }
+  // Signaler une erreur de détection (référents et modérateurs). Dans l'app,
+  // le choix est enregistré pour que le groupe ou l'organisation ne revienne
+  // pas à la prochaine détection.
   $('doublons').addEventListener('click', function (e) {
     var t = e.target.closest('.doublon__toggle');
-    if (!t) return;
-    var i = Number(t.dataset.i);
-    state.open = state.open === i ? null : i;
+    if (t) {
+      var i = Number(t.dataset.i);
+      state.open = state.open === i ? null : i;
+      renderList();
+      var again = document.querySelector('.doublon__toggle[data-i="' + i + '"]');
+      if (again) again.focus();
+      return;
+    }
+    var nd = e.target.closest('[data-notdup]');
+    if (nd) {
+      var d = doublons[Number(nd.dataset.notdup)];
+      state.pendingNotDup = Number(nd.dataset.notdup);
+      $('notdup-title').textContent = 'Ne plus proposer « ' + title(d) + ' » comme doublon\u00a0?';
+      $('notdup-detail').textContent = (d.occ.length === 2 ? 'Ces 2 organisations' : 'Ces ' + d.occ.length + ' organisations') +
+        ' ne seront plus proposées comme doublons. Elles restent inscrites et rien n’est modifié sur leurs pages.';
+      $('btn-notdup').textContent = 'Ne plus proposer';
+      state.pendingAction = function () {
+        var i = state.pendingNotDup;
+        doublons.splice(i, 1); TOTAL--; state.open = null;
+        renderList(); $('results-count').focus();
+        showToast('« ' + title(d) + ' » ne sera plus proposé comme doublon');
+      };
+      openModal('modal-notdup');
+      return;
+    }
+    var rm = e.target.closest('[data-remove]');
+    if (rm) {
+      var gi = state.open, g = doublons[gi], id = Number(rm.dataset.remove), o = byId(g, id);
+      $('notdup-title').textContent = 'Retirer l’organisation #' + id + ' de ce groupe\u00a0?';
+      $('notdup-detail').textContent = '#' + id + ' · ' + o.name + ' ne sera plus proposée comme doublon de « ' + title(g) + ' ». ' +
+        'Les ' + (g.occ.length - 1) + ' autres organisations restent dans le groupe. Rien n’est modifié sur sa page.';
+      $('btn-notdup').textContent = 'Retirer du groupe';
+      state.pendingAction = function () {
+        g.occ = g.occ.filter(function (x) { return x.id !== id; });
+        if (g.target === id) g.target = oldest(g.occ).id;
+        renderList();
+        var tg = document.querySelector('.doublon__toggle[data-i="' + gi + '"]');
+        if (tg) tg.focus();
+        showToast('L’organisation #' + id + ' a été retirée de ce groupe de doublons');
+      };
+      openModal('modal-notdup');
+    }
+  });
+  $('filters').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-crit]');
+    if (!b) return;
+    state.criterion = b.dataset.crit; state.open = null;
     renderList();
-    var again = document.querySelector('.doublon__toggle[data-i="' + i + '"]');
+    var again = document.querySelector('[data-crit="' + state.criterion + '"]');
     if (again) again.focus();
   });
   $('search').addEventListener('input', function (e) { state.query = e.target.value; renderList(); });
@@ -672,7 +807,7 @@
   // d'activité montrent ce qui arrive (« 13 missions +7 »).
   function renderMerge() {
     var d = doublons[state.current], src = sources(d), tgt = byId(d, d.target);
-    $('merge-name').textContent = d.name;
+    $('merge-name').innerHTML = esc(title(d)) + ' ' + aliasHtml(d);
     $('merge-sources-title').textContent = src.length > 1 ? 'Organisations à désinscrire' : 'Organisation à désinscrire';
     $('merge-sources').innerHTML = src.map(function (o) { return orgaCard(d, o, { keep: true, abbrev: true }); }).join('');
     $('merge-target').innerHTML = orgaCard(d, tgt, { target: true, statsHtml: arrivals(d) });
@@ -700,7 +835,7 @@
   $('btn-validate').addEventListener('click', function () {
     var d = doublons[state.current], src = sources(d), tgt = byId(d, d.target), all = union(d), t = totals(d);
     var newcomers = all.filter(function (p) { return tgt.people.indexOf(p) === -1; });
-    $('confirm-title').textContent = 'Fusionner les doublons de ' + d.name + ' ?';
+    $('confirm-title').textContent = 'Fusionner les doublons de ' + tgt.name + ' ?';
     $('confirm-detail').innerHTML = (src.length > 1 ? src.length + ' organisations seront fusionnées' : '1 organisation sera fusionnée') +
       ' dans <strong>#' + tgt.id + '</strong>, puis désinscrite' + (src.length > 1 ? 's' : '') + '.';
     // Texte simplifié le 09/11/2026 : qui devient co-responsable, et ce que
@@ -717,6 +852,13 @@
     $('btn-confirm').disabled = true;
     openModal('modal-confirm');
   });
+  // Modale partagée par « Ce ne sont pas des doublons » et « Retirer du
+  // groupe » : chaque bouton prépare son texte et son action.
+  $('btn-notdup').addEventListener('click', function () {
+    closeModal(true);
+    if (state.pendingAction) state.pendingAction();
+    state.pendingAction = null;
+  });
   $('confirm-check').addEventListener('change', function (e) { $('btn-confirm').disabled = !e.target.checked; });
   $('btn-confirm').addEventListener('click', function () {
     var i = state.current, d = doublons[i];
@@ -726,7 +868,7 @@
     state.open = null;
     closeModal(true);
     location.hash = '#confirmation';
-    showToast();
+    showToast('La fusion a bien été effectuée');
   });
 
   // ---------- Vue confirmation ----------
@@ -736,13 +878,11 @@
     // puis ceux arrivés (organisations de la plus récente à la plus ancienne).
     var people = tgt.people.slice();
     src.forEach(function (o) { o.people.forEach(function (x) { if (people.indexOf(x) === -1) people.push(x); }); });
-    $('done-title').textContent = '✅ Fusion confirmée pour ' + d.name;
+    $('done-title').textContent = '✅ Fusion confirmée pour ' + tgt.name;
     $('done-intro').textContent = 'Les responsables ont reçu un e-mail les informant de la fusion.';
     $('done-sources-title').textContent = src.length > 1 ? 'Organisations désinscrites' : 'Organisation désinscrite';
-    $('done-sources-text').textContent = (src.length > 1 ? 'Leurs' : 'Ses') + ' responsables, missions et participations ont été transférés vers l’organisation gardée.';
     $('done-sources').innerHTML = src.map(function (o) { return orgaCard(d, o, { noStats: true, noOldest: true }); }).join('');
-    $('done-target-text').textContent = 'Elle regroupe maintenant les responsables, missions et participations des doublons.';
-    $('done-target').innerHTML = orgaCard(d, tgt, { target: true, validated: true, abbrev: true, people: people, missions: t.missions, parts: t.parts });
+    $('done-target').innerHTML = orgaCard(d, tgt, { target: true, noOldest: true, abbrev: true, people: people, missions: t.missions, parts: t.parts });
     $('btn-next').hidden = state.done.next === null;
   }
   $('btn-next').addEventListener('click', function () {
@@ -778,7 +918,7 @@
   // ---------- Toast ----------
   var toastTimer;
   function hideToast() { clearTimeout(toastTimer); $('toast').hidden = true; }
-  function showToast() { $('toast').hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(hideToast, 6000); }
+  function showToast(msg) { if (msg) $('toast-text').textContent = msg; $('toast').hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(hideToast, 6000); }
   $('toast-close').addEventListener('click', hideToast);
 
   // ---------- Routage (ancres, pour que « retour » du navigateur marche) ----------

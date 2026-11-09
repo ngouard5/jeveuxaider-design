@@ -74,7 +74,7 @@ co-responsable, champs complétés) est dans la confirmation. La plus ancienne e
 **09/11/2026 — Fusion de doublons : « Garder celle-ci » sur chaque doublon,
 plus de modale « Changer ».** La page a deux zones l'une au-dessus de
 l'autre, titrées par un badge : « Organisations à désinscrire » (badge
-orange, zone en pointillé, cartes grises complètes — identité et activité —
+rouge — revu le 09/11, remplace l'orange du 05/11 —, zone en pointillé, cartes grises complètes — identité et activité —
 avec « Détails » et « Garder celle-ci », sans badge par carte), une flèche,
 puis « Organisation à garder » (badge vert, zone blanche bordée de bleu
 clair, carte bleu clair, badge « La plus ancienne », conseil de garder la
@@ -85,11 +85,32 @@ un « + » par responsable ajouté : « Camille P + Léa F + Karim H + Julie M �
 dans la liste des doublons comme dans la zone « à désinscrire » (remplace
 le tri par ancienneté du 05/11). Figma : 2220:14639. La page de confirmation reprend
 les deux zones : « Organisations désinscrites » (badge rouge, cartes sans
-activité ni bouton) et « Organisation gardée » (badge vert, carte « Validée »
-avec les totaux après fusion, sans « + »). Explorées puis écartées (maquette de Nicolas
+activité ni bouton) et « Organisation gardée » (badge vert, carte sans
+badge avec les totaux après fusion, sans « + ») ; pas de phrase sous les
+badges de zone. Figma : 2239:37020. Explorées puis écartées (maquette de Nicolas
 retenue) : flux convergents horizontaux, rail vertical façon graphe de
 fusion, barres empilées colorées par organisation, table de fusion champ
 par champ — voir `prototypes/fusion-doublons-organisations-pistes.html`.
+
+**09/11/2026 — Détection des doublons : même nom ou même RNA, toujours
+avec le même code postal.** Une organisation n'appartient qu'à un seul
+groupe : si A et B ont le même nom et B et C le même RNA, A, B et C forment
+un seul groupe (la détection ne le fait pas encore, prévu côté technique).
+Dans la liste, chaque groupe affiche son critère (badge gris « Même nom » /
+« Même RNA ») et un filtre permet de les séparer. Quand les noms diffèrent,
+le groupe prend le nom de la plus ancienne suivi de « aussi « … » » (au-delà
+d'un autre nom : « aussi « ASP Pantin » et 2 autres noms », un groupe RNA
+pouvant réunir 4 ou 5 organisations) et chaque
+carte affiche son nom sur la ligne de l'id (« #12740 · Solidarité Pantin »).
+Essayé puis retiré le 09/11 : tag RNA mis en avant en bleu, phrase « Elle
+garde son nom : … » sur la page de fusion (le nom est déjà sur la carte). Erreurs de détection :
+« Ce ne sont pas des doublons » sur le groupe, « Retirer du groupe » sur
+une organisation quand le groupe en compte 3 ou plus ; les deux sont
+ouverts aux référents et aux modérateurs, et le choix est mémorisé pour que
+le groupe ne revienne pas. À trancher : le cas « même nom, même code postal,
+RNA différents » (probablement deux associations distinctes, à exclure de
+la détection) et les organisations sans code postal. Volume des doublons
+par RNA inconnu. Exemple : `prototypes/fusion-doublons-organisations.html`.
 
 **04/11/2026 — À la fusion, les champs vides de l'organisation gardée sont
 complétés par les autres, jamais écrasés.** Rien n'est perdu : les autres

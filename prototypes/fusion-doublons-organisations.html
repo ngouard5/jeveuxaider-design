@@ -125,7 +125,9 @@
      de l'id. */
   .doublon__alias{font-size:14px;line-height:24px;font-weight:400;color:var(--text-mention-grey)}
   .doublon__actions{display:flex;flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:8px 16px}
-  .badge--grey{color:var(--text-mention-grey);background:var(--background-contrast-grey)}
+  /* Critère du groupe en DsfrTag sm, non cliquable (Figma 1860:23992,
+     10/11/2026) : poids normal malgré le titre en gras. */
+  .doublon__name .tag{font-weight:400}
   /* Filtre par critère : DsfrTag sélectionnable, taille MD (Tag.vue :
      px-3 py-1 text-sm h-8). Le groupe garde aria-label « Critère de détection ». */
   .filters{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:-16px 0 24px}
@@ -693,8 +695,8 @@
         '<div class="orga__info">' +
           // Noms différents dans le groupe : le nom suit l'id sur la même ligne.
           '<div class="orga__name-row"><h3 class="orga__title">#' + o.id +
-            (namesDiffer(d) ? ' <span class="orga__title-name">· ' + esc(o.name) + '</span>' : '<span class="sr-only"> · ' + esc(o.name) + '</span>') + '</h3>' +
-            '<span class="orga__meta">· Créée le ' + fmtDate(o) + '</span>' + badgeFor(d, o, opts) + '</div>' +
+            (namesDiffer(d) ? ' <span class="orga__title-name"><span class="sr-only">, </span>' + esc(o.name) + '</span>' : '<span class="sr-only">, ' + esc(o.name) + '</span>') + '</h3>' +
+            '<span class="orga__meta">Inscrite le ' + fmtDate(o) + '</span>' + badgeFor(d, o, opts) + '</div>' +
           tagsRow(o) +
         '</div>' +
         '<div class="orga__actions">' +
@@ -730,7 +732,7 @@
         '<button type="button" class="doublon__toggle" aria-expanded="' + open + '" aria-controls="panel-' + i + '" data-i="' + i + '">' +
           '<span class="doublon__name">' + esc(title(d)) +
             aliasHtml(d) +
-            '<span class="badge badge--grey" title="Critère de détection, avec le même code postal">' + CRITERIA[d.criterion] + '</span></span>' +
+            '<span class="tag" title="Critère de détection, avec le même code postal">' + CRITERIA[d.criterion] + '</span></span>' +
           '<span class="doublon__count">' + plural(d.occ.length, 'occurrence') + (open ? ICON.down : ICON.right) + '</span>' +
         '</button>' +
         (open ? '<div class="doublon__panel" id="panel-' + i + '">' +

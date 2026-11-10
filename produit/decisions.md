@@ -43,8 +43,8 @@ côté app. Voir `design-system/composants/uibadgestate.html` et
 (Figma, 05/11/2026), jamais « Confirmer » ou « Valider » seul. Exemple :
 `prototypes/fusion-doublons-organisations.html`.
 
-**04/11/2026 — Date de création d'une organisation sans l'heure.** « Créée le
-4 mars 2021 » : l'heure n'aide pas à départager des doublons. Exemple :
+**04/11/2026, revu le 10/11/2026 — Date d'inscription d'une organisation sans
+l'heure.** « Inscrite le 4 mars 2021 » (et non « Créée le ») ; l'heure n'aide pas à départager des doublons. Exemple :
 `prototypes/fusion-doublons-organisations.html`.
 
 **04/11/2026, revu le 05/11/2026 — Fusion de doublons : une carte homogène
@@ -96,12 +96,13 @@ par champ — voir `prototypes/fusion-doublons-organisations-pistes.html`.
 avec le même code postal.** Une organisation n'appartient qu'à un seul
 groupe : si A et B ont le même nom et B et C le même RNA, A, B et C forment
 un seul groupe (la détection ne le fait pas encore, prévu côté technique).
-Dans la liste, chaque groupe affiche son critère (badge gris « Même nom » /
-« Même RNA ») et un filtre permet de les séparer. Quand les noms diffèrent,
+Dans la liste, chaque groupe affiche son critère (tag gris « Même nom » /
+« Même RNA », tag et non badge depuis le 10/11/2026) et un filtre permet de les séparer. Quand les noms diffèrent,
 le groupe prend le nom de la plus ancienne suivi de « aussi « … » » (au-delà
 d'un autre nom : « aussi « ASP Pantin » et 2 autres noms », un groupe RNA
 pouvant réunir 4 ou 5 organisations) et chaque
-carte affiche son nom sur la ligne de l'id (« #12740 · Solidarité Pantin »).
+carte affiche son nom sur la ligne de l'id (« #12740 Solidarité Pantin », sans point
+médian de séparation depuis le 10/11/2026).
 Essayé puis retiré le 09/11 : tag RNA mis en avant en bleu, phrase « Elle
 garde son nom : … » sur la page de fusion (le nom est déjà sur la carte). Erreurs de détection :
 « Ce ne sont pas des doublons » sur le groupe, « Retirer du groupe » sur

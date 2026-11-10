@@ -695,7 +695,7 @@
         '<div class="orga__info">' +
           // Noms différents dans le groupe : le nom suit l'id sur la même ligne.
           '<div class="orga__name-row"><h3 class="orga__title">#' + o.id +
-            (namesDiffer(d) ? ' <span class="orga__title-name"><span class="sr-only">, </span>' + esc(o.name) + '</span>' : '<span class="sr-only">, ' + esc(o.name) + '</span>') + '</h3>' +
+            (namesDiffer(d) ? ' <span class="orga__title-name">· ' + esc(o.name) + '</span>' : '<span class="sr-only"> · ' + esc(o.name) + '</span>') + '</h3>' +
             '<span class="orga__meta">Inscrite le ' + fmtDate(o) + '</span>' + badgeFor(d, o, opts) + '</div>' +
           tagsRow(o) +
         '</div>' +

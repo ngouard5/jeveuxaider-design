@@ -101,8 +101,9 @@ Dans la liste, chaque groupe affiche son critère (tag gris « Même nom » /
 le groupe prend le nom de la plus ancienne suivi de « aussi « … » » (au-delà
 d'un autre nom : « aussi « ASP Pantin » et 2 autres noms », un groupe RNA
 pouvant réunir 4 ou 5 organisations) et chaque
-carte affiche son nom sur la ligne de l'id (« #12740 Solidarité Pantin », sans point
-médian de séparation depuis le 10/11/2026).
+carte affiche son nom sur la ligne de l'id (« #12740 · Solidarité Pantin » ; depuis le
+10/11/2026, c'est le seul point médian de l'en-tête de carte : plus de
+« · » avant « Inscrite le »).
 Essayé puis retiré le 09/11 : tag RNA mis en avant en bleu, phrase « Elle
 garde son nom : … » sur la page de fusion (le nom est déjà sur la carte). Erreurs de détection :
 « Ce ne sont pas des doublons » sur le groupe, « Retirer du groupe » sur

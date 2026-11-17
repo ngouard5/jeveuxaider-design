@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Prototype — Homepage, opération France TV</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>document.documentElement.setAttribute("data-fr-theme", matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");</script>
+<style>
+  /* Base cascade layers — voir design-system/GUIDE-PROTOTYPAGE.md (Piège n°2) */
+  @import url("../design-system/compiled-reset.css") layer(tailwind-reset);
+  @import url("../design-system/dsfr.min.css") layer(dsfr-base);
+  @import url("../design-system/compiled.css") layer(dsfr-utilitaires);
+  @import url("../design-system/patches.css") layer(site-patches);
+
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font-family:Marianne,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--background-default-grey);font-synthesis:none}
+
+  /* ---------- header : repris tel quel de prototypes/homepage.html ---------- */
+  .jva-header{background:var(--background-default-grey);box-shadow:0 2px 3px rgba(0,0,18,.16);position:relative;z-index:30}
+  .jva-header__row{max-width:1440px;margin:0 auto;display:flex;align-items:center;gap:24px;padding:12px 24px;flex-wrap:wrap}
+  @media (min-width:1024px){.jva-header__row{gap:40px;padding:12px 120px 12px 104px;flex-wrap:nowrap}}
+  .jva-header__brand{display:flex;align-items:center;gap:16px;flex:none}
+  .jva-header__rf{height:48px;width:auto;flex:none}
+  .jva-header__logo{height:40px;width:auto;flex:none}
+  .jva-header__tools{display:flex;align-items:center;gap:16px;flex:1 1 auto;justify-content:flex-end;flex-wrap:wrap}
+  @media (min-width:1024px){.jva-header__tools{gap:24px}}
+  .jva-header__tool-link{display:inline-flex;align-items:center;gap:8px;padding:4px 12px;font-size:14px;font-weight:500;line-height:24px;color:var(--text-action-high-blue-france);text-decoration:none;background-image:none;white-space:nowrap}
+  .jva-header__tool-link--bordered{box-shadow:inset 0 0 0 1px var(--border-default-grey)}
+  .jva-header__menu{border-top:1px solid var(--border-default-grey);max-width:1440px;margin:0 auto;padding:0 24px}
+  @media (min-width:1024px){.jva-header__menu{padding:0 104px}}
+  .jva-header__menu .fr-nav__list{overflow-x:auto}
+
+  /* ==========================================================================
+     HERO FRANCE TV — Figma "Projet France TV" › Homepage - Événement France TV
+     › Hero (node 6310:9247), frame de référence 1680×742.
+
+     Couleurs : le hero est une surface de marque (bleu France plein + blanc),
+     comme le hero de homepage.html. Ces valeurs restent volontairement fixes en
+     dark mode : passer le fond sur une variable DSFR le ferait virer au violet
+     clair en sombre, avec le texte blanc illisible dessus (Piège n°3). Seul le
+     reste de la page suit le thème.
+
+     Typo (styles Figma) : surtitre = texte détail maj. 14/24 bold ; titre =
+     48/56 (= fr-display--xs) ; unité = H2 32/40 ; participation = H4 24/32.
+     Le compteur à 134px dépasse fr-display--xl (80px) : c'est la valeur de la
+     maquette, à arbitrer si on passe en prod.
+     ========================================================================== */
+  .ftv-hero{--ftv-blue:#000091;position:relative;overflow:hidden;background:var(--ftv-blue);color:#fff;box-shadow:0 6px 18px rgba(0,0,18,.16);isolation:isolate}
+  .ftv-hero__stage{position:relative;max-width:1680px;margin:0 auto;min-height:742px;display:flex;flex-direction:column;align-items:center;padding:56px 16px 72px;text-align:center}
+
+  /* Fond : halo flouté + cercles concentriques (assets Figma, centrés) */
+  .ftv-hero__bg{position:absolute;inset:0;pointer-events:none;z-index:-1}
+  .ftv-hero__bg img{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);max-width:none}
+  .ftv-hero__blur{width:2216px;height:2216px}               /* 1216 + débord du flou (inset -41.12%) */
+  .ftv-ripple{position:absolute;left:50%;top:50%;width:293px;height:293px;margin:-146.5px 0 0 -146.5px;border-radius:50%;border:2px solid rgba(255,255,255,.35);opacity:0;pointer-events:none}
+  .ftv-ripple.is-on{animation:ftv-ripple 2.4s cubic-bezier(.2,.6,.3,1) forwards}
+  @keyframes ftv-ripple{0%{transform:scale(1);opacity:.9}100%{transform:scale(5.3);opacity:0}}
+
+  .ftv-hero__brand{display:flex;align-items:flex-end;gap:16px;margin:0 0 40px;flex-wrap:wrap;justify-content:center}
+  .ftv-hero__brand-label{font-size:14px;line-height:24px;font-weight:700;text-transform:uppercase;color:#F5F5FE;margin:0}
+  .ftv-hero__brand img{width:186px;height:32px;display:block}
+
+  .ftv-hero__title{margin:0;color:#fff;font-weight:700;font-size:32px;line-height:40px}
+  @media (min-width:768px){.ftv-hero__title{font-size:48px;line-height:56px;letter-spacing:-1.44px}}
+
+  .ftv-counter{position:relative;display:flex;flex-direction:column;align-items:center;width:fit-content;padding:8px 40px 32px;margin:32px auto 0}
+  @media (min-width:768px){.ftv-counter{padding:8px 48px 32px}}
+  @media (min-width:1200px){.ftv-counter{min-width:696px}} /* frame "Volunteer Hours" */
+  .ftv-counter__value{display:block;font-weight:700;font-size:64px;line-height:1.2;letter-spacing:.02em;font-variant-numeric:tabular-nums;white-space:nowrap;color:#fff}
+  @media (min-width:768px){.ftv-counter__value{font-size:104px}}
+  @media (min-width:1200px){.ftv-counter__value{font-size:134px}}
+  .ftv-counter__unit{display:block;font-weight:700;font-size:24px;line-height:32px;color:#fff}
+  @media (min-width:768px){.ftv-counter__unit{font-size:32px;line-height:40px}}
+  /* Éclat décoratif (instance "Graphic", 80×80, en haut à droite du nombre) */
+  .ftv-counter__spark{position:absolute;right:8px;top:-4px;width:36px;height:36px;transform-origin:20% 80%}
+  @media (min-width:768px){.ftv-counter__spark{right:-8px;top:0;width:64px;height:64px}}
+  /* Figma : top 21px, mais avec un interligne "normal" (186px) ; notre interligne 1.2
+     remonte les chiffres d'environ 12px, d'où top ajusté pour garder l'éclat au-dessus du dernier chiffre */
+  @media (min-width:1200px){.ftv-counter__spark{right:25px;top:2px;width:80px;height:80px}}
+  .ftv-counter__spark img{position:absolute;inset:8.23% -0.04% 7.5% 0.87%;width:auto;height:auto;max-width:none}
+  .ftv-counter__spark.is-pop{animation:ftv-spark .7s cubic-bezier(.3,1.6,.5,1)}
+  @keyframes ftv-spark{0%{transform:scale(1)}35%{transform:scale(1.25) rotate(-6deg)}100%{transform:scale(1)}}
+
+  /* Pile d'avatars — remplace les bulles flottantes sous 1200 px (même seuil
+     que .ftv-bubbles), cf. capture fournie par Nicolas le 17/11/2026.
+     Chaque photo recouvre la précédente, mêmes cadrages et dégradés que les bulles. */
+  .ftv-avatars{display:flex;justify-content:center;margin:24px 0 16px;padding:0;list-style:none}
+  @media (min-width:1200px){.ftv-avatars{display:none}}
+  .ftv-avatars li{position:relative;width:56px;height:56px;flex:none;border-radius:50%;overflow:hidden;background:linear-gradient(to bottom,var(--g1),var(--g2));margin:0;padding:0}
+  .ftv-avatars li + li{margin-left:-12px}
+  .ftv-avatars img{position:absolute;max-width:none;object-fit:cover}
+  /* Bordure blanche, comme les bulles desktop (en ::after pour ne pas décaler le cadrage) */
+  .ftv-avatars li::after{content:"";position:absolute;inset:0;border-radius:50%;border:3px solid #fff}
+  @media (min-width:768px){.ftv-avatars li::after{border-width:4px}}
+  @media (min-width:768px){.ftv-avatars li{width:72px;height:72px}.ftv-avatars li + li{margin-left:-16px}}
+
+  .ftv-hero__participation{margin:8px 0 0;font-size:18px;line-height:28px;color:#fff}
+  @media (min-width:768px){.ftv-hero__participation{font-size:24px;line-height:32px}}
+  .ftv-hero__participation strong{font-variant-numeric:tabular-nums}
+
+  .ftv-hero__ctas{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin-top:40px}
+  /* Boutons : DsfrButton.vue size="lg" (px-6 py-2 text-lg min-h-[3rem]).
+     1er = type tertiary-no-outline (fond blanc, texte bleu) + icône droite ;
+     2e  = type transparent (bordure blanche), cf. .btn-transparent-outline de homepage.html.
+     La maquette les dessine à 56px de haut, le composant réel fait 48px : on suit le code. */
+  .btn-transparent-outline{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:transparent;border:1px solid #fff;color:#fff;font-weight:500;text-decoration:none;transition:background-color .15s}
+  .btn-transparent-outline:hover{background:#2323ff}
+  .ftv-btn-icon{width:24px;height:24px;flex:none}
+  /* dsfr.min.css ajoute sa propre icône sur a[target=_blank] : on garde celle de la maquette */
+  .ftv-hero__ctas a[target=_blank]::after{content:none}
+
+  /* Bouton pause (WCAG 2.2.2 : tout mouvement automatique > 5 s doit pouvoir être arrêté).
+     Hors maquette — ajouté pour l'accessibilité, discret en bas à droite. */
+  .ftv-pause{position:absolute;right:24px;bottom:24px;display:inline-flex;align-items:center;gap:8px;padding:4px 12px;min-height:32px;font:inherit;font-size:14px;font-weight:500;color:#fff;background:transparent;border:1px solid rgba(255,255,255,.6);cursor:pointer}
+  .ftv-pause:hover{background:#2323ff}
+  .ftv-pause svg{width:16px;height:16px}
+  /* Mobile : sous les boutons, centré */
+  @media (max-width:767px){.ftv-pause{position:static;margin-top:32px}}
+
+  /* ---------- Bulles bénévoles ----------
+     Positions = coordonnées Figma dans le frame 1680 px, exprimées en % de
+     largeur pour suivre la taille d'écran. Masquées sous 1200 px : en dessous,
+     elles chevauchent le titre et le compteur. */
+  .ftv-bubbles{position:absolute;inset:0;pointer-events:none;display:none}
+  @media (min-width:1200px){.ftv-bubbles{display:block}}
+  .ftv-slot{position:absolute;width:var(--size);height:var(--size)}
+  .ftv-float{position:absolute;inset:0;animation:ftv-float var(--dur,7s) ease-in-out var(--delay,0s) infinite alternate}
+  @keyframes ftv-float{
+    0%{transform:translate(0,0)}
+    50%{transform:translate(var(--fx,4px),calc(var(--fy,8px) * -1))}
+    100%{transform:translate(calc(var(--fx,4px) * -.6),calc(var(--fy,8px) * .5))}
+  }
+  .ftv-bubble{position:absolute;inset:0;border-radius:50%;overflow:hidden;box-shadow:0 6px 18px rgba(0,0,18,.16);background:linear-gradient(to bottom,var(--g1),var(--g2));transition:transform .45s cubic-bezier(.5,0,.75,0),opacity .45s}
+  .ftv-bubble::after{content:"";position:absolute;inset:0;border-radius:50%;border:4px solid #fff}
+  .ftv-bubble img{position:absolute;max-width:none;object-fit:cover}
+  .ftv-bubble.is-out{transform:scale(.4);opacity:0}
+  .ftv-bubble.is-in{animation:ftv-pop .6s cubic-bezier(.3,1.5,.5,1)}
+  @keyframes ftv-pop{0%{transform:scale(.4);opacity:0}100%{transform:scale(1);opacity:1}}
+  /* Anneau qui s'échappe de la bulle à l'arrivée d'une nouvelle promesse */
+  .ftv-slot__ring{position:absolute;inset:0;border-radius:50%;border:2px solid #fff;opacity:0}
+  .ftv-slot__ring.is-on{animation:ftv-ring 1.1s ease-out forwards}
+  @keyframes ftv-ring{0%{transform:scale(1);opacity:.8}100%{transform:scale(1.7);opacity:0}}
+
+  /* Tag "+Xh" — frame Figma : fond blanc, p 8px, radius 40px, 16/24 bold bleu */
+  .ftv-tag{position:absolute;left:71%;top:-13px;padding:8px;border-radius:40px;background:#fff;color:var(--ftv-blue,#000091);font-size:16px;line-height:24px;font-weight:700;white-space:nowrap;transform-origin:15% 85%;transition:transform .3s ease-in,opacity .3s}
+  .ftv-tag.is-out{transform:scale(.3);opacity:0}
+  .ftv-tag.is-in{animation:ftv-tag-in .7s cubic-bezier(.3,1.7,.5,1)}
+  @keyframes ftv-tag-in{0%{transform:scale(0) rotate(-12deg);opacity:0}100%{transform:scale(1) rotate(0);opacity:1}}
+  /* Copie fantôme du tag qui monte et s'efface : "ces heures s'ajoutent au compteur" */
+  .ftv-tag-ghost{position:absolute;left:71%;top:-13px;padding:8px;color:#fff;font-size:16px;line-height:24px;font-weight:700;white-space:nowrap;pointer-events:none;animation:ftv-ghost 1.4s ease-out forwards}
+  @keyframes ftv-ghost{0%{transform:translateY(0);opacity:0}20%{opacity:1}100%{transform:translateY(-48px);opacity:0}}
+
+  .ftv-hero.is-paused .ftv-float{animation-play-state:paused}
+
+  @media (prefers-reduced-motion:reduce){
+    .ftv-float,.ftv-ripple.is-on,.ftv-slot__ring.is-on,.ftv-tag-ghost,.ftv-counter__spark.is-pop{animation:none!important}
+    .ftv-bubble.is-in,.ftv-tag.is-in{animation:ftv-fade .4s}
+    @keyframes ftv-fade{from{opacity:0}to{opacity:1}}
+  }
+
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+</style>
+</head>
+<body>
+
+<header class="jva-header">
+  <div class="jva-header__row">
+    <div class="jva-header__brand">
+      <img src="ressources/rf.svg" alt="République Française" class="jva-header__rf">
+      <img src="ressources/jva_logohorizontal_bleu.svg" alt="JeVeuxAider.gouv.fr — Par la réserve civique" class="jva-header__logo">
+    </div>
+    <div class="jva-header__tools">
+      <a href="#" class="jva-header__tool-link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>Trouver une mission</a>
+      <a href="#" class="jva-header__tool-link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Publier une mission</a>
+      <a href="#" class="jva-header__tool-link jva-header__tool-link--bordered"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c1.5-4 4.2-6 7-6s5.5 2 7 6"/></svg>Mon compte</a>
+    </div>
+  </div>
+  <div class="jva-header__menu">
+    <nav class="fr-nav" id="header-navigation" role="navigation" aria-label="Menu principal">
+      <ul class="fr-nav__list">
+        <li class="fr-nav__item"><a class="fr-nav__link" href="#" aria-current="page">Particuliers</a></li>
+        <li class="fr-nav__item"><a class="fr-nav__link" href="#">Associations</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- ============ HERO — opération France TV (Semaine de la fraternité) ============
+     Animations du prototype :
+     - toutes les 5 s, le compteur d'heures défile jusqu'à sa nouvelle valeur ;
+     - les bulles flottent doucement (chacune sa durée/amplitude) ;
+     - 2 ticks sur 3 environ, une bulle est remplacée par un autre bénévole, qui
+       arrive avec un tag "+Xh" ; ces heures font partie de l'incrément du tick.
+     Les chiffres sont fictifs. ================================================ -->
+<section class="ftv-hero" id="ftv-hero" aria-labelledby="ftv-title">
+  <div class="ftv-hero__bg" aria-hidden="true">
+    <img class="ftv-hero__blur" src="ressources/france-tv/blur.svg" alt="">
+    <img src="ressources/france-tv/cercle-1.svg" width="293" height="293" alt="">
+    <img src="ressources/france-tv/cercle-2.svg" width="445" height="445" alt="">
+    <img src="ressources/france-tv/cercle-3.svg" width="611" height="611" alt="">
+    <img src="ressources/france-tv/cercle-4.svg" width="789" height="789" alt="">
+    <img src="ressources/france-tv/cercle-5.svg" width="1062" height="1062" alt="">
+    <img src="ressources/france-tv/cercle-6.svg" width="1289" height="1289" alt="">
+    <img src="ressources/france-tv/cercle-7.svg" width="1562" height="1562" alt="">
+    <span class="ftv-ripple" id="ftv-ripple"></span>
+  </div>
+
+  <div class="ftv-hero__stage">
+    <div class="ftv-bubbles" id="ftv-bubbles" aria-hidden="true"></div>
+
+    <div class="ftv-hero__brand">
+      <p class="ftv-hero__brand-label">Semaine de la fraternité avec</p>
+      <img src="ressources/france-tv/logo-france-tv.svg" alt="France.tv">
+    </div>
+
+    <h1 class="ftv-hero__title" id="ftv-title">
+      Ensemble, nous avons déjà promis
+      <span class="ftv-counter">
+        <span class="ftv-counter__value" id="ftv-hours">830 020</span>
+        <span class="ftv-counter__unit">heures de bénévolat</span>
+        <span class="ftv-counter__spark" id="ftv-spark" aria-hidden="true"><img src="ressources/france-tv/eclat.svg" alt=""></span>
+      </span>
+    </h1>
+
+    <ul class="ftv-avatars" id="ftv-avatars" aria-hidden="true"></ul>
+
+    <p class="ftv-hero__participation"><strong id="ftv-people">248 474 personnes</strong> ont déjà participé</p>
+
+    <div class="ftv-hero__ctas">
+      <a href="#" class="font-medium transition-extended ease-out inline-flex items-center justify-center gap-2 bg-white text-jva-blue-500 hover:bg-[#F6F6F6] active:bg-[#EDEDED] px-6 py-2 text-lg min-h-[3rem]" target="_blank" rel="noopener" title="Promettre mes heures — nouvelle fenêtre">
+        Promettre mes heures
+        <img class="ftv-btn-icon" src="ressources/france-tv/icone-lien-externe.svg" alt="">
+      </a>
+      <a href="#" class="btn-transparent-outline transition-extended px-6 py-2 text-lg min-h-[3rem]">Trouver une mission</a>
+    </div>
+
+    <button type="button" class="ftv-pause" id="ftv-pause" aria-pressed="false">
+      <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><rect x="3" y="2" width="3.5" height="12"/><rect x="9.5" y="2" width="3.5" height="12"/></svg>
+      <span>Mettre en pause l’animation</span>
+    </button>
+  </div>
+</section>
+
+</main>
+
+<script>
+(() => {
+  const hero = document.getElementById('ftv-hero');
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fmt = n => n.toLocaleString('fr-FR').replace(/[  ]/g, ' ');
+  const rand = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+  const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+
+  /* Bénévoles : cadrage repris de la maquette (position/taille de l'image dans la
+     bulle, en % de la bulle) + dégradé de fond de chaque bulle. La 9e photo vient
+     de ressources/dashboard, pour avoir toujours quelqu'un « en réserve ». */
+  const PEOPLE = [
+    {src:'benevole-1.png', crop:[-57.37, 5.30, 214.74, 140.40], g:['#FEABA2','#FD8D81']},
+    {src:'benevole-2.png', crop:[-91.35,-7.69, 281.73, 159.62], g:['#F4BF6F','#F2B964']},
+    {src:'benevole-3.png', crop:[-60.58, 7.69, 226.92, 150.96], g:['#75C996','#44A369']},
+    {src:'benevole-4.png', crop:[-22.12,-34.62,143.27, 215.38], g:['#CDDADB','#C8D3D6']},
+    {src:'benevole-5.png', crop:[-50.00, 6.25, 181.64, 121.15], g:['#978CBE','#9C8EC5']},
+    {src:'benevole-6.png', crop:[-42.50,-2.50, 201.25, 201.25], g:['#FEABA2','#FD8D81']},
+    {src:'benevole-7.png', crop:[-10.08, 0.84, 107.56, 178.15], g:['#A1C8C9','#95C1C7']},
+    {src:'benevole-8.png', crop:[-61.54, 8.65, 198.08,  99.04], g:['#A1C8C9','#95C1C7']},
+    {src:'../dashboard/photo-profil-temoignage.png', crop:[0, 0, 100, 100], g:['#F4BF6F','#F2B964']},
+  ];
+  /* Emplacements Figma (x, y, taille dans le frame 1680×742) + bénévole initial + tag initial */
+  const SLOTS = [
+    {x:193,  y:108, s:104, p:0},
+    {x:1300, y:268, s:104, p:1},
+    {x:284,  y:576, s:104, p:2, tag:36},
+    {x:190,  y:440, s:80,  p:3},
+    {x:1404, y:132, s:80,  p:4, tag:10},
+    {x:1291, y:559, s:80,  p:5},
+    {x:280,  y:289, s:80,  p:6, tag:1},
+    {x:1432, y:412, s:104, p:7, tag:4},
+  ];
+  const TAG_VALUES = [1,1,2,2,3,4,5,5,6,8,10,12,15,20,24,36];
+  const MAX_TAGS = 4;
+
+  const layer = document.getElementById('ftv-bubbles');
+  const free = new Set(PEOPLE.map((_, i) => i));
+  const tagOrder = []; // slots portant un tag, du plus ancien au plus récent
+
+  function paint(bubble, idx) {
+    const p = PEOPLE[idx];
+    bubble.style.setProperty('--g1', p.g[0]);
+    bubble.style.setProperty('--g2', p.g[1]);
+    const [l, t, w, h] = p.crop;
+    bubble.innerHTML = `<img src="ressources/france-tv/${p.src}" alt="" style="left:${l}%;top:${t}%;width:${w}%;height:${h}%">`;
+  }
+
+  /* Pile d'avatars mobile — ordre de la capture de référence */
+  const avatars = document.getElementById('ftv-avatars');
+  [0, 6, 2, 4, 5, 1].forEach(i => {
+    const li = document.createElement('li');
+    paint(li, i);
+    avatars.appendChild(li);
+  });
+
+  function addTag(slot, value, animate) {
+    const tag = document.createElement('span');
+    tag.className = 'ftv-tag' + (animate ? ' is-in' : '');
+    tag.textContent = `+${value}h`;
+    slot.float.appendChild(tag);
+    slot.tag = tag;
+    tagOrder.push(slot);
+    if (animate) {
+      const ghost = document.createElement('span');
+      ghost.className = 'ftv-tag-ghost';
+      ghost.textContent = tag.textContent;
+      slot.float.appendChild(ghost);
+      ghost.addEventListener('animationend', () => ghost.remove());
+    }
+    while (tagOrder.length > MAX_TAGS) removeTag(tagOrder[0]);
+  }
+  function removeTag(slot) {
+    if (!slot.tag) return;
+    const tag = slot.tag;
+    slot.tag = null;
+    tagOrder.splice(tagOrder.indexOf(slot), 1);
+    tag.classList.add('is-out');
+    setTimeout(() => tag.remove(), 300);
+  }
+
+  const slots = SLOTS.map((d, i) => {
+    const el = document.createElement('div');
+    el.className = 'ftv-slot';
+    el.style.cssText = `left:${(d.x / 1680 * 100).toFixed(3)}%;top:${d.y}px;--size:${d.s}px`;
+    const float = document.createElement('div');
+    float.className = 'ftv-float';
+    float.style.cssText = `--dur:${(5.5 + Math.random() * 3.5).toFixed(2)}s;--delay:-${(Math.random() * 6).toFixed(2)}s;--fx:${rand(-6, 6)}px;--fy:${rand(6, 12)}px`;
+    const ring = document.createElement('span');
+    ring.className = 'ftv-slot__ring';
+    const bubble = document.createElement('div');
+    bubble.className = 'ftv-bubble';
+    float.append(ring, bubble);
+    el.appendChild(float);
+    layer.appendChild(el);
+    paint(bubble, d.p);
+    free.delete(d.p);
+    const slot = {el, float, ring, bubble, person: d.p, tag: null};
+    if (d.tag) addTag(slot, d.tag, false);
+    return slot;
+  });
+
+  /* Remplace une bulle : sortie (450 ms) → nouveau bénévole qui « pop » → tag +Xh */
+  function replace(slot, hours) {
+    removeTag(slot);
+    slot.bubble.classList.remove('is-in');
+    slot.bubble.classList.add('is-out');
+    setTimeout(() => {
+      const next = pick([...free]);
+      free.add(slot.person);
+      free.delete(next);
+      slot.person = next;
+      paint(slot.bubble, next);
+      slot.bubble.classList.remove('is-out');
+      void slot.bubble.offsetWidth;
+      slot.bubble.classList.add('is-in');
+      slot.ring.classList.remove('is-on');
+      void slot.ring.offsetWidth;
+      slot.ring.classList.add('is-on');
+      setTimeout(() => addTag(slot, hours, true), 250);
+    }, 450);
+  }
+
+  /* Compteurs */
+  const hoursEl = document.getElementById('ftv-hours');
+  const peopleEl = document.getElementById('ftv-people');
+  const spark = document.getElementById('ftv-spark');
+  const ripple = document.getElementById('ftv-ripple');
+  let hours = 830020, shownHours = hours, people = 248474, raf;
+
+  function rollTo(target) {
+    cancelAnimationFrame(raf);
+    if (reduceMotion) { hoursEl.textContent = fmt(shownHours = target); return; }
+    const from = shownHours, t0 = performance.now(), D = 1400;
+    const step = now => {
+      const k = Math.min(1, (now - t0) / D), e = 1 - Math.pow(1 - k, 3);
+      shownHours = Math.round(from + (target - from) * e);
+      hoursEl.textContent = fmt(shownHours);
+      if (k < 1) raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+  }
+  const restart = (el, cls) => { el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); };
+
+  function tick() {
+    // Arrivée visible 2 fois sur 3 : une bulle (jamais deux fois de suite la même) est remplacée
+    let shown = 0;
+    const visible = getComputedStyle(layer).display !== 'none';
+    if (visible && Math.random() < 0.67) {
+      shown = pick(TAG_VALUES);
+      const candidates = slots.filter(s => s !== tick.last);
+      tick.last = pick(candidates);
+      replace(tick.last, shown);
+    }
+    // Les autres promesses arrivées partout en France pendant ces 5 s
+    const delta = shown + rand(8, 60);
+    hours += delta;
+    people += (shown ? 1 : 0) + rand(0, 3);
+    setTimeout(() => {
+      rollTo(hours);
+      peopleEl.textContent = `${fmt(people)} personnes`;
+      restart(spark, 'is-pop');
+      restart(ripple, 'is-on');
+    }, shown ? 900 : 0); // le compteur bouge quand le tag apparaît
+  }
+
+  let timer = setInterval(tick, 5000);
+
+  const pauseBtn = document.getElementById('ftv-pause');
+  pauseBtn.addEventListener('click', () => {
+    const paused = pauseBtn.getAttribute('aria-pressed') !== 'true';
+    pauseBtn.setAttribute('aria-pressed', String(paused));
+    pauseBtn.querySelector('span').textContent = paused ? 'Reprendre l’animation' : 'Mettre en pause l’animation';
+    pauseBtn.querySelector('svg').innerHTML = paused
+      ? '<path d="M4 2l10 6-10 6z"/>'
+      : '<rect x="3" y="2" width="3.5" height="12"/><rect x="9.5" y="2" width="3.5" height="12"/>';
+    hero.classList.toggle('is-paused', paused);
+    clearInterval(timer);
+    if (!paused) timer = setInterval(tick, 5000);
+  });
+})();
+</script>
+
+</body>
+</html>

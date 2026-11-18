@@ -131,3 +131,8 @@ devient co-responsable et ce que ça change pour eux. La case confirme
 l'accord des responsables (« Les responsables ont donné leur accord pour
 cette fusion », sans le nombre), pas seulement qu'ils ont été prévenus. Ils reçoivent un e-mail une fois la fusion
 faite.
+
+**18/11/2026 — La landing Semaine de la Fraternité n'a pas de header.**
+La page commence directement par le hero bleu (pas de bandeau
+JeVeuxAider.gouv.fr ni de navigation) ; les logos France.tv et
+JeVeuxAider.gouv.fr du hero et le footer DSFR suffisent à situer la page.

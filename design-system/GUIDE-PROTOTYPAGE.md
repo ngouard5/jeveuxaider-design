@@ -261,6 +261,18 @@ pas de conflit. La règle à suivre selon le cas :
    arbitraire entre deux paliers — voir la note "Cohérence avec le code" sur
    `fondamentaux/typographie.html`.
 
+## Piège n°5 : les liens `target="_blank"` reçoivent déjà une icône DSFR
+
+`dsfr.min.css` ajoute une icône « lien externe » (`::after`, masque
+`icons/system/external-link-line.svg`) à **tout** lien `target="_blank"`. Si le
+bouton contient déjà son icône (comme dans Figma), on en voit deux. Piège
+sournois : en `file://` le masque ne se charge pas (CORS), donc les captures
+locales n'en montrent qu'une ; le doublon n'apparaît qu'une fois servi en HTTP
+(GitHub Pages). Soit on retire l'icône inline, soit on neutralise celle du DSFR
+sur le composant : `.mon-bouton[target=_blank]::after{content:none}`. Pour
+vérifier, ouvrir le prototype via un serveur local (`python3 -m http.server`
+à la racine du dépôt), pas en double-cliquant le fichier.
+
 ## Avant de committer
 
 1. `python3 design-system/outils/checktags.py votre-prototype.html` —

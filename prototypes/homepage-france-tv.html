@@ -85,6 +85,11 @@
   .ftv-ripple{position:absolute;left:50%;top:50%;width:293px;height:293px;margin:-146.5px 0 0 -146.5px;border-radius:50%;border:2px solid rgba(255,255,255,.35);opacity:0;pointer-events:none}
   .ftv-ripple.is-on{animation:ftv-ripple 2.4s cubic-bezier(.2,.6,.3,1) forwards}
   @keyframes ftv-ripple{0%{transform:scale(1);opacity:.9}100%{transform:scale(5.3);opacity:0}}
+  /* Fondus haut et bas (Figma 6358:7099, calques "Gradient" 174px) : masquent
+     progressivement les cercles et l'onde, sous les bulles et le contenu. */
+  .ftv-hero__bg::before,.ftv-hero__bg::after{content:"";position:absolute;left:0;right:0;height:174px;z-index:1;pointer-events:none}
+  .ftv-hero__bg::before{top:0;background:linear-gradient(to top,rgba(0,0,145,0),var(--ftv-blue))}
+  .ftv-hero__bg::after{bottom:0;background:linear-gradient(to bottom,rgba(0,0,145,0),var(--ftv-blue))}
 
   /* Espacements (Figma "D - Hero A" 6316:16775 / "M - Hero A" 6333:19147, MAJ 18/11/2026) :
      desktop = colonne centrée, gap 40 (marque +24 de padding bas, titre→compteur 24) ;

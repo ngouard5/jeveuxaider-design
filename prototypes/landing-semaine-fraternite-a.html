@@ -1,0 +1,1400 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Prototype — Landing Semaine de la Fraternité, version A</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>document.documentElement.setAttribute("data-fr-theme", matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");</script>
+<style>
+  /* Base cascade layers — voir design-system/GUIDE-PROTOTYPAGE.md (Piège n°2) */
+  @import url("../design-system/compiled-reset.css") layer(tailwind-reset);
+  @import url("../design-system/dsfr.min.css") layer(dsfr-base);
+  @import url("../design-system/compiled.css") layer(dsfr-utilitaires);
+  @import url("../design-system/patches.css") layer(site-patches);
+
+  /* ==========================================================================
+     LANDING « SEMAINE DE LA FRATERNITÉ », VERSION A (compteur en grand, formulaire dessous)
+     Figma "Projet France TV" › D - Landing Semaine de la Fraternité B (node 6358:7588) —
+     maquette nommée « B » dans Figma, devenue la version A le 18/11/2026,
+     frame de référence 1680 px. Pas de maquette mobile : l'empilement mobile est proposé ici.
+
+     Surfaces de marque (hero bleu, bandeau témoignages #6464F3, rappel final bleu) :
+     couleurs fixes, identiques en dark mode, comme les heroes France TV. Le reste de la page
+     (fonds clairs, textes, cartes, formulaire) suit les variables DSFR.
+     ========================================================================== */
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font-family:Marianne,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--background-default-grey);color:var(--text-default-grey);font-synthesis:none}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  .br-desktop{display:none}
+  @media (min-width:1024px){.br-desktop{display:inline}}
+  /* ---------- Boutons : DsfrButton.vue size="lg" (px-6 py-2 text-lg min-h-[3rem]) ----------
+     La maquette dessine les boutons LG à 56px, le composant réel fait 48px : on suit le code.
+     Primaire adaptatif : variables DSFR fond + texte (GUIDE-PROTOTYPAGE, Piège n°3). */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:8px 24px;font:inherit;font-size:18px;line-height:28px;font-weight:500;text-align:center;text-decoration:none;background-image:none;border:0;cursor:pointer;transition:background-color .15s ease-out}
+  .btn--primary{background-color:var(--background-action-high-blue-france);color:var(--text-inverted-blue-france)}
+  .btn--primary:hover{background-color:var(--background-action-high-blue-france-hover)}
+  .btn--primary:active{background-color:var(--background-action-high-blue-france-active)}
+  /* Sur surface de marque bleue : bouton blanc, texte bleu (fixe, comme les heroes) */
+  .btn--on-brand{background-color:#fff;color:#000091}
+  .btn--on-brand:hover{background-color:#F6F6F6}
+  .btn--on-brand:active{background-color:#EDEDED}
+  /* Tertiaire LG de la maquette : contour 1px bleu (Figma 6306:8731) */
+  .btn--tertiary{background:transparent;color:var(--text-action-high-blue-france);box-shadow:inset 0 0 0 1px var(--border-action-high-blue-france)}
+  .btn--tertiary:hover{background-color:var(--background-default-grey-hover)}
+  .btn--icon{width:48px;padding:0}
+  .btn--icon svg{width:24px;height:24px}
+  .btn[disabled]{opacity:.4;cursor:default}
+  /* Secondaire sur fond #6464F3 (Figma 4301:23623, bordure blanche) */
+  .btn--outline-white{background:transparent;color:#fff;box-shadow:inset 0 0 0 1px #fff}
+  .btn--outline-white:hover{background-color:rgba(255,255,255,.12)}
+
+  /* ---------- Gabarit de section ----------
+     Figma : padding 96 / 198 px à 1680 (contenu 1284), titres « Titres alternatifs SM » 56/64
+     (= fr-display--sm), sous-titre 24/32 mention. Mobile : 32/40, padding 48/16. */
+  .lp-section{padding:48px 16px}
+  @media (min-width:768px){.lp-section{padding:72px 32px}}
+  @media (min-width:1200px){.lp-section{padding:96px 32px}}
+  .lp-container{max-width:1284px;margin:0 auto}
+  .lp-head{display:flex;flex-direction:column;gap:24px;margin-bottom:32px}
+  @media (min-width:1024px){.lp-head{flex-direction:row;align-items:flex-end;gap:32px;margin-bottom:56px}}
+  .lp-head__text{flex:1 1 auto;min-width:0}
+  .lp-title{margin:0;font-weight:700;font-size:32px;line-height:40px;color:var(--text-title-grey)}
+  @media (min-width:1024px){.lp-title{font-size:56px;line-height:64px}}
+  .lp-subtitle{margin:8px 0 0;font-size:18px;line-height:28px;color:var(--text-mention-grey)}
+  @media (min-width:1024px){.lp-subtitle{font-size:24px;line-height:32px}}
+  .lp-head__actions{display:flex;gap:12px;flex:none}
+
+  /* ---------- Carrousels (missions, partenaires, témoignages) ----------
+     Piste défilante au doigt / au trackpad, flèches et points de pagination synchronisés. */
+  .carousel__track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;scrollbar-width:none;margin:0;padding:0;list-style:none}
+  .carousel__track::-webkit-scrollbar{display:none}
+  .carousel__track > li{scroll-snap-align:start;flex:none;margin:0;padding:0}
+  @media (prefers-reduced-motion:reduce){.carousel__track{scroll-behavior:auto}}
+  .dots{display:flex;align-items:center;gap:8px;margin:32px 0 0;padding:0;list-style:none}
+  .dots button{display:block;width:8px;height:8px;padding:0;border:0;border-radius:50%;background:var(--dot-off);cursor:pointer}
+  .dots button[aria-current="true"]{width:12px;height:12px;background:var(--dot-on)}
+  /* zone cliquable 24px sans changer le dessin */
+  .dots li{display:flex;align-items:center;justify-content:center;min-width:12px;min-height:24px}
+
+  /* ==========================================================================
+     1. HERO — Figma « D - Hero A » (6358:7589), 1680×742 : repris de
+     homepage-france-tv.html (cercles, bulles bénévoles, compteur animé), avec le logo
+     JeVeuxAider.gouv.fr dans la marque et le bouton « Je donne de mon temps » qui
+     descend au formulaire. Pas d'ombre sous le hero : la section formulaire, du même
+     bleu, le prolonge.
+     ========================================================================== */
+  .ftv-hero{--ftv-blue:#000091;position:relative;z-index:1;overflow:hidden;background:var(--ftv-blue);color:#fff;isolation:isolate} /* z-index : passe au-dessus du débord vers le haut de l’ombre de la section formulaire */
+  .ftv-hero__stage{position:relative;max-width:1680px;margin:0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:52px 16px;text-align:center}
+  @media (min-width:768px){.ftv-hero__stage{padding:56px 32px 72px}}
+  @media (min-width:1200px){.ftv-hero__stage{min-height:742px;padding:56px 16px}} /* frame Figma « D - Hero A » 1680×742, contenu centré */
+
+  /* Fond : halo flouté + cercles concentriques (assets Figma, centrés) */
+  .ftv-hero__bg{position:absolute;inset:0;pointer-events:none;z-index:-1}
+  .ftv-hero__bg img{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);max-width:none}
+  .ftv-hero__blur{width:2216px;height:2216px}               /* 1216 + débord du flou (inset -41.12%) */
+  .ftv-ripple{position:absolute;left:50%;top:50%;width:293px;height:293px;margin:-146.5px 0 0 -146.5px;border-radius:50%;border:2px solid rgba(255,255,255,.35);opacity:0;pointer-events:none}
+  .ftv-ripple.is-on{animation:ftv-ripple 2.4s cubic-bezier(.2,.6,.3,1) forwards}
+  @keyframes ftv-ripple{0%{transform:scale(1);opacity:.9}100%{transform:scale(5.3);opacity:0}}
+  /* Fondus haut et bas (Figma 6358:7099, calques "Gradient" 174px) : masquent
+     progressivement les cercles et l'onde, sous les bulles et le contenu. */
+  .ftv-hero__bg::before,.ftv-hero__bg::after{content:"";position:absolute;left:0;right:0;height:174px;z-index:1;pointer-events:none}
+  .ftv-hero__bg::before{top:0;background:linear-gradient(to top,rgba(0,0,145,0),var(--ftv-blue))}
+  .ftv-hero__bg::after{bottom:0;background:linear-gradient(to bottom,rgba(0,0,145,0),var(--ftv-blue))}
+
+  /* Espacements (Figma "D - Hero A" 6316:16775 / "M - Hero A" 6333:19147, MAJ 18/11/2026) :
+     desktop = colonne centrée, gap 40 (marque +24 de padding bas, titre→compteur 24) ;
+     mobile  = gap 48 entre les blocs (titre→compteur 24, avatars→texte 24). */
+  .ftv-hero__brand{display:flex;flex-direction:column;align-items:center;gap:8px;margin:0}
+  @media (min-width:768px){.ftv-hero__brand{flex-direction:row;align-items:center;gap:16px;flex-wrap:wrap;justify-content:center}}
+  .ftv-hero__brand-label{font-size:14px;line-height:20px;font-weight:700;text-transform:uppercase;color:#F5F5FE;margin:0}
+  @media (min-width:768px){.ftv-hero__brand-label{line-height:24px}}
+  .ftv-hero__logos{display:flex;align-items:center;gap:16px}
+  .ftv-hero__brand img{display:block;width:auto;height:24px}
+  .ftv-hero__brand img.logo-jva{height:28px}
+  .br-mobile{display:inline}
+  @media (min-width:768px){.br-mobile{display:none}}
+
+  .ftv-hero__title{margin:48px 0 0;color:#fff;font-weight:700;font-size:32px;line-height:40px;letter-spacing:-.03em}
+  @media (min-width:768px){.ftv-hero__title{margin-top:64px;font-size:48px;line-height:56px}}
+
+  .ftv-counter{position:relative;display:flex;flex-direction:column;align-items:center;width:fit-content;padding:0;margin:24px auto 0}
+  @media (min-width:768px){.ftv-counter{padding:8px 48px 32px}}
+  @media (min-width:1200px){.ftv-counter{min-width:696px}} /* frame "Volunteer Hours" */
+  /* Le nombre porte l'éclat : ses dimensions sont en em pour suivre la taille du nombre */
+  .ftv-counter__num{position:relative;display:block;font-size:70px}
+  @media (min-width:768px){.ftv-counter__num{font-size:104px}}
+  @media (min-width:1200px){.ftv-counter__num{font-size:134px}}
+  .ftv-counter__value{display:block;font-weight:700;font-size:inherit;line-height:92px;letter-spacing:.02em;font-variant-numeric:tabular-nums;white-space:nowrap;color:#fff}
+  @media (min-width:768px){.ftv-counter__value{line-height:1.21}} /* 162/134 */
+  .ftv-counter__unit{display:block;font-weight:700;font-size:28px;line-height:36px;color:#fff}
+  @media (min-width:768px){.ftv-counter__unit{font-size:32px;line-height:40px}}
+  /* Éclat décoratif (instance "Graphic") : 80px pour un nombre à 134px (desktop),
+     40px à 70px (mobile) ≈ .6em ; il mord sur le dernier chiffre (≈ .18em) */
+  .ftv-counter__spark{position:absolute;left:100%;margin-left:-.18em;top:-.02em;width:.6em;height:.6em;transform-origin:20% 80%}
+  /* Taille explicite : avec width/height:auto, une image en absolu garde sa taille
+     intrinsèque (79px) et ignore l'inset */
+  .ftv-counter__spark img{position:absolute;left:.87%;top:8.23%;width:99.17%;height:84.27%;max-width:none}
+  .ftv-counter__spark.is-pop{animation:ftv-spark .7s cubic-bezier(.3,1.6,.5,1)}
+  @keyframes ftv-spark{0%{transform:scale(1)}35%{transform:scale(1.25) rotate(-6deg)}100%{transform:scale(1)}}
+
+  /* Pile d'avatars — remplace les bulles flottantes sous 1200 px (même seuil
+     que .ftv-bubbles). Figma mobile : 56px, bordure 3, chevauchement 12.
+     Chaque photo recouvre la précédente, mêmes cadrages et dégradés que les bulles. */
+  .hero-avatars{display:flex;justify-content:center;margin:48px 0 0;padding:0;list-style:none}
+  @media (min-width:768px){.hero-avatars{margin-top:32px}}
+  @media (min-width:1200px){.hero-avatars{display:none}}
+  .hero-avatars li{position:relative;width:56px;height:56px;flex:none;border-radius:50%;overflow:hidden;background:linear-gradient(to bottom,var(--g1),var(--g2));margin:0;padding:0}
+  .hero-avatars li + li{margin-left:-12px}
+  .hero-avatars img{position:absolute;max-width:none;object-fit:cover}
+  /* Bordure blanche, comme les bulles desktop (en ::after pour ne pas décaler le cadrage) */
+  .hero-avatars li::after{content:"";position:absolute;inset:0;border-radius:50%;border:3px solid #fff}
+  @media (min-width:768px){.hero-avatars li::after{border-width:4px}}
+  @media (min-width:768px){.hero-avatars li{width:72px;height:72px}.hero-avatars li + li{margin-left:-16px}}
+
+  .ftv-hero__participation{margin:24px 0 0;font-size:18px;line-height:24px;color:#fff}
+  @media (min-width:768px){.ftv-hero__participation{font-size:24px;line-height:32px}}
+  @media (min-width:1200px){.ftv-hero__participation{margin-top:40px}}
+  .ftv-hero__participation strong{font-variant-numeric:tabular-nums}
+
+  .ftv-hero__ctas{display:flex;justify-content:center;margin-top:48px;align-self:stretch}
+  @media (min-width:768px){.ftv-hero__ctas{margin-top:40px;align-self:auto}}
+  .ftv-hero__ctas > a{flex:1 1 auto}
+  @media (min-width:768px){.ftv-hero__ctas > a{flex:none}}
+  /* Bouton : DsfrButton.vue size="lg" (px-6 py-2 text-lg min-h-[3rem]), type
+     tertiary-no-outline (fond blanc, texte bleu) + icône à gauche (Figma : pl 18 / pr 24).
+     Pleine largeur sur mobile, comme la maquette.
+     La maquette le dessine à 56px de haut, le composant réel fait 48px : on suit le code. */
+  .ftv-btn-icon{width:24px;height:24px;flex:none;margin-left:-6px}
+
+  /* Bouton pause (WCAG 2.2.2 : tout mouvement automatique > 5 s doit pouvoir être arrêté).
+     Hors maquette — ajouté pour l'accessibilité, discret en bas à droite. */
+  .ftv-pause{position:absolute;right:24px;bottom:24px;display:inline-flex;align-items:center;gap:8px;padding:4px 12px;min-height:32px;font:inherit;font-size:14px;font-weight:500;color:#fff;background:transparent;border:0;cursor:pointer} /* sans bordure : discret */
+  .ftv-pause:hover{background:#2323ff}
+  .ftv-pause svg{width:16px;height:16px}
+  /* Mobile : sous les boutons, centré */
+  @media (max-width:767px){.ftv-pause{position:static;margin-top:32px}}
+
+  /* ---------- Bulles bénévoles ----------
+     Positions = coordonnées Figma dans le frame 1680 px, exprimées en % de
+     largeur pour suivre la taille d'écran. Masquées sous 1200 px : en dessous,
+     elles chevauchent le titre et le compteur. */
+  .ftv-bubbles{position:absolute;inset:0;pointer-events:none;display:none}
+  @media (min-width:1200px){.ftv-bubbles{display:block}}
+  .ftv-slot{position:absolute;width:var(--size);height:var(--size)}
+  .ftv-float{position:absolute;inset:0;animation:ftv-float var(--dur,7s) ease-in-out var(--delay,0s) infinite alternate}
+  @keyframes ftv-float{
+    0%{transform:translate(0,0)}
+    50%{transform:translate(var(--fx,4px),calc(var(--fy,8px) * -1))}
+    100%{transform:translate(calc(var(--fx,4px) * -.6),calc(var(--fy,8px) * .5))}
+  }
+  .ftv-bubble{position:absolute;inset:0;border-radius:50%;overflow:hidden;box-shadow:0 6px 18px rgba(0,0,18,.16);background:linear-gradient(to bottom,var(--g1),var(--g2));transition:transform .45s cubic-bezier(.5,0,.75,0),opacity .45s}
+  .ftv-bubble::after{content:"";position:absolute;inset:0;border-radius:50%;border:4px solid #fff}
+  .ftv-bubble img{position:absolute;max-width:none;object-fit:cover}
+  .ftv-bubble.is-out{transform:scale(.4);opacity:0}
+  .ftv-bubble.is-in{animation:ftv-pop .6s cubic-bezier(.3,1.5,.5,1)}
+  @keyframes ftv-pop{0%{transform:scale(.4);opacity:0}100%{transform:scale(1);opacity:1}}
+  /* Anneau qui s'échappe de la bulle à l'arrivée d'une nouvelle promesse */
+  .ftv-slot__ring{position:absolute;inset:0;border-radius:50%;border:2px solid #fff;opacity:0}
+  .ftv-slot__ring.is-on{animation:ftv-ring 1.1s ease-out forwards}
+  @keyframes ftv-ring{0%{transform:scale(1);opacity:.8}100%{transform:scale(1.7);opacity:0}}
+
+  /* Tag "+Xh" — frame Figma : fond blanc, p 8px, radius 40px, 16/24 bold bleu */
+  .ftv-tag{position:absolute;left:71%;top:-13px;padding:8px;border-radius:40px;background:#fff;color:var(--ftv-blue,#000091);font-size:16px;line-height:24px;font-weight:700;white-space:nowrap;transform-origin:15% 85%;transition:transform .3s ease-in,opacity .3s}
+  .ftv-tag.is-out{transform:scale(.3);opacity:0}
+  .ftv-tag.is-in{animation:ftv-tag-in .7s cubic-bezier(.3,1.7,.5,1)}
+  @keyframes ftv-tag-in{0%{transform:scale(0) rotate(-12deg);opacity:0}100%{transform:scale(1) rotate(0);opacity:1}}
+  /* Copie fantôme du tag qui monte et s'efface : "ces heures s'ajoutent au compteur" */
+  .ftv-tag-ghost{position:absolute;left:71%;top:-13px;padding:8px;color:#fff;font-size:16px;line-height:24px;font-weight:700;white-space:nowrap;pointer-events:none;animation:ftv-ghost 1.4s ease-out forwards}
+  @keyframes ftv-ghost{0%{transform:translateY(0);opacity:0}20%{opacity:1}100%{transform:translateY(-48px);opacity:0}}
+
+  .ftv-hero.is-paused .ftv-float{animation-play-state:paused}
+
+  @media (prefers-reduced-motion:reduce){
+    .ftv-float,.ftv-ripple.is-on,.ftv-slot__ring.is-on,.ftv-tag-ghost,.ftv-counter__spark.is-pop{animation:none!important}
+    .ftv-bubble.is-in,.ftv-tag.is-in{animation:ftv-fade .4s}
+    @keyframes ftv-fade{from{opacity:0}to{opacity:1}}
+  }
+
+  .br-mobile{display:inline}
+  @media (min-width:768px){.br-mobile{display:none}}
+
+  /* Bloc compteur du rappel final — repris tel quel de homepage-france-tv-variante.html (mêmes réglages
+     validés : séparateur 25 %, éclat sans chevauchement, interligne 1). */
+  .ftv-stats{width:100%;display:flex;flex-direction:column;gap:24px;color:#fff}
+  .ftv-stats__hours{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:8px}
+  .ftv-stats__hours{position:relative;margin:0;padding:26px 16px 29px;text-align:center}
+  @media (min-width:768px){
+    .ftv-stats{flex-direction:row;align-items:center;gap:0;padding:24px 0 24px 46px;min-height:199px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:8px;text-align:left}
+    .ftv-stats__hours{flex:none;background:none;border:0;border-radius:0;padding:0 23px 0 0;text-align:left}
+  }
+  .ftv-stats__value{display:block;font-weight:700;font-size:inherit;line-height:80px;letter-spacing:.02em;font-variant-numeric:tabular-nums;white-space:nowrap}
+  @media (min-width:768px){.ftv-stats__value{line-height:1}}
+  .ftv-stats__unit{display:block;font-weight:700;font-size:22px;line-height:28px;margin-top:16px}
+  @media (min-width:768px){.ftv-stats__unit{font-size:24px;line-height:32px;margin-top:12px}}
+  .ftv-stats__num{position:relative;display:inline-block;font-size:64px;padding-right:.727em}
+  @media (min-width:768px){.ftv-stats__num{font-size:78px;padding-right:.675em}}
+  .ftv-stats__spark{position:absolute;right:0;top:-.17em;width:.667em;height:.667em;transform-origin:20% 80%}
+  @media (min-width:768px){.ftv-stats__spark{top:-.12em;width:.615em;height:.615em}}
+  .ftv-stats__spark img{position:absolute;left:.87%;top:8.23%;width:99.17%;height:84.27%;max-width:none}
+  .ftv-stats__spark.is-pop{animation:ftv-spark .7s cubic-bezier(.3,1.6,.5,1)}
+  @keyframes ftv-spark{0%{transform:scale(1)}35%{transform:scale(1.25) rotate(-6deg)}100%{transform:scale(1)}}
+  .ftv-stats__people{min-width:0}
+  @media (min-width:768px){.ftv-stats__people{flex:1 1 auto;border-left:1px solid rgba(255,255,255,.25);padding:10px 24px 9px 32px}}
+  .ftv-stats__people p{margin:0;font-size:18px;line-height:24px}
+  @media (min-width:768px){.ftv-stats__people p{font-size:20px;line-height:28px}}
+  .ftv-stats__people strong{font-variant-numeric:tabular-nums}
+  .ftv-avatars{display:flex;margin:16px 0 0;padding:0;list-style:none}
+  @media (min-width:768px){.ftv-avatars{margin-top:24px}}
+  .ftv-avatars li{position:relative;width:56px;height:56px;flex:none;border-radius:50%;overflow:hidden;background:linear-gradient(to bottom,var(--g1),var(--g2));margin:0;padding:0}
+  @media (min-width:768px){.ftv-avatars li{width:64px;height:64px}}
+  .ftv-avatars li + li{margin-left:-20px}
+  @media (min-width:768px){.ftv-avatars li + li{margin-left:-24px}}
+  .ftv-avatars img{position:absolute;max-width:none;object-fit:cover}
+  .ftv-avatars li::after{content:"";position:absolute;inset:0;border-radius:50%;border:3px solid #fff}
+  @media (max-width:767px){.ftv-stats__people{text-align:center}.ftv-avatars{justify-content:center}}
+
+
+  /* ==========================================================================
+     1 bis. FORMULAIRE — Figma « Formulaire » (6358:8673), 1680×1008 : fond bleu France,
+     halo flouté derrière la carte, fondu en haut (raccord avec le hero), texte
+     d'introduction 28/36 + #ChacunPourTous, carte formulaire 700 px, gouttière 80.
+     ========================================================================== */
+  .pledge{--ftv-blue:#000091;position:relative;overflow:hidden;isolation:isolate;background:var(--ftv-blue);color:#fff;box-shadow:0 6px 18px rgba(0,0,18,.16)}
+  .pledge__bg{position:absolute;inset:0;pointer-events:none;z-index:-1;max-width:1680px;margin:0 auto}
+  .pledge__blur{position:absolute;left:calc(41.67% + 71px - 200px);top:-155px;width:1269px;height:1269px;max-width:none}
+  .pledge__bg::before{content:"";position:absolute;left:0;right:0;top:0;height:174px;background:linear-gradient(to bottom,var(--ftv-blue),rgba(0,0,145,0))}
+  .pledge__inner{max-width:1472px;margin:0 auto;padding:16px 16px 48px;display:grid;gap:40px}
+  @media (min-width:768px){.pledge__inner{padding:32px 32px 72px}}
+  @media (min-width:1200px){.pledge__inner{grid-template-columns:minmax(0,1fr) minmax(480px,700px);column-gap:80px;align-items:center;padding:96px 32px;min-height:1008px}}
+  @media (min-width:1536px){.pledge__inner{padding:96px 0}}
+  .pledge__intro{display:flex;flex-direction:column;align-items:flex-start;gap:40px}
+  @media (min-width:1200px){.pledge__intro{gap:80px}}
+  .pledge__copy{display:flex;flex-direction:column;gap:24px;max-width:692px}
+  @media (min-width:768px){.pledge__copy{gap:36px}}
+  .pledge__copy p{margin:0;font-size:20px;line-height:28px;color:#fff}
+  @media (min-width:768px){.pledge__copy p{font-size:28px;line-height:36px}}
+  .pledge__copy .pledge__callout{font-weight:700}
+  .pledge__hashtag{display:block;width:240px;height:auto}
+  @media (min-width:768px){.pledge__hashtag{width:346px}}
+  .pledge .promise{padding:24px 16px}
+  @media (min-width:768px){.pledge .promise{padding:40px}}
+
+  /* ---------- Formulaire de promesse (Figma 6352:23646) ----------
+     Carte blanche, padding 40, gap 32, ombre « lifted ». Sur la surface bleue mais avec
+     ses propres couleurs DSFR (elle passe en sombre avec le thème). */
+  .promise{background:var(--background-default-grey);color:var(--text-default-grey);box-shadow:0 6px 18px rgba(0,0,18,.16);padding:24px 16px;display:flex;flex-direction:column;gap:32px}
+  @media (min-width:768px){.promise{padding:40px}}
+  .promise__form{display:flex;flex-direction:column;gap:32px}
+  .promise__form[hidden]{display:none}
+  .promise fieldset{border:0;margin:0;padding:0;min-width:0}
+  .promise legend{float:left;width:100%;padding:0;margin:0 0 16px;font-size:20px;line-height:28px;font-weight:700;color:var(--text-title-grey)}
+  @media (min-width:768px){.promise legend{font-size:22px}}
+  .promise legend + *{clear:both}
+  /* Boutons radio riches : composant Figma « Bouton radio riche » (bordure 2px, coche ronde
+     en haut à droite, pas de pastille radio). Le code a RadioRichGroup.vue (marqué « obsolète »)
+     avec bordure 1px et pastille radio visible : on suit la maquette, nouveau composant à prévoir. */
+  .rich-radios{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .rich-radios--3{grid-template-columns:repeat(3,minmax(0,1fr))}
+  @media (max-width:479px){.rich-radios--3{grid-template-columns:1fr}}
+  .rich-radio{position:relative;display:block;margin:0}
+  .rich-radio input{position:absolute;opacity:0;width:1px;height:1px;margin:0}
+  .rich-radio span{display:flex;align-items:center;min-height:72px;height:100%;padding:16px 36px 16px 16px;border:2px solid var(--border-default-grey);background:var(--background-default-grey);font-size:16px;line-height:24px;font-weight:700;color:var(--text-title-grey);cursor:pointer;transition:background-color .15s ease-out}
+  @media (min-width:768px) and (max-width:1199px),(min-width:1440px){.rich-radio span{padding:22px 40px 22px 24px}}
+  .rich-radio span:hover{background:var(--background-default-grey-hover)}
+  .rich-radio input:checked + span{border-color:var(--border-active-blue-france);background:var(--background-alt-blue-france);color:var(--text-action-high-blue-france)}
+  .rich-radio input:focus-visible + span{outline:2px solid #0a76f6;outline-offset:2px}
+  .rich-radio span::after{content:"";position:absolute;top:10px;right:10px;width:24px;height:24px;border-radius:50%;background:var(--background-action-high-blue-france) url("ressources/france-tv/icone-check.svg") center/16px no-repeat;opacity:0;transform:scale(.6);transition:opacity .15s,transform .2s cubic-bezier(.3,1.6,.5,1)}
+  .rich-radio input:checked + span::after{opacity:1;transform:none}
+  @media (prefers-reduced-motion:reduce){.rich-radio span::after{transition:none}}
+
+  /* Encart d'estimation : bandeau info clair (info-975 / info-925 dans la maquette), emoji 32px */
+  .promise__estimate{display:flex;align-items:center;gap:16px;margin:0;padding:24px;border-radius:4px;background:var(--info-975-75);border:1px solid var(--border-default-blue-cumulus,#DBE4FF);font-size:14px;line-height:24px;color:var(--text-title-grey)}
+  .promise__estimate strong{white-space:nowrap}
+  .promise{scroll-margin-top:24px}
+  .promise__estimate-emoji{font-size:32px;line-height:24px;flex:none;padding-top:4px}
+  /* Champ : DSFR fr-input (fond contrast-grey, soulignement plain-grey) */
+  .promise .fr-input-group{margin:0}
+  .promise .fr-label{display:block;margin-bottom:8px;font-size:16px;line-height:24px;color:var(--text-label-grey)}
+  .promise .fr-input{display:block;width:100%;padding:8px 16px;font:inherit;font-size:16px;line-height:24px;color:var(--text-default-grey);background:var(--background-contrast-grey);border:0;border-radius:4px 4px 0 0;box-shadow:inset 0 -2px 0 0 var(--border-plain-grey)}
+  .promise .fr-input::placeholder{font-style:italic;color:var(--text-mention-grey)}
+  .promise .fr-input-group--error .fr-input{box-shadow:inset 0 -2px 0 0 var(--border-plain-error)}
+  .promise .fr-error-text[hidden]{display:none}
+  .promise .fr-error-text{display:flex;gap:4px;margin:8px 0 0;font-size:12px;line-height:20px;color:var(--text-default-error)}
+  .promise__submit{display:flex;flex-direction:column;gap:8px}
+  .promise__submit .btn{width:100%}
+  .promise__rgpd{margin:0;font-size:12px;line-height:20px;color:var(--text-mention-grey);text-align:center}
+  /* État « promesse enregistrée » */
+  .promise__done{display:flex;flex-direction:column;gap:16px}
+  .promise__done[hidden]{display:none}
+  .promise__done h2{margin:0;font-size:28px;line-height:36px;font-weight:700;color:var(--text-title-grey)}
+  .promise__done p{margin:0;font-size:18px;line-height:28px}
+  .promise__done .btn{align-self:flex-start}
+
+  /* ==========================================================================
+     2. DE LA PROMESSE À L'ACTION — Figma 6352:22698, fond warm neutral (#F9F6F2),
+     cartes CardMission (354 px, gouttière 24) qui débordent à droite, puis tags d'activités.
+     ========================================================================== */
+  .missions{background:var(--background-warm-neutral)}
+  .missions .carousel__track{gap:24px;margin-right:calc(50% - 50vw);padding-right:16px}
+  @media (min-width:1348px){.missions .carousel__track{margin-right:calc((1284px - 100vw) / 2)}}
+  .missions .carousel__track > li{width:min(354px,calc(100vw - 48px));display:flex}
+  /* CardMission.vue : bordure #E5E5E5, image 16/9 puis infos m-8 (32px), titre DsfrHeading xs
+     20/28 line-clamp-3, tags DsfrTag sm, puces 14/20 mention avec icônes Remix 16. */
+  .card-mission{position:relative;display:flex;flex-direction:column;width:100%;background:var(--background-default-grey);border:1px solid var(--border-default-grey)}
+  .card-mission__img{position:relative;aspect-ratio:384/216;overflow:hidden;background:var(--background-contrast-grey)}
+  .card-mission__img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s ease}
+  .card-mission:hover .card-mission__img img{transform:scale(1.05)}
+  @media (prefers-reduced-motion:reduce){.card-mission__img img{transition:none}}
+  .card-mission__badges{position:absolute;left:16px;top:16px;right:16px;display:flex;flex-wrap:wrap;gap:8px}
+  /* DsfrBadge jaune tournesol, 12/20 bold maj. */
+  .badge-sun{display:inline-flex;padding:0 6px;border-radius:4px;background:var(--background-contrast-yellow-tournesol);color:var(--text-label-yellow-tournesol);font-size:12px;line-height:20px;font-weight:700;text-transform:uppercase}
+  .card-mission__body{display:flex;flex-direction:column;gap:16px;padding:24px}
+  @media (min-width:768px){.card-mission__body{padding:32px}}
+  .card-mission__tags{display:flex;gap:8px;margin:0;padding:0;list-style:none;min-width:0}
+  .tag-sm{display:inline-flex;align-items:center;padding:2px 8px;border-radius:12px;background:var(--background-contrast-grey);color:var(--text-label-grey);font-size:12px;line-height:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .card-mission__title{margin:0;min-height:84px;font-size:20px;line-height:28px;font-weight:700;color:var(--text-title-grey);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  .card-mission__title a{color:inherit;text-decoration:none;background-image:none}
+  .card-mission__title a::after{content:"";position:absolute;inset:0}
+  .card-mission__meta{display:flex;flex-direction:column;gap:4px;margin:0;padding:0;list-style:none}
+  .card-mission__meta li{display:flex;align-items:center;gap:8px;font-size:14px;line-height:20px;color:var(--text-mention-grey)}
+  .card-mission__meta svg{width:16px;height:16px;flex:none}
+
+  /* Tags d'activités (Figma « activités/tag » 6301:6802) : blancs, 24/32 bold, padding 20/32,
+     ombre 0 4 6 ; emoji + libellé. */
+  .activities{margin-top:56px}
+  .activities__label{margin:0 0 24px;font-size:20px;line-height:28px;color:var(--text-mention-grey)}
+  @media (min-width:1024px){.activities__label{margin-bottom:32px;font-size:24px;line-height:32px}}
+  .activities__tags{display:flex;flex-wrap:wrap;gap:12px;margin:0;padding:0;list-style:none}
+  @media (min-width:1024px){.activities__tags{gap:16px}}
+  .activity-tag{display:inline-flex;align-items:center;gap:12px;padding:12px 20px;background:var(--background-default-grey);box-shadow:0 4px 6px rgba(0,0,18,.16);color:var(--text-title-grey);font-size:18px;line-height:28px;font-weight:700;text-decoration:none;background-image:none;transition:background-color .15s,transform .15s}
+  @media (min-width:1024px){.activity-tag{padding:20px 32px;font-size:24px;line-height:32px}}
+  .activity-tag:hover{background-color:var(--background-default-grey-hover);transform:translateY(-2px)}
+  @media (prefers-reduced-motion:reduce){.activity-tag:hover{transform:none}}
+  .activity-tag span{font-weight:400}
+  .missions__cta{margin-top:40px}
+  @media (min-width:1024px){.missions__cta{margin-top:56px}}
+
+  /* ==========================================================================
+     2 bis. PROGRAMME DE LA SEMAINE — Figma 6358:8851 : fond blanc, 4 rendez-vous
+     (date/heure 24/32 bleu, vignette 169×104 r8, titre 24/32, description 16/24 mention,
+     logo chaîne 24 px, bouton tertiaire MD « Voir sur france.tv »), bouton secondaire LG.
+     < 1200 px : date + chaîne sur une ligne, émission dessous, bouton pleine largeur.
+     ========================================================================== */
+  .btn--md{min-height:40px;padding:8px 12px 8px 16px;font-size:16px;line-height:24px}
+  .btn--md svg{width:16px;height:16px;flex:none}
+  .btn--grey{background:transparent;color:var(--text-action-high-blue-france);box-shadow:inset 0 0 0 1px var(--border-default-grey)}
+  .btn--grey:hover{background-color:var(--background-default-grey-hover)}
+  .btn--tertiary svg{width:24px;height:24px;flex:none}
+  .programme{background:var(--background-default-grey)}
+  .prog-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:24px}
+  @media (min-width:1200px){.prog-list{gap:32px}}
+  .prog-list > li[hidden]{display:none}
+  .prog{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"when channel" "show show" "cta cta";gap:16px;align-items:center;padding-bottom:24px;border-bottom:1px solid var(--border-default-grey)}
+  @media (min-width:1200px){.prog{grid-template-columns:92px minmax(0,1fr) 127px auto;grid-template-areas:"when show channel cta";column-gap:56px;padding:0;border:0}}
+  .prog__when{grid-area:when;margin:0;display:flex;flex-wrap:wrap;column-gap:8px;font-size:20px;line-height:28px;color:var(--text-title-blue-france)}
+  @media (min-width:1200px){.prog__when{flex-direction:column;font-size:24px;line-height:32px}}
+  .prog__when strong{font-weight:700}
+  .prog__show{grid-area:show;display:flex;align-items:center;gap:16px;min-width:0}
+  @media (min-width:768px){.prog__show{gap:32px}}
+  .prog__thumb{flex:none;width:120px;height:74px;border-radius:8px;overflow:hidden;background:#b75050}
+  @media (min-width:768px){.prog__thumb{width:169px;height:104px}}
+  .prog__thumb img{display:block;width:100%;height:100%;object-fit:cover}
+  .prog__info{min-width:0}
+  .prog__title{margin:0;font-size:18px;line-height:24px;font-weight:700;color:var(--text-title-grey)}
+  @media (min-width:768px){.prog__title{font-size:24px;line-height:32px}}
+  .prog__desc{margin:4px 0 0;font-size:14px;line-height:20px;color:var(--text-mention-grey)}
+  @media (min-width:768px){.prog__desc{margin-top:8px;font-size:16px;line-height:24px}}
+  .prog__channel{grid-area:channel;display:block;width:auto;height:20px}
+  @media (min-width:1200px){.prog__channel{height:24px}}
+  /* logos chaîne : texte #232323 → on l'inverse en dark mode (le point coloré reste proche) */
+  [data-fr-theme="dark"] .prog__channel{filter:invert(1) hue-rotate(180deg)}
+  .prog .btn{grid-area:cta;justify-self:start}
+  /* DSFR ajoute déjà une icône « lien externe » à tout a[target=_blank] : on la retire, l’icône de la maquette est dans le bouton */
+  .prog .btn[target=_blank]::after{content:none}
+  @media (max-width:767px){.prog .btn{justify-self:stretch}}
+  .programme__cta{margin-top:40px}
+  @media (min-width:1024px){.programme__cta{margin-top:56px}}
+  .programme__cta svg{transition:transform .2s ease-out}
+  .programme__cta[aria-expanded="true"] svg{transform:rotate(180deg)}
+  @media (prefers-reduced-motion:reduce){.programme__cta svg{transition:none}}
+
+  /* ==========================================================================
+     3. PARTENAIRES — Figma 6352:24784 : surtitre 14/24 maj. mention, logos (hauteurs
+     maquette), gap 80, points de pagination.
+     ========================================================================== */
+  .partners{text-align:center;--dot-on:var(--text-title-grey);--dot-off:var(--text-disabled-grey)}
+  .partners__label{margin:0 0 40px;font-size:14px;line-height:24px;font-weight:700;text-transform:uppercase;color:var(--text-mention-grey)}
+  @media (min-width:1024px){.partners__label{margin-bottom:56px}}
+  .partners .carousel__track{gap:48px;align-items:center;padding:0 16px}
+  @media (min-width:1024px){.partners .carousel__track{gap:80px}}
+  .partners .carousel__track > li{display:flex;align-items:center;height:88px}
+  .partners img{display:block;width:auto;max-width:none}
+  .partners .dots{justify-content:center;margin-top:40px}
+  @media (min-width:1024px){.partners .dots{margin-top:56px}}
+  /* Logos sur fond blanc : en dark mode on garde une pastille claire pour qu'ils restent lisibles */
+  [data-fr-theme="dark"] .partners .carousel__track > li{background:#fff;padding:0 12px;border-radius:4px}
+
+  /* ==========================================================================
+     4. PAROLES DE BÉNÉVOLES — Figma 6352:25135, fond #6464F3 (valeur maquette, proche
+     de blue-france-main-525), cartes « verbatims/bloc » 708×344, flèches secondaires blanches.
+     ========================================================================== */
+  .voices{--voices-bg:#6464F3;background:var(--voices-bg);color:#fff;padding-bottom:40px;--dot-on:#fff;--dot-off:rgba(255,255,255,.55)}
+  @media (min-width:1200px){.voices{padding-bottom:48px}}
+  .voices .lp-title,.voices .lp-subtitle{color:#fff}
+  .voices .carousel__track{gap:24px;margin-right:calc(50% - 50vw);padding-right:16px}
+  @media (min-width:1348px){.voices .carousel__track{margin-right:calc((1284px - 100vw) / 2)}}
+  .voices .carousel__track > li{width:min(708px,calc(100vw - 48px));display:flex}
+  .quote-card{display:flex;align-items:center;gap:24px;width:100%;padding:24px;background:#fff;border:1px solid #E5E5E5;color:#161616}
+  @media (min-width:768px){.quote-card{gap:32px;padding:40px 32px;min-height:344px}}
+  .quote-card__logo{flex:none;width:184px;height:184px;display:none;align-items:center;justify-content:center}
+  @media (min-width:768px){.quote-card__logo{display:flex}}
+  .quote-card__logo img{width:120px;height:120px;object-fit:contain}
+  .quote-card__sep{align-self:stretch;width:1px;background:#DDDDDD;display:none}
+  @media (min-width:768px){.quote-card__sep{display:block}}
+  .quote-card__body{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:16px}
+  .quote-card__mark{width:32px;height:32px;display:block}
+  .quote-card blockquote{margin:8px 0 0;font-size:18px;line-height:28px;font-weight:700}
+  @media (min-width:768px){.quote-card blockquote{font-size:20px;line-height:32px}}
+  .quote-card figcaption{display:flex;align-items:center;gap:16px}
+  .quote-card figcaption img{width:48px;height:48px;border-radius:50%;object-fit:cover;box-shadow:0 6px 18px rgba(0,0,18,.16)}
+  .quote-card__name{display:block;font-size:16px;line-height:24px;font-weight:700;color:#3A3A3A}
+  .quote-card__role{display:block;margin-top:4px;font-size:12px;line-height:20px;color:#666}
+  .voices__cta{margin-top:40px}
+  @media (min-width:1200px){.voices__cta{margin-top:56px}}
+
+  /* Bandeau de visages (Figma « Profils » 6358:5258) : cartes 193×256, radius 12, gouttière 30,
+     décalées verticalement, coupées à 238 px ; ombre portée 0 6 9. Purement décoratif. */
+  .faces{background:#6464F3;overflow:hidden;height:150px}
+  @media (min-width:768px){.faces{height:238px}}
+  .faces ul{display:flex;justify-content:center;gap:30px;margin:0;padding:0;list-style:none;filter:drop-shadow(0 6px 9px rgba(0,0,18,.16))}
+  .faces li{flex:none;width:193px;height:256px;margin:0;border-radius:12px;overflow:hidden;transform:translateY(var(--y))}
+  @media (max-width:767px){.faces ul{gap:16px}.faces li{width:120px;height:160px;transform:translateY(calc(var(--y) * .62))}}
+  .faces img{display:block;width:100%;height:100%;object-fit:cover}
+
+  /* ==========================================================================
+     5. COMMENT ÇA MARCHE — Figma 6358:5603, fond alt-blue-france, étapes en accordéon
+     (une seule ouverte) + galerie de 3 photos (reprise de la galerie du hero B, figée).
+     ========================================================================== */
+  .how{background:var(--background-alt-blue-france)}
+  .how .lp-container{max-width:1248px}
+  .how__grid{display:grid;gap:24px}
+  @media (min-width:1024px){.how__grid{grid-template-columns:1fr 1fr;gap:40px;align-items:stretch}}
+  .steps{display:flex;flex-direction:column;gap:16px;margin:0;padding:0;list-style:none}
+  .steps > li{margin:0;padding:0}
+  .steps > li::marker{content:none}
+  .step{background:var(--background-default-grey);border:1px solid var(--border-open-blue-france)}
+  .step h3{margin:0}
+  .step__btn{display:flex;align-items:flex-start;gap:24px;width:100%;padding:24px;margin:0;font:inherit;font-size:20px;line-height:28px;font-weight:700;text-align:left;color:var(--text-title-grey);background:transparent;border:0;cursor:pointer}
+  @media (min-width:768px){.step__btn{padding:32px;font-size:24px;line-height:32px}}
+  .step__btn:hover{background:var(--background-default-grey-hover)}
+  .step__btn span{flex:1 1 auto}
+  .step__btn svg{width:32px;height:32px;flex:none;color:var(--text-action-high-blue-france);transition:transform .2s}
+  .step__btn[aria-expanded="true"] svg{transform:rotate(-90deg)}
+  @media (prefers-reduced-motion:reduce){.step__btn svg{transition:none}}
+  .step__panel{margin:0;padding:0 80px 32px 32px;margin-top:-24px;font-size:18px;line-height:28px;color:var(--text-mention-grey)}
+  @media (max-width:767px){.step__panel{padding:0 24px 24px;margin-top:-16px;font-size:16px;line-height:24px}}
+  .step__panel[hidden]{display:none}
+
+  .how__gallery{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:16px;min-height:420px;margin:0;padding:0;list-style:none}
+  @media (min-width:1024px){.how__gallery{gap:24px;min-height:600px}}
+  .how__gallery li:first-child{grid-row:1 / span 2}
+  .photo-card{position:relative;overflow:hidden;border-radius:8px;margin:0;background:var(--background-contrast-grey)}
+  .photo-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:var(--pos,center)}
+  /* Étiquette — pill blanche 14/19 bold bleu, ombre 0 6 9 (Figma 6358:5639) */
+  .photo-card__tag{position:absolute;left:50%;bottom:24px;transform:translateX(-50%);margin:0;padding:12px 24px;border-radius:40px;background:#fff;color:#000091;font-size:14px;line-height:19px;font-weight:700;text-align:center;width:max-content;max-width:calc(100% - 24px);filter:drop-shadow(0 6px 9px rgba(0,0,18,.16))}
+  @media (max-width:1439px){.photo-card__tag{bottom:16px;padding:8px 16px}}
+  .how__cta{margin-top:40px}
+  @media (min-width:1024px){.how__cta{margin-top:56px}}
+
+  /* ==========================================================================
+     6. FAQ — Figma 6352:25742 : titre centré + éclat, accordéons DSFR (DsfrAccordion.vue)
+     dans un cadre bordé 960 px, padding 32.
+     ========================================================================== */
+  .faq .lp-title{position:relative;display:inline-block;text-align:center;margin-right:.55em}
+  .faq__head{text-align:center;margin-bottom:32px}
+  @media (min-width:1024px){.faq__head{margin-bottom:56px}}
+  .faq__spark{position:absolute;right:-.55em;top:-.32em;width:.86em;height:.86em}
+  .faq__spark img{position:absolute;left:.87%;top:8.23%;width:99.17%;height:84.27%;max-width:none}
+  .faq__box{max-width:960px;margin:0 auto;padding:16px;border:1px solid var(--border-default-grey)}
+  @media (min-width:768px){.faq__box{padding:32px}}
+  .faq .fr-accordion{border-bottom:1px solid var(--border-default-grey)}
+  .faq .fr-accordion:first-child{border-top:1px solid var(--border-default-grey)}
+  .faq .fr-accordion__title{margin:0}
+  .faq .fr-accordion__btn{display:flex;align-items:center;gap:16px;width:100%;padding:12px 16px;margin:0;font:inherit;font-size:16px;line-height:24px;font-weight:500;text-align:left;color:var(--text-action-high-blue-france);background:transparent;border:0;cursor:pointer}
+  .faq .fr-accordion__btn:hover{background-color:var(--background-default-grey-hover)}
+  .faq .fr-accordion__btn::after{content:none} /* le chevron DSFR est remplacé par l'icône SVG ci-dessous */
+  .faq .fr-accordion__btn svg{width:16px;height:16px;flex:none;margin-left:auto;transition:transform .2s}
+  .faq .fr-accordion__btn[aria-expanded="true"] svg{transform:rotate(180deg)}
+  .faq .fr-collapse{padding:4px 16px 16px;font-size:16px;line-height:24px;color:var(--text-default-grey)}
+  .faq .fr-collapse[hidden]{display:none}
+  .faq .fr-collapse p{margin:0}
+
+  /* ==========================================================================
+     7. RAPPEL FINAL — Figma « Footer » 6358:5754 : surface bleue, titre centré, même
+     bloc compteur (839 px), logos France.tv + JeVeuxAider, bouton blanc.
+     ========================================================================== */
+  .final{background:#000091;color:#fff;text-align:center;box-shadow:0 6px 18px rgba(0,0,18,.16)}
+  .final .lp-title{color:#fff}
+  .final__inner{display:flex;flex-direction:column;align-items:center;gap:32px}
+  @media (min-width:1024px){.final__inner{gap:56px}}
+  .final .ftv-stats{max-width:839px}
+  .final__logos{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:24px 32px;margin-top:-16px}
+  @media (min-width:1024px){.final__logos{margin-top:-16px}}
+  .final__logos img{display:block;height:32px;width:auto}
+  .final__logos img.logo-jva{height:37px}
+
+  /* ==========================================================================
+     8. PIED DE PAGE — Figma « navigation/desktop/footer » (6352:22748), structure de
+     LayoutFooter.vue : liens (fond alt-grey, bordure haute 2px bleue), bloc marque, mentions.
+     ========================================================================== */
+  .site-footer{border-top:2px solid var(--border-plain-blue-france);font-size:12px;line-height:20px;color:var(--text-default-grey)}
+  .site-footer a{color:inherit;text-decoration:none;background-image:none}
+  .site-footer a:hover{text-decoration:underline}
+  .site-footer__links{background:var(--background-alt-grey);padding:30px 16px 32px}
+  .site-footer__links-inner{max-width:1440px;margin:0 auto;display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
+  @media (min-width:1024px){.site-footer__links-inner{grid-template-columns:repeat(5,1fr);padding:0 104px}}
+  .site-footer__links h2{margin:0 0 12px;font-size:12px;line-height:20px;font-weight:700;color:var(--text-title-grey)}
+  .site-footer__links ul{display:flex;flex-direction:column;gap:12px;margin:0;padding:0;list-style:none}
+  .site-footer__col--cont{padding-top:32px}
+  .site-footer__brand{max-width:1440px;margin:0 auto;padding:16px 16px 8px;display:flex;flex-direction:column;gap:16px}
+  @media (min-width:1024px){.site-footer__brand{flex-direction:row;align-items:center;justify-content:space-between;padding:16px 120px 8px 104px}}
+  .site-footer__logos{display:flex;align-items:center;gap:24px}
+  .site-footer__logos .rf{height:98px;width:auto;margin:-8px 0}
+  .site-footer__logos .jva{height:28px;width:auto}
+  @media (min-width:768px){.site-footer__logos .rf{height:130px;margin:-16px 0}.site-footer__logos .jva{height:40px}}
+  .site-footer__desc{max-width:588px;padding:16px 0}
+  .site-footer__desc p{margin:0 0 16px;font-size:14px;line-height:24px}
+  .site-footer__gov{display:flex;flex-wrap:wrap;gap:8px 24px;margin:0;padding:0;list-style:none}
+  .site-footer__gov a{display:inline-flex;align-items:center;gap:2px;font-size:14px;line-height:24px;font-weight:700}
+  .site-footer__gov svg{width:16px;height:16px}
+  .site-footer__bottom{max-width:1440px;margin:0 auto;padding:0 16px 16px}
+  @media (min-width:1024px){.site-footer__bottom{padding:0 120px 16px}}
+  .site-footer__bottom-inner{border-top:1px solid var(--border-default-grey);padding-top:16px;color:var(--text-mention-grey)}
+  .site-footer__mentions{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;margin:0 0 24px;padding:0;list-style:none}
+  .site-footer__mentions li + li{border-left:1px solid var(--border-default-grey);padding-left:16px}
+  .site-footer__licence{margin:0}
+  .site-footer__licence a{text-decoration:underline}
+</style>
+</head>
+<body>
+
+<main>
+
+<!-- ============ 1. HERO — compteur collectif ============
+     Repris de homepage-france-tv.html : toutes les 5 s le compteur monte, une bulle
+     change de bénévole (tag « +Xh ») ; ces heures s'ajoutent aussi au compteur du
+     rappel final. Chiffres fictifs. -->
+<section class="ftv-hero" id="ftv-hero" aria-labelledby="ftv-title">
+  <div class="ftv-hero__bg" aria-hidden="true">
+    <img class="ftv-hero__blur" src="ressources/france-tv/blur.svg" alt="">
+    <img src="ressources/france-tv/cercle-1.svg" width="293" height="293" alt="">
+    <img src="ressources/france-tv/cercle-2.svg" width="445" height="445" alt="">
+    <img src="ressources/france-tv/cercle-3.svg" width="611" height="611" alt="">
+    <img src="ressources/france-tv/cercle-4.svg" width="789" height="789" alt="">
+    <img src="ressources/france-tv/cercle-5.svg" width="1062" height="1062" alt="">
+    <img src="ressources/france-tv/cercle-6.svg" width="1289" height="1289" alt="">
+    <img src="ressources/france-tv/cercle-7.svg" width="1562" height="1562" alt="">
+    <span class="ftv-ripple" id="ftv-ripple"></span>
+  </div>
+
+  <div class="ftv-hero__stage">
+    <div class="ftv-bubbles" id="ftv-bubbles" aria-hidden="true"></div>
+
+    <div class="ftv-hero__brand">
+      <p class="ftv-hero__brand-label">Semaine de la fraternité ·<br class="br-mobile"> du 23 au 30 mars avec</p>
+      <span class="ftv-hero__logos">
+        <img src="ressources/france-tv/logo-france-tv.svg" alt="France.tv">
+        <img class="logo-jva" src="ressources/france-tv/logo-jva-blanc.svg" alt="JeVeuxAider.gouv.fr">
+      </span>
+    </div>
+
+    <h1 class="ftv-hero__title" id="ftv-title">
+      Ensemble, nous avons déjà promis
+      <span class="ftv-counter">
+        <span class="ftv-counter__num"><span class="ftv-counter__value js-hours" id="ftv-hours">830 020</span><span class="ftv-counter__spark js-spark" id="ftv-spark" aria-hidden="true"><img src="ressources/france-tv/eclat.svg" alt=""></span></span>
+        <span class="ftv-counter__unit">heures de bénévolat</span>
+      </span>
+    </h1>
+
+    <ul class="hero-avatars" id="hero-avatars" aria-hidden="true"></ul>
+
+    <p class="ftv-hero__participation">Rejoignez les <strong class="js-people" id="ftv-people">248 292 personnes</strong><br class="br-mobile"> qui ont déjà participé</p>
+
+    <div class="ftv-hero__ctas">
+      <a href="#promesse" class="btn btn--on-brand">Je donne de mon temps</a>
+    </div>
+
+    <button type="button" class="ftv-pause" id="ftv-pause" aria-pressed="false">
+      <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><rect x="3" y="2" width="3.5" height="12"/><rect x="9.5" y="2" width="3.5" height="12"/></svg>
+      <span>Mettre en pause l’animation</span>
+    </button>
+  </div>
+</section>
+
+<!-- ============ 1 bis. FORMULAIRE DE PROMESSE ============
+     Même formulaire que la version B, fonctionnel. Hypothèse de calcul (à valider) :
+     une promesse court sur 6 mois → « une fois par semaine » ×24, « une fois par mois » ×6,
+     « une seule fois » ×1 (2 h une fois par mois = 12 h, comme dans la maquette). -->
+<section class="pledge" aria-labelledby="pledge-title">
+  <div class="pledge__bg" aria-hidden="true"><img class="pledge__blur" src="ressources/france-tv/blur-formulaire.svg" width="1269" height="1269" alt=""></div>
+  <div class="pledge__inner">
+    <div class="pledge__intro">
+      <h2 class="sr-only" id="pledge-title">Promettre des heures de bénévolat</h2>
+      <div class="pledge__copy">
+        <p>En France, 13&nbsp;millions de bénévoles font vivre près de 1,5&nbsp;million d’associations. Pourtant, beaucoup d’entre elles peinent à recruter.</p>
+        <p>Une heure donnée, un voisin aidé, un repas<br class="br-desktop"> partagé&nbsp;: chaque geste compte, et chacun<br class="br-desktop"> peut trouver sa manière de s’engager.</p>
+        <p class="pledge__callout">Pour la semaine de la Fraternité,<br class="br-desktop"> on compte sur vous.</p>
+      </div>
+      <img class="pledge__hashtag" src="ressources/france-tv/hashtag-chacunpourtous.svg" width="346" height="50" alt="#ChacunPourTous">
+    </div>
+
+      <div class="promise" id="promesse">
+        <form class="promise__form" id="promise-form" novalidate>
+          <fieldset>
+            <legend>Combien de temps pouvez-vous donner&nbsp;?</legend>
+            <div class="rich-radios">
+              <label class="rich-radio"><input type="radio" name="duree" value="1"><span>1h</span></label>
+              <label class="rich-radio"><input type="radio" name="duree" value="2" checked><span>2h</span></label>
+              <label class="rich-radio"><input type="radio" name="duree" value="4"><span>Une demi-journée</span></label>
+              <label class="rich-radio"><input type="radio" name="duree" value="7"><span>1 journée</span></label>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>À quelle fréquence&nbsp;?</legend>
+            <div class="rich-radios rich-radios--3">
+              <label class="rich-radio"><input type="radio" name="frequence" value="24"><span>Une fois<br>par semaine</span></label>
+              <label class="rich-radio"><input type="radio" name="frequence" value="6" checked><span>Une fois<br>par mois</span></label>
+              <label class="rich-radio"><input type="radio" name="frequence" value="1"><span>Une seule<br>fois</span></label>
+            </div>
+          </fieldset>
+
+          <p class="promise__estimate" aria-live="polite"><span class="promise__estimate-emoji" aria-hidden="true">🤩</span><span>Formidable&nbsp;! Vous allez faire grimper le compteur de la Fraternité de <strong id="promise-total">12 heures</strong>.</span></p>
+
+          <div class="fr-input-group" id="email-group">
+            <label class="fr-label" for="promise-email">Votre adresse e-mail</label>
+            <input class="fr-input" type="email" id="promise-email" name="email" autocomplete="email" placeholder="sarah.martin@mail.com" aria-describedby="promise-email-error">
+            <p class="fr-error-text" id="promise-email-error" hidden>Saisissez une adresse e-mail au format nom@domaine.fr</p>
+          </div>
+
+          <div class="promise__submit">
+            <button type="submit" class="btn btn--primary">Je fais grimper le compteur</button>
+            <p class="promise__rgpd">Votre e-mail sert à vous envoyer des propositions de missions adaptées.<br>Vous pouvez vous désinscrire à tout moment.</p>
+          </div>
+        </form>
+
+        <div class="promise__done" id="promise-done" hidden tabindex="-1">
+          <h2>Merci, votre promesse compte déjà&nbsp;!</h2>
+          <p>Vos <strong id="promise-done-hours">12 heures</strong> viennent de s’ajouter au compteur de la Fraternité.</p>
+          <p>Dès le 23 mars, nous vous enverrons à <strong id="promise-done-email"></strong> des missions qui correspondent à votre temps.</p>
+          <a href="#missions" class="btn btn--tertiary">Voir des missions dès maintenant</a>
+        </div>
+      </div>
+  </div>
+</section>
+
+<!-- ============ 2. DE LA PROMESSE À L'ACTION ============
+     Carte 1 = contenu de la maquette ; les suivantes reprennent les photos de mission
+     déjà utilisées dans le hero B, pour un rendu moins répétitif (contenus fictifs). -->
+<section class="lp-section missions" id="missions" aria-labelledby="missions-title" data-carousel>
+  <div class="lp-container">
+    <div class="lp-head">
+      <div class="lp-head__text">
+        <h2 class="lp-title" id="missions-title">De la promesse à l’action</h2>
+        <p class="lp-subtitle">Des missions qui correspondent à votre temps</p>
+      </div>
+      <div class="lp-head__actions">
+        <button type="button" class="btn btn--tertiary btn--icon" data-prev aria-label="Missions précédentes" aria-controls="missions-track"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7.828 11H20V13H7.828L13.192 18.364L11.778 19.778L4 12L11.778 4.222L13.192 5.636L7.828 11Z"/></svg></button>
+        <button type="button" class="btn btn--tertiary btn--icon" data-next aria-label="Missions suivantes" aria-controls="missions-track"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.172 11L10.808 5.636L12.222 4.222L20 12L12.222 19.778L10.808 18.364L16.172 13H4V11H16.172Z"/></svg></button>
+        <a href="#" class="btn btn--tertiary">Plus de missions</a>
+      </div>
+    </div>
+
+    <ul class="carousel__track" id="missions-track" aria-label="Missions de bénévolat"></ul>
+
+    <div class="activities">
+      <p class="activities__label">En panne d’inspiration&nbsp;?</p>
+      <ul class="activities__tags">
+        <li><a href="#" class="activity-tag"><span aria-hidden="true">💬</span>Traduction</a></li>
+        <li><a href="#" class="activity-tag"><span aria-hidden="true">🐰</span>Soins aux animaux</a></li>
+        <li><a href="#" class="activity-tag"><span aria-hidden="true">♻️</span>Ramassage de déchets</a></li>
+        <li><a href="#" class="activity-tag"><span aria-hidden="true">🙋‍♂️</span>Mentorat et parrainage</a></li>
+        <li><a href="#" class="activity-tag"><span aria-hidden="true">☕️</span>Maraude</a></li>
+        <li><a href="#" class="activity-tag"><span aria-hidden="true">🚛</span>Logistique</a></li>
+        <li><a href="#" class="activity-tag"><span aria-hidden="true">🖥️</span>Informatique</a></li>
+        <li><a href="#" class="activity-tag"><span aria-hidden="true">💭</span>Gestion des ressources humaines</a></li>
+        <li><a href="#" class="activity-tag"><span aria-hidden="true">📅</span>Événementiel</a></li>
+        <li><a href="#" class="activity-tag"><span aria-hidden="true">🌳</span>Aménagement d’espaces naturels</a></li>
+        <li><a href="#" class="activity-tag"><span aria-hidden="true">✉️</span>Vie citoyenne</a></li>
+        <li><a href="#" class="activity-tag"><span aria-hidden="true">🏛️</span>Valorisation du patrimoine</a></li>
+        <li><a href="#" class="activity-tag"><span aria-hidden="true">🔨</span>Travaux manuels</a></li>
+      </ul>
+    </div>
+
+    <div class="missions__cta"><a href="#" class="btn btn--primary">Toutes les missions</a></div>
+  </div>
+</section>
+
+<!-- ============ 2 bis. PROGRAMME DE LA SEMAINE ============
+     4 premiers rendez-vous = maquette. Les 3 suivants (affichés par « Tout le programme »)
+     sont fictifs et réutilisent les vignettes, pour montrer le dépliage. -->
+<section class="lp-section programme" aria-labelledby="programme-title">
+  <div class="lp-container">
+    <div class="lp-head">
+      <div class="lp-head__text">
+        <h2 class="lp-title" id="programme-title">Programme de la semaine</h2>
+        <p class="lp-subtitle">Du 23 au 30 mars, les émissions de France Télévisions mettent à l’honneur les associations et les bénévoles.</p>
+      </div>
+    </div>
+    <ul class="prog-list" id="programme-list">
+      <li>
+        <article class="prog">
+          <p class="prog__when"><strong>23 mars</strong><span>17h50</span></p>
+          <div class="prog__show">
+            <div class="prog__thumb"><img src="ressources/france-tv/programme/emission-1.jpg" alt="" width="169" height="104" loading="lazy"></div>
+            <div class="prog__info">
+              <h3 class="prog__title">Ça commence aujourd’hui</h3>
+              <p class="prog__desc">Témoignage d’un bénéficiaire de l’association<br class="br-desktop"> La Cravate Solidaire</p>
+            </div>
+          </div>
+          <img class="prog__channel" src="ressources/france-tv/programme/logo-france2.svg" alt="France 2" width="126" height="24">
+          <a href="#" class="btn btn--grey btn--md" target="_blank" rel="noopener">Voir sur france.tv<span class="sr-only"> : Ça commence aujourd’hui, le 23 mars (nouvelle fenêtre)</span><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10 6V8H5V19H16V14H18V20C18 20.5523 17.5523 21 17 21H4C3.44772 21 3 20.5523 3 20V7C3 6.44772 3.44772 6 4 6H10ZM21 3V11H19V6.413L11.2071 14.2071L9.79289 12.7929L17.585 5H13V3H21Z"/></svg></a>
+        </article>
+      </li>
+      <li>
+        <article class="prog">
+          <p class="prog__when"><strong>24 mars</strong><span>15h05</span></p>
+          <div class="prog__show">
+            <div class="prog__thumb"><img src="ressources/france-tv/programme/emission-2.jpg" alt="" width="169" height="104" loading="lazy"></div>
+            <div class="prog__info">
+              <h3 class="prog__title">Le magazine de la santé</h3>
+              <p class="prog__desc">Les bienfaits de l’altruisme sur le corps et l’esprit</p>
+            </div>
+          </div>
+          <img class="prog__channel" src="ressources/france-tv/programme/logo-france2.svg" alt="France 2" width="126" height="24">
+          <a href="#" class="btn btn--grey btn--md" target="_blank" rel="noopener">Voir sur france.tv<span class="sr-only"> : Le magazine de la santé, le 24 mars (nouvelle fenêtre)</span><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10 6V8H5V19H16V14H18V20C18 20.5523 17.5523 21 17 21H4C3.44772 21 3 20.5523 3 20V7C3 6.44772 3.44772 6 4 6H10ZM21 3V11H19V6.413L11.2071 14.2071L9.79289 12.7929L17.585 5H13V3H21Z"/></svg></a>
+        </article>
+      </li>
+      <li>
+        <article class="prog">
+          <p class="prog__when"><strong>25 mars</strong><span>09h30</span></p>
+          <div class="prog__show">
+            <div class="prog__thumb"><img src="ressources/france-tv/programme/emission-3.jpg" alt="" width="169" height="104" loading="lazy"></div>
+            <div class="prog__info">
+              <h3 class="prog__title">Les maternelles</h3>
+              <p class="prog__desc">Prendre soin des mamans solos</p>
+            </div>
+          </div>
+          <img class="prog__channel" src="ressources/france-tv/programme/logo-france2.svg" alt="France 2" width="126" height="24">
+          <a href="#" class="btn btn--grey btn--md" target="_blank" rel="noopener">Voir sur france.tv<span class="sr-only"> : Les maternelles, le 25 mars (nouvelle fenêtre)</span><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10 6V8H5V19H16V14H18V20C18 20.5523 17.5523 21 17 21H4C3.44772 21 3 20.5523 3 20V7C3 6.44772 3.44772 6 4 6H10ZM21 3V11H19V6.413L11.2071 14.2071L9.79289 12.7929L17.585 5H13V3H21Z"/></svg></a>
+        </article>
+      </li>
+      <li>
+        <article class="prog">
+          <p class="prog__when"><strong>26 mars</strong><span>11h50</span></p>
+          <div class="prog__show">
+            <div class="prog__thumb"><img src="ressources/france-tv/programme/emission-4.jpg" alt="" width="169" height="104" loading="lazy"></div>
+            <div class="prog__info">
+              <h3 class="prog__title">C politique</h3>
+              <p class="prog__desc">Le monde associatif fait-il le travail de l’État&nbsp;?</p>
+            </div>
+          </div>
+          <img class="prog__channel" src="ressources/france-tv/programme/logo-france5.svg" alt="France 5" width="126" height="24">
+          <a href="#" class="btn btn--grey btn--md" target="_blank" rel="noopener">Voir sur france.tv<span class="sr-only"> : C politique, le 26 mars (nouvelle fenêtre)</span><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10 6V8H5V19H16V14H18V20C18 20.5523 17.5523 21 17 21H4C3.44772 21 3 20.5523 3 20V7C3 6.44772 3.44772 6 4 6H10ZM21 3V11H19V6.413L11.2071 14.2071L9.79289 12.7929L17.585 5H13V3H21Z"/></svg></a>
+        </article>
+      </li>
+      <li hidden data-prog-extra>
+        <article class="prog">
+          <p class="prog__when"><strong>27 mars</strong><span>15h05</span></p>
+          <div class="prog__show">
+            <div class="prog__thumb"><img src="ressources/france-tv/programme/emission-2.jpg" alt="" width="169" height="104" loading="lazy"></div>
+            <div class="prog__info">
+              <h3 class="prog__title">Le magazine de la santé</h3>
+              <p class="prog__desc">Bénévoles à l’hôpital&nbsp;: une présence qui soigne aussi</p>
+            </div>
+          </div>
+          <img class="prog__channel" src="ressources/france-tv/programme/logo-france2.svg" alt="France 2" width="126" height="24">
+          <a href="#" class="btn btn--grey btn--md" target="_blank" rel="noopener">Voir sur france.tv<span class="sr-only"> : Le magazine de la santé, le 27 mars (nouvelle fenêtre)</span><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10 6V8H5V19H16V14H18V20C18 20.5523 17.5523 21 17 21H4C3.44772 21 3 20.5523 3 20V7C3 6.44772 3.44772 6 4 6H10ZM21 3V11H19V6.413L11.2071 14.2071L9.79289 12.7929L17.585 5H13V3H21Z"/></svg></a>
+        </article>
+      </li>
+      <li hidden data-prog-extra>
+        <article class="prog">
+          <p class="prog__when"><strong>28 mars</strong><span>09h30</span></p>
+          <div class="prog__show">
+            <div class="prog__thumb"><img src="ressources/france-tv/programme/emission-3.jpg" alt="" width="169" height="104" loading="lazy"></div>
+            <div class="prog__info">
+              <h3 class="prog__title">Les maternelles</h3>
+              <p class="prog__desc">Parents bénévoles&nbsp;: s’engager avec ses enfants</p>
+            </div>
+          </div>
+          <img class="prog__channel" src="ressources/france-tv/programme/logo-france2.svg" alt="France 2" width="126" height="24">
+          <a href="#" class="btn btn--grey btn--md" target="_blank" rel="noopener">Voir sur france.tv<span class="sr-only"> : Les maternelles, le 28 mars (nouvelle fenêtre)</span><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10 6V8H5V19H16V14H18V20C18 20.5523 17.5523 21 17 21H4C3.44772 21 3 20.5523 3 20V7C3 6.44772 3.44772 6 4 6H10ZM21 3V11H19V6.413L11.2071 14.2071L9.79289 12.7929L17.585 5H13V3H21Z"/></svg></a>
+        </article>
+      </li>
+      <li hidden data-prog-extra>
+        <article class="prog">
+          <p class="prog__when"><strong>30 mars</strong><span>17h50</span></p>
+          <div class="prog__show">
+            <div class="prog__thumb"><img src="ressources/france-tv/programme/emission-1.jpg" alt="" width="169" height="104" loading="lazy"></div>
+            <div class="prog__info">
+              <h3 class="prog__title">Ça commence aujourd’hui</h3>
+              <p class="prog__desc">Ils ont changé de vie grâce au bénévolat</p>
+            </div>
+          </div>
+          <img class="prog__channel" src="ressources/france-tv/programme/logo-france2.svg" alt="France 2" width="126" height="24">
+          <a href="#" class="btn btn--grey btn--md" target="_blank" rel="noopener">Voir sur france.tv<span class="sr-only"> : Ça commence aujourd’hui, le 30 mars (nouvelle fenêtre)</span><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10 6V8H5V19H16V14H18V20C18 20.5523 17.5523 21 17 21H4C3.44772 21 3 20.5523 3 20V7C3 6.44772 3.44772 6 4 6H10ZM21 3V11H19V6.413L11.2071 14.2071L9.79289 12.7929L17.585 5H13V3H21Z"/></svg></a>
+        </article>
+      </li>
+    </ul>
+    <div class="programme__cta">
+      <button type="button" class="btn btn--tertiary" aria-expanded="false" aria-controls="programme-list" data-label-open="Réduire le programme">Tout le programme<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 13.172L16.95 8.222L18.364 9.636L12 16L5.636 9.636L7.05 8.222L12 13.172Z"/></svg></button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 3. PARTENAIRES ============ -->
+<section class="lp-section partners" aria-labelledby="partners-title" data-carousel>
+  <h2 class="partners__label" id="partners-title">Les partenaires de la semaine de la fraternité</h2>
+  <ul class="carousel__track" aria-label="Logos des partenaires">
+    <li><img src="ressources/france-tv/partenaires/adopte.png" alt="Adopte une asso" style="height:56px"></li>
+    <li><img src="ressources/france-tv/partenaires/tousunis.png" alt="Tous unis tous solidaires" style="height:64px"></li>
+    <li><img src="ressources/france-tv/partenaires/ligue.svg" alt="La Ligue de l’enseignement" style="height:64px"></li>
+    <li><img src="ressources/france-tv/partenaires/mouvement.png" alt="Le Mouvement associatif" style="height:80px"></li>
+    <li><img src="ressources/france-tv/partenaires/helloasso.png" alt="HelloAsso" style="height:48px"></li>
+    <li><img src="ressources/france-tv/partenaires/fabrique.png" alt="Ville de Paris, La Fabrique de la solidarité" style="height:64px"></li>
+    <li><img src="ressources/france-tv/partenaires/campus.png" alt="Campus France" style="height:88px"></li>
+    <li><img src="ressources/france-tv/partenaires/article1.png" alt="Article 1" style="height:48px"></li>
+  </ul>
+  <ul class="dots" aria-label="Pages des partenaires"></ul>
+</section>
+
+<!-- ============ 4. PAROLES DE BÉNÉVOLES + BANDEAU DE VISAGES ============ -->
+<section class="lp-section voices" aria-labelledby="voices-title" data-carousel>
+  <div class="lp-container">
+    <div class="lp-head">
+      <div class="lp-head__text">
+        <h2 class="lp-title" id="voices-title">Paroles de bénévoles</h2>
+        <p class="lp-subtitle">Une heure par semaine, une journée par an&nbsp;: chacun a trouvé sa manière de s’engager.</p>
+      </div>
+      <div class="lp-head__actions">
+        <button type="button" class="btn btn--outline-white btn--icon" data-prev aria-label="Témoignages précédents" aria-controls="voices-track"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7.828 11H20V13H7.828L13.192 18.364L11.778 19.778L4 12L11.778 4.222L13.192 5.636L7.828 11Z"/></svg></button>
+        <button type="button" class="btn btn--outline-white btn--icon" data-next aria-label="Témoignages suivants" aria-controls="voices-track"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.172 11L10.808 5.636L12.222 4.222L20 12L12.222 19.778L10.808 18.364L16.172 13H4V11H16.172Z"/></svg></button>
+      </div>
+    </div>
+
+    <ul class="carousel__track" id="voices-track" aria-label="Témoignages">
+      <li><figure class="quote-card" style="margin:0">
+        <div class="quote-card__logo"><img src="ressources/france-tv/temoignages/logo-restos.png" alt="Les Restaurants du Cœur"></div>
+        <div class="quote-card__sep" aria-hidden="true"></div>
+        <div class="quote-card__body">
+          <div><svg class="quote-card__mark" viewBox="0 0 32 32" aria-hidden="true"><path fill="#6A6AF4" d="M13.333 4h5.334a10.667 10.667 0 0 1 0 21.333V30C12 27.333 2.667 23.333 2.667 14.667A10.667 10.667 0 0 1 13.333 4ZM16 22.667h2.667a8 8 0 0 0 0-16h-5.334a8 8 0 0 0-8 8c0 4.813 3.283 7.954 10.667 11.306V22.667Z"/></svg>
+          <blockquote>Une expérience très humaine, aux côtés d’autres bénévoles engagés et d’équipes bienveillantes. On se sent vite utile et accueilli. Hâte de revenir distribuer des repas avec les Restos du Cœur&nbsp;!</blockquote></div>
+          <figcaption><img src="ressources/france-tv/temoignages/temoin-1.jpg" alt=""><span><span class="quote-card__name">Anne-Marie</span><span class="quote-card__role">Bénévole pour les Restos du Cœur</span></span></figcaption>
+        </div>
+      </figure></li>
+      <li><figure class="quote-card" style="margin:0">
+        <div class="quote-card__logo"><img src="ressources/france-tv/temoignages/logo-makesense.png" alt="makesense"></div>
+        <div class="quote-card__sep" aria-hidden="true"></div>
+        <div class="quote-card__body">
+          <div><svg class="quote-card__mark" viewBox="0 0 32 32" aria-hidden="true"><path fill="#6A6AF4" d="M13.333 4h5.334a10.667 10.667 0 0 1 0 21.333V30C12 27.333 2.667 23.333 2.667 14.667A10.667 10.667 0 0 1 13.333 4ZM16 22.667h2.667a8 8 0 0 0 0-16h-5.334a8 8 0 0 0-8 8c0 4.813 3.283 7.954 10.667 11.306V22.667Z"/></svg>
+          <blockquote>Une aventure collective qui donne du sens, des échanges riches et beaucoup d’énergie. J’ai appris, contribué concrètement et rencontré des personnes inspirantes.</blockquote></div>
+          <figcaption><img src="ressources/france-tv/temoignages/temoin-2.jpg" alt=""><span><span class="quote-card__name">Steve</span><span class="quote-card__role">Bénévole pour makesense</span></span></figcaption>
+        </div>
+      </figure></li>
+      <li><figure class="quote-card" style="margin:0">
+        <div class="quote-card__logo"><img src="ressources/france-tv/temoignages/logo-fnh.png" alt="Fondation pour la Nature et l’Homme"></div>
+        <div class="quote-card__sep" aria-hidden="true"></div>
+        <div class="quote-card__body">
+          <div><svg class="quote-card__mark" viewBox="0 0 32 32" aria-hidden="true"><path fill="#6A6AF4" d="M13.333 4h5.334a10.667 10.667 0 0 1 0 21.333V30C12 27.333 2.667 23.333 2.667 14.667A10.667 10.667 0 0 1 13.333 4ZM16 22.667h2.667a8 8 0 0 0 0-16h-5.334a8 8 0 0 0-8 8c0 4.813 3.283 7.954 10.667 11.306V22.667Z"/></svg>
+          <blockquote>Une expérience formidable avec un super groupe de vacanciers et d’accompagnateurs. On s’est vite sentis comme en famille. Hâte de m’engager à nouveau avec SINGA&nbsp;!</blockquote></div>
+          <figcaption><img src="ressources/france-tv/temoignages/temoin-3.jpg" alt=""><span><span class="quote-card__name">Anne-Marie</span><span class="quote-card__role">Bénévole chez SINGA</span></span></figcaption>
+        </div>
+      </figure></li>
+    </ul>
+    <ul class="dots" aria-label="Pages des témoignages"></ul>
+
+    <div class="voices__cta"><a href="#" class="btn btn--on-brand">Je trouve une mission</a></div>
+  </div>
+</section>
+
+<div class="faces" aria-hidden="true">
+  <ul class="js-faces"></ul>
+</div>
+
+<!-- ============ 5. COMMENT ÇA MARCHE ============ -->
+<section class="lp-section how" aria-labelledby="how-title">
+  <div class="lp-container">
+    <div class="lp-head">
+      <div class="lp-head__text">
+        <h2 class="lp-title" id="how-title">Comment ça marche&nbsp;?</h2>
+        <p class="lp-subtitle">Du 23 au 30 mars, déclarez le nombre d’heures de bénévolat<br class="br-desktop"> que vous êtes prêt à donner aux associations</p>
+      </div>
+    </div>
+
+    <div class="how__grid">
+      <ol class="steps">
+        <li class="step">
+          <h3><button type="button" class="step__btn" aria-expanded="true" aria-controls="step-1"><span>Je choisis combien de temps je suis prêt<br class="br-desktop"> à accorder aux associations</span><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 13.172L16.95 8.222L18.364 9.636L12 16L5.636 9.636L7.05 8.222L12 13.172Z"/></svg></button></h3>
+          <p class="step__panel" id="step-1">Tous les dons sont précieux, pour une heure ou plus,<br class="br-desktop"> vous aiderez beaucoup.</p>
+        </li>
+        <li class="step">
+          <h3><button type="button" class="step__btn" aria-expanded="false" aria-controls="step-2"><span>Je saisis mon adresse e&#8209;mail</span><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 13.172L16.95 8.222L18.364 9.636L12 16L5.636 9.636L7.05 8.222L12 13.172Z"/></svg></button></h3>
+          <p class="step__panel" id="step-2" hidden>Elle sert uniquement à vous envoyer des missions qui correspondent au temps promis.</p>
+        </li>
+        <li class="step">
+          <h3><button type="button" class="step__btn" aria-expanded="false" aria-controls="step-3"><span>Je rejoins les donateurs de temps<br class="br-desktop"> et je fais vivre la fraternité</span><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 13.172L16.95 8.222L18.364 9.636L12 16L5.636 9.636L7.05 8.222L12 13.172Z"/></svg></button></h3>
+          <p class="step__panel" id="step-3" hidden>Votre promesse s’ajoute au compteur national, aux côtés de celles de milliers d’autres personnes.</p>
+        </li>
+        <li class="step">
+          <h3><button type="button" class="step__btn" aria-expanded="false" aria-controls="step-4"><span>Je reçois des missions pour passer<br class="br-desktop"> de la promesse à l’action</span><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 13.172L16.95 8.222L18.364 9.636L12 16L5.636 9.636L7.05 8.222L12 13.172Z"/></svg></button></h3>
+          <p class="step__panel" id="step-4" hidden>Près de chez vous ou à distance, vous choisissez librement celles qui vous conviennent.</p>
+        </li>
+      </ol>
+
+      <ul class="how__gallery" aria-label="Exemples de missions">
+        <li class="photo-card"><img src="ressources/france-tv/mission-personnes-agees.jpg" alt="" style="--pos:42% center"><p class="photo-card__tag">J’aide des personnes âgées</p></li>
+        <li class="photo-card"><img src="ressources/france-tv/mission-aide-devoirs.jpg" alt="" style="--pos:55% 35%"><p class="photo-card__tag">J’aide aux devoirs</p></li>
+        <li class="photo-card"><img src="ressources/france-tv/mission-renovation-meubles.jpg" alt="" style="--pos:40% 40%"><p class="photo-card__tag">Je rénove des meubles</p></li>
+      </ul>
+    </div>
+
+    <div class="how__cta"><a href="#promesse" class="btn btn--primary">Je donne de mon temps</a></div>
+  </div>
+</section>
+
+<!-- ============ 6. FAQ ============ -->
+<section class="lp-section faq" aria-labelledby="faq-title">
+  <div class="lp-container">
+    <div class="faq__head">
+      <h2 class="lp-title" id="faq-title">Vous avez des questions&nbsp;?<span class="faq__spark" aria-hidden="true"><img src="ressources/france-tv/eclat.svg" alt=""></span></h2>
+    </div>
+    <div class="faq__box">
+      <section class="fr-accordion">
+        <h3 class="fr-accordion__title"><button class="fr-accordion__btn" aria-expanded="false" type="button" aria-controls="faq-1">La semaine de la Fraternité, c’est quoi&nbsp;?<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 8.781L11.3 5.481L12.243 6.424L8 10.667L3.757 6.424L4.7 5.481L8 8.781Z"/></svg></button></h3>
+        <div class="fr-collapse" id="faq-1" hidden><p>Du 23 au 30 mars, JeVeuxAider.gouv.fr et France Télévisions invitent chacun à promettre du temps aux associations. Chaque heure promise fait grimper un compteur national.</p></div>
+      </section>
+      <section class="fr-accordion">
+        <h3 class="fr-accordion__title"><button class="fr-accordion__btn" aria-expanded="false" type="button" aria-controls="faq-2">Est-ce que ma promesse m’engage&nbsp;?<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 8.781L11.3 5.481L12.243 6.424L8 10.667L3.757 6.424L4.7 5.481L8 8.781Z"/></svg></button></h3>
+        <div class="fr-collapse" id="faq-2" hidden><p>Non. C’est une intention, pas un contrat&nbsp;: vous choisissez ensuite les missions qui vous conviennent, et vous pouvez changer d’avis à tout moment.</p></div>
+      </section>
+      <section class="fr-accordion">
+        <h3 class="fr-accordion__title"><button class="fr-accordion__btn" aria-expanded="false" type="button" aria-controls="faq-3">Comment sont comptées les heures&nbsp;?<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 8.781L11.3 5.481L12.243 6.424L8 10.667L3.757 6.424L4.7 5.481L8 8.781Z"/></svg></button></h3>
+        <div class="fr-collapse" id="faq-3" hidden><p>Nous multiplions le temps choisi par sa fréquence, sur six mois&nbsp;: 2 heures une fois par mois comptent par exemple pour 12 heures.</p></div>
+      </section>
+      <section class="fr-accordion">
+        <h3 class="fr-accordion__title"><button class="fr-accordion__btn" aria-expanded="false" type="button" aria-controls="faq-4">Je n’ai jamais fait de bénévolat. Par où commencer&nbsp;?<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 8.781L11.3 5.481L12.243 6.424L8 10.667L3.757 6.424L4.7 5.481L8 8.781Z"/></svg></button></h3>
+        <div class="fr-collapse" id="faq-4" hidden><p>Les missions « Idéale pour débuter » ne demandent aucune expérience&nbsp;: l’association vous accueille et vous explique tout sur place.</p></div>
+      </section>
+      <section class="fr-accordion">
+        <h3 class="fr-accordion__title"><button class="fr-accordion__btn" aria-expanded="false" type="button" aria-controls="faq-5">Que devient mon adresse e&#8209;mail&nbsp;?<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 8.781L11.3 5.481L12.243 6.424L8 10.667L3.757 6.424L4.7 5.481L8 8.781Z"/></svg></button></h3>
+        <div class="fr-collapse" id="faq-5" hidden><p>Elle sert uniquement à vous envoyer des propositions de missions adaptées. Vous pouvez vous désinscrire à tout moment, en un clic.</p></div>
+      </section>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 7. RAPPEL FINAL ============ -->
+<section class="lp-section final" aria-labelledby="final-title">
+  <div class="lp-container final__inner">
+    <h2 class="lp-title" id="final-title">Jusqu’au 30 mars, chaque heure compte</h2>
+    <div class="ftv-stats">
+      <p class="ftv-stats__hours">
+        <span class="ftv-stats__num"><span class="ftv-stats__value js-hours">830 020</span><span class="ftv-stats__spark js-spark" aria-hidden="true"><img src="ressources/france-tv/eclat.svg" alt=""></span></span>
+        <span class="ftv-stats__unit">heures de bénévolat promises</span>
+      </p>
+      <div class="ftv-stats__people">
+        <p><strong class="js-people">248 292 personnes</strong> déjà engagées</p>
+        <ul class="ftv-avatars js-avatars" aria-hidden="true"></ul>
+      </div>
+    </div>
+    <div class="final__logos">
+      <img src="ressources/france-tv/logo-france-tv.svg" alt="France.tv">
+      <img class="logo-jva" src="ressources/france-tv/logo-jva-blanc.svg" alt="JeVeuxAider.gouv.fr">
+    </div>
+    <a href="#promesse" class="btn btn--on-brand">Je fais grimper le compteur</a>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ 8. PIED DE PAGE ============ -->
+<footer class="site-footer" role="contentinfo">
+  <div class="site-footer__links">
+    <div class="site-footer__links-inner">
+      <div><h2>Le bénévolat en France</h2><ul><li><a href="#">Paris</a></li><li><a href="#">Toulouse</a></li><li><a href="#">Lyon</a></li><li><a href="#">Marseille</a></li><li><a href="#">Bordeaux</a></li><li><a href="#">Nantes</a></li><li><a href="#">Lille</a></li><li><a href="#">Rennes</a></li></ul></div>
+      <div class="site-footer__col--cont"><ul><li><a href="#">Montpellier</a></li><li><a href="#">Strasbourg</a></li><li><a href="#">Angers</a></li><li><a href="#">Nice</a></li><li><a href="#">Rouen</a></li><li><a href="#">Grenoble</a></li><li><a href="#">Tours</a></li><li><a href="#">Dijon</a></li></ul></div>
+      <div><h2>Organisations populaires</h2><ul><li><a href="#">Make sense</a></li><li><a href="#">JobIRL</a></li><li><a href="#">Emmaüs Connect - Paris</a></li><li><a href="#">Etendart</a></li><li><a href="#">Restos du Coeur</a></li><li><a href="#">Mon Emile Association</a></li><li><a href="#">Article 1</a></li><li><a href="#">Lobby des Consciences</a></li></ul></div>
+      <div class="site-footer__col--cont"><ul><li><a href="#">Singa</a></li><li><a href="#">1 Lettre 1 Sourire</a></li><li><a href="#">Apprentis d’Auteuil</a></li><li><a href="#">Collia</a></li><li><a href="#">AVDTM - ExplorJob</a></li><li><a href="#">Entraide Scolaire Amicale</a></li><li><a href="#">Entourage</a></li><li><a href="#">Le Bon Samaritain</a></li></ul></div>
+      <div><h2>Liens utiles</h2><ul><li><a href="#">Centre d’aide</a></li><li><a href="#">Charte de la Réserve Civique</a></li><li><a href="#">Manifeste</a></li><li><a href="#">Actualités du bénévolat</a></li><li><a href="#">Communication</a></li><li><a href="#">Presse</a></li><li><a href="#">Écoles et Universités</a></li><li><a href="#">Statistiques</a></li></ul></div>
+    </div>
+  </div>
+  <div class="site-footer__brand">
+    <div class="site-footer__logos">
+      <img class="rf" src="ressources/rf.svg" alt="République Française">
+      <img class="jva" src="ressources/jva_logohorizontal_bleu.svg" alt="JeVeuxAider.gouv.fr">
+    </div>
+    <div class="site-footer__desc">
+      <p>Texte optionnel 3 lignes maximum.<br>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Consectetur et vel quam auctor semper. Cras si amet mollis dolor.</p>
+      <ul class="site-footer__gov">
+        <li><a href="#">info.gouv.fr<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M6.667 4v1.333H3.333v7.334h7.334V9.333H12v4a.667.667 0 0 1-.667.667H2.667A.667.667 0 0 1 2 13.333V4.667C2 4.298 2.298 4 2.667 4h4ZM14 2v5.333h-1.333V4.275L7.471 9.471l-.942-.942 5.194-5.196H8.667V2H14Z"/></svg></a></li>
+        <li><a href="#">service-public.gouv.fr<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M6.667 4v1.333H3.333v7.334h7.334V9.333H12v4a.667.667 0 0 1-.667.667H2.667A.667.667 0 0 1 2 13.333V4.667C2 4.298 2.298 4 2.667 4h4ZM14 2v5.333h-1.333V4.275L7.471 9.471l-.942-.942 5.194-5.196H8.667V2H14Z"/></svg></a></li>
+        <li><a href="#">legifrance.gouv.fr<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M6.667 4v1.333H3.333v7.334h7.334V9.333H12v4a.667.667 0 0 1-.667.667H2.667A.667.667 0 0 1 2 13.333V4.667C2 4.298 2.298 4 2.667 4h4ZM14 2v5.333h-1.333V4.275L7.471 9.471l-.942-.942 5.194-5.196H8.667V2H14Z"/></svg></a></li>
+        <li><a href="#">data.gouv.fr<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M6.667 4v1.333H3.333v7.334h7.334V9.333H12v4a.667.667 0 0 1-.667.667H2.667A.667.667 0 0 1 2 13.333V4.667C2 4.298 2.298 4 2.667 4h4ZM14 2v5.333h-1.333V4.275L7.471 9.471l-.942-.942 5.194-5.196H8.667V2H14Z"/></svg></a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="site-footer__bottom">
+    <div class="site-footer__bottom-inner">
+      <ul class="site-footer__mentions">
+        <li><a href="#">Accessibilité : non/partiellement/totalement conforme</a></li>
+        <li><a href="#">Mentions légales</a></li>
+        <li><a href="#">Données personnelles</a></li>
+        <li><a href="#">Gestion des cookies</a></li>
+        <li><a href="#">Plan du site</a></li>
+        <li><a href="#">Paramètres d’affichage</a></li>
+      </ul>
+      <p class="site-footer__licence">Sauf mention explicite de propriété intellectuelle détenue par des tiers, les contenus de ce site sont proposés sous <a href="https://github.com/etalab/licence-ouverte/blob/master/LO.md" target="_blank" rel="noopener">licence etalab-2.0</a></p>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fmt = n => n.toLocaleString('fr-FR').replace(/[\u00a0\u202f]/g, ' ');
+  const rand = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+  const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+  const plural = n => `${fmt(n)} heure${n > 1 ? 's' : ''}`;
+
+  /* ---------- Avatars (mêmes photos et cadrages que les heroes France TV) ---------- */
+  const PEOPLE = [
+    {src:'benevole-1.png', crop:[-57.37, 5.30, 214.74, 140.40], g:['#FEABA2','#FD8D81']},
+    {src:'benevole-7.png', crop:[-10.08, 0.84, 107.56, 178.15], g:['#A1C8C9','#95C1C7']},
+    {src:'benevole-3.png', crop:[-60.58, 7.69, 226.92, 150.96], g:['#75C996','#44A369']},
+    {src:'benevole-5.png', crop:[-50.00, 6.25, 181.64, 121.15], g:['#978CBE','#9C8EC5']},
+    {src:'benevole-6.png', crop:[-42.50,-2.50, 201.25, 201.25], g:['#FEABA2','#FD8D81']},
+    {src:'benevole-2.png', crop:[-91.35,-7.69, 281.73, 159.62], g:['#F4BF6F','#F2B964']},
+  ];
+  document.querySelectorAll('.js-avatars').forEach(ul => PEOPLE.forEach(p => {
+    const li = document.createElement('li');
+    li.style.setProperty('--g1', p.g[0]);
+    li.style.setProperty('--g2', p.g[1]);
+    const [l, t, w, h] = p.crop;
+    li.innerHTML = `<img src="ressources/france-tv/${p.src}" alt="" style="left:${l}%;top:${t}%;width:${w}%;height:${h}%">`;
+    ul.appendChild(li);
+  }));
+
+  /* ---------- Hero : bulles bénévoles (repris de homepage-france-tv.html) ---------- */
+  const hero = document.getElementById('ftv-hero');
+
+  /* Bénévoles : cadrage repris de la maquette (position/taille de l'image dans la
+     bulle, en % de la bulle) + dégradé de fond de chaque bulle. Les 3 dernières ne
+     sont pas affichées au départ : elles servent aux remplacements. */
+  const HERO_PEOPLE = [
+    {src:'benevole-1.png', crop:[-57.37, 5.30, 214.74, 140.40], g:['#FEABA2','#FD8D81']},
+    {src:'benevole-2.png', crop:[-91.35,-7.69, 281.73, 159.62], g:['#F4BF6F','#F2B964']},
+    {src:'benevole-3.png', crop:[-60.58, 7.69, 226.92, 150.96], g:['#75C996','#44A369']},
+    {src:'benevole-4.png', crop:[-22.12,-34.62,143.27, 215.38], g:['#CDDADB','#C8D3D6']},
+    {src:'benevole-5.png', crop:[-50.00, 6.25, 181.64, 121.15], g:['#978CBE','#9C8EC5']},
+    {src:'benevole-6.png', crop:[-42.50,-2.50, 201.25, 201.25], g:['#FEABA2','#FD8D81']},
+    {src:'benevole-7.png', crop:[-10.08, 0.84, 107.56, 178.15], g:['#A1C8C9','#95C1C7']},
+    {src:'benevole-8.png', crop:[-61.54, 8.65, 198.08,  99.04], g:['#A1C8C9','#95C1C7']},
+    // Photos « en réserve » (fournies le 18/11/2026) : ce sont elles qui arrivent en premier
+    // quand une bulle change. Photos carrées avec fond : léger zoom pour cadrer le visage.
+    {src:'benevole-9.jpg',  crop:[-10, -4, 120, 120], g:['#CDDADB','#C8D3D6']},
+    {src:'benevole-10.jpg', crop:[-10, -4, 120, 120], g:['#CDDADB','#C8D3D6']},
+    {src:'benevole-11.jpg', crop:[-5,  -2, 110, 110], g:['#CDDADB','#C8D3D6']},
+  ];
+  /* Emplacements Figma (x, y, taille dans le frame 1680×742) + bénévole initial + tag initial */
+  const SLOTS = [
+    {x:193,  y:108, s:104, p:0},
+    {x:1300, y:268, s:104, p:1},
+    {x:284,  y:576, s:104, p:2, tag:36},
+    {x:190,  y:440, s:80,  p:3},
+    {x:1404, y:132, s:80,  p:4, tag:10},
+    {x:1291, y:559, s:80,  p:5},
+    {x:280,  y:289, s:80,  p:6, tag:1},
+    {x:1432, y:412, s:104, p:7, tag:4},
+  ];
+  const TAG_VALUES = [1,1,2,2,3,4,5,5,6,8,10,12,15,20,24,36];
+  const MAX_TAGS = 4;
+
+  const layer = document.getElementById('ftv-bubbles');
+  // File d'attente des bénévoles absents de l'écran : le plus ancien revient en premier
+  const free = HERO_PEOPLE.map((_, i) => i);
+  const tagOrder = []; // slots portant un tag, du plus ancien au plus récent
+
+  function paint(bubble, idx) {
+    const p = HERO_PEOPLE[idx];
+    bubble.style.setProperty('--g1', p.g[0]);
+    bubble.style.setProperty('--g2', p.g[1]);
+    const [l, t, w, h] = p.crop;
+    bubble.innerHTML = `<img src="ressources/france-tv/${p.src}" alt="" style="left:${l}%;top:${t}%;width:${w}%;height:${h}%">`;
+  }
+
+  /* Pile d'avatars mobile — ordre de la capture de référence */
+  const avatars = document.getElementById('hero-avatars');
+  [0, 6, 2, 4, 5, 1].forEach(i => {
+    const li = document.createElement('li');
+    paint(li, i);
+    avatars.appendChild(li);
+  });
+
+  function addTag(slot, value, animate) {
+    const tag = document.createElement('span');
+    tag.className = 'ftv-tag' + (animate ? ' is-in' : '');
+    tag.textContent = `+${value}h`;
+    slot.float.appendChild(tag);
+    slot.tag = tag;
+    tagOrder.push(slot);
+    if (animate) {
+      const ghost = document.createElement('span');
+      ghost.className = 'ftv-tag-ghost';
+      ghost.textContent = tag.textContent;
+      slot.float.appendChild(ghost);
+      ghost.addEventListener('animationend', () => ghost.remove());
+    }
+    while (tagOrder.length > MAX_TAGS) removeTag(tagOrder[0]);
+  }
+  function removeTag(slot) {
+    if (!slot.tag) return;
+    const tag = slot.tag;
+    slot.tag = null;
+    tagOrder.splice(tagOrder.indexOf(slot), 1);
+    tag.classList.add('is-out');
+    setTimeout(() => tag.remove(), 300);
+  }
+
+  const slots = SLOTS.map((d, i) => {
+    const el = document.createElement('div');
+    el.className = 'ftv-slot';
+    el.style.cssText = `left:${(d.x / 1680 * 100).toFixed(3)}%;top:${d.y}px;--size:${d.s}px`;
+    const float = document.createElement('div');
+    float.className = 'ftv-float';
+    float.style.cssText = `--dur:${(5.5 + Math.random() * 3.5).toFixed(2)}s;--delay:-${(Math.random() * 6).toFixed(2)}s;--fx:${rand(-6, 6)}px;--fy:${rand(6, 12)}px`;
+    const ring = document.createElement('span');
+    ring.className = 'ftv-slot__ring';
+    const bubble = document.createElement('div');
+    bubble.className = 'ftv-bubble';
+    float.append(ring, bubble);
+    el.appendChild(float);
+    layer.appendChild(el);
+    paint(bubble, d.p);
+    free.splice(free.indexOf(d.p), 1);
+    const slot = {el, float, ring, bubble, person: d.p, tag: null};
+    if (d.tag) addTag(slot, d.tag, false);
+    return slot;
+  });
+
+  /* Remplace une bulle : sortie (450 ms) → nouveau bénévole qui « pop » → tag +Xh */
+  function replace(slot, hours) {
+    removeTag(slot);
+    slot.bubble.classList.remove('is-in');
+    slot.bubble.classList.add('is-out');
+    setTimeout(() => {
+      const next = free.shift();
+      free.push(slot.person);
+      slot.person = next;
+      paint(slot.bubble, next);
+      slot.bubble.classList.remove('is-out');
+      void slot.bubble.offsetWidth;
+      slot.bubble.classList.add('is-in');
+      slot.ring.classList.remove('is-on');
+      void slot.ring.offsetWidth;
+      slot.ring.classList.add('is-on');
+      setTimeout(() => addTag(slot, hours, true), 250);
+    }, 450);
+  }
+
+  /* ---------- Compteurs (hero + rappel final, toujours synchronisés) ---------- */
+  let hours = 830020, people = 248292, shown = hours;
+  const hoursEls = document.querySelectorAll('.js-hours');
+  const peopleEls = document.querySelectorAll('.js-people');
+  const sparks = document.querySelectorAll('.js-spark');
+  const ripple = document.getElementById('ftv-ripple');
+  const restart = (el, cls) => { el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); };
+  let raf = null;
+  function render() {
+    peopleEls.forEach(el => el.textContent = `${fmt(people)} personnes`);
+    sparks.forEach(s => restart(s, 'is-pop'));
+    restart(ripple, 'is-on');
+    if (reduceMotion) { shown = hours; hoursEls.forEach(el => el.textContent = fmt(hours)); return; }
+    cancelAnimationFrame(raf);
+    const from = shown, to = hours, t0 = performance.now(), dur = 1400;
+    const step = now => {
+      const k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+      shown = Math.round(from + (to - from) * e);
+      hoursEls.forEach(el => el.textContent = fmt(shown));
+      if (k < 1) raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+  }
+  function add(h, p) { hours += h; people += p; render(); }
+
+  function tick() {
+    // Arrivée visible 2 fois sur 3 : une bulle (jamais deux fois de suite la même) est remplacée
+    let shownTag = 0;
+    const visible = getComputedStyle(layer).display !== 'none';
+    if (visible && Math.random() < 0.67) {
+      shownTag = pick(TAG_VALUES);
+      tick.last = pick(slots.filter(s => s !== tick.last));
+      replace(tick.last, shownTag);
+    }
+    // Les autres promesses arrivées partout en France pendant ces 5 s
+    const dh = shownTag + rand(8, 60), dp = (shownTag ? 1 : 0) + rand(0, 3);
+    setTimeout(() => add(dh, dp), shownTag ? 900 : 0); // le compteur bouge quand le tag apparaît
+  }
+
+  let timer = null;
+  const pauseBtn = document.getElementById('ftv-pause');
+  const start = () => { timer = setInterval(tick, 5000); };
+  pauseBtn.addEventListener('click', () => {
+    const paused = pauseBtn.getAttribute('aria-pressed') !== 'true';
+    pauseBtn.setAttribute('aria-pressed', String(paused));
+    pauseBtn.querySelector('span').textContent = paused ? 'Reprendre l’animation' : 'Mettre en pause l’animation';
+    pauseBtn.querySelector('svg').innerHTML = paused
+      ? '<path d="M4 2l10 6-10 6z"/>'
+      : '<rect x="3" y="2" width="3.5" height="12"/><rect x="9.5" y="2" width="3.5" height="12"/>';
+    hero.classList.toggle('is-paused', paused);
+    clearInterval(timer);
+    if (!paused) start();
+  });
+  start();
+
+  /* ---------- Formulaire de promesse ---------- */
+  const form = document.getElementById('promise-form');
+  const total = document.getElementById('promise-total');
+  const email = document.getElementById('promise-email');
+  const emailGroup = document.getElementById('email-group');
+  const emailError = document.getElementById('promise-email-error');
+  const promised = () => Number(form.duree.value) * Number(form.frequence.value);
+  form.addEventListener('change', e => { if (e.target.type === 'radio') total.textContent = plural(promised()); });
+  const setError = on => {
+    emailGroup.classList.toggle('fr-input-group--error', on);
+    emailError.hidden = !on;
+    email.setAttribute('aria-invalid', String(on));
+  };
+  email.addEventListener('input', () => { if (emailGroup.classList.contains('fr-input-group--error') && email.validity.valid && email.value) setError(false); });
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    if (!email.value || !email.validity.valid) { setError(true); email.focus(); return; }
+    setError(false);
+    const h = promised();
+    add(h, 1);
+    document.getElementById('promise-done-hours').textContent = plural(h);
+    document.getElementById('promise-done-email').textContent = email.value;
+    form.hidden = true;
+    const done = document.getElementById('promise-done');
+    done.hidden = false;
+    done.focus();
+  });
+
+  /* ---------- Cartes mission (structure CardMission.vue) ---------- */
+  const ICON = {
+    pin:'<path d="M12 20.9l4.95-4.95a7 7 0 1 0-9.9 0L12 20.9zm0 2.828l-6.364-6.364a9 9 0 1 1 12.728 0L12 23.728zM12 13a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm0 2a4 4 0 1 1 0-8 4 4 0 0 1 0 8z"/>',
+    time:'<path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm1-8h4v2h-6V7h2v5z"/>',
+    orga:'<path d="M21 19h2v2H1v-2h2V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v15h4v-8h-2V9h3a1 1 0 0 1 1 1v9zM5 5v14h8V5H5zm2 6h4v2H7v-2zm0-4h4v2H7V7z"/>',
+  };
+  const MISSIONS = [
+    {img:'mission-festival.jpg', badges:['Idéale pour débuter','Ouverte dès 16 ans'], tags:['Communication','+1'], title:'Je participe à la promotion d’un festival / événement', place:'Paris 75012', when:'Une demi-journée à partir du 3 juillet', orga:'Cosmos Arts'},
+    {img:'mission-personnes-agees.jpg', badges:['Idéale pour débuter'], tags:['Lien intergénérationnel'], title:'Je rends visite à des personnes âgées isolées de mon quartier', place:'Lyon 69003', when:'1 heure par semaine', orga:'Voisins solidaires du 3e'},
+    {img:'mission-aide-devoirs.jpg', badges:['Ouverte dès 16 ans'], tags:['Soutien scolaire','+1'], title:'J’accompagne des collégiens dans leurs devoirs', place:'À distance', when:'2 heures par semaine', orga:'Coup de pouce scolaire'},
+    {img:'mission-collecte-dons.jpg', badges:['Idéale pour débuter','Ouverte dès 16 ans'], tags:['Collecte'], title:'Je participe à une collecte alimentaire en supermarché', place:'Nantes 44000', when:'Une demi-journée le 28 mars', orga:'Banque alimentaire 44'},
+    {img:'mission-ateliers-culturels.jpg', badges:[], tags:['Culture et loisirs'], title:'J’anime un atelier de peinture pour des enfants', place:'Lille 59000', when:'Une fois par mois', orga:'La Maison des couleurs'},
+    {img:'mission-renovation-meubles.jpg', badges:['Idéale pour débuter'], tags:['Travaux manuels','+1'], title:'Je rénove des meubles pour des familles relogées', place:'Marseille 13004', when:'1 journée, le samedi', orga:'Atelier Récup’ & Partage'},
+  ];
+  const track = document.getElementById('missions-track');
+  track.innerHTML = MISSIONS.map(m => `
+    <li><article class="card-mission">
+      <div class="card-mission__img"><img src="ressources/france-tv/${m.img}" alt="">
+        ${m.badges.length ? `<div class="card-mission__badges">${m.badges.map(b => `<span class="badge-sun">${b}</span>`).join('')}</div>` : ''}
+      </div>
+      <div class="card-mission__body">
+        <ul class="card-mission__tags">${m.tags.map(t => `<li class="tag-sm">${t}</li>`).join('')}</ul>
+        <h3 class="card-mission__title"><a href="#">${m.title}</a></h3>
+        <ul class="card-mission__meta">
+          <li><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">${ICON.pin}</svg>${m.place}</li>
+          <li><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">${ICON.time}</svg>${m.when}</li>
+          <li><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">${ICON.orga}</svg>${m.orga}</li>
+        </ul>
+      </div>
+    </article></li>`).join('');
+
+  /* ---------- Bandeau de visages : décalages verticaux de la maquette ---------- */
+  const FACE_Y = [60, 30, 60, 0, 20, 60, 0, 60];
+  const faces = document.querySelector('.js-faces');
+  for (let i = 0; i < 16; i++) {
+    const n = i % 8;
+    faces.insertAdjacentHTML('beforeend', `<li style="--y:${FACE_Y[n]}px"><img src="ressources/france-tv/profils/profil-${n + 1}.jpg" alt=""></li>`);
+  }
+
+  /* ---------- Carrousels ---------- */
+  document.querySelectorAll('[data-carousel]').forEach(root => {
+    const tr = root.querySelector('.carousel__track');
+    const prev = root.querySelector('[data-prev]');
+    const next = root.querySelector('[data-next]');
+    const dots = root.querySelector('.dots');
+    const pages = () => Math.max(1, Math.ceil((tr.scrollWidth - 2) / tr.clientWidth));
+    const page = () => Math.round(tr.scrollLeft / tr.clientWidth);
+    const go = i => tr.scrollTo({left: i * tr.clientWidth});
+    function update() {
+      const n = pages(), p = Math.min(page(), n - 1);
+      const atEnd = tr.scrollLeft + tr.clientWidth >= tr.scrollWidth - 2;
+      if (prev) prev.disabled = tr.scrollLeft <= 2;
+      if (next) next.disabled = atEnd;
+      if (dots) {
+        if (dots.children.length !== n) {
+          dots.innerHTML = Array.from({length: n}, (_, i) => `<li><button type="button" aria-label="Page ${i + 1} sur ${n}"></button></li>`).join('');
+          dots.querySelectorAll('button').forEach((b, i) => b.addEventListener('click', () => go(i)));
+        }
+        dots.hidden = n < 2;
+        dots.querySelectorAll('button').forEach((b, i) => b.setAttribute('aria-current', String(i === (atEnd ? n - 1 : p))));
+      }
+    }
+    const stepBy = dir => {
+      const item = tr.querySelector('li');
+      const gap = parseFloat(getComputedStyle(tr).columnGap) || 0;
+      const w = item ? item.getBoundingClientRect().width + gap : tr.clientWidth;
+      tr.scrollBy({left: dir * Math.max(w, Math.floor(tr.clientWidth / w) * w)});
+    };
+    prev && prev.addEventListener('click', () => stepBy(-1));
+    next && next.addEventListener('click', () => stepBy(1));
+    tr.addEventListener('scroll', () => requestAnimationFrame(update), {passive: true});
+    addEventListener('resize', update);
+    addEventListener('load', update);
+    update();
+  });
+
+  /* ---------- Accordéons : étapes (une seule ouverte) et FAQ (dsfr.js non embarqué) ---------- */
+  const steps = document.querySelectorAll('.step__btn');
+  steps.forEach(btn => btn.addEventListener('click', () => {
+    const open = btn.getAttribute('aria-expanded') === 'true';
+    steps.forEach(b => { b.setAttribute('aria-expanded', 'false'); document.getElementById(b.getAttribute('aria-controls')).hidden = true; });
+    if (!open) { btn.setAttribute('aria-expanded', 'true'); document.getElementById(btn.getAttribute('aria-controls')).hidden = false; }
+  }));
+  document.querySelectorAll('.faq .fr-accordion__btn').forEach(btn => btn.addEventListener('click', () => {
+    const open = btn.getAttribute('aria-expanded') === 'true';
+    btn.setAttribute('aria-expanded', String(!open));
+    const panel = document.getElementById(btn.getAttribute('aria-controls'));
+    panel.hidden = open;
+    // mécanisme du vrai dsfr.js : classe --expanded + hauteur max libérée
+    panel.classList.toggle('fr-collapse--expanded', !open);
+    panel.style.setProperty('--collapse-max-height', open ? '0' : 'none');
+  }));
+  const progBtn = document.querySelector('.programme__cta button');
+  if (progBtn) {
+    const closedLabel = progBtn.firstChild.textContent;
+    progBtn.addEventListener('click', () => {
+      const open = progBtn.getAttribute('aria-expanded') !== 'true';
+      const extra = document.querySelectorAll('[data-prog-extra]');
+      extra.forEach(li => { li.hidden = !open; });
+      progBtn.setAttribute('aria-expanded', String(open));
+      progBtn.firstChild.textContent = open ? progBtn.dataset.labelOpen : closedLabel;
+      if (open && extra[0]) { const a = extra[0].querySelector('a'); a && a.focus({preventScroll: true}); }
+    });
+  }
+})();
+</script>
+</body>
+</html>

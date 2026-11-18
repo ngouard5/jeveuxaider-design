@@ -1,0 +1,449 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Prototype — Homepage, opération France TV (variante missions)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>document.documentElement.setAttribute("data-fr-theme", matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");</script>
+<style>
+  /* Base cascade layers — voir design-system/GUIDE-PROTOTYPAGE.md (Piège n°2) */
+  @import url("../design-system/compiled-reset.css") layer(tailwind-reset);
+  @import url("../design-system/dsfr.min.css") layer(dsfr-base);
+  @import url("../design-system/compiled.css") layer(dsfr-utilitaires);
+  @import url("../design-system/patches.css") layer(site-patches);
+
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font-family:Marianne,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--background-default-grey);font-synthesis:none}
+
+  /* ---------- header : Figma "Projet France TV" › Header (node 6301:4538), MAJ 18/11/2026 ----------
+     Conteneur 1440 centré ; bloc marque (rf.svg, padding 16 inclus) puis logo à 28px ;
+     accès rapides : Tertiaire SM (pl 8 / pr 12, gap 8), icônes Remix 16px de la maquette.
+     Menu : DsfrNavItem.vue (components/dsfr/nav-item) dans DesktopSecondaryNavigation.vue,
+     items 14/24 (text-sm), p 16 (pr 12 avec chevron), gap 8, hover gray-50. */
+  .jva-header{background:var(--background-default-grey);box-shadow:0 2px 3px rgba(0,0,18,.16);position:relative;z-index:30}
+  .jva-header__row{max-width:1440px;margin:0 auto;display:flex;align-items:center;gap:16px 40px;padding:12px 16px;flex-wrap:wrap}
+  @media (min-width:1024px){.jva-header__row{flex-wrap:nowrap}}
+  @media (min-width:1472px){.jva-header__row{padding:12px 0}}
+  .jva-header__brand{display:flex;align-items:center;gap:28px;flex:1 1 auto}
+  .jva-header__rf{height:98px;width:auto;flex:none} /* le SVG contient déjà le padding 16 du bloc marque */
+  .jva-header__logo{height:40px;width:auto;flex:none}
+  .jva-header__tools{display:flex;align-items:center;gap:8px;flex:1 1 100%;justify-content:flex-start;flex-wrap:wrap}
+  @media (min-width:1024px){.jva-header__tools{flex:none;justify-content:flex-end}}
+  .jva-header__tool-link{display:inline-flex;align-items:center;gap:8px;padding:4px 12px 4px 8px;font-size:14px;font-weight:500;line-height:24px;color:var(--text-action-high-blue-france);text-decoration:none;background-image:none;white-space:nowrap}
+  .jva-header__tool-link--bordered{box-shadow:inset 0 0 0 1px var(--border-default-grey)}
+  .jva-header__menu{border-top:1px solid var(--border-default-grey)}
+  .jva-nav{max-width:1440px;margin:0 auto;display:flex;overflow-x:auto;padding:0}
+  .jva-nav__item{display:flex;align-items:center;gap:8px;padding:16px;font:inherit;font-size:14px;line-height:24px;font-weight:400;color:var(--text-action-high-grey);background:transparent;border:0;border-bottom:2px solid transparent;text-decoration:none;background-image:none;white-space:nowrap;cursor:pointer}
+  .jva-nav__item:hover{background-color:var(--background-default-grey-hover)}
+  .jva-nav__item--dropdown{padding-right:12px}
+  .jva-nav__item svg{width:16px;height:16px;flex:none}
+  .jva-nav__emoji{line-height:1}
+
+  /* ---------- header mobile (< 1024 px, comme HeaderMobile.vue « lg:hidden ») ----------
+     Figma "Projet France TV" › Header mobile (node 6352:23266) : une seule ligne de 90px —
+     bloc marque (px 16 / py 12), logo 121×20, puis Recherche (p 8, sans bordure) et Menu
+     (p 8, bordure #DDD), gap 16, pr 16 ; ombre 0 2 6. Accès rapides et menu secondaire masqués. */
+  .jva-header__mobile-tools{display:none;align-items:center;gap:16px;margin-left:auto}
+  .jva-header__icon-btn{display:inline-flex;align-items:center;justify-content:center;padding:8px;color:var(--text-action-high-blue-france);background:transparent;border:0;cursor:pointer;text-decoration:none;background-image:none}
+  .jva-header__icon-btn--bordered{box-shadow:inset 0 0 0 1px var(--border-default-grey)}
+  .jva-header__icon-btn svg{width:24px;height:24px}
+  @media (max-width:1023px){
+    .jva-header{box-shadow:0 2px 6px rgba(0,0,18,.16)}
+    .jva-header__row{flex-wrap:nowrap;gap:0;padding:0 16px 0 0}
+    .jva-header__brand{gap:22px;flex:1 1 auto;min-width:0}
+    .jva-header__rf{height:98px;margin:-4px 0} /* SVG avec padding 16 intégré → py 12 de la maquette */
+    .jva-header__logo{height:20px}
+    .jva-header__tools,.jva-header__menu{display:none}
+    .jva-header__mobile-tools{display:flex}
+  }
+
+  /* ==========================================================================
+     HERO FRANCE TV, VARIANTE — Figma "Projet France TV" › Hero (node 6306:9169),
+     frame de référence 1680×818.
+
+     Couleurs : surface de marque (bleu France plein + blanc), fixe en dark mode,
+     comme le hero de homepage-france-tv.html (voir le commentaire là-bas).
+
+     Typo (styles Figma) : surtitre = texte détail maj. 14/24 bold ;
+     titre = 64/68 (≈ fr-display--md, interligne de la maquette) ;
+     chapô = 28/36 regular ; unité = H4 24/32 ; participation = H6 20/28.
+     Le compteur à 78px est la valeur de la maquette (entre fr-display--lg et --xl).
+     ========================================================================== */
+  .ftv-hero{--ftv-blue:#000091;position:relative;overflow:hidden;background:var(--ftv-blue);color:#fff;box-shadow:0 6px 18px rgba(0,0,18,.16);isolation:isolate}
+  /* Desktop (Figma "D - Hero B" 6306:9169, MAJ 18/11/2026) : texte 825 + galerie fluide,
+     gouttière 48, marges 104, frame 1680×814. Mobile ("M - Hero B" 6333:19358) : une
+     colonne, padding 32/16, gap 32, sans galerie. */
+  .ftv-hero__stage{position:relative;max-width:1680px;margin:0 auto;padding:32px 16px;display:grid;gap:32px}
+  @media (min-width:768px){.ftv-hero__stage{padding:56px 32px 64px;gap:40px}}
+  @media (min-width:1200px){
+    /* Colonnes proportionnelles à la maquette (825 / 599) pour que tout se resserre
+       de façon homogène entre 1200 et 1680 px */
+    .ftv-hero__stage{grid-template-columns:minmax(0,825fr) minmax(0,599fr);column-gap:48px;row-gap:0;padding:79px 104px 68px;min-height:814px}
+  }
+
+  /* Anneaux décoratifs (assets Figma Ellipse 41 / Ellipse 40), positions du frame 1680 */
+  .ftv-hero__bg{position:absolute;inset:0;pointer-events:none;z-index:-1;max-width:1680px;margin:0 auto}
+  .ftv-hero__bg img{position:absolute;max-width:none}
+  .ftv-ring-1{left:38.69%;top:244px;width:935px;height:935px;transform:rotate(180deg)}
+  .ftv-ring-2{left:-161.71px;top:-234.8px;width:619px;height:619px;transform:rotate(120deg)} /* conteneur 845.57 à (-275,-348) */
+
+  .ftv-hero__text{display:flex;flex-direction:column;align-items:flex-start;gap:32px}
+  @media (min-width:768px){.ftv-hero__text{gap:40px}}
+
+  .ftv-hero__brand{display:flex;flex-direction:column;align-items:flex-start;gap:12px;margin:0}
+  @media (min-width:768px){.ftv-hero__brand{flex-direction:row;align-items:center;flex-wrap:wrap}}
+  .ftv-hero__brand-label{font-size:14px;line-height:20px;font-weight:700;text-transform:uppercase;color:#F5F5FE;margin:0}
+  @media (min-width:768px){.ftv-hero__brand-label{line-height:24px}}
+  .ftv-hero__brand img{width:139px;height:24px;display:block}
+  .br-mobile{display:inline}
+  @media (min-width:768px){.br-mobile{display:none}}
+  .only-desktop{display:none}
+  @media (min-width:768px){.only-desktop{display:inline}}
+
+  .ftv-hero__copy{display:flex;flex-direction:column;gap:8px}
+  @media (min-width:768px){.ftv-hero__copy{gap:24px}}
+  .ftv-hero__title{margin:0;color:#fff;font-weight:700;font-size:32px;line-height:40px}
+  @media (min-width:768px){.ftv-hero__title{font-size:48px;line-height:56px;letter-spacing:-.03em}}
+  /* 64px à 1680 px, réduit avec la colonne en dessous pour garder le titre sur 2 lignes */
+  @media (min-width:1200px){.ftv-hero__title{font-size:min(64px,calc((100vw - 256px) * .0449));line-height:1.0625}}
+  .ftv-hero__lead{margin:0;max-width:720px;color:#fff;font-size:24px;line-height:32px}
+  @media (min-width:1200px){.ftv-hero__lead{font-size:28px;line-height:36px}}
+
+  /* Bloc compteur — fond blanc 10 %, bordure blanche 25 %, radius 8, 825×199.
+     Mobile : seul le compteur est dans le bloc (361×181, centré), les personnes engagées dessous. */
+  .ftv-stats{width:100%;display:flex;flex-direction:column;gap:32px}
+  .ftv-stats__hours{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:8px}
+  .ftv-stats__hours{position:relative;margin:0;padding:26px 16px 29px;text-align:center}
+  @media (min-width:768px){
+    .ftv-stats{flex-direction:row;align-items:center;gap:0;padding:24px 0 24px 46px;min-height:199px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:8px}
+    .ftv-stats__hours{flex:none;background:none;border:0;border-radius:0;padding:0 41px 0 0;text-align:left} /* séparateur à x=435 à 1680 px */
+  }
+  .ftv-stats__value{display:block;font-weight:700;font-size:inherit;line-height:80px;letter-spacing:.02em;font-variant-numeric:tabular-nums;white-space:nowrap}
+  /* Interligne 1 : la boîte colle aux chiffres, sinon l'espace sous le nombre paraît trop grand
+     et le bloc décentré (retour Nicolas 18/11/2026) */
+  @media (min-width:768px){.ftv-stats__value{line-height:1}}
+  .ftv-stats__unit{display:block;font-weight:700;font-size:22px;line-height:28px;margin-top:16px}
+  @media (min-width:768px){.ftv-stats__unit{font-size:24px;line-height:32px;margin-top:12px}}
+  /* Le nombre porte l'éclat : tailles en em pour suivre la taille du nombre.
+     Desktop : 48px pour 78px (.615em), mord de .22em sur le dernier chiffre (interligne 1.2 ≠
+     « normal » Figma, d'où top -.02em) ; mobile : 48px pour 72px, mord de .29em, top -.17em. La place de l'éclat n'est réservée qu'à partir
+     de 768 px (sur mobile, le nombre est centré seul, comme dans la maquette). */
+  .ftv-stats__num{position:relative;display:inline-block;font-size:72px}
+  @media (min-width:768px){.ftv-stats__num{font-size:78px;padding-right:.395em}}
+  @media (min-width:1200px){.ftv-stats__num{font-size:min(78px,calc((100vw - 256px) * .0548))}}
+  .ftv-stats__spark{position:absolute;left:100%;margin-left:-.29em;top:-.17em;width:.667em;height:.667em;transform-origin:20% 80%}
+  @media (min-width:768px){.ftv-stats__spark{left:auto;right:0;margin-left:0;top:-.12em;width:.615em;height:.615em}}
+  /* Dessin dans le cadre Graphic (inset Figma 8.23% -0.04% 7.5% 0.87%) — taille explicite :
+     avec width/height:auto, une image en absolu garde sa taille intrinsèque et ignore l'inset */
+  .ftv-stats__spark img{position:absolute;left:.87%;top:8.23%;width:99.17%;height:84.27%;max-width:none}
+  .ftv-stats__spark.is-pop{animation:ftv-spark .7s cubic-bezier(.3,1.6,.5,1)}
+  @keyframes ftv-spark{0%{transform:scale(1)}35%{transform:scale(1.25) rotate(-6deg)}100%{transform:scale(1)}}
+
+  .ftv-stats__people{min-width:0}
+  @media (min-width:768px){.ftv-stats__people{flex:1 1 auto;border-left:1px solid #E3E3FD;padding:10px 24px 9px 32px}} /* séparateur ≈135px, centré */
+  .ftv-stats__people p{margin:0;font-size:18px;line-height:24px}
+  @media (min-width:768px){.ftv-stats__people p{font-size:20px;line-height:28px}}
+  .ftv-stats__people strong{font-variant-numeric:tabular-nums}
+
+  /* 1200–1439 px : la colonne de gauche est trop étroite pour les deux moitiés
+     côte à côte → empilées, séparateur horizontal */
+  @media (min-width:1200px) and (max-width:1439px){
+    .ftv-stats{flex-direction:column;align-items:flex-start;gap:20px;padding:16px 32px 24px;min-height:0}
+    .ftv-stats__hours{padding-right:0}
+    .ftv-stats__people{border-left:0;border-top:1px solid #E3E3FD;padding:20px 0 0;margin-top:0;align-self:stretch}
+  }
+
+  /* Pile d'avatars : 64px, bordure blanche 3px, chevauchement 24px (Figma 6310:10831) */
+  .ftv-avatars{display:flex;margin:16px 0 0;padding:0;list-style:none}
+  @media (min-width:768px){.ftv-avatars{margin-top:24px}}
+  .ftv-avatars li{position:relative;width:64px;height:64px;flex:none;border-radius:50%;overflow:hidden;background:linear-gradient(to bottom,var(--g1),var(--g2));margin:0;padding:0}
+  .ftv-avatars li + li{margin-left:-24px}
+  /* 1200–1599 px : colonne trop étroite pour 6 avatars de 64px → 48px, chevauchement 16 */
+  @media (min-width:1200px) and (max-width:1599px){.ftv-avatars li{width:48px;height:48px}.ftv-avatars li + li{margin-left:-16px}}
+  .ftv-avatars img{position:absolute;max-width:none;object-fit:cover}
+  .ftv-avatars li::after{content:"";position:absolute;inset:0;border-radius:50%;border:3px solid #fff}
+
+  .ftv-hero__ctas{display:flex;align-self:stretch}
+  @media (min-width:768px){.ftv-hero__ctas{align-self:auto}}
+  .ftv-hero__ctas > a{flex:1 1 auto}
+  @media (min-width:768px){.ftv-hero__ctas > a{flex:none}}
+  /* Bouton : DsfrButton.vue size="lg" (px-6 py-2 text-lg min-h-[3rem]), tertiary-no-outline
+     + icône à gauche (Figma : pl 18 / pr 24). Pleine largeur sur mobile.
+     La maquette le dessine à 56px, le composant réel fait 48px : on suit le code. */
+  .ftv-btn-icon{width:24px;height:24px;flex:none;margin-left:-6px}
+
+  /* ---------- Galerie d'exemples de missions ----------
+     Desktop : 1 carte haute + 2 cartes, colonnes égales, gouttière 24, 40px sous le haut
+     du texte, hauteur 535 (≈ 287×535 et 287×255 à 1680 px).
+     Une carte à la fois change de mission toutes les ROTATION_MS (fondu + léger zoom).
+     Tablette : 3 cartes en ligne. Mobile : pas de galerie (absente de la maquette). */
+  .ftv-gallery{list-style:none;margin:0;padding:0;position:relative;display:grid;gap:16px;grid-template-columns:repeat(3,1fr);grid-auto-rows:220px}
+  @media (max-width:767px){.ftv-gallery{display:none}}
+  @media (min-width:1200px){
+    .ftv-gallery{grid-template-columns:1fr 1fr;grid-template-rows:repeat(2,minmax(0,1fr));grid-auto-rows:auto;gap:24px;margin-top:40px;height:535px;align-self:start}
+    .ftv-mission:first-child{grid-row:1 / span 2}
+  }
+  .ftv-mission{position:relative;overflow:hidden;border-radius:8px;background:#1212ff}
+  .ftv-mission__face{position:absolute;inset:0;transition:opacity .9s ease}
+  .ftv-mission__face.is-entering{opacity:0}
+  .ftv-mission__face img{position:absolute;max-width:none;left:var(--l);top:var(--t);width:var(--w);height:var(--h);object-fit:cover}
+  /* Hors desktop, les cartes n'ont plus les proportions Figma : cadrage par object-position */
+  @media (max-width:1199px){.ftv-mission__face img{left:0;top:0;width:100%;height:100%;object-position:var(--pos)}}
+  .ftv-mission__face.is-entering img{transform:scale(1.06)}
+  .ftv-mission__face img{transition:transform 1.6s cubic-bezier(.2,.6,.3,1)}
+  /* Étiquette — pill blanche, 14/19 bold bleu, ombre 0 6 9 (Figma 6311:10873) */
+  .ftv-mission__tag{position:absolute;left:50%;bottom:24px;transform:translateX(-50%);margin:0;padding:12px 24px;border-radius:40px;background:#fff;color:var(--ftv-blue,#000091);font-size:14px;line-height:19px;font-weight:700;text-align:center;width:max-content;max-width:calc(100% - 24px);filter:drop-shadow(0 6px 9px rgba(0,0,18,.16));transition:transform .5s cubic-bezier(.3,1.5,.5,1) .35s}
+  /* Cartes étroites (tablette, desktop < 1440) : étiquette plus compacte, peut passer sur 2 lignes */
+  @media (min-width:768px) and (max-width:1439px){.ftv-mission__tag{bottom:16px;padding:8px 16px}}
+  .ftv-mission__face.is-entering .ftv-mission__tag{transform:translateX(-50%) translateY(12px)}
+
+  /* Bouton pause (WCAG 2.2.2 : tout mouvement automatique > 5 s doit pouvoir être arrêté).
+     Hors maquette — ajouté pour l'accessibilité, sous la galerie. */
+  .ftv-pause{justify-self:end;display:inline-flex;align-items:center;gap:8px;padding:4px 12px;min-height:32px;font:inherit;font-size:14px;font-weight:500;color:#fff;background:transparent;border:0;cursor:pointer} /* sans bordure : discret */
+  .ftv-pause:hover{background:#2323ff}
+  .ftv-pause svg{width:16px;height:16px}
+  @media (min-width:1200px){.ftv-pause{grid-column:2;margin-top:-48px;align-self:end}}
+  @media (max-width:767px){.ftv-pause{justify-self:center;margin-top:-8px}}
+
+  @media (prefers-reduced-motion:reduce){
+    .ftv-stats__spark.is-pop{animation:none!important}
+    .ftv-mission__face img,.ftv-mission__tag{transition:none!important}
+    .ftv-mission__face.is-entering img{transform:none}
+    .ftv-mission__face.is-entering .ftv-mission__tag{transform:translateX(-50%)}
+  }
+
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+</style>
+</head>
+<body>
+
+<header class="jva-header">
+  <div class="jva-header__row">
+    <div class="jva-header__brand">
+      <img src="ressources/rf.svg" alt="République Française" class="jva-header__rf">
+      <a href="#" aria-label="Page d’accueil" style="background-image:none"><img src="ressources/jva_logohorizontal_bleu.svg" alt="" class="jva-header__logo"></a>
+    </div>
+    <div class="jva-header__tools">
+      <a href="#" class="jva-header__tool-link"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M12.0207 11.078L14.876 13.9327L13.9327 14.876L11.078 12.0207C10.0158 12.8721 8.69467 13.3353 7.33333 13.3333C4.02133 13.3333 1.33333 10.6453 1.33333 7.33333C1.33333 4.02133 4.02133 1.33333 7.33333 1.33333C10.6453 1.33333 13.3333 4.02133 13.3333 7.33333C13.3353 8.69467 12.8721 10.0158 12.0207 11.078ZM10.6833 10.5833C11.5294 9.71326 12.0019 8.54695 12 7.33333C12 4.75467 9.91133 2.66667 7.33333 2.66667C4.75467 2.66667 2.66667 4.75467 2.66667 7.33333C2.66667 9.91133 4.75467 12 7.33333 12C8.54695 12.0019 9.71326 11.5294 10.5833 10.6833L10.6833 10.5833Z"/></svg>Trouver une mission</a>
+      <a href="#" class="jva-header__tool-link"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.33333 7.33333V3.33333H8.66667V7.33333H12.6667V8.66667H8.66667V12.6667H7.33333V8.66667H3.33333V7.33333H7.33333Z"/></svg>Publier une mission</a>
+      <a href="#" class="jva-header__tool-link jva-header__tool-link--bordered"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M8 8.66667C5.79 8.66667 4 6.87667 4 4.66667C4 2.45667 5.79 0.666667 8 0.666667C10.21 0.666667 12 2.45667 12 4.66667C12 6.87667 10.21 8.66667 8 8.66667ZM10.6667 4.66667C10.6667 6.14 9.47333 7.33333 8 7.33333C6.52667 7.33333 5.33333 6.14 5.33333 4.66667C5.33333 3.19333 6.52667 2 8 2C9.47333 2 10.6667 3.19333 10.6667 4.66667Z"/><path fill-rule="evenodd" clip-rule="evenodd" d="M2.66667 14.6667C2.66667 11.7211 5.05448 9.33333 8 9.33333C10.9455 9.33333 13.3333 11.7211 13.3333 14.6667H12C12 12.4575 10.2091 10.6667 8 10.6667C5.79086 10.6667 4 12.4575 4 14.6667H2.66667Z"/></svg>Mon compte</a>
+    </div>
+    <div class="jva-header__mobile-tools">
+      <a href="#" class="jva-header__icon-btn" aria-label="Trouver une mission"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M18.031 16.617L22.314 20.899L20.899 22.314L16.617 18.031C15.0237 19.3082 13.042 20.0029 11 20C6.032 20 2 15.968 2 11C2 6.032 6.032 2 11 2C15.968 2 20 6.032 20 11C20.0029 13.042 19.3082 15.0237 18.031 16.617ZM16.025 15.875C17.2941 14.5699 18.0029 12.8204 18 11C18 7.132 14.867 4 11 4C7.132 4 4 7.132 4 11C4 14.867 7.132 18 11 18C12.8204 18.0029 14.5699 17.2941 15.875 16.025L16.025 15.875Z"/></svg></a>
+      <button type="button" class="jva-header__icon-btn jva-header__icon-btn--bordered" aria-label="Menu" aria-expanded="false"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M3 4H21V6H3V4ZM3 11H21V13H3V11ZM3 18H21V20H3V18Z"/></svg></button>
+    </div>
+  </div>
+  <div class="jva-header__menu">
+    <nav class="jva-nav" role="navigation" aria-label="Navigation secondaire">
+      <button type="button" class="jva-nav__item jva-nav__item--dropdown" aria-haspopup="true" aria-expanded="false">Trouver une mission de bénévolat<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M8 8.78133L11.3 5.48133L12.2427 6.424L8 10.6667L3.75733 6.424L4.7 5.48133L8 8.78133Z"/></svg></button>
+      <a href="#" class="jva-nav__item"><span class="jva-nav__emoji" aria-hidden="true">🔥</span>En ce moment</a>
+      <button type="button" class="jva-nav__item jva-nav__item--dropdown" aria-haspopup="true" aria-expanded="false"><span class="jva-nav__emoji" aria-hidden="true">🤝</span>Solidarité crises<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M8 8.78133L11.3 5.48133L12.2427 6.424L8 10.6667L3.75733 6.424L4.7 5.48133L8 8.78133Z"/></svg></button>
+      <a href="#" class="jva-nav__item"><span class="jva-nav__emoji" aria-hidden="true">🫰</span>Bénévolat 16 - 18 ans</a>
+      <a href="#" class="jva-nav__item">Annuaire</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- ============ HERO — opération France TV, variante « Et vous ? » ============
+     Animations du prototype :
+     - toutes les 5 s, le compteur d'heures défile jusqu'à sa nouvelle valeur ;
+     - toutes les 4 s, une carte de la galerie (à tour de rôle) passe à un autre
+       exemple de mission.
+     Les chiffres sont fictifs. ================================================ -->
+<section class="ftv-hero" id="ftv-hero" aria-labelledby="ftv-title">
+  <div class="ftv-hero__bg" aria-hidden="true">
+    <img class="ftv-ring-1" src="ressources/france-tv/anneau-1.svg" width="935" height="935" alt="">
+    <img class="ftv-ring-2" src="ressources/france-tv/anneau-2.svg" width="619" height="619" alt="">
+  </div>
+
+  <div class="ftv-hero__stage">
+    <div class="ftv-hero__text">
+      <div class="ftv-hero__brand">
+        <p class="ftv-hero__brand-label">Semaine de la fraternité ·<br class="br-mobile"> du 23 au 30 mars avec</p>
+        <img src="ressources/france-tv/logo-france-tv.svg" alt="France.tv">
+      </div>
+
+      <div class="ftv-hero__copy">
+        <h1 class="ftv-hero__title" id="ftv-title">Et vous, combien d’heures<br class="only-desktop"> donnez-vous aux autres&nbsp;?</h1>
+        <p class="ftv-hero__lead">Trouvez une mission<span class="only-desktop"> près de chez vous ou à distance</span> et faites grimper le compteur d’heures de bénévolat de la <strong>semaine de la Fraternité</strong>.</p>
+      </div>
+
+      <div class="ftv-stats">
+        <p class="ftv-stats__hours">
+          <span class="ftv-stats__num"><span class="ftv-stats__value" id="ftv-hours">830 020</span><span class="ftv-stats__spark" id="ftv-spark" aria-hidden="true"><img src="ressources/france-tv/eclat.svg" alt=""></span></span>
+          <span class="ftv-stats__unit">heures de bénévolat promises</span>
+        </p>
+        <div class="ftv-stats__people">
+          <p><strong id="ftv-people">248 292 personnes</strong> déjà engagées</p>
+          <ul class="ftv-avatars" id="ftv-avatars" aria-hidden="true"></ul>
+        </div>
+      </div>
+
+      <div class="ftv-hero__ctas">
+        <a href="#" class="font-medium transition-extended ease-out inline-flex items-center justify-center gap-2 bg-white text-jva-blue-500 hover:bg-[#F6F6F6] active:bg-[#EDEDED] px-6 py-2 text-lg min-h-[3rem]">
+          <img class="ftv-btn-icon" src="ressources/france-tv/icone-recherche.svg" alt="">
+          Trouver une mission
+        </a>
+      </div>
+    </div>
+
+    <!-- Galerie : exemples illustratifs, pas des liens (aria-label sur la liste) -->
+    <ul class="ftv-gallery" id="ftv-gallery" aria-label="Exemples de missions"></ul>
+
+    <button type="button" class="ftv-pause" id="ftv-pause" aria-pressed="false">
+      <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><rect x="3" y="2" width="3.5" height="12"/><rect x="9.5" y="2" width="3.5" height="12"/></svg>
+      <span>Mettre en pause l’animation</span>
+    </button>
+  </div>
+</section>
+
+</main>
+
+<script>
+(() => {
+  const hero = document.getElementById('ftv-hero');
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fmt = n => n.toLocaleString('fr-FR').replace(/[  ]/g, ' ');
+  const rand = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+
+  /* ---------- Avatars (mêmes photos et cadrages que homepage-france-tv.html) ---------- */
+  const PEOPLE = [
+    {src:'benevole-1.png', crop:[-57.37, 5.30, 214.74, 140.40], g:['#FEABA2','#FD8D81']},
+    {src:'benevole-7.png', crop:[-10.08, 0.84, 107.56, 178.15], g:['#A1C8C9','#95C1C7']},
+    {src:'benevole-3.png', crop:[-60.58, 7.69, 226.92, 150.96], g:['#75C996','#44A369']},
+    {src:'benevole-5.png', crop:[-50.00, 6.25, 181.64, 121.15], g:['#978CBE','#9C8EC5']},
+    {src:'benevole-6.png', crop:[-42.50,-2.50, 201.25, 201.25], g:['#FEABA2','#FD8D81']},
+    {src:'benevole-2.png', crop:[-91.35,-7.69, 281.73, 159.62], g:['#F4BF6F','#F2B964']},
+  ];
+  const avatars = document.getElementById('ftv-avatars');
+  PEOPLE.forEach(p => {
+    const li = document.createElement('li');
+    li.style.setProperty('--g1', p.g[0]);
+    li.style.setProperty('--g2', p.g[1]);
+    const [l, t, w, h] = p.crop;
+    li.innerHTML = `<img src="ressources/france-tv/${p.src}" alt="" style="left:${l}%;top:${t}%;width:${w}%;height:${h}%">`;
+    avatars.appendChild(li);
+  });
+
+  /* ---------- Exemples de missions ----------
+     Cadrages en % de la carte, repris de la maquette quand elle les donne :
+     tall = carte haute (287×535 à 1680 px), wide = carte large (287×255) ; pos = object-position hors desktop.
+     Pour ajouter un exemple : une photo dans ressources/france-tv/ + une ligne ici. */
+  const MISSIONS = [
+    {label:'J’aide des personnes âgées', src:'mission-personnes-agees.jpg',
+     tall:[-79.3, 0, 279.3, 100], wide:[-72.3, 0, 287.7, 216.0], pos:'45% 30%'},
+    {label:'J’aide aux devoirs', src:'mission-aide-devoirs.jpg',
+     tall:[-129.4, 0, 299.0, 100], wide:[-67.5, -29.7, 203.8, 142.9], pos:'60% 40%'},
+    {label:'Je rénove des meubles', src:'mission-renovation-meubles.jpg',
+     tall:[-47.6, 0, 279.0, 100], wide:[-25.4, 0, 168.0, 126.0], pos:'35% 40%'},
+    // Exemples ajoutés le 18/11/2026 (pas de cadrage Figma : visages centrés à la main)
+    {label:'Je collecte des dons', src:'mission-collecte-dons.jpg',
+     tall:[-56.1, 0, 279.1, 100], wide:[-22.0, -1.3, 180, 135], pos:'38% 35%'},
+    {label:'J’anime des ateliers culturels', src:'mission-ateliers-culturels.jpg',
+     tall:[-83.9, 0, 279.1, 100], wide:[-24.0, 0, 165, 124], pos:'48% 30%'},
+    {label:'Je fais découvrir mon sport', src:'mission-sport.jpg',
+     tall:[-114.9, -18, 330, 118], wide:[-40.0, -24.3, 180, 135], pos:'50% 45%'},
+  ];
+  const ROTATION_MS = 4000;
+  const FORMATS = ['tall', 'wide', 'wide']; // ordre des cartes dans la grille desktop
+
+  const gallery = document.getElementById('ftv-gallery');
+  const cards = FORMATS.map((format, i) => {
+    const li = document.createElement('li');
+    li.className = 'ftv-mission';
+    gallery.appendChild(li);
+    const card = {li, format, mission: i, face: null};
+    setFace(card, i, false);
+    return card;
+  });
+
+  function setFace(card, idx, animate) {
+    const m = MISSIONS[idx];
+    const [l, t, w, h] = m[card.format];
+    const face = document.createElement('div');
+    face.className = 'ftv-mission__face' + (animate ? ' is-entering' : '');
+    face.style.cssText = `--l:${l}%;--t:${t}%;--w:${w}%;--h:${h}%;--pos:${m.pos}`;
+    face.innerHTML = `<img src="ressources/france-tv/${m.src}" alt=""><p class="ftv-mission__tag">${m.label}</p>`;
+    card.li.appendChild(face);
+    const old = card.face;
+    card.face = face;
+    card.mission = idx;
+    if (animate) {
+      void face.offsetWidth;
+      face.classList.remove('is-entering');
+      if (old) setTimeout(() => old.remove(), 950);
+    } else if (old) old.remove();
+  }
+
+  /* Rotation : à chaque tour, la carte suivante (visible à l'écran) prend la
+     première mission en attente ; l'ancienne repart en fin de file. S'il n'y a
+     pas plus de missions que de cartes, la carte échange avec la suivante. */
+  const waiting = MISSIONS.map((_, i) => i).filter(i => !cards.some(c => c.mission === i));
+  let turn = 0;
+  function rotate() {
+    const visible = cards.filter(c => c.li.offsetParent !== null);
+    if (!visible.length) return;
+    const card = visible[turn++ % visible.length];
+    if (waiting.length) {
+      const next = waiting.shift();
+      waiting.push(card.mission);
+      setFace(card, next, true);
+    } else if (visible.length > 1) {
+      const other = visible[turn % visible.length];
+      const a = card.mission, b = other.mission;
+      setFace(card, b, true);
+      setTimeout(() => setFace(other, a, true), 250);
+    } else {
+      setFace(card, (card.mission + 1) % MISSIONS.length, true);
+    }
+  }
+
+  /* ---------- Compteurs ---------- */
+  const hoursEl = document.getElementById('ftv-hours');
+  const peopleEl = document.getElementById('ftv-people');
+  const spark = document.getElementById('ftv-spark');
+  let hours = 830020, shownHours = hours, people = 248292, raf;
+
+  function rollTo(target) {
+    cancelAnimationFrame(raf);
+    if (reduceMotion) { hoursEl.textContent = fmt(shownHours = target); return; }
+    const from = shownHours, t0 = performance.now(), D = 1400;
+    const step = now => {
+      const k = Math.min(1, (now - t0) / D), e = 1 - Math.pow(1 - k, 3);
+      shownHours = Math.round(from + (target - from) * e);
+      hoursEl.textContent = fmt(shownHours);
+      if (k < 1) raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+  }
+  function tick() {
+    hours += rand(8, 60);
+    people += rand(0, 3);
+    rollTo(hours);
+    peopleEl.textContent = `${fmt(people)} personnes`;
+    spark.classList.remove('is-pop'); void spark.offsetWidth; spark.classList.add('is-pop');
+  }
+
+  let timers = [];
+  const start = () => { timers = [setInterval(tick, 5000), setInterval(rotate, ROTATION_MS)]; };
+  const stop = () => { timers.forEach(clearInterval); timers = []; };
+  start();
+
+  const pauseBtn = document.getElementById('ftv-pause');
+  pauseBtn.addEventListener('click', () => {
+    const paused = pauseBtn.getAttribute('aria-pressed') !== 'true';
+    pauseBtn.setAttribute('aria-pressed', String(paused));
+    pauseBtn.querySelector('span').textContent = paused ? 'Reprendre l’animation' : 'Mettre en pause l’animation';
+    pauseBtn.querySelector('svg').innerHTML = paused
+      ? '<path d="M4 2l10 6-10 6z"/>'
+      : '<rect x="3" y="2" width="3.5" height="12"/><rect x="9.5" y="2" width="3.5" height="12"/>';
+    paused ? stop() : start();
+  });
+})();
+</script>
+
+</body>
+</html>

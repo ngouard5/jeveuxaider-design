@@ -82,11 +82,14 @@
     .ftv-hero__stage{grid-template-columns:minmax(0,825fr) minmax(0,599fr);column-gap:48px;row-gap:0;padding:79px 104px 68px;min-height:814px}
   }
 
-  /* Anneaux décoratifs (assets Figma Ellipse 41 / Ellipse 40), positions du frame 1680 */
   .ftv-hero__bg{position:absolute;inset:0;pointer-events:none;z-index:-1;max-width:1680px;margin:0 auto}
   .ftv-hero__bg img{position:absolute;max-width:none}
-  .ftv-ring-1{left:38.69%;top:244px;width:935px;height:935px;transform:rotate(180deg)}
-  .ftv-ring-2{left:-161.71px;top:-234.8px;width:619px;height:619px;transform:rotate(120deg)} /* conteneur 845.57 à (-275,-348) */
+  /* Halos flous (Figma 6306:9169, MAJ 19/11/2026 : remplacent les anneaux Ellipse 40/41).
+     Assets Figma « Blur » (cercle blanc 16 % + flou gaussien), positions du frame 1680 :
+     cercle 635 à (842,445), 461 à (1289,-101), 746 à (-44,-69) ; l'image inclut la marge du flou. */
+  .ftv-glow-1{left:38.21%;top:245px;width:1035px;height:1035px}
+  .ftv-glow-2{left:70.77%;top:-201px;width:661px;height:661px}
+  .ftv-glow-3{left:-344px;top:-369px;width:1346px;height:1346px}
 
   .ftv-hero__text{display:flex;flex-direction:column;align-items:flex-start;gap:32px}
   @media (min-width:768px){.ftv-hero__text{gap:40px}}
@@ -161,6 +164,10 @@
   /* 1200–1599 px : colonne trop étroite pour 6 avatars de 64px → 48px, chevauchement 16 */
   @media (min-width:1200px) and (max-width:1599px){.ftv-avatars li{width:48px;height:48px}.ftv-avatars li + li{margin-left:-16px}}
   .ftv-avatars img{position:absolute;max-width:none;object-fit:cover}
+  /* Rotation des photos : fondu + léger rétrécissement (400 ms), voir swapAvatar() */
+  .ftv-avatars li{transition:opacity .4s ease,transform .4s ease}
+  .ftv-avatars li.is-swapping{opacity:0;transform:scale(.85)}
+  @media (prefers-reduced-motion:reduce){.ftv-avatars li{transition:none}}
   .ftv-avatars li::after{content:"";position:absolute;inset:0;border-radius:50%;border:3px solid #fff}
 
   .ftv-hero__ctas{display:flex;align-self:stretch}
@@ -254,8 +261,9 @@
      Les chiffres sont fictifs. ================================================ -->
 <section class="ftv-hero" id="ftv-hero" aria-labelledby="ftv-title">
   <div class="ftv-hero__bg" aria-hidden="true">
-    <img class="ftv-ring-1" src="ressources/france-tv/anneau-1.svg" width="935" height="935" alt="">
-    <img class="ftv-ring-2" src="ressources/france-tv/anneau-2.svg" width="619" height="619" alt="">
+    <img class="ftv-glow-1" src="ressources/france-tv/flou-1.svg" width="1035" height="1035" alt="">
+    <img class="ftv-glow-2" src="ressources/france-tv/flou-2.svg" width="661" height="661" alt="">
+    <img class="ftv-glow-3" src="ressources/france-tv/flou-3.svg" width="1346" height="1346" alt="">
   </div>
 
   <div class="ftv-hero__stage">
@@ -305,7 +313,7 @@
 (() => {
   const hero = document.getElementById('ftv-hero');
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const fmt = n => n.toLocaleString('fr-FR').replace(/[  ]/g, ' ');
+  const fmt = n => n.toLocaleString('fr-FR').replace(/[\u00a0\u202f]/g, ' ');
   const rand = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
 
   /* ---------- Avatars (mêmes photos et cadrages que homepage-france-tv.html) ---------- */
@@ -318,12 +326,41 @@
     {src:'benevole-2.png', crop:[-91.35,-7.69, 281.73, 159.62], g:['#F4BF6F','#F2B964']},
   ];
   const avatars = document.getElementById('ftv-avatars');
-  PEOPLE.forEach(p => {
-    const li = document.createElement('li');
+
+  /* ---------- Rotation des photos de la pile d'avatars ----------
+     À chaque mouvement du compteur (toutes les 5 s), un avatar au hasard s'efface et laisse place
+     à un bénévole « en réserve » : la pile donne l'impression de nouveaux arrivants.
+     S'arrête avec le bouton pause ; sans animation si prefers-reduced-motion. */
+  const RESERVE = [
+    {src:'benevole-9.jpg',  crop:[-10, -4, 120, 120], g:['#CDDADB','#C8D3D6']},
+    {src:'benevole-4.png',  crop:[-22.12,-34.62,143.27, 215.38], g:['#CDDADB','#C8D3D6']},
+    {src:'benevole-10.jpg', crop:[-10, -4, 120, 120], g:['#CDDADB','#C8D3D6']},
+    {src:'benevole-8.png',  crop:[-61.54, 8.65, 198.08,  99.04], g:['#A1C8C9','#95C1C7']},
+    {src:'benevole-11.jpg', crop:[-5,  -2, 110, 110], g:['#CDDADB','#C8D3D6']},
+  ];
+  const paintAvatar = (li, p) => {
     li.style.setProperty('--g1', p.g[0]);
     li.style.setProperty('--g2', p.g[1]);
     const [l, t, w, h] = p.crop;
     li.innerHTML = `<img src="ressources/france-tv/${p.src}" alt="" style="left:${l}%;top:${t}%;width:${w}%;height:${h}%">`;
+  };
+  const AVATAR_PEOPLE = new WeakMap(); // li -> personne affichée
+  function swapAvatar(ul) {
+    if (!ul || !ul.children.length) return;
+    const lis = [...ul.children];
+    const li = lis.filter(x => x !== swapAvatar.last)[Math.floor(Math.random() * (lis.length - 1))] || lis[0];
+    swapAvatar.last = li;
+    const next = RESERVE.shift();
+    RESERVE.push(AVATAR_PEOPLE.get(li) || next);
+    AVATAR_PEOPLE.set(li, next);
+    if (reduceMotion) { paintAvatar(li, next); return; }
+    li.classList.add('is-swapping');
+    setTimeout(() => { paintAvatar(li, next); li.classList.remove('is-swapping'); }, 400);
+  }
+  PEOPLE.forEach(p => {
+    const li = document.createElement('li');
+    paintAvatar(li, p);
+    AVATAR_PEOPLE.set(li, p);
     avatars.appendChild(li);
   });
 
@@ -424,6 +461,7 @@
     rollTo(hours);
     peopleEl.textContent = `${fmt(people)} personnes`;
     spark.classList.remove('is-pop'); void spark.offsetWidth; spark.classList.add('is-pop');
+    swapAvatar(avatars); // une photo change à chaque mouvement du compteur
   }
 
   let timers = [];

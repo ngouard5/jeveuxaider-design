@@ -87,8 +87,12 @@
   @media (min-width:1200px){.ftv-hero__stage{grid-template-columns:minmax(0,825fr) minmax(400px,583fr);column-gap:64px;align-items:center;padding:64px 104px;min-height:936px}}
   .ftv-hero__bg{position:absolute;inset:0;pointer-events:none;z-index:-1;max-width:1680px;margin:0 auto}
   .ftv-hero__bg img{position:absolute;max-width:none}
-  .ftv-ring-1{left:38.69%;top:244px;width:935px;height:935px;transform:rotate(180deg)}
-  .ftv-ring-2{left:-161.71px;top:-234.8px;width:619px;height:619px;transform:rotate(120deg)}
+  /* Halos flous (Figma 6306:9169, MAJ 19/11/2026 : remplacent les anneaux Ellipse 40/41).
+     Assets Figma « Blur » (cercle blanc 16 % + flou gaussien), positions du frame 1680 :
+     cercle 635 à (842,445), 461 à (1289,-101), 746 à (-44,-69) ; l'image inclut la marge du flou. */
+  .ftv-glow-1{left:38.21%;top:245px;width:1035px;height:1035px}
+  .ftv-glow-2{left:70.77%;top:-201px;width:661px;height:661px}
+  .ftv-glow-3{left:-344px;top:-369px;width:1346px;height:1346px}
 
   .ftv-hero__text{display:flex;flex-direction:column;align-items:flex-start;gap:32px}
   @media (min-width:768px){.ftv-hero__text{gap:40px}}
@@ -146,6 +150,10 @@
   .ftv-avatars li + li{margin-left:-20px}
   @media (min-width:768px){.ftv-avatars li + li{margin-left:-24px}}
   .ftv-avatars img{position:absolute;max-width:none;object-fit:cover}
+  /* Rotation des photos : fondu + léger rétrécissement (400 ms), voir swapAvatar() */
+  .ftv-avatars li{transition:opacity .4s ease,transform .4s ease}
+  .ftv-avatars li.is-swapping{opacity:0;transform:scale(.85)}
+  @media (prefers-reduced-motion:reduce){.ftv-avatars li{transition:none}}
   .ftv-avatars li::after{content:"";position:absolute;inset:0;border-radius:50%;border:3px solid #fff}
   @media (max-width:767px){.ftv-stats__people{text-align:center}.ftv-avatars{justify-content:center}}
 
@@ -450,6 +458,17 @@
   .site-footer__mentions li + li{border-left:1px solid var(--border-default-grey);padding-left:16px}
   .site-footer__licence{margin:0}
   .site-footer__licence a{text-decoration:underline}
+
+  /* ==========================================================================
+     APPARITION AU SCROLL — fondu + léger glissement (16 px), 0,6 s, une seule fois.
+     Les listes (cartes, tags, étapes…) apparaissent en cascade (70 ms d'écart, plafonné).
+     La classe html.js-reveal n'est posée que par le script et sans prefers-reduced-motion :
+     sans JS ou avec mouvement réduit, tout est visible d'emblée.
+     On anime « translate » (et non « transform ») pour ne pas écraser les transforms
+     existants (bandeau de visages, survol des tags).
+     ========================================================================== */
+  html.js-reveal .reveal{opacity:0;translate:0 16px;transition:opacity .6s ease-out,translate .7s cubic-bezier(.2,.6,.3,1);transition-delay:var(--reveal-delay,0s)}
+  html.js-reveal .reveal.is-visible{opacity:1;translate:none}
 </style>
 </head>
 <body>
@@ -464,8 +483,9 @@
      (2 h une fois par mois = 12 h, comme dans la maquette). Chiffres fictifs. -->
 <section class="ftv-hero" id="ftv-hero" aria-labelledby="ftv-title">
   <div class="ftv-hero__bg" aria-hidden="true">
-    <img class="ftv-ring-1" src="ressources/france-tv/anneau-1.svg" width="935" height="935" alt="">
-    <img class="ftv-ring-2" src="ressources/france-tv/anneau-2.svg" width="619" height="619" alt="">
+    <img class="ftv-glow-1" src="ressources/france-tv/flou-1.svg" width="1035" height="1035" alt="">
+    <img class="ftv-glow-2" src="ressources/france-tv/flou-2.svg" width="661" height="661" alt="">
+    <img class="ftv-glow-3" src="ressources/france-tv/flou-3.svg" width="1346" height="1346" alt="">
   </div>
 
   <div class="ftv-hero__stage">
@@ -933,6 +953,40 @@
     ul.appendChild(li);
   }));
 
+  /* ---------- Rotation des photos de la pile d'avatars ----------
+     À chaque mouvement du compteur (toutes les 5 s, ou à l'envoi d'une promesse), un avatar au hasard s'efface et laisse place
+     à un bénévole « en réserve » : la pile donne l'impression de nouveaux arrivants.
+     S'arrête avec le bouton pause ; sans animation si prefers-reduced-motion. */
+  const RESERVE = [
+    {src:'benevole-9.jpg',  crop:[-10, -4, 120, 120], g:['#CDDADB','#C8D3D6']},
+    {src:'benevole-4.png',  crop:[-22.12,-34.62,143.27, 215.38], g:['#CDDADB','#C8D3D6']},
+    {src:'benevole-10.jpg', crop:[-10, -4, 120, 120], g:['#CDDADB','#C8D3D6']},
+    {src:'benevole-8.png',  crop:[-61.54, 8.65, 198.08,  99.04], g:['#A1C8C9','#95C1C7']},
+    {src:'benevole-11.jpg', crop:[-5,  -2, 110, 110], g:['#CDDADB','#C8D3D6']},
+  ];
+  const paintAvatar = (li, p) => {
+    li.style.setProperty('--g1', p.g[0]);
+    li.style.setProperty('--g2', p.g[1]);
+    const [l, t, w, h] = p.crop;
+    li.innerHTML = `<img src="ressources/france-tv/${p.src}" alt="" style="left:${l}%;top:${t}%;width:${w}%;height:${h}%">`;
+  };
+  const AVATAR_PEOPLE = new WeakMap(); // li -> personne affichée
+  function swapAvatar(ul) {
+    if (!ul || !ul.children.length) return;
+    const lis = [...ul.children];
+    const li = lis.filter(x => x !== swapAvatar.last)[Math.floor(Math.random() * (lis.length - 1))] || lis[0];
+    swapAvatar.last = li;
+    const next = RESERVE.shift();
+    RESERVE.push(AVATAR_PEOPLE.get(li) || next);
+    AVATAR_PEOPLE.set(li, next);
+    if (reduceMotion) { paintAvatar(li, next); return; }
+    li.classList.add('is-swapping');
+    setTimeout(() => { paintAvatar(li, next); li.classList.remove('is-swapping'); }, 400);
+  }
+  // Le hero B : seule sa pile change (celle du rappel final reste fixe)
+  const heroAvatars = document.querySelector('.ftv-hero .js-avatars');
+  if (heroAvatars) [...heroAvatars.children].forEach((li, i) => AVATAR_PEOPLE.set(li, PEOPLE[i]));
+
   /* ---------- Compteurs (hero + rappel final, toujours synchronisés) ---------- */
   let hours = 830020, people = 248292, shown = hours;
   const hoursEls = document.querySelectorAll('.js-hours');
@@ -953,7 +1007,8 @@
     };
     raf = requestAnimationFrame(step);
   }
-  function add(h, p) { hours += h; people += p; render(); }
+  // Chaque mouvement du compteur (tick ou promesse envoyée) change aussi une photo du hero
+  function add(h, p) { hours += h; people += p; render(); swapAvatar(heroAvatars); }
 
   let timer = null;
   const pauseBtn = document.getElementById('ftv-pause');
@@ -1102,6 +1157,38 @@
       if (open && extra[0]) { const a = extra[0].querySelector('a'); a && a.focus({preventScroll: true}); }
     });
   }
+})();
+</script>
+<script>
+/* Apparition au scroll (voir le bloc CSS « APPARITION AU SCROLL ») */
+(() => {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
+  // Éléments qui apparaissent seuls
+  const SINGLE = ['.lp-head', '.partners__label', '.faq__head', '.faq__box', '.activities__label',
+    '.missions__cta', '.programme__cta', '.voices__cta', '.how__cta', '.pledge__intro', '.pledge .promise'];
+  // Listes dont les enfants apparaissent en cascade quand la liste entre dans l'écran
+  const GROUP = ['.carousel__track', '.activities__tags', '.prog-list', '.steps', '.how__gallery', '.faces ul', '.final__inner'];
+  const STEP = .07, MAX = 8;
+
+  const io = new IntersectionObserver(entries => entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    io.unobserve(e.target);
+    const items = e.target.dataset.revealGroup !== undefined ? [...e.target.children] : [e.target];
+    items.forEach(el => el.classList.add('is-visible'));
+  }), {rootMargin: '0px 0px -8% 0px', threshold: .12});
+
+  document.documentElement.classList.add('js-reveal');
+  document.querySelectorAll(SINGLE.join(',')).forEach(el => { el.classList.add('reveal'); io.observe(el); });
+  document.querySelectorAll(GROUP.join(',')).forEach(list => {
+    list.dataset.revealGroup = '';
+    [...list.children].forEach((el, i) => {
+      el.classList.add('reveal');
+      el.style.setProperty('--reveal-delay', `${Math.min(i, MAX) * STEP}s`);
+    });
+    io.observe(list);
+  });
+  // Rendez-vous du programme affichés plus tard par « Tout le programme » : déjà visibles
+  document.querySelectorAll('.prog-list > [hidden]').forEach(el => { el.classList.add('is-visible'); el.style.removeProperty('--reveal-delay'); });
 })();
 </script>
 </body>

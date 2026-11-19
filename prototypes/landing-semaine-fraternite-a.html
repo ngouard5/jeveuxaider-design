@@ -87,7 +87,9 @@
   .ftv-hero{--ftv-blue:#000091;position:relative;z-index:1;overflow:hidden;background:var(--ftv-blue);color:#fff;isolation:isolate} /* z-index : passe au-dessus du débord vers le haut de l’ombre de la section formulaire */
   .ftv-hero__stage{position:relative;max-width:1680px;margin:0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:52px 16px;text-align:center}
   @media (min-width:768px){.ftv-hero__stage{padding:56px 32px 72px}}
-  @media (min-width:1200px){.ftv-hero__stage{min-height:742px;padding:56px 16px}} /* frame Figma « D - Hero A » 1680×742, contenu centré */
+  /* Desktop : le hero occupe tout l'écran (100svh, au moins la hauteur du frame Figma 742),
+     contenu centré verticalement ; le formulaire arrive au scroll. */
+  @media (min-width:1200px){.ftv-hero__stage{min-height:max(742px,100vh);min-height:max(742px,100svh);padding:56px 16px}}
 
   /* Fond : halo flouté + cercles concentriques (assets Figma, centrés) */
   .ftv-hero__bg{position:absolute;inset:0;pointer-events:none;z-index:-1}
@@ -263,7 +265,8 @@
   .pledge{--ftv-blue:#000091;position:relative;overflow:hidden;isolation:isolate;background:var(--ftv-blue);color:#fff;box-shadow:0 6px 18px rgba(0,0,18,.16)}
   .pledge__bg{position:absolute;inset:0;pointer-events:none;z-index:-1;max-width:1680px;margin:0 auto}
   .pledge__blur{position:absolute;left:calc(41.67% + 71px - 200px);top:-155px;width:1269px;height:1269px;max-width:none}
-  .pledge__bg::before{content:"";position:absolute;left:0;right:0;top:0;height:174px;background:linear-gradient(to bottom,var(--ftv-blue),rgba(0,0,145,0))}
+  /* Fondu en haut (Figma « Gradient » 174 px) : en ::after pour passer AU-DESSUS du halo flou, sinon le halo crée une marche avec le hero */
+  .pledge__bg::after{content:"";position:absolute;left:0;right:0;top:0;height:174px;background:linear-gradient(to bottom,var(--ftv-blue),rgba(0,0,145,0))}
   .pledge__inner{max-width:1472px;margin:0 auto;padding:16px 16px 48px;display:grid;gap:40px}
   @media (min-width:768px){.pledge__inner{padding:32px 32px 72px}}
   @media (min-width:1200px){.pledge__inner{grid-template-columns:minmax(0,1fr) minmax(480px,700px);column-gap:80px;align-items:center;padding:96px 32px;min-height:1008px}}
@@ -575,6 +578,17 @@
   .site-footer__mentions li + li{border-left:1px solid var(--border-default-grey);padding-left:16px}
   .site-footer__licence{margin:0}
   .site-footer__licence a{text-decoration:underline}
+
+  /* ==========================================================================
+     APPARITION AU SCROLL — fondu + léger glissement (16 px), 0,6 s, une seule fois.
+     Les listes (cartes, tags, étapes…) apparaissent en cascade (70 ms d'écart, plafonné).
+     La classe html.js-reveal n'est posée que par le script et sans prefers-reduced-motion :
+     sans JS ou avec mouvement réduit, tout est visible d'emblée.
+     On anime « translate » (et non « transform ») pour ne pas écraser les transforms
+     existants (bandeau de visages, survol des tags).
+     ========================================================================== */
+  html.js-reveal .reveal{opacity:0;translate:0 16px;transition:opacity .6s ease-out,translate .7s cubic-bezier(.2,.6,.3,1);transition-delay:var(--reveal-delay,0s)}
+  html.js-reveal .reveal.is-visible{opacity:1;translate:none}
 </style>
 </head>
 <body>
@@ -1169,7 +1183,8 @@
   const slots = SLOTS.map((d, i) => {
     const el = document.createElement('div');
     el.className = 'ftv-slot';
-    el.style.cssText = `left:${(d.x / 1680 * 100).toFixed(3)}%;top:${d.y}px;--size:${d.s}px`;
+    // y Figma dans un frame de 742 px : on centre ce « cadre » verticalement dans le hero plein écran
+    el.style.cssText = `left:${(d.x / 1680 * 100).toFixed(3)}%;top:calc(50% - 371px + ${d.y}px);--size:${d.s}px`;
     const float = document.createElement('div');
     float.className = 'ftv-float';
     float.style.cssText = `--dur:${(5.5 + Math.random() * 3.5).toFixed(2)}s;--delay:-${(Math.random() * 6).toFixed(2)}s;--fx:${rand(-6, 6)}px;--fy:${rand(6, 12)}px`;
@@ -1394,6 +1409,38 @@
       if (open && extra[0]) { const a = extra[0].querySelector('a'); a && a.focus({preventScroll: true}); }
     });
   }
+})();
+</script>
+<script>
+/* Apparition au scroll (voir le bloc CSS « APPARITION AU SCROLL ») */
+(() => {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
+  // Éléments qui apparaissent seuls
+  const SINGLE = ['.lp-head', '.partners__label', '.faq__head', '.faq__box', '.activities__label',
+    '.missions__cta', '.programme__cta', '.voices__cta', '.how__cta', '.pledge__intro', '.pledge .promise'];
+  // Listes dont les enfants apparaissent en cascade quand la liste entre dans l'écran
+  const GROUP = ['.carousel__track', '.activities__tags', '.prog-list', '.steps', '.how__gallery', '.faces ul', '.final__inner'];
+  const STEP = .07, MAX = 8;
+
+  const io = new IntersectionObserver(entries => entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    io.unobserve(e.target);
+    const items = e.target.dataset.revealGroup !== undefined ? [...e.target.children] : [e.target];
+    items.forEach(el => el.classList.add('is-visible'));
+  }), {rootMargin: '0px 0px -8% 0px', threshold: .12});
+
+  document.documentElement.classList.add('js-reveal');
+  document.querySelectorAll(SINGLE.join(',')).forEach(el => { el.classList.add('reveal'); io.observe(el); });
+  document.querySelectorAll(GROUP.join(',')).forEach(list => {
+    list.dataset.revealGroup = '';
+    [...list.children].forEach((el, i) => {
+      el.classList.add('reveal');
+      el.style.setProperty('--reveal-delay', `${Math.min(i, MAX) * STEP}s`);
+    });
+    io.observe(list);
+  });
+  // Rendez-vous du programme affichés plus tard par « Tout le programme » : déjà visibles
+  document.querySelectorAll('.prog-list > [hidden]').forEach(el => { el.classList.add('is-visible'); el.style.removeProperty('--reveal-delay'); });
 })();
 </script>
 </body>

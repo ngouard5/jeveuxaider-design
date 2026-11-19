@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Prototype — Widget Semaine de la Fraternité sur france.tv</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>document.documentElement.setAttribute("data-fr-theme", matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");</script>
+<style>
+  /* Base cascade layers — voir design-system/GUIDE-PROTOTYPAGE.md (Piège n°2) */
+  @import url("../design-system/compiled-reset.css") layer(tailwind-reset);
+  @import url("../design-system/dsfr.min.css") layer(dsfr-base);
+  @import url("../design-system/compiled.css") layer(dsfr-utilitaires);
+  @import url("../design-system/patches.css") layer(site-patches);
+
+  /* ==========================================================================
+     WIDGET « SEMAINE DE LA FRATERNITÉ » INTÉGRÉ AU SITE FRANCE.TV
+     Figma "Projet France TV" :
+       - D - Widget sur France TV - Réduit (6359:14578) et Ouvert (6359:14876), frame 1680 px
+       - M - Widget sur France TV, réduit (6359:14834) et ouvert (6362:15076), frame 393 px
+     Le site france.tv n'est qu'une capture (image de fond, non interactive) : seul le
+     widget est un vrai prototype. Bascule desktop/mobile à 768 px.
+
+     Surfaces de marque (carte bleue réduite, en-tête bleu ouvert) : couleurs fixes,
+     identiques en dark mode, comme les heroes France TV. Le formulaire suit les variables
+     DSFR (il passe en sombre avec le thème), comme sur landing-semaine-fraternite-b.html.
+     ========================================================================== */
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font-family:Marianne,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#0d0d0d;color:var(--text-default-grey);font-synthesis:none}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  .br-wide{display:none}
+  @media (min-width:768px){.br-wide{display:inline}}
+
+  /* ---------- Le site hôte : capture france.tv ---------- */
+  .host{display:block;width:100%;height:auto}
+  .host img{display:block;width:100%;height:auto}
+
+  /* ---------- Boutons : repris de landing-semaine-fraternite-b.html ----------
+     DsfrButton.vue size="lg" (min-h 48px : la maquette dessine 56px, on suit le code). */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:8px 24px;font:inherit;font-size:18px;line-height:28px;font-weight:500;text-align:center;text-decoration:none;background-image:none;border:0;cursor:pointer;transition:background-color .15s ease-out}
+  .btn--primary{background-color:var(--background-action-high-blue-france);color:var(--text-inverted-blue-france)}
+  .btn--primary:hover{background-color:var(--background-action-high-blue-france-hover)}
+  .btn--primary:active{background-color:var(--background-action-high-blue-france-active)}
+  .btn--tertiary{background:transparent;color:var(--text-action-high-blue-france);box-shadow:inset 0 0 0 1px var(--border-action-high-blue-france)}
+  .btn--tertiary:hover{background-color:var(--background-default-grey-hover)}
+  .btn--tertiary[target=_blank]::after{content:none}
+  /* Primaire MD sur surface bleue (Figma « Thème clair / Primaire / MD », fond blanc) :
+     DsfrButton size="md" = min-h 40px, px-4, 16/24 medium. Fixe, comme les heroes. */
+  .btn--md{min-height:40px;padding:8px 16px;font-size:16px;line-height:24px}
+  .btn--on-brand{background-color:#fff;color:#000091}
+  .btn--on-brand:hover{background-color:#F6F6F6}
+  .btn--on-brand:active{background-color:#EDEDED}
+  /* Tertiaire SM icône seule (Figma « Thème clair / Tertiaire / SM ») : 32px, fond blanc 10 %, rayon 8 */
+  .w-icon-btn{position:absolute;top:8px;right:8px;z-index:2;display:flex;align-items:center;justify-content:center;width:32px;height:32px;padding:0;border:0;border-radius:8px;background:rgba(255,255,255,.1);cursor:pointer;transition:background-color .15s ease-out}
+  .w-icon-btn:hover{background:rgba(255,255,255,.2)}
+  .w-icon-btn:active{background:rgba(255,255,255,.28)}
+  .w-icon-btn img{display:block;width:16px;height:16px}
+  :focus-visible{outline:2px solid #0a76f6;outline-offset:2px}
+
+  /* ==========================================================================
+     WIDGET — conteneur flottant, ancré en bas à droite (desktop) / bas de l'écran (mobile)
+     Desktop : réduit 337 px, ouvert 557 px, marge 24 px. Mobile : réduit = largeur − 32 px,
+     marge 16 px ; ouvert = plein écran.
+     ========================================================================== */
+  .widget{position:fixed;z-index:10;right:16px;left:16px;bottom:16px}
+  @media (min-width:768px){.widget{left:auto;right:24px;bottom:24px}}
+  .widget[hidden]{display:none}
+  .widget__panel[hidden]{display:none}
+  .widget__panel{animation:w-in .22s cubic-bezier(.2,.8,.3,1)}
+  @keyframes w-in{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.widget__panel{animation:none}}
+
+  /* ---------- État réduit (Figma 6362:15220 / 6362:15261) ----------
+     Fond #000091, bordure blanche 30 %, rayon 16, padding 24, gap 16, ombre « lifted »,
+     halo flou centré (cercle 287 px, blanc 20 %, flou 50). */
+  .w-mini{position:relative;overflow:hidden;display:flex;flex-direction:column;gap:16px;padding:24px;background:#000091;color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:16px;box-shadow:0 6px 18px rgba(0,0,18,.16)}
+  @media (min-width:768px){.w-mini{width:337px}}
+  .w-mini__blur{position:absolute;left:50%;top:50%;width:487px;height:487px;max-width:none;transform:translate(-50%,-50%);pointer-events:none}
+  .w-mini > :not(.w-mini__blur):not(.w-icon-btn){position:relative}
+  .w-event{margin:0;padding-right:24px}
+  .w-event__title{display:block;font-size:16px;line-height:24px;font-weight:700}
+  .w-event__date{display:block;font-size:14px;line-height:24px}
+  .w-hours{margin:0;text-align:center}
+  .w-hours__num{position:relative;display:inline-block;font-size:46px;line-height:56px;font-weight:700;letter-spacing:.92px;font-variant-numeric:tabular-nums;white-space:nowrap}
+  /* Éclat : 32 px, posé à cheval sur le coin haut droit du nombre (Figma : left 224.5 / top −8
+     dans une colonne de 289 px, soit ~15 px à l'intérieur du nombre) */
+  .w-hours__spark{position:absolute;right:-17px;top:-8px;width:32px;height:32px}
+  .w-hours__spark img{position:absolute;left:.87%;top:8.23%;width:99.17%;height:84.27%;max-width:none}
+  .w-hours__spark.is-pop{animation:w-spark .7s cubic-bezier(.3,1.6,.5,1)}
+  @keyframes w-spark{0%{transform:scale(1)}35%{transform:scale(1.25) rotate(-6deg)}100%{transform:scale(1)}}
+  .w-hours__unit{display:block;font-size:16px;line-height:24px;font-weight:700}
+  .w-mini .btn{width:100%}
+  .w-logos{display:flex;align-items:center;justify-content:center;gap:26px;margin:0}
+  .w-logos img{display:block}
+
+  /* ---------- État ouvert (Figma 6362:15294 / 6362:15393) ----------
+     En-tête bleu (padding 16/24, halo flou en bas à gauche), puis formulaire blanc
+     (padding 24/32 desktop, 24/16 mobile, gap 32). Rayon 8 + ombre en desktop. */
+  .w-full{display:flex;flex-direction:column;background:var(--background-default-grey)}
+  @media (max-width:767px){
+    .widget.is-open{inset:0}
+    .w-full{height:100%;overflow-y:auto;overscroll-behavior:contain}
+  }
+  @media (min-width:768px){
+    .w-full{width:557px;max-height:calc(100vh - 48px);border-radius:8px;overflow:hidden;box-shadow:0 6px 18px rgba(0,0,18,.16)}
+    .w-full__body{overflow-y:auto;overscroll-behavior:contain}
+  }
+  .w-full__head{position:relative;flex:none;overflow:hidden;padding:16px 48px 16px 24px;background:#000091;color:#fff}
+  /* Mobile : l'en-tête reste visible pendant le défilement (bouton « Réduire » toujours à portée) */
+  @media (max-width:767px){.w-full__head{position:sticky;top:0;z-index:3}}
+  .w-full__head .w-icon-btn{top:8px;right:8px}
+  .w-full__blur{position:absolute;left:calc(50% - 170px);top:calc(50% + 93.5px);width:533px;height:533px;max-width:none;transform:translate(-50%,-50%);pointer-events:none}
+  .w-full__head > :not(.w-full__blur):not(.w-icon-btn){position:relative}
+  .w-full__event{display:flex;flex-wrap:wrap;align-items:baseline;gap:0 8px;margin:0;font-size:16px;line-height:24px}
+  .w-full__event strong{font-weight:700}
+  .w-full__event-date{font-size:14px}
+  .w-full__count{display:flex;align-items:flex-end;gap:4px;margin:0}
+  .w-full__count strong{font-size:22px;line-height:28px;font-weight:700;font-variant-numeric:tabular-nums}
+  .w-full__count-label{font-size:14px;line-height:24px}
+
+  /* ---------- Formulaire de promesse : repris de landing-semaine-fraternite-b.html ---------- */
+  .promise{color:var(--text-default-grey);padding:24px 16px;display:flex;flex-direction:column;gap:32px}
+  @media (min-width:768px){.promise{padding:24px 32px}}
+  .promise__form{display:flex;flex-direction:column;gap:32px}
+  .promise__form[hidden]{display:none}
+  .promise__intro{display:flex;flex-direction:column;align-items:flex-start;gap:8px}
+  .promise__intro p{margin:0;font-size:14px;line-height:24px;color:var(--text-title-grey)}
+  .promise__intro .fr-link{margin:0}
+  .promise__intro:focus{outline:none}
+  .promise fieldset{border:0;margin:0;padding:0;min-width:0}
+  .promise legend{float:left;width:100%;padding:0;margin:0 0 16px;font-size:22px;line-height:28px;font-weight:700;color:var(--text-title-grey)}
+  .promise legend + *{clear:both}
+  /* Boutons radio riches (Figma « Bouton radio riche ») — voir la note dans la landing B.
+     Widget : 2 / 3 colonnes en desktop (padding 24), une seule colonne en mobile (padding 16). */
+  .rich-radios{display:grid;grid-template-columns:1fr;gap:8px}
+  @media (min-width:768px){
+    .rich-radios{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .rich-radios--3{grid-template-columns:repeat(3,minmax(0,1fr))}
+  }
+  .rich-radio{position:relative;display:block;margin:0}
+  .rich-radio input{position:absolute;opacity:0;width:1px;height:1px;margin:0}
+  .rich-radio span{display:flex;align-items:center;height:100%;padding:16px 40px 16px 16px;border:2px solid var(--border-default-grey);background:var(--background-default-grey);font-size:16px;line-height:24px;font-weight:700;color:var(--text-title-grey);cursor:pointer;transition:background-color .15s ease-out}
+  @media (min-width:768px){.rich-radio span{min-height:72px;padding:22px 24px}}
+  .rich-radio span:hover{background:var(--background-default-grey-hover)}
+  .rich-radio input:checked + span{border-color:var(--border-active-blue-france);background:var(--background-alt-blue-france);color:var(--text-action-high-blue-france)}
+  .rich-radio input:focus-visible + span{outline:2px solid #0a76f6;outline-offset:2px}
+  .rich-radio span::after{content:"";position:absolute;top:10px;right:10px;width:24px;height:24px;border-radius:50%;background:var(--background-action-high-blue-france) url("ressources/france-tv/icone-check.svg") center/16px no-repeat;opacity:0;transform:scale(.6);transition:opacity .15s,transform .2s cubic-bezier(.3,1.6,.5,1)}
+  .rich-radio input:checked + span::after{opacity:1;transform:none}
+  @media (prefers-reduced-motion:reduce){.rich-radio span::after{transition:none}}
+  .promise__estimate{display:flex;align-items:center;gap:16px;margin:0;padding:24px;border-radius:4px;background:var(--info-975-75);border:1px solid var(--border-default-blue-cumulus,#DBE4FF);font-size:14px;line-height:24px;color:var(--text-title-grey)}
+  .promise__estimate strong{white-space:nowrap}
+  .promise__estimate-emoji{font-size:32px;line-height:24px;flex:none;padding-top:4px}
+  .promise .fr-input-group{margin:0}
+  .promise .fr-label{display:block;margin-bottom:8px;font-size:16px;line-height:24px;color:var(--text-label-grey)}
+  .promise .fr-input{display:block;width:100%;padding:8px 16px;font:inherit;font-size:16px;line-height:24px;color:var(--text-default-grey);background:var(--background-contrast-grey);border:0;border-radius:4px 4px 0 0;box-shadow:inset 0 -2px 0 0 var(--border-plain-grey)}
+  .promise .fr-input::placeholder{font-style:italic;color:var(--text-mention-grey)}
+  .promise .fr-input-group--error .fr-input{box-shadow:inset 0 -2px 0 0 var(--border-plain-error)}
+  .promise .fr-error-text[hidden]{display:none}
+  .promise .fr-error-text{display:flex;gap:4px;margin:8px 0 0;font-size:12px;line-height:20px;color:var(--text-default-error)}
+  .promise__submit{display:flex;flex-direction:column;gap:8px}
+  .promise__submit .btn{width:100%}
+  .promise__rgpd{margin:0;font-size:12px;line-height:20px;color:var(--text-mention-grey);text-align:center}
+  .promise__done{display:flex;flex-direction:column;gap:16px}
+  .promise__done[hidden]{display:none}
+  .promise__done h2{margin:0;font-size:22px;line-height:28px;font-weight:700;color:var(--text-title-grey)}
+  .promise__done p{margin:0;font-size:16px;line-height:24px}
+  .promise__done .btn{align-self:flex-start}
+
+  /* ---------- Hors maquette : réafficher le widget après « Fermer » (outil de démo) ---------- */
+  .demo-reopen{position:fixed;z-index:10;right:16px;bottom:16px;padding:8px 16px;font:inherit;font-size:14px;line-height:24px;font-weight:500;color:#161616;background:#fff;border:0;border-radius:20px;box-shadow:0 6px 18px rgba(0,0,18,.3);cursor:pointer}
+  .demo-reopen:hover{background:#F6F6F6}
+  .demo-reopen[hidden]{display:none}
+</style>
+</head>
+<body>
+
+<!-- Site hôte : simple capture de la page d'accueil france.tv (fournie par la maquette) -->
+<picture class="host">
+  <source media="(min-width:768px)" srcset="ressources/france-tv/widget/fond-site-ftv-desktop.jpg">
+  <img src="ressources/france-tv/widget/fond-site-ftv-mobile.jpg" alt="Page d’accueil de france.tv (capture d’écran, non interactive)">
+</picture>
+
+<!-- ============ WIDGET ============
+     Réduit → « Je donne de mon temps » ouvre le formulaire ; « Réduire » (−) ou Échap le referme ;
+     « Fermer » (×) masque le widget. Le formulaire fonctionne comme sur la landing B :
+     estimation recalculée à chaque choix, l'envoi ajoute les heures au compteur.
+     Hypothèse de calcul (à valider) : promesse sur 6 mois → semaine ×24, mois ×6, une fois ×1.
+     Le compteur ne défile pas tout seul ici (pas de bouton pause à prévoir dans un widget,
+     WCAG 2.2.2) : il ne bouge qu'à l'envoi d'une promesse. Chiffres fictifs. -->
+<aside class="widget" id="widget" aria-label="Semaine de la Fraternité, avec JeVeuxAider.gouv.fr">
+
+  <!-- Réduit -->
+  <div class="widget__panel w-mini" id="w-mini">
+    <img class="w-mini__blur" src="ressources/france-tv/widget/blur-reduit.svg" width="487" height="487" alt="" aria-hidden="true">
+    <button type="button" class="w-icon-btn" id="w-close" aria-label="Fermer le widget Semaine de la Fraternité">
+      <img src="ressources/france-tv/widget/icone-fermer.svg" width="16" height="16" alt="">
+    </button>
+    <p class="w-event">
+      <span class="w-event__title">Semaine de la Fraternité</span>
+      <span class="w-event__date">Du 23 au 30 mars</span>
+    </p>
+    <p class="w-hours">
+      <span class="w-hours__num"><span class="js-hours">830 020</span><span class="w-hours__spark js-spark" aria-hidden="true"><img src="ressources/france-tv/widget/eclat.svg" alt=""></span></span>
+      <span class="w-hours__unit">heures de bénévolat promises</span>
+    </p>
+    <button type="button" class="btn btn--md btn--on-brand" id="w-open" aria-expanded="false" aria-controls="w-full">Je donne de mon temps</button>
+    <p class="w-logos">
+      <img src="ressources/france-tv/widget/logo-tv.svg" width="39" height="21" alt="France.tv">
+      <img src="ressources/france-tv/widget/logo-jva-carre.svg" width="32" height="24" alt="JeVeuxAider.gouv.fr">
+    </p>
+  </div>
+
+  <!-- Ouvert -->
+  <div class="widget__panel w-full" id="w-full" hidden>
+    <div class="w-full__head">
+      <img class="w-full__blur" src="ressources/france-tv/widget/blur-ouvert.svg" width="533" height="533" alt="" aria-hidden="true">
+      <button type="button" class="w-icon-btn" id="w-reduce" aria-label="Réduire le formulaire">
+        <img src="ressources/france-tv/widget/icone-reduire.svg" width="16" height="16" alt="">
+      </button>
+      <p class="w-full__event"><strong>Semaine de la Fraternité</strong> <span class="w-full__event-date">Du 23 au 30 mars</span></p>
+      <p class="w-full__count"><strong><span class="js-hours">830 020</span> h</strong> <span class="w-full__count-label">promises</span></p>
+    </div>
+
+    <div class="w-full__body">
+      <div class="promise">
+        <form class="promise__form" id="promise-form" novalidate>
+          <!-- Intro (Figma 6362:15601) : texte 14/24 + DsfrLink SM externe vers la landing.
+               L'icône « lien externe » est celle que le DSFR ajoute lui-même à tout
+               .fr-link[target=_blank] (GUIDE-PROTOTYPAGE, Piège n°5) : rien à ajouter à la main. -->
+          <div class="promise__intro" id="w-intro" tabindex="-1">
+            <p>Promettez quelques heures aux associations&nbsp;: à partir du 23 mars, JeVeuxAider.gouv.fr vous enverra des missions qui correspondent à votre disponibilité, sans aucune obligation bien sûr.</p>
+            <a class="fr-link fr-link--sm" href="landing-semaine-fraternite-a.html" target="_blank" rel="noopener">Comment ça marche&nbsp;?<span class="sr-only"> (nouvelle fenêtre)</span></a>
+          </div>
+
+          <fieldset>
+            <legend id="w-first">Combien de temps pouvez-vous donner&nbsp;?</legend>
+            <div class="rich-radios">
+              <label class="rich-radio"><input type="radio" name="duree" value="1"><span>1h</span></label>
+              <label class="rich-radio"><input type="radio" name="duree" value="2" checked><span>2h</span></label>
+              <label class="rich-radio"><input type="radio" name="duree" value="4"><span>Une demi-journée</span></label>
+              <label class="rich-radio"><input type="radio" name="duree" value="7"><span>1 journée</span></label>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>À quelle fréquence&nbsp;?</legend>
+            <div class="rich-radios rich-radios--3">
+              <label class="rich-radio"><input type="radio" name="frequence" value="24"><span>Une fois<br class="br-wide"> par semaine</span></label>
+              <label class="rich-radio"><input type="radio" name="frequence" value="6" checked><span>Une fois<br class="br-wide"> par mois</span></label>
+              <label class="rich-radio"><input type="radio" name="frequence" value="1"><span>Une seule<br class="br-wide"> fois</span></label>
+            </div>
+          </fieldset>
+
+          <p class="promise__estimate" aria-live="polite"><span class="promise__estimate-emoji" aria-hidden="true">🤩</span><span>Formidable&nbsp;! Vous allez faire grimper le compteur de la Fraternité de <strong id="promise-total">12 heures</strong>.</span></p>
+
+          <div class="fr-input-group" id="email-group">
+            <label class="fr-label" for="promise-email">Votre adresse e-mail</label>
+            <input class="fr-input" type="email" id="promise-email" name="email" autocomplete="email" placeholder="sarah.martin@mail.com" aria-describedby="promise-email-error">
+            <p class="fr-error-text" id="promise-email-error" hidden>Saisissez une adresse e-mail au format nom@domaine.fr</p>
+          </div>
+
+          <div class="promise__submit">
+            <button type="submit" class="btn btn--primary">Je fais grimper le compteur</button>
+            <p class="promise__rgpd">Votre e-mail sert à vous envoyer des propositions de missions adaptées.<br>Vous pouvez vous désinscrire à tout moment.</p>
+          </div>
+        </form>
+
+        <!-- Hors maquette : état après envoi, repris de la landing B -->
+        <div class="promise__done" id="promise-done" hidden tabindex="-1">
+          <h2>Merci, votre promesse compte déjà&nbsp;!</h2>
+          <p>Vos <strong id="promise-done-hours">12 heures</strong> viennent de s’ajouter au compteur de la Fraternité.</p>
+          <p>Dès le 23 mars, nous vous enverrons à <strong id="promise-done-email"></strong> des missions qui correspondent à votre temps.</p>
+          <a href="https://www.jeveuxaider.gouv.fr/missions-benevolat" target="_blank" rel="noopener" class="btn btn--tertiary">Voir des missions</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<button type="button" class="demo-reopen" id="demo-reopen" hidden>Réafficher le widget (démo)</button>
+
+<script>
+(() => {
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fmt = n => n.toLocaleString('fr-FR').replace(/[  ]/g, ' ');
+  const plural = n => `${fmt(n)} heure${n > 1 ? 's' : ''}`;
+  const $ = id => document.getElementById(id);
+
+  const widget = $('widget'), mini = $('w-mini'), full = $('w-full');
+  const openBtn = $('w-open'), reduceBtn = $('w-reduce'), closeBtn = $('w-close'), reopen = $('demo-reopen');
+  const isMobile = () => matchMedia('(max-width: 767px)').matches;
+
+  /* ---------- Réduit / ouvert / fermé ---------- */
+  function open() {
+    mini.hidden = true; full.hidden = false; widget.classList.add('is-open');
+    openBtn.setAttribute('aria-expanded', 'true');
+    // Plein écran en mobile : la page dessous ne défile plus
+    document.body.style.overflow = isMobile() ? 'hidden' : '';
+    const done = $('promise-done');
+    (done.hidden ? $('w-intro') : done).focus();
+  }
+  function reduce() {
+    full.hidden = true; mini.hidden = false; widget.classList.remove('is-open');
+    openBtn.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+    openBtn.focus();
+  }
+  openBtn.addEventListener('click', open);
+  reduceBtn.addEventListener('click', reduce);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !full.hidden) reduce(); });
+  closeBtn.addEventListener('click', () => { widget.hidden = true; reopen.hidden = false; reopen.focus(); });
+  reopen.addEventListener('click', () => { widget.hidden = false; reopen.hidden = true; openBtn.focus(); });
+
+  /* ---------- Compteur ---------- */
+  let hours = 830020, shown = hours, raf = null;
+  const hoursEls = document.querySelectorAll('.js-hours');
+  const spark = document.querySelector('.js-spark');
+  function render() {
+    spark.classList.remove('is-pop'); void spark.offsetWidth; spark.classList.add('is-pop');
+    if (reduceMotion) { shown = hours; hoursEls.forEach(el => el.textContent = fmt(hours)); return; }
+    cancelAnimationFrame(raf);
+    const from = shown, to = hours, t0 = performance.now(), dur = 900;
+    const step = now => {
+      const k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+      shown = Math.round(from + (to - from) * e);
+      hoursEls.forEach(el => el.textContent = fmt(shown));
+      if (k < 1) raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+  }
+
+  /* ---------- Formulaire de promesse (même logique que la landing B) ---------- */
+  const form = $('promise-form'), total = $('promise-total');
+  const email = $('promise-email'), emailGroup = $('email-group'), emailError = $('promise-email-error');
+  const promised = () => Number(form.duree.value) * Number(form.frequence.value);
+  form.addEventListener('change', e => { if (e.target.type === 'radio') total.textContent = plural(promised()); });
+  const setError = on => {
+    emailGroup.classList.toggle('fr-input-group--error', on);
+    emailError.hidden = !on;
+    email.setAttribute('aria-invalid', String(on));
+  };
+  email.addEventListener('input', () => { if (emailGroup.classList.contains('fr-input-group--error') && email.validity.valid && email.value) setError(false); });
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    if (!email.value || !email.validity.valid) { setError(true); email.focus(); return; }
+    setError(false);
+    const h = promised();
+    hours += h; render();
+    $('promise-done-hours').textContent = plural(h);
+    $('promise-done-email').textContent = email.value;
+    form.hidden = true;
+    const done = $('promise-done');
+    done.hidden = false;
+    done.focus();
+  });
+})();
+</script>
+</body>
+</html>

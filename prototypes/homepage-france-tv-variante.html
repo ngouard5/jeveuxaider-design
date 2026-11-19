@@ -131,8 +131,8 @@
   /* Le nombre porte l'éclat : tailles en em pour suivre la taille du nombre.
      Desktop : 48px pour 78px (.615em), mobile : 48px pour 72px (.667em) ; placé .06em après le
      dernier chiffre, sans le chevaucher (écart volontaire avec la maquette, retour 18/11/2026).  */
-  .ftv-stats__num{position:relative;display:inline-block;font-size:72px;padding-right:.727em} /* place de l'éclat : il ne chevauche plus les chiffres (retour 18/11/2026) */
-  @media (min-width:768px){.ftv-stats__num{font-size:78px;padding-right:.675em}}
+  .ftv-stats__num{position:relative;display:inline-block;font-size:72px;padding-right:.66em} /* place de l'éclat : il ne chevauche plus les chiffres (retour 18/11/2026) */
+  @media (min-width:768px){.ftv-stats__num{font-size:78px;padding-right:.61em}}
   @media (min-width:1200px){.ftv-stats__num{font-size:min(78px,calc((100vw - 256px) * .0548))}}
   .ftv-stats__spark{position:absolute;right:0;top:-.17em;width:.667em;height:.667em;transform-origin:20% 80%}
   @media (min-width:768px){.ftv-stats__spark{top:-.12em;width:.615em;height:.615em}}
@@ -280,11 +280,11 @@
 
       <div class="ftv-stats">
         <p class="ftv-stats__hours">
-          <span class="ftv-stats__num"><span class="ftv-stats__value" id="ftv-hours">830 020</span><span class="ftv-stats__spark" id="ftv-spark" aria-hidden="true"><img src="ressources/france-tv/eclat.svg" alt=""></span></span>
+          <span class="ftv-stats__num"><span class="ftv-stats__value" id="ftv-hours">28 000</span><span class="ftv-stats__spark" id="ftv-spark" aria-hidden="true"><img src="ressources/france-tv/eclat.svg" alt=""></span></span>
           <span class="ftv-stats__unit">heures de bénévolat promises</span>
         </p>
         <div class="ftv-stats__people">
-          <p><strong id="ftv-people">248 292 personnes</strong> déjà engagées</p>
+          <p><strong id="ftv-people">2 864 personnes</strong> déjà engagées</p>
           <ul class="ftv-avatars" id="ftv-avatars" aria-hidden="true"></ul>
         </div>
       </div>
@@ -441,7 +441,7 @@
   const hoursEl = document.getElementById('ftv-hours');
   const peopleEl = document.getElementById('ftv-people');
   const spark = document.getElementById('ftv-spark');
-  let hours = 830020, shownHours = hours, people = 248292, raf;
+  let hours = 28000, shownHours = hours, people = 2864, raf;
 
   function rollTo(target) {
     cancelAnimationFrame(raf);

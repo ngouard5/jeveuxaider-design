@@ -124,8 +124,8 @@
   @media (min-width:768px){.ftv-stats__value{line-height:1}}
   .ftv-stats__unit{display:block;font-weight:700;font-size:22px;line-height:28px;margin-top:16px}
   @media (min-width:768px){.ftv-stats__unit{font-size:24px;line-height:32px;margin-top:12px}}
-  .ftv-stats__num{position:relative;display:inline-block;font-size:64px;padding-right:.727em}
-  @media (min-width:768px){.ftv-stats__num{font-size:78px;padding-right:.675em}}
+  .ftv-stats__num{position:relative;display:inline-block;font-size:64px;padding-right:.66em}
+  @media (min-width:768px){.ftv-stats__num{font-size:78px;padding-right:.61em}}
   @media (min-width:1200px){.ftv-hero .ftv-stats__num{font-size:min(78px,calc((100vw - 300px) * .0565))}}
   .ftv-stats__spark{position:absolute;right:0;top:-.17em;width:.667em;height:.667em;transform-origin:20% 80%}
   @media (min-width:768px){.ftv-stats__spark{top:-.12em;width:.615em;height:.615em}}
@@ -368,41 +368,6 @@
   .faces img{display:block;width:100%;height:100%;object-fit:cover}
 
   /* ==========================================================================
-     5. COMMENT ÇA MARCHE — Figma 6358:5603, fond alt-blue-france, étapes en accordéon
-     (une seule ouverte) + galerie de 3 photos (reprise de la galerie du hero B, figée).
-     ========================================================================== */
-  .how{background:var(--background-alt-blue-france)}
-  .how .lp-container{max-width:1248px}
-  .how__grid{display:grid;gap:24px}
-  @media (min-width:1024px){.how__grid{grid-template-columns:1fr 1fr;gap:40px;align-items:stretch}}
-  .steps{display:flex;flex-direction:column;gap:16px;margin:0;padding:0;list-style:none}
-  .steps > li{margin:0;padding:0}
-  .steps > li::marker{content:none}
-  .step{background:var(--background-default-grey);border:1px solid var(--border-open-blue-france)}
-  .step h3{margin:0}
-  .step__btn{display:flex;align-items:flex-start;gap:24px;width:100%;padding:24px;margin:0;font:inherit;font-size:20px;line-height:28px;font-weight:700;text-align:left;color:var(--text-title-grey);background:transparent;border:0;cursor:pointer}
-  @media (min-width:768px){.step__btn{padding:32px;font-size:24px;line-height:32px}}
-  .step__btn:hover{background:var(--background-default-grey-hover)}
-  .step__btn span{flex:1 1 auto}
-  .step__btn svg{width:32px;height:32px;flex:none;color:var(--text-action-high-blue-france);transition:transform .2s}
-  .step__btn[aria-expanded="true"] svg{transform:rotate(-90deg)}
-  @media (prefers-reduced-motion:reduce){.step__btn svg{transition:none}}
-  .step__panel{margin:0;padding:0 80px 32px 32px;margin-top:-24px;font-size:18px;line-height:28px;color:var(--text-mention-grey)}
-  @media (max-width:767px){.step__panel{padding:0 24px 24px;margin-top:-16px;font-size:16px;line-height:24px}}
-  .step__panel[hidden]{display:none}
-
-  .how__gallery{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:16px;min-height:420px;margin:0;padding:0;list-style:none}
-  @media (min-width:1024px){.how__gallery{gap:24px;min-height:600px}}
-  .how__gallery li:first-child{grid-row:1 / span 2}
-  .photo-card{position:relative;overflow:hidden;border-radius:8px;margin:0;background:var(--background-contrast-grey)}
-  .photo-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:var(--pos,center)}
-  /* Étiquette — pill blanche 14/19 bold bleu, ombre 0 6 9 (Figma 6358:5639) */
-  .photo-card__tag{position:absolute;left:50%;bottom:24px;transform:translateX(-50%);margin:0;padding:12px 24px;border-radius:40px;background:#fff;color:#000091;font-size:14px;line-height:19px;font-weight:700;text-align:center;width:max-content;max-width:calc(100% - 24px);filter:drop-shadow(0 6px 9px rgba(0,0,18,.16))}
-  @media (max-width:1439px){.photo-card__tag{bottom:16px;padding:8px 16px}}
-  .how__cta{margin-top:40px}
-  @media (min-width:1024px){.how__cta{margin-top:56px}}
-
-  /* ==========================================================================
      6. FAQ — Figma 6352:25742 : titre centré + éclat, accordéons DSFR (DsfrAccordion.vue)
      dans un cadre bordé 960 px, padding 32.
      ========================================================================== */
@@ -413,8 +378,10 @@
   .faq__spark img{position:absolute;left:.87%;top:8.23%;width:99.17%;height:84.27%;max-width:none}
   .faq__box{max-width:960px;margin:0 auto;padding:16px;border:1px solid var(--border-default-grey)}
   @media (min-width:768px){.faq__box{padding:32px}}
-  .faq .fr-accordion{border-bottom:1px solid var(--border-default-grey)}
-  .faq .fr-accordion:first-child{border-top:1px solid var(--border-default-grey)}
+  /* Un seul trait entre deux questions, aucun au-dessus de la 1re ni sous la dernière :
+     on coupe les lignes haut/bas que le DSFR trace en box-shadow sur ::before */
+  .faq .fr-accordion::before{content:none}
+  .faq .fr-accordion + .fr-accordion{border-top:1px solid var(--border-default-grey)}
   .faq .fr-accordion__title{margin:0}
   .faq .fr-accordion__btn{display:flex;align-items:center;gap:16px;width:100%;padding:12px 16px;margin:0;font:inherit;font-size:16px;line-height:24px;font-weight:500;text-align:left;color:var(--text-action-high-blue-france);background:transparent;border:0;cursor:pointer}
   .faq .fr-accordion__btn:hover{background-color:var(--background-default-grey-hover)}
@@ -429,7 +396,10 @@
      7. RAPPEL FINAL — Figma « Footer » 6358:5754 : surface bleue, titre centré, même
      bloc compteur (839 px), logos France.tv + JeVeuxAider, bouton blanc.
      ========================================================================== */
-  .final{background:#000091;color:#fff;text-align:center;box-shadow:0 6px 18px rgba(0,0,18,.16)}
+  .final{position:relative;overflow:hidden;isolation:isolate;background:#000091;color:#fff;text-align:center;box-shadow:0 6px 18px rgba(0,0,18,.16)}
+  /* Halo (Figma 6365:15635) : cercle blanc 16 % de 716 px flouté, centré, à 110 px du haut de la section.
+     Le SVG fait 1316 px (cercle + 300 px de débord du flou de chaque côté), d'où top:-190px. */
+  .final__blur{position:absolute;left:50%;top:-190px;z-index:-1;width:1316px;height:1316px;max-width:none;transform:translateX(-50%);pointer-events:none}
   .final .lp-title{color:#fff}
   .final__inner{display:flex;flex-direction:column;align-items:center;gap:32px}
   @media (min-width:1024px){.final__inner{gap:56px}}
@@ -515,11 +485,11 @@
 
       <div class="ftv-stats">
         <p class="ftv-stats__hours">
-          <span class="ftv-stats__num"><span class="ftv-stats__value js-hours">830 020</span><span class="ftv-stats__spark js-spark" aria-hidden="true"><img src="ressources/france-tv/eclat.svg" alt=""></span></span>
+          <span class="ftv-stats__num"><span class="ftv-stats__value js-hours">28 000</span><span class="ftv-stats__spark js-spark" aria-hidden="true"><img src="ressources/france-tv/eclat.svg" alt=""></span></span>
           <span class="ftv-stats__unit">heures de bénévolat promises</span>
         </p>
         <div class="ftv-stats__people">
-          <p><strong class="js-people">248 292 personnes</strong> déjà engagées</p>
+          <p><strong class="js-people">2 864 personnes</strong> déjà engagées</p>
           <ul class="ftv-avatars js-avatars" aria-hidden="true"></ul>
         </div>
       </div>
@@ -803,47 +773,6 @@
   <ul class="js-faces"></ul>
 </div>
 
-<!-- ============ 5. COMMENT ÇA MARCHE ============ -->
-<section class="lp-section how" aria-labelledby="how-title">
-  <div class="lp-container">
-    <div class="lp-head">
-      <div class="lp-head__text">
-        <h2 class="lp-title" id="how-title">Comment ça marche&nbsp;?</h2>
-        <p class="lp-subtitle">Du 23 au 30 mars, déclarez le nombre d’heures de bénévolat<br class="br-desktop"> que vous êtes prêt à donner aux associations</p>
-      </div>
-    </div>
-
-    <div class="how__grid">
-      <ol class="steps">
-        <li class="step">
-          <h3><button type="button" class="step__btn" aria-expanded="true" aria-controls="step-1"><span>Je choisis combien de temps je suis prêt<br class="br-desktop"> à accorder aux associations</span><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 13.172L16.95 8.222L18.364 9.636L12 16L5.636 9.636L7.05 8.222L12 13.172Z"/></svg></button></h3>
-          <p class="step__panel" id="step-1">Tous les dons sont précieux, pour une heure ou plus,<br class="br-desktop"> vous aiderez beaucoup.</p>
-        </li>
-        <li class="step">
-          <h3><button type="button" class="step__btn" aria-expanded="false" aria-controls="step-2"><span>Je saisis mon adresse e&#8209;mail</span><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 13.172L16.95 8.222L18.364 9.636L12 16L5.636 9.636L7.05 8.222L12 13.172Z"/></svg></button></h3>
-          <p class="step__panel" id="step-2" hidden>Elle sert uniquement à vous envoyer des missions qui correspondent au temps promis.</p>
-        </li>
-        <li class="step">
-          <h3><button type="button" class="step__btn" aria-expanded="false" aria-controls="step-3"><span>Je rejoins les donateurs de temps<br class="br-desktop"> et je fais vivre la fraternité</span><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 13.172L16.95 8.222L18.364 9.636L12 16L5.636 9.636L7.05 8.222L12 13.172Z"/></svg></button></h3>
-          <p class="step__panel" id="step-3" hidden>Votre promesse s’ajoute au compteur national, aux côtés de celles de milliers d’autres personnes.</p>
-        </li>
-        <li class="step">
-          <h3><button type="button" class="step__btn" aria-expanded="false" aria-controls="step-4"><span>Je reçois des missions pour passer<br class="br-desktop"> de la promesse à l’action</span><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 13.172L16.95 8.222L18.364 9.636L12 16L5.636 9.636L7.05 8.222L12 13.172Z"/></svg></button></h3>
-          <p class="step__panel" id="step-4" hidden>Près de chez vous ou à distance, vous choisissez librement celles qui vous conviennent.</p>
-        </li>
-      </ol>
-
-      <ul class="how__gallery" aria-label="Exemples de missions">
-        <li class="photo-card"><img src="ressources/france-tv/mission-personnes-agees.jpg" alt="" style="--pos:42% center"><p class="photo-card__tag">J’aide des personnes âgées</p></li>
-        <li class="photo-card"><img src="ressources/france-tv/mission-aide-devoirs.jpg" alt="" style="--pos:55% 35%"><p class="photo-card__tag">J’aide aux devoirs</p></li>
-        <li class="photo-card"><img src="ressources/france-tv/mission-renovation-meubles.jpg" alt="" style="--pos:40% 40%"><p class="photo-card__tag">Je rénove des meubles</p></li>
-      </ul>
-    </div>
-
-    <div class="how__cta"><a href="#promesse" class="btn btn--primary">Je donne de mon temps</a></div>
-  </div>
-</section>
-
 <!-- ============ 6. FAQ ============ -->
 <section class="lp-section faq" aria-labelledby="faq-title">
   <div class="lp-container">
@@ -877,15 +806,16 @@
 
 <!-- ============ 7. RAPPEL FINAL ============ -->
 <section class="lp-section final" aria-labelledby="final-title">
+  <img class="final__blur" src="ressources/france-tv/blur-final.svg" width="1316" height="1316" alt="" aria-hidden="true">
   <div class="lp-container final__inner">
     <h2 class="lp-title" id="final-title">Jusqu’au 30 mars, chaque heure compte</h2>
     <div class="ftv-stats">
       <p class="ftv-stats__hours">
-        <span class="ftv-stats__num"><span class="ftv-stats__value js-hours">830 020</span><span class="ftv-stats__spark js-spark" aria-hidden="true"><img src="ressources/france-tv/eclat.svg" alt=""></span></span>
+        <span class="ftv-stats__num"><span class="ftv-stats__value js-hours">28 000</span><span class="ftv-stats__spark js-spark" aria-hidden="true"><img src="ressources/france-tv/eclat.svg" alt=""></span></span>
         <span class="ftv-stats__unit">heures de bénévolat promises</span>
       </p>
       <div class="ftv-stats__people">
-        <p><strong class="js-people">248 292 personnes</strong> déjà engagées</p>
+        <p><strong class="js-people">2 864 personnes</strong> déjà engagées</p>
         <ul class="ftv-avatars js-avatars" aria-hidden="true"></ul>
       </div>
     </div>
@@ -1000,7 +930,7 @@
   if (heroAvatars) [...heroAvatars.children].forEach((li, i) => AVATAR_PEOPLE.set(li, PEOPLE[i]));
 
   /* ---------- Compteurs (hero + rappel final, toujours synchronisés) ---------- */
-  let hours = 830020, people = 248292, shown = hours;
+  let hours = 28000, people = 2864, shown = hours;
   const hoursEls = document.querySelectorAll('.js-hours');
   const peopleEls = document.querySelectorAll('.js-people');
   const sparks = document.querySelectorAll('.js-spark');
@@ -1141,13 +1071,7 @@
     update();
   });
 
-  /* ---------- Accordéons : étapes (une seule ouverte) et FAQ (dsfr.js non embarqué) ---------- */
-  const steps = document.querySelectorAll('.step__btn');
-  steps.forEach(btn => btn.addEventListener('click', () => {
-    const open = btn.getAttribute('aria-expanded') === 'true';
-    steps.forEach(b => { b.setAttribute('aria-expanded', 'false'); document.getElementById(b.getAttribute('aria-controls')).hidden = true; });
-    if (!open) { btn.setAttribute('aria-expanded', 'true'); document.getElementById(btn.getAttribute('aria-controls')).hidden = false; }
-  }));
+  /* ---------- Accordéons : FAQ (dsfr.js non embarqué) ---------- */
   document.querySelectorAll('.faq .fr-accordion__btn').forEach(btn => btn.addEventListener('click', () => {
     const open = btn.getAttribute('aria-expanded') === 'true';
     btn.setAttribute('aria-expanded', String(!open));
@@ -1177,9 +1101,9 @@
   if (matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
   // Éléments qui apparaissent seuls
   const SINGLE = ['.lp-head', '.partners__label', '.faq__head', '.faq__box', '.activities__label',
-    '.missions__cta', '.programme__cta', '.voices__cta', '.how__cta', '.pledge__intro', '.pledge .promise'];
+    '.missions__cta', '.programme__cta', '.voices__cta', '.pledge__intro', '.pledge .promise'];
   // Listes dont les enfants apparaissent en cascade quand la liste entre dans l'écran
-  const GROUP = ['.carousel__track', '.activities__tags', '.prog-list', '.steps', '.how__gallery', '.faces ul', '.final__inner'];
+  const GROUP = ['.carousel__track', '.activities__tags', '.prog-list', '.faces ul', '.final__inner'];
   const STEP = .07, MAX = 8;
 
   const io = new IntersectionObserver(entries => entries.forEach(e => {

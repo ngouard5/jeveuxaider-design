@@ -350,7 +350,7 @@
     const later = form.frequence.value !== '1' ? ' (sur plusieurs mois)' : '';
     equiv.innerHTML = items.length
       ? `Ces heures, ça peut être… ${items.join(', ')}${later} ou toute autre mission de votre choix.`
-      : 'Une heure, c’est déjà une mission&nbsp;: à vous de choisir laquelle.';
+      : `Cette heure, ça peut être… <strong>1</strong>&nbsp;heure de ramassage de déchets${later} ou toute autre mission de votre choix.`;
   };
   form.addEventListener('change', e => { if (e.target.type === 'radio') updateEstimate(); });
   const setError = on => {

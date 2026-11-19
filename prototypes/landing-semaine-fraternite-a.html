@@ -415,6 +415,18 @@
   .prog .btn{grid-area:cta;justify-self:start}
   /* DSFR ajoute déjà une icône « lien externe » à tout a[target=_blank] : on la retire, l’icône de la maquette est dans le bouton */
   .prog .btn[target=_blank]::after{content:none}
+  /* Toute la ligne est cliquable (lien étendu, comme CardMission) : le bouton reste le seul lien
+     (un seul arrêt clavier, libellé complet pour les lecteurs d'écran), son ::before couvre l'article. */
+  .prog{position:relative;cursor:pointer}
+  .prog .btn::before{content:"";position:absolute;inset:0;z-index:1}
+  /* Survol : fond bleu très clair sur toute la ligne. L'ombre portée (même couleur, 16 px)
+     déborde autour sans toucher à la mise en page. */
+  .prog{border-radius:4px;transition:background-color .15s ease-out,box-shadow .15s ease-out}
+  .prog:hover{background-color:var(--background-alt-blue-france);box-shadow:0 0 0 16px var(--background-alt-blue-france)}
+  .prog:hover .btn{background-color:var(--background-default-grey)}
+  @media (prefers-reduced-motion:reduce){.prog{transition:none}}
+  .prog .btn:focus-visible{outline:none}
+  .prog:has(.btn:focus-visible){outline:2px solid #0a76f6;outline-offset:16px}
   @media (max-width:767px){.prog .btn{justify-self:stretch}}
   .programme__cta{margin-top:40px}
   @media (min-width:1024px){.programme__cta{margin-top:56px}}

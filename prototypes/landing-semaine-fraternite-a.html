@@ -65,7 +65,7 @@
   @media (min-width:1024px){.lp-subtitle{font-size:24px;line-height:32px}}
   .lp-head__actions{display:flex;gap:12px;flex:none}
 
-  /* ---------- Carrousels (missions, partenaires, témoignages) ----------
+  /* ---------- Carrousels (partenaires, témoignages) ----------
      Piste défilante au doigt / au trackpad, flèches et points de pagination synchronisés. */
   .carousel__track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;scrollbar-width:none;margin:0;padding:0;list-style:none}
   .carousel__track::-webkit-scrollbar{display:none}
@@ -113,7 +113,6 @@
   @media (min-width:768px){.ftv-hero__brand-label{line-height:24px}}
   .ftv-hero__logos{display:flex;align-items:center;gap:16px}
   .ftv-hero__brand img{display:block;width:auto;height:24px}
-  .ftv-hero__brand img.logo-jva{height:28px}
   .br-mobile{display:inline}
   @media (min-width:768px){.br-mobile{display:none}}
 
@@ -278,8 +277,22 @@
   .pledge__copy p{margin:0;font-size:20px;line-height:28px;color:#fff}
   @media (min-width:768px){.pledge__copy p{font-size:28px;line-height:36px}}
   .pledge__copy .pledge__callout{font-weight:700}
-  .pledge__hashtag{display:block;width:240px;height:auto}
-  @media (min-width:768px){.pledge__hashtag{width:346px}}
+  /* Porteur et partenaires sous l'intro (Figma 6369:16683) : « Projet porté par » + france.tv,
+     puis « avec la participation de » + 3 logos blancs ; libellés 16/24 italique. */
+  .pledge__partners{display:flex;flex-direction:column;gap:24px}
+  @media (min-width:768px){.pledge__partners{flex-direction:row;align-items:flex-start;gap:80px}}
+  .pledge__partners-group{display:flex;flex-direction:column;align-items:flex-start;gap:8px}
+  .pledge__partners-group + .pledge__partners-group{gap:16px}
+  .pledge__partners-label{margin:0;font-size:16px;line-height:24px;font-style:italic;color:#fff}
+  .pledge__partners img{display:block;width:auto}
+  .pledge__partners .logo-ftv{height:24px}
+  .pledge__partners-logos{display:flex;align-items:center;gap:24px;margin:0;padding:0;list-style:none}
+  @media (min-width:768px){.pledge__partners-logos{gap:40px}}
+  .pledge__partners-logos li{margin:0;padding:0}
+  .pledge__partners-logos li::marker{content:none}
+  .pledge__partners-logos img{height:50px}
+  .pledge__partners-logos li:last-child img{height:32px}
+  @media (min-width:768px){.pledge__partners-logos img{height:58px}.pledge__partners-logos li:last-child img{height:37px}}
   .pledge .promise{padding:24px 16px}
   @media (min-width:768px){.pledge .promise{padding:40px}}
 
@@ -335,48 +348,50 @@
   .promise__done .btn{align-self:flex-start}
 
   /* ==========================================================================
-     2. DE LA PROMESSE À L'ACTION — Figma 6352:22698, fond warm neutral (#F9F6F2),
-     cartes CardMission (354 px, gouttière 24) qui débordent à droite, puis tags d'activités.
+     2. DE LA PROMESSE À L'ACTION — Figma 6358:7701 : fond alt-blue-france, ce que représentent
+     les heures promises en 4 chiffres (blocs cliquables) + une photo par chiffre.
+     Rotation automatique : chaque photo reste 5 s, la barre du bloc actif se remplit pendant
+     ce temps. Un clic sur un bloc affiche sa photo et arrête la rotation ; le bouton
+     « Mettre en pause l'animation » (WCAG 2.2.2) la suspend / la relance.
      ========================================================================== */
-  .missions{background:var(--background-warm-neutral)}
-  .missions .carousel__track{gap:24px;margin-right:calc(50% - 50vw);padding-right:16px}
-  @media (min-width:1348px){.missions .carousel__track{margin-right:calc((1284px - 100vw) / 2)}}
-  .missions .carousel__track > li{width:min(354px,calc(100vw - 48px));display:flex}
-  /* CardMission.vue : bordure #E5E5E5, image 16/9 puis infos m-8 (32px), titre DsfrHeading xs
-     20/28 line-clamp-3, tags DsfrTag sm, puces 14/20 mention avec icônes Remix 16. */
-  .card-mission{position:relative;display:flex;flex-direction:column;width:100%;background:var(--background-default-grey);border:1px solid var(--border-default-grey)}
-  .card-mission__img{position:relative;aspect-ratio:384/216;overflow:hidden;background:var(--background-contrast-grey)}
-  .card-mission__img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s ease}
-  .card-mission:hover .card-mission__img img{transform:scale(1.05)}
-  @media (prefers-reduced-motion:reduce){.card-mission__img img{transition:none}}
-  .card-mission__badges{position:absolute;left:16px;top:16px;right:16px;display:flex;flex-wrap:wrap;gap:8px}
-  /* DsfrBadge jaune tournesol, 12/20 bold maj. */
-  .badge-sun{display:inline-flex;padding:0 6px;border-radius:4px;background:var(--background-contrast-yellow-tournesol);color:var(--text-label-yellow-tournesol);font-size:12px;line-height:20px;font-weight:700;text-transform:uppercase}
-  .card-mission__body{display:flex;flex-direction:column;gap:16px;padding:24px}
-  @media (min-width:768px){.card-mission__body{padding:32px}}
-  .card-mission__tags{display:flex;gap:8px;margin:0;padding:0;list-style:none;min-width:0}
-  .tag-sm{display:inline-flex;align-items:center;padding:2px 8px;border-radius:12px;background:var(--background-contrast-grey);color:var(--text-label-grey);font-size:12px;line-height:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .card-mission__title{margin:0;min-height:84px;font-size:20px;line-height:28px;font-weight:700;color:var(--text-title-grey);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-  .card-mission__title a{color:inherit;text-decoration:none;background-image:none}
-  .card-mission__title a::after{content:"";position:absolute;inset:0}
-  .card-mission__meta{display:flex;flex-direction:column;gap:4px;margin:0;padding:0;list-style:none}
-  .card-mission__meta li{display:flex;align-items:center;gap:8px;font-size:14px;line-height:20px;color:var(--text-mention-grey)}
-  .card-mission__meta svg{width:16px;height:16px;flex:none}
+  .impact{background:var(--background-alt-blue-france)}
+  .impact__grid{display:grid;grid-template-areas:"media" "pause" "steps";gap:16px}
+  @media (min-width:1024px){.impact__grid{grid-template-columns:1fr 1fr;grid-template-areas:"steps media" ". pause";column-gap:24px}}
+  .impact__steps{grid-area:steps;display:flex;flex-direction:column;gap:16px;margin:0;padding:0;list-style:none}
+  .impact__steps > li{margin:0;padding:0}
+  .impact__steps > li::marker{content:none}
+  .impact__step{position:relative;display:flex;align-items:center;gap:16px;width:100%;margin:0;padding:20px 24px;font:inherit;text-align:left;color:var(--text-title-grey);background:var(--background-default-grey);border:1px solid var(--border-open-blue-france);border-radius:0;cursor:pointer;transition:background-color .15s ease-out,box-shadow .15s ease-out}
+  @media (min-width:768px){.impact__step{gap:24px;padding:32px}}
+  .impact__step:hover{background-color:var(--background-default-grey-hover)}
+  .impact__step[aria-pressed="true"]{box-shadow:0 6px 9px rgba(0,0,18,.16)}
+  .impact__num{flex:none;width:88px;text-align:right;font-size:28px;line-height:36px;font-weight:700;white-space:nowrap}
+  @media (min-width:768px){.impact__num{width:124px;font-size:40px;line-height:48px}}
+  .impact__step[aria-pressed="true"] .impact__num{color:var(--text-title-blue-france)}
+  .impact__label{flex:1 1 auto;min-width:0;font-size:18px;line-height:28px;font-weight:400}
+  @media (min-width:768px){.impact__label{font-size:24px;line-height:32px}}
+  .impact__label strong{font-weight:700}
+  /* Barre de progression (Figma « Progress ») : piste border-open, remplissage border-default,
+     8 px au bas du bloc actif, par-dessus sa bordure */
+  .impact__bar{position:absolute;left:-1px;right:-1px;bottom:-1px;height:8px;background:var(--border-open-blue-france);opacity:0;pointer-events:none}
+  .impact__bar::before{content:"";position:absolute;inset:0;background:var(--border-default-blue-france);transform-origin:left center}
+  .impact__step[aria-pressed="true"] .impact__bar{opacity:1}
+  .impact[data-state="running"] [aria-pressed="true"] .impact__bar::before,
+  .impact[data-state="paused"] [aria-pressed="true"] .impact__bar::before{animation:impact-fill 5s linear forwards}
+  .impact[data-state="paused"] [aria-pressed="true"] .impact__bar::before,
+  .impact.is-offscreen [aria-pressed="true"] .impact__bar::before{animation-play-state:paused}
+  @keyframes impact-fill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 
-  /* Tags d'activités (Figma « activités/tag » 6301:6802) : blancs, 24/32 bold, padding 20/32,
-     ombre 0 4 6 ; emoji + libellé. */
-  .activities{margin-top:56px}
-  .activities__label{margin:0 0 24px;font-size:20px;line-height:28px;color:var(--text-mention-grey)}
-  @media (min-width:1024px){.activities__label{margin-bottom:32px;font-size:24px;line-height:32px}}
-  .activities__tags{display:flex;flex-wrap:wrap;gap:12px;margin:0;padding:0;list-style:none}
-  @media (min-width:1024px){.activities__tags{gap:16px}}
-  .activity-tag{display:inline-flex;align-items:center;gap:12px;padding:12px 20px;background:var(--background-default-grey);box-shadow:0 4px 6px rgba(0,0,18,.16);color:var(--text-title-grey);font-size:18px;line-height:28px;font-weight:700;text-decoration:none;background-image:none;transition:background-color .15s,transform .15s}
-  @media (min-width:1024px){.activity-tag{padding:20px 32px;font-size:24px;line-height:32px}}
-  .activity-tag:hover{background-color:var(--background-default-grey-hover);transform:translateY(-2px)}
-  @media (prefers-reduced-motion:reduce){.activity-tag:hover{transform:none}}
-  .activity-tag span{font-weight:400}
-  .missions__cta{margin-top:40px}
-  @media (min-width:1024px){.missions__cta{margin-top:56px}}
+  .impact__media{grid-area:media;position:relative;overflow:hidden;margin:0;border-radius:8px;aspect-ratio:630/576;background:var(--background-contrast-grey)}
+  @media (min-width:1024px){.impact__media{aspect-ratio:auto;min-height:100%}}
+  .impact__media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:var(--pos,center);opacity:0;transition:opacity .5s ease-out}
+  .impact__media img.is-current{opacity:1}
+  @media (prefers-reduced-motion:reduce){.impact__media img,.impact__step{transition:none}}
+  /* Bouton tertiaire sans contour SM (Figma « Thème clair / Tertiaire / SM ») */
+  .impact__pause{grid-area:pause;justify-self:end;display:inline-flex;align-items:center;gap:8px;min-height:32px;margin:0;padding:4px 12px 4px 8px;font:inherit;font-size:14px;line-height:24px;font-weight:500;color:var(--text-action-high-blue-france);background:transparent;border:0;cursor:pointer;transition:background-color .15s ease-out}
+  .impact__pause:hover{background-color:var(--background-default-grey-hover)}
+  .impact__pause svg{width:16px;height:16px;flex:none}
+  .impact__cta{margin-top:32px}
+  @media (min-width:1024px){.impact__cta{margin-top:8px}} /* 16 + 32 (bouton pause) + 8 = 56 px sous la rangée, comme Figma */
 
   /* ==========================================================================
      2 bis. PROGRAMME DE LA SEMAINE — Figma 6358:8851 : fond blanc, 4 rendez-vous
@@ -601,7 +616,6 @@
       <p class="ftv-hero__brand-label">Semaine de la fraternité ·<br class="br-mobile"> du 23 au 30 mars avec</p>
       <span class="ftv-hero__logos">
         <img src="ressources/france-tv/logo-france-tv.svg" alt="France.tv">
-        <img class="logo-jva" src="ressources/france-tv/logo-jva-blanc.svg" alt="JeVeuxAider.gouv.fr">
       </span>
     </div>
 
@@ -642,7 +656,20 @@
         <p>Une heure donnée, un voisin aidé, un repas<br class="br-desktop"> partagé&nbsp;: chaque geste compte, et chacun<br class="br-desktop"> peut trouver sa manière de s’engager.</p>
         <p class="pledge__callout">Pour la semaine de la Fraternité,<br class="br-desktop"> on compte sur vous.</p>
       </div>
-      <img class="pledge__hashtag" src="ressources/france-tv/hashtag-chacunpourtous.svg" width="346" height="50" alt="#ChacunPourTous">
+      <div class="pledge__partners">
+        <div class="pledge__partners-group">
+          <p class="pledge__partners-label">Projet porté par</p>
+          <img class="logo-ftv" src="ressources/france-tv/logo-france-tv.svg" width="139" height="24" alt="France.tv">
+        </div>
+        <div class="pledge__partners-group">
+          <p class="pledge__partners-label">avec la participation de</p>
+          <ul class="pledge__partners-logos">
+            <li><img src="ressources/france-tv/logo-jva-carre-blanc.svg" width="79" height="58" alt="JeVeuxAider.gouv.fr"></li>
+            <li><img src="ressources/france-tv/logo-mouvement-associatif.svg" width="110" height="58" alt="Le Mouvement associatif"></li>
+            <li><img src="ressources/france-tv/logo-france-generosites.svg" width="132" height="37" alt="France générosités"></li>
+          </ul>
+        </div>
+      </div>
     </div>
 
       <div class="promise" id="promesse">
@@ -691,44 +718,34 @@
 </section>
 
 <!-- ============ 2. DE LA PROMESSE À L'ACTION ============
-     Carte 1 = contenu de la maquette ; les suivantes reprennent les photos de mission
-     déjà utilisées dans le hero B, pour un rendu moins répétitif (contenus fictifs). -->
-<section class="lp-section missions" id="missions" aria-labelledby="missions-title" data-carousel>
+     Figma 6358:7701. Photos fournies par Nicolas (maraudes, collectes) ; visites = maquette ;
+     aide aux devoirs = photo de mission existante. -->
+<section class="lp-section impact" id="missions" aria-labelledby="missions-title" data-state="running">
   <div class="lp-container">
     <div class="lp-head">
       <div class="lp-head__text">
-        <h2 class="lp-title" id="missions-title">De la promesse à l’action</h2>
-        <p class="lp-subtitle">Des missions qui correspondent à votre temps</p>
-      </div>
-      <div class="lp-head__actions">
-        <button type="button" class="btn btn--tertiary btn--icon" data-prev aria-label="Missions précédentes" aria-controls="missions-track"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7.828 11H20V13H7.828L13.192 18.364L11.778 19.778L4 12L11.778 4.222L13.192 5.636L7.828 11Z"/></svg></button>
-        <button type="button" class="btn btn--tertiary btn--icon" data-next aria-label="Missions suivantes" aria-controls="missions-track"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.172 11L10.808 5.636L12.222 4.222L20 12L12.222 19.778L10.808 18.364L16.172 13H4V11H16.172Z"/></svg></button>
-        <a href="#" class="btn btn--tertiary">Plus de missions</a>
+        <h2 class="lp-title" id="missions-title">28&nbsp;000 heures de bénévolat, c’est…</h2>
+        <p class="lp-subtitle">Aider des familles, des jeunes, des personnes âgées isolées… et bien d’autres.</p>
       </div>
     </div>
 
-    <ul class="carousel__track" id="missions-track" aria-label="Missions de bénévolat"></ul>
-
-    <div class="activities">
-      <p class="activities__label">En panne d’inspiration&nbsp;?</p>
-      <ul class="activities__tags">
-        <li><a href="#" class="activity-tag"><span aria-hidden="true">💬</span>Traduction</a></li>
-        <li><a href="#" class="activity-tag"><span aria-hidden="true">🐰</span>Soins aux animaux</a></li>
-        <li><a href="#" class="activity-tag"><span aria-hidden="true">♻️</span>Ramassage de déchets</a></li>
-        <li><a href="#" class="activity-tag"><span aria-hidden="true">🙋‍♂️</span>Mentorat et parrainage</a></li>
-        <li><a href="#" class="activity-tag"><span aria-hidden="true">☕️</span>Maraude</a></li>
-        <li><a href="#" class="activity-tag"><span aria-hidden="true">🚛</span>Logistique</a></li>
-        <li><a href="#" class="activity-tag"><span aria-hidden="true">🖥️</span>Informatique</a></li>
-        <li><a href="#" class="activity-tag"><span aria-hidden="true">💭</span>Gestion des ressources humaines</a></li>
-        <li><a href="#" class="activity-tag"><span aria-hidden="true">📅</span>Événementiel</a></li>
-        <li><a href="#" class="activity-tag"><span aria-hidden="true">🌳</span>Aménagement d’espaces naturels</a></li>
-        <li><a href="#" class="activity-tag"><span aria-hidden="true">✉️</span>Vie citoyenne</a></li>
-        <li><a href="#" class="activity-tag"><span aria-hidden="true">🏛️</span>Valorisation du patrimoine</a></li>
-        <li><a href="#" class="activity-tag"><span aria-hidden="true">🔨</span>Travaux manuels</a></li>
+    <div class="impact__grid">
+      <ul class="impact__steps">
+        <li><button type="button" class="impact__step" aria-pressed="true" data-index="0"><span class="impact__num">9&nbsp;333</span><span class="impact__label"><strong>maraudes</strong> pour aider des personnes sans-abri</span><span class="impact__bar" aria-hidden="true"></span></button></li>
+        <li><button type="button" class="impact__step" aria-pressed="false" data-index="1"><span class="impact__num">933</span><span class="impact__label"><strong>jeunes accompagnés</strong> dans leurs devoirs scolaires</span><span class="impact__bar" aria-hidden="true"></span></button></li>
+        <li><button type="button" class="impact__step" aria-pressed="false" data-index="2"><span class="impact__num">7&nbsp;000</span><span class="impact__label"><strong>collectes alimentaires</strong> pour soutenir des familles</span><span class="impact__bar" aria-hidden="true"></span></button></li>
+        <li><button type="button" class="impact__step" aria-pressed="false" data-index="3"><span class="impact__num">14&nbsp;000</span><span class="impact__label"><strong>visites</strong> à des personnes âgées isolées</span><span class="impact__bar" aria-hidden="true"></span></button></li>
       </ul>
+      <div class="impact__media" aria-hidden="true">
+      <img src="ressources/france-tv/chiffre-maraudes.jpg" alt="" class="is-current" style="--pos:55% center">
+      <img src="ressources/france-tv/mission-aide-devoirs.jpg" alt="" style="--pos:40% center">
+      <img src="ressources/france-tv/chiffre-collectes-alimentaires.jpg" alt="" style="--pos:30% center">
+      <img src="ressources/france-tv/chiffre-visites-personnes-agees.jpg" alt="">
+      </div>
+      <button type="button" class="impact__pause"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M6 6H7.333V10H6V6Z"/><path d="M10 6H8.667V10H10V6Z"/><path fill-rule="evenodd" clip-rule="evenodd" d="M1.333 8C1.333 11.682 4.318 14.667 8 14.667C11.682 14.667 14.667 11.682 14.667 8C14.667 4.318 11.682 1.333 8 1.333C4.318 1.333 1.333 4.318 1.333 8ZM13.333 8C13.333 10.946 10.946 13.333 8 13.333C5.054 13.333 2.667 10.946 2.667 8C2.667 5.054 5.054 2.667 8 2.667C10.946 2.667 13.333 5.054 13.333 8Z"/></svg><span>Mettre en pause l’animation</span></button>
     </div>
 
-    <div class="missions__cta"><a href="#" class="btn btn--primary">Toutes les missions</a></div>
+    <div class="impact__cta"><a href="#" class="btn btn--primary">Je trouve une mission</a></div>
   </div>
 </section>
 
@@ -1247,36 +1264,47 @@
     done.focus();
   });
 
-  /* ---------- Cartes mission (structure CardMission.vue) ---------- */
-  const ICON = {
-    pin:'<path d="M12 20.9l4.95-4.95a7 7 0 1 0-9.9 0L12 20.9zm0 2.828l-6.364-6.364a9 9 0 1 1 12.728 0L12 23.728zM12 13a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm0 2a4 4 0 1 1 0-8 4 4 0 0 1 0 8z"/>',
-    time:'<path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm1-8h4v2h-6V7h2v5z"/>',
-    orga:'<path d="M21 19h2v2H1v-2h2V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v15h4v-8h-2V9h3a1 1 0 0 1 1 1v9zM5 5v14h8V5H5zm2 6h4v2H7v-2zm0-4h4v2H7V7z"/>',
-  };
-  const MISSIONS = [
-    {img:'mission-festival.jpg', badges:['Idéale pour débuter','Ouverte dès 16 ans'], tags:['Communication','+1'], title:'Je participe à la promotion d’un festival / événement', place:'Paris 75012', when:'Une demi-journée à partir du 3 juillet', orga:'Cosmos Arts'},
-    {img:'mission-personnes-agees.jpg', badges:['Idéale pour débuter'], tags:['Lien intergénérationnel'], title:'Je rends visite à des personnes âgées isolées de mon quartier', place:'Lyon 69003', when:'1 heure par semaine', orga:'Voisins solidaires du 3e'},
-    {img:'mission-aide-devoirs.jpg', badges:['Ouverte dès 16 ans'], tags:['Soutien scolaire','+1'], title:'J’accompagne des collégiens dans leurs devoirs', place:'À distance', when:'2 heures par semaine', orga:'Coup de pouce scolaire'},
-    {img:'mission-collecte-dons.jpg', badges:['Idéale pour débuter','Ouverte dès 16 ans'], tags:['Collecte'], title:'Je participe à une collecte alimentaire en supermarché', place:'Nantes 44000', when:'Une demi-journée le 28 mars', orga:'Banque alimentaire 44'},
-    {img:'mission-ateliers-culturels.jpg', badges:[], tags:['Culture et loisirs'], title:'J’anime un atelier de peinture pour des enfants', place:'Lille 59000', when:'Une fois par mois', orga:'La Maison des couleurs'},
-    {img:'mission-renovation-meubles.jpg', badges:['Idéale pour débuter'], tags:['Travaux manuels','+1'], title:'Je rénove des meubles pour des familles relogées', place:'Marseille 13004', when:'1 journée, le samedi', orga:'Atelier Récup’ & Partage'},
-  ];
-  const track = document.getElementById('missions-track');
-  track.innerHTML = MISSIONS.map(m => `
-    <li><article class="card-mission">
-      <div class="card-mission__img"><img src="ressources/france-tv/${m.img}" alt="">
-        ${m.badges.length ? `<div class="card-mission__badges">${m.badges.map(b => `<span class="badge-sun">${b}</span>`).join('')}</div>` : ''}
-      </div>
-      <div class="card-mission__body">
-        <ul class="card-mission__tags">${m.tags.map(t => `<li class="tag-sm">${t}</li>`).join('')}</ul>
-        <h3 class="card-mission__title"><a href="#">${m.title}</a></h3>
-        <ul class="card-mission__meta">
-          <li><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">${ICON.pin}</svg>${m.place}</li>
-          <li><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">${ICON.time}</svg>${m.when}</li>
-          <li><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">${ICON.orga}</svg>${m.orga}</li>
-        </ul>
-      </div>
-    </article></li>`).join('');
+  /* ---------- De la promesse à l'action : un chiffre, une photo ----------
+     data-state : running (rotation, 5 s par photo), paused (bouton pause, barre figée),
+     stopped (après un clic sur un bloc : la rotation ne reprend plus d'elle-même). */
+  (() => {
+    const root = document.querySelector('.impact');
+    if (!root) return;
+    const btns = [...root.querySelectorAll('.impact__step')];
+    const imgs = [...root.querySelectorAll('.impact__media img')];
+    const pause = root.querySelector('.impact__pause');
+    const ICON_PAUSE = pause.querySelector('svg').innerHTML;
+    const ICON_PLAY = '<path fill-rule="evenodd" clip-rule="evenodd" d="M8 14.667C4.318 14.667 1.333 11.682 1.333 8C1.333 4.318 4.318 1.333 8 1.333C11.682 1.333 14.667 4.318 14.667 8C14.667 11.682 11.682 14.667 8 14.667ZM8 13.333C10.946 13.333 13.333 10.946 13.333 8C13.333 5.054 10.946 2.667 8 2.667C5.054 2.667 2.667 5.054 2.667 8C2.667 10.946 5.054 13.333 8 13.333ZM7.081 5.61L10.334 7.778C10.457 7.86 10.457 8.14 10.334 8.222L7.081 10.39C6.904 10.508 6.667 10.381 6.667 10.168V5.832C6.667 5.619 6.904 5.492 7.081 5.61Z"/>';
+    let current = 0;
+    const show = i => {
+      current = (i + btns.length) % btns.length;
+      btns.forEach((b, k) => b.setAttribute('aria-pressed', String(k === current)));
+      imgs.forEach((im, k) => im.classList.toggle('is-current', k === current));
+    };
+    const setState = s => {
+      root.dataset.state = s;
+      const running = s === 'running';
+      pause.querySelector('span').textContent = running ? 'Mettre en pause l’animation' : 'Relancer l’animation';
+      pause.querySelector('svg').innerHTML = running ? ICON_PAUSE : ICON_PLAY;
+    };
+    // Fin du remplissage de la barre (animation du ::before) = photo suivante
+    root.addEventListener('animationend', e => {
+      if (e.animationName === 'impact-fill' && root.dataset.state === 'running') show(current + 1);
+    });
+    btns.forEach((b, i) => b.addEventListener('click', () => { show(i); setState('stopped'); }));
+    pause.addEventListener('click', () => {
+      if (root.dataset.state === 'running') return setState('paused');
+      // Relancer après un clic sur un bloc : on repart du bloc affiché, barre à zéro
+      if (root.dataset.state === 'stopped') { root.dataset.state = ''; void root.offsetWidth; }
+      setState('running');
+    });
+    // La rotation n'avance que lorsque la section est à l'écran
+    if ('IntersectionObserver' in window) {
+      root.classList.add('is-offscreen');
+      new IntersectionObserver(([e]) => root.classList.toggle('is-offscreen', !e.isIntersecting), {threshold: .3}).observe(root);
+    }
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) setState('stopped');
+  })();
 
   /* ---------- Bandeau de visages : décalages verticaux de la maquette ---------- */
   const FACE_Y = [60, 30, 60, 0, 20, 60, 0, 60];
@@ -1352,10 +1380,10 @@
 (() => {
   if (matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
   // Éléments qui apparaissent seuls
-  const SINGLE = ['.lp-head', '.partners__label', '.faq__head', '.faq__box', '.activities__label',
-    '.missions__cta', '.programme__cta', '.voices__cta', '.pledge__intro', '.pledge .promise'];
+  const SINGLE = ['.lp-head', '.partners__label', '.faq__head', '.faq__box',
+    '.impact__cta', '.programme__cta', '.voices__cta', '.pledge__intro', '.pledge .promise'];
   // Listes dont les enfants apparaissent en cascade quand la liste entre dans l'écran
-  const GROUP = ['.carousel__track', '.activities__tags', '.prog-list', '.faces ul', '.final__inner'];
+  const GROUP = ['.carousel__track', '.impact__steps', '.prog-list', '.faces ul', '.final__inner'];
   const STEP = .07, MAX = 8;
 
   const io = new IntersectionObserver(entries => entries.forEach(e => {

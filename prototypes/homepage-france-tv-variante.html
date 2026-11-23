@@ -177,7 +177,9 @@
   /* Bouton : DsfrButton.vue size="lg" (px-6 py-2 text-lg min-h-[3rem]), tertiary-no-outline
      + icône à gauche (Figma : pl 18 / pr 24). Pleine largeur sur mobile.
      La maquette le dessine à 56px, le composant réel fait 48px : on suit le code. */
-  .ftv-btn-icon{width:24px;height:24px;flex:none;margin-left:-6px}
+  /* Icône « lien externe » à droite (Figma 6389:16713) : ajoutée par le DSFR sur tout [target=_blank] */
+  /* Le bouton espace déjà ses enfants (gap 8px) : on retire la marge DSFR de l’icône, qui s’y ajoutait */
+  .ftv-hero__ctas > a::after{margin-left:0}
 
   /* ---------- Galerie d'exemples de missions ----------
      Desktop : 1 carte haute + 2 cartes, colonnes égales, gouttière 24, 40px sous le haut
@@ -290,9 +292,8 @@
       </div>
 
       <div class="ftv-hero__ctas">
-        <a href="#" class="font-medium transition-extended ease-out inline-flex items-center justify-center gap-2 bg-white text-jva-blue-500 hover:bg-[#F6F6F6] active:bg-[#EDEDED] px-6 py-2 text-lg min-h-[3rem]">
-          <img class="ftv-btn-icon" src="ressources/france-tv/icone-recherche.svg" alt="">
-          Trouver une mission
+        <a href="landing-semaine-fraternite-a.html" target="_blank" rel="noopener" class="font-medium transition-extended ease-out inline-flex items-center justify-center gap-2 bg-white text-jva-blue-500 hover:bg-[#F6F6F6] active:bg-[#EDEDED] px-6 py-2 text-lg min-h-[3rem]">
+          Je donne de mon temps<span class="sr-only"> (nouvelle fenêtre)</span>
         </a>
       </div>
     </div>

@@ -78,13 +78,13 @@
   .dots li{display:flex;align-items:center;justify-content:center;min-width:12px;min-height:24px}
 
   /* ==========================================================================
-     1. HERO — Figma "D - Hero B" (6352:23583), 1680×936 : texte 825 + formulaire de
+     1. HERO — Figma "D - Hero B" (6352:23583), 1680×1048 : texte 825 + formulaire de
      promesse (583), gouttière 64, marges 104 / 64.
      ========================================================================== */
   .ftv-hero{--ftv-blue:#000091;position:relative;overflow:hidden;background:var(--ftv-blue);color:#fff;box-shadow:0 6px 18px rgba(0,0,18,.16);isolation:isolate}
   .ftv-hero__stage{position:relative;max-width:1680px;margin:0 auto;padding:32px 16px 40px;display:grid;gap:40px}
   @media (min-width:768px){.ftv-hero__stage{padding:56px 32px 64px}}
-  @media (min-width:1200px){.ftv-hero__stage{grid-template-columns:minmax(0,825fr) minmax(400px,583fr);column-gap:64px;align-items:center;padding:64px 104px;min-height:936px}}
+  @media (min-width:1200px){.ftv-hero__stage{grid-template-columns:minmax(0,825fr) minmax(400px,583fr);column-gap:64px;align-items:center;padding:64px 104px;min-height:1048px}}
   .ftv-hero__bg{position:absolute;inset:0;pointer-events:none;z-index:-1;max-width:1680px;margin:0 auto}
   .ftv-hero__bg img{position:absolute;max-width:none}
   /* Halos flous (Figma 6306:9169, MAJ 19/11/2026 : remplacent les anneaux Ellipse 40/41).
@@ -96,12 +96,26 @@
 
   .ftv-hero__text{display:flex;flex-direction:column;align-items:flex-start;gap:32px}
   @media (min-width:768px){.ftv-hero__text{gap:40px}}
-  /* Surtitre + deux logos (France.tv 139×24, JeVeuxAider blanc 178×29), gap 12 */
-  .ftv-hero__brand{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:0}
-  .ftv-hero__brand-label{flex:1 1 100%;font-size:14px;line-height:20px;font-weight:700;text-transform:uppercase;color:#F5F5FE;margin:0}
-  @media (min-width:768px){.ftv-hero__brand-label{flex:none;line-height:24px}}
-  .ftv-hero__brand img{display:block;height:24px;width:auto}
-  .ftv-hero__brand img.logo-jva{height:29px}
+  /* Figma 6352:23583 (MAJ) : colonne texte = surtitre seul (24 au-dessus du titre),
+     titre + chapô, 80 jusqu'au compteur, 40 jusqu'aux partenaires (en bas, comme la landing A). */
+  .ftv-hero__brand{margin:0 0 -8px;font-size:14px;line-height:20px;font-weight:700;text-transform:uppercase;color:#F5F5FE}
+  @media (min-width:768px){.ftv-hero__brand{margin-bottom:-16px;line-height:24px}}
+  @media (min-width:768px){.ftv-hero .ftv-stats{margin-top:40px}}
+  /* Partenaires : repris de .pledge__partners (landing A, Figma 6389:21288) */
+  .ftv-partners{display:flex;flex-direction:column;gap:24px}
+  @media (min-width:768px){.ftv-partners{flex-direction:row;align-items:flex-start;gap:80px}}
+  .ftv-partners__group{display:flex;flex-direction:column;align-items:flex-start;gap:8px}
+  .ftv-partners__group + .ftv-partners__group{gap:16px}
+  .ftv-partners__label{margin:0;font-size:16px;line-height:24px;font-style:italic;color:#fff}
+  .ftv-partners img{display:block;width:auto}
+  .ftv-partners .logo-ftv{height:24px}
+  .ftv-partners__logos{display:flex;align-items:center;gap:24px;margin:0;padding:0;list-style:none}
+  @media (min-width:768px){.ftv-partners__logos{gap:40px}}
+  .ftv-partners__logos li{margin:0;padding:0}
+  .ftv-partners__logos li::marker{content:none}
+  .ftv-partners__logos img{height:50px}
+  .ftv-partners__logos li:last-child img{height:32px}
+  @media (min-width:768px){.ftv-partners__logos img{height:58px}.ftv-partners__logos li:last-child img{height:37px}}
   .ftv-hero__copy{display:flex;flex-direction:column;gap:8px}
   @media (min-width:768px){.ftv-hero__copy{gap:24px}}
   .ftv-hero__title{margin:0;color:#fff;font-weight:700;font-size:32px;line-height:40px}
@@ -139,7 +153,7 @@
   .ftv-stats__people strong{font-variant-numeric:tabular-nums}
   /* 1200–1499 px : colonne trop étroite pour les deux moitiés côte à côte → empilées */
   @media (min-width:1200px) and (max-width:1499px){
-    .ftv-hero .ftv-stats{flex-direction:column;align-items:flex-start;gap:20px;padding:16px 32px 24px;min-height:0}
+    .ftv-hero .ftv-stats{flex-direction:column;align-items:flex-start;gap:20px;padding:32px;min-height:0}
     .ftv-hero .ftv-stats__hours{padding-right:0}
     .ftv-hero .ftv-stats__people{border-left:0;border-top:1px solid rgba(255,255,255,.25);padding:20px 0 0;align-self:stretch}
   }
@@ -214,11 +228,40 @@
   .promise__submit .btn{width:100%}
   .promise__rgpd{margin:0;font-size:12px;line-height:20px;color:var(--text-mention-grey);text-align:center}
   /* État « promesse enregistrée » */
-  .promise__done{display:flex;flex-direction:column;gap:16px}
+  /* Champ ville (Figma 6358:8673) : consigne en texte d'aide DSFR plutôt qu'en placeholder,
+     loupe à droite (le vrai champ sera une autocomplétion, comme la recherche de missions). */
+  .promise .fr-hint-text{display:block;margin-top:4px;font-size:12px;line-height:20px;color:var(--text-mention-grey)}
+  .promise__search{position:relative}
+  .promise__search .fr-input{padding-right:40px}
+  .promise__search > svg{position:absolute;right:12px;top:20px;width:16px;height:16px;transform:translateY(-50%);color:var(--text-default-grey);pointer-events:none}
+  /* Panneau de suggestions (DsfrInputAutocomplete : absolute w-full, mt-2, bordure grise,
+     shadow-md, max-h 222px ; options text-sm py-2 px-3, survol #E3E3FD = action-low bleu France) */
+  .combo-panel{position:absolute;z-index:20;left:0;right:0;top:100%;margin-top:8px;padding:12px 4px;background:var(--background-default-grey);border:1px solid var(--border-default-grey);box-shadow:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.1)}
+  .combo-panel[hidden]{display:none}
+  .combo-list{max-height:198px;overflow-y:auto;overscroll-behavior:contain;margin:0;padding:0 4px;list-style:none;text-align:left}
+  .combo-list li{display:flex;flex-direction:column;margin:0;padding:8px 12px;font-size:14px;line-height:20px;color:var(--text-default-grey);cursor:pointer}
+  .combo-list li[aria-selected="true"]{background:var(--background-action-low-blue-france)}
+  .combo-list li small{font-size:12px;line-height:16px;color:var(--text-mention-grey)}
+  .combo-list li[aria-selected="true"] small{color:var(--text-default-grey)}
+  .combo-list li.is-empty{cursor:default;color:var(--text-mention-grey)}
+
+  /* ---------- État après envoi (Figma 6389:20936, avec les reformulations de la critique) ---------- */
+  .promise__done{display:flex;flex-direction:column;gap:24px}
   .promise__done[hidden]{display:none}
+  .promise__done:focus{outline:none}
   .promise__done h2{margin:0;font-size:28px;line-height:36px;font-weight:700;color:var(--text-title-grey)}
-  .promise__done p{margin:0;font-size:18px;line-height:28px}
-  .promise__done .btn{align-self:flex-start}
+  .promise__done p{margin:0;font-size:16px;line-height:24px}
+  .promise__done .btn{width:100%}
+  /* Landing B : pas de bloc compteur dans l'état final, le compteur du hero est juste à côté.
+     La fête s'y passe : « +12 h » vert clair (fond bleu de marque, couleur fixe = vert DSFR
+     success-950 en clair, lisible sur #000091) après l'éclat, et confettis dans le cadre du compteur. */
+  .ftv-stats{position:relative}
+  @media (min-width:768px){.ftv-stats{overflow:hidden}}
+  .ftv-stats__gain{position:absolute;left:100%;top:.05em;margin-left:4px;font-size:24px;line-height:32px;font-weight:700;letter-spacing:0;color:#B8FEC9;white-space:nowrap;opacity:0;transform:translateY(6px);transition:opacity .3s ease-out,transform .3s ease-out}
+  .ftv-stats__gain.is-on{opacity:1;transform:none}
+  .confetti{position:absolute;inset:0;pointer-events:none}
+  .confetti i{position:absolute;display:block;width:8px;height:12px;border-radius:2px}
+  .confetti i.is-round{width:8px;height:8px;border-radius:50%}
 
   /* ==========================================================================
      2. DE LA PROMESSE À L'ACTION — Figma 6358:7701 : fond alt-blue-france, ce que représentent
@@ -480,11 +523,7 @@
 
   <div class="ftv-hero__stage">
     <div class="ftv-hero__text">
-      <div class="ftv-hero__brand">
-        <p class="ftv-hero__brand-label">Semaine de la fraternité · du 23 au 30 mars avec</p>
-        <img src="ressources/france-tv/logo-france-tv.svg" alt="France.tv">
-        <img class="logo-jva" src="ressources/france-tv/logo-jva-blanc.svg" alt="JeVeuxAider.gouv.fr">
-      </div>
+      <p class="ftv-hero__brand">Semaine de la fraternité · du 23 au 30 mars</p>
 
       <div class="ftv-hero__copy">
         <h1 class="ftv-hero__title" id="ftv-title">Et vous, combien d’heures<br class="br-desktop"> donnez-vous aux autres&nbsp;?</h1>
@@ -492,8 +531,9 @@
       </div>
 
       <div class="ftv-stats">
+        <div class="confetti" id="confetti" aria-hidden="true"></div>
         <p class="ftv-stats__hours">
-          <span class="ftv-stats__num"><span class="ftv-stats__value js-hours">28 000</span><span class="ftv-stats__spark js-spark" aria-hidden="true"><img src="ressources/france-tv/eclat.svg" alt=""></span></span>
+          <span class="ftv-stats__num" id="hero-num"><span class="ftv-stats__value js-hours">28 000</span><span class="ftv-stats__spark js-spark" aria-hidden="true"><img src="ressources/france-tv/eclat.svg" alt=""></span><span class="ftv-stats__gain" id="hero-gain" aria-hidden="true">+12&nbsp;h</span></span>
           <span class="ftv-stats__unit">heures de bénévolat promises</span>
         </p>
         <div class="ftv-stats__people">
@@ -506,6 +546,21 @@
         <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><rect x="3" y="2" width="3.5" height="12"/><rect x="9.5" y="2" width="3.5" height="12"/></svg>
         <span>Mettre en pause le compteur</span>
       </button>
+
+      <div class="ftv-partners">
+        <div class="ftv-partners__group">
+          <p class="ftv-partners__label">Projet porté par</p>
+          <img class="logo-ftv" src="ressources/france-tv/logo-france-tv.svg" width="139" height="24" alt="France.tv">
+        </div>
+        <div class="ftv-partners__group">
+          <p class="ftv-partners__label">avec la participation de</p>
+          <ul class="ftv-partners__logos">
+            <li><img src="ressources/france-tv/logo-jva-carre-blanc.svg" width="79" height="58" alt="JeVeuxAider.gouv.fr"></li>
+            <li><img src="ressources/france-tv/logo-mouvement-associatif.svg" width="110" height="58" alt="Le Mouvement associatif"></li>
+            <li><img src="ressources/france-tv/logo-france-generosites.svg" width="132" height="37" alt="France générosités"></li>
+          </ul>
+        </div>
+      </div>
     </div>
 
     <div class="promise" id="promesse">
@@ -531,6 +586,26 @@
 
         <p class="promise__estimate" aria-live="polite"><span class="promise__estimate-spark" aria-hidden="true"><img src="ressources/france-tv/eclat.svg" alt=""></span><strong class="promise__estimate-hours" id="promise-total">+12&nbsp;h</strong><span id="promise-equiv">Ces heures, ça peut être… <strong>4</strong>&nbsp;maraudes, <strong>6</strong>&nbsp;séances de devoirs, <strong>3</strong>&nbsp;collectes (sur plusieurs mois) ou toute autre mission de votre choix.</span></p>
 
+        <!-- Ville (Figma 6358:8673) : sert à localiser les missions des e-mails et le bouton
+               de l'état final. Prototype : une liste de villes en dur ; en vrai, l'API Adresse
+               (code postal ou nom), comme les autres autocomplétions de l'app. -->
+          <div class="fr-input-group" id="city-group">
+            <label class="fr-label" for="promise-city">Votre ville
+              <span class="fr-hint-text" id="promise-city-hint">Code postal ou nom de la ville</span>
+            </label>
+            <!-- Autocomplétion : reprise de DsfrInputAutocomplete (components/dsfr/InputAutocomplete.vue),
+                 combobox ARIA, panneau sous le champ et de sa largeur, option survolée en bleu clair,
+                 ligne secondaire en gris (département, région). -->
+            <div class="promise__search" id="city-combo">
+              <input class="fr-input" type="text" id="promise-city" name="city" placeholder="Paris, Nantes, Lyon…" role="combobox" autocomplete="off" aria-autocomplete="list" aria-controls="promise-city-list" aria-expanded="false" aria-describedby="promise-city-hint promise-city-error">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.031 16.617l4.283 4.282-1.415 1.415-4.282-4.283A8.96 8.96 0 0 1 11 20c-4.968 0-9-4.032-9-9s4.032-9 9-9 9 4.032 9 9a8.96 8.96 0 0 1-1.969 5.617zm-2.006-.742A6.977 6.977 0 0 0 18 11c0-3.868-3.133-7-7-7-3.868 0-7 3.132-7 7 0 3.867 3.132 7 7 7a6.977 6.977 0 0 0 4.875-1.975l.15-.15z"/></svg>
+              <div class="combo-panel" id="city-panel" hidden>
+                <ul class="combo-list" id="promise-city-list" role="listbox" aria-label="Suggestions"></ul>
+              </div>
+            </div>
+            <p class="fr-error-text" id="promise-city-error" hidden>Indiquez votre ville ou votre code postal</p>
+          </div>
+
         <div class="fr-input-group" id="email-group">
           <label class="fr-label" for="promise-email">Votre adresse e-mail</label>
           <input class="fr-input" type="email" id="promise-email" name="email" autocomplete="email" placeholder="sarah.martin@mail.com" aria-describedby="promise-email-error">
@@ -539,16 +614,19 @@
 
         <div class="promise__submit">
           <button type="submit" class="btn btn--primary">Je fais grimper le compteur</button>
-          <p class="promise__rgpd">Votre e-mail sert à vous envoyer des propositions de missions adaptées.<br>Vous pouvez vous désinscrire à tout moment.</p>
+          <p class="promise__rgpd">Votre ville et votre e-mail servent à vous envoyer des missions près de chez vous.<br>Vous pouvez vous désinscrire à tout moment.</p>
         </div>
       </form>
 
-      <div class="promise__done" id="promise-done" hidden tabindex="-1">
-        <h2>Merci, votre promesse compte déjà&nbsp;!</h2>
-        <p>Vos <strong id="promise-done-hours">12 heures</strong> viennent de s’ajouter au compteur de la Fraternité.</p>
-        <p>Dès le 23 mars, nous vous enverrons à <strong id="promise-done-email"></strong> des missions qui correspondent à votre temps.</p>
-        <a href="#missions" class="btn btn--tertiary">Voir des missions dès maintenant</a>
-      </div>
+      <!-- État après envoi (Figma 6389:20936), avec les reformulations proposées :
+             titre sans emoji qui tient la promesse du bouton, adresse rappelée
+             (pour repérer une faute de frappe), bouton vers la recherche JVA
+             centrée sur la ville saisie. -->
+        <div class="promise__done" id="promise-done" hidden tabindex="-1">
+          <h2>Merci&nbsp;! Vos <span id="promise-done-hours">12 heures</span> sont dans le compteur</h2>
+          <p>JeVeuxAider.gouv.fr, la plateforme publique du bénévolat, vous enverra (à l’adresse <strong id="promise-done-email"></strong>) des missions <span id="promise-done-place">près de chez vous</span>.</p>
+          <a href="https://www.jeveuxaider.gouv.fr/missions-benevolat" id="promise-done-cta" target="_blank" rel="noopener" class="btn btn--primary"><span id="promise-done-cta-label">Voir les missions près de chez vous</span><span class="sr-only"> (nouvelle fenêtre)</span></a>
+        </div>
     </div>
   </div>
 </section>
@@ -992,18 +1070,156 @@
     email.setAttribute('aria-invalid', String(on));
   };
   email.addEventListener('input', () => { if (emailGroup.classList.contains('fr-input-group--error') && email.validity.valid && email.value) setError(false); });
-  form.addEventListener('submit', e => {
+  const city = document.getElementById('promise-city');
+  const cityGroup = document.getElementById('city-group');
+  const cityError = document.getElementById('promise-city-error');
+  const setCityError = on => {
+    cityGroup.classList.toggle('fr-input-group--error', on);
+    cityError.hidden = !on;
+    city.setAttribute('aria-invalid', String(on));
+  };
+  city.addEventListener('input', () => { if (city.value.trim()) setCityError(false); });
+
+  /* Villes du prototype (en vrai : API Adresse, comme les autres DsfrInputAutocomplete de l'app).
+     La recherche JVA se centre avec ?aroundLatLng=lat,lng (composables/useAlgoliaSearchParametersHelper.ts,
+     rayon 35 km). */
+  const CITY_LIST = [
+    ['Paris', '75001', 'Paris, Île-de-France', '48.8566,2.3522'],
+    ['Marseille', '13001', '13, Bouches-du-Rhône, Provence-Alpes-Côte d’Azur', '43.2965,5.3698'],
+    ['Lyon', '69001', '69, Rhône, Auvergne-Rhône-Alpes', '45.764,4.8357'],
+    ['Toulouse', '31000', '31, Haute-Garonne, Occitanie', '43.6047,1.4442'],
+    ['Nice', '06000', '06, Alpes-Maritimes, Provence-Alpes-Côte d’Azur', '43.7102,7.262'],
+    ['Nantes', '44000', '44, Loire-Atlantique, Pays de la Loire', '47.2184,-1.5536'],
+    ['Nanterre', '92000', '92, Hauts-de-Seine, Île-de-France', '48.8924,2.2071'],
+    ['Nancy', '54000', '54, Meurthe-et-Moselle, Grand Est', '48.6921,6.1844'],
+    ['Strasbourg', '67000', '67, Bas-Rhin, Grand Est', '48.5734,7.7521'],
+    ['Montpellier', '34000', '34, Hérault, Occitanie', '43.6108,3.8767'],
+    ['Bordeaux', '33000', '33, Gironde, Nouvelle-Aquitaine', '44.8378,-0.5792'],
+    ['Lille', '59000', '59, Nord, Hauts-de-France', '50.6292,3.0573'],
+    ['Rennes', '35000', '35, Ille-et-Vilaine, Bretagne', '48.1173,-1.6778'],
+    ['Reims', '51100', '51, Marne, Grand Est', '49.2583,4.0317'],
+    ['Saint-Étienne', '42000', '42, Loire, Auvergne-Rhône-Alpes', '45.4397,4.3872'],
+    ['Le Havre', '76600', '76, Seine-Maritime, Normandie', '49.4944,0.1079'],
+  ].map(([name, cp, context, ll]) => ({ name, cp, context, ll }));
+  const CITIES = Object.fromEntries(CITY_LIST.map(c => [c.name, c.ll]));
+
+  /* Combobox (même comportement clavier que DsfrInputAutocomplete : ↓ ↑ Entrée Échap) */
+  (() => {
+    const panel = document.getElementById('city-panel'), list = document.getElementById('promise-city-list');
+    const norm = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
+    let items = [], active = -1;
+    const close = () => { panel.hidden = true; city.setAttribute('aria-expanded', 'false'); city.removeAttribute('aria-activedescendant'); active = -1; };
+    const highlight = i => {
+      active = i;
+      [...list.children].forEach((li, k) => li.setAttribute('aria-selected', String(k === i)));
+      if (i >= 0) { city.setAttribute('aria-activedescendant', `city-opt-${i}`); list.children[i].scrollIntoView({ block: 'nearest' }); }
+      else city.removeAttribute('aria-activedescendant');
+    };
+    const choose = c => { city.value = `${c.name} (${c.cp})`; setCityError(false); close(); };
+    const open = () => {
+      const q = norm(city.value);
+      if (q.length < 2) return close();
+      items = CITY_LIST.filter(c => norm(c.name).startsWith(q) || c.cp.startsWith(q)).slice(0, 6);
+      list.innerHTML = items.length
+        ? items.map((c, i) => `<li role="option" id="city-opt-${i}" aria-selected="false"><span>${c.name} (${c.cp})</span><small>${c.context}</small></li>`).join('')
+        : '<li class="is-empty" role="option" aria-disabled="true">Aucun résultat</li>';
+      [...list.children].forEach((li, i) => {
+        if (!items[i]) return;
+        li.addEventListener('mousemove', () => highlight(i));
+        li.addEventListener('mousedown', e => { e.preventDefault(); choose(items[i]); });
+      });
+      active = -1;
+      panel.hidden = false; city.setAttribute('aria-expanded', 'true');
+    };
+    city.addEventListener('input', open);
+    city.addEventListener('blur', close);
+    city.addEventListener('keydown', e => {
+      if (panel.hidden || !items.length) return;
+      if (e.key === 'ArrowDown') { e.preventDefault(); highlight((active + 1) % items.length); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); highlight((active - 1 + items.length) % items.length); }
+      else if (e.key === 'Enter' && active >= 0) { e.preventDefault(); choose(items[active]); }
+      else if (e.key === 'Escape') { e.stopPropagation(); close(); }
+    });
+  })();
+
+  /* ---------- Effet fête ---------- */
+  // Gerbe de confettis depuis le nombre, aux couleurs de la page (bleu France, rouge Marianne,
+  // orange de l'éclat, jaune tournesol), qui retombe et s'efface dans la carte
+  const CONFETTI_COLORS = ['var(--background-action-high-blue-france)', 'var(--background-action-high-red-marianne)',
+    '#FFA48B' /* = eclat.svg */, 'var(--background-action-high-yellow-tournesol)'];
+  function burst(layer, origin) {
+    const box = layer.getBoundingClientRect(), o = origin.getBoundingClientRect();
+    const x0 = o.left - box.left + o.width / 2, y0 = o.top - box.top + o.height / 2;
+    for (let i = 0; i < 18; i++) {
+      const p = document.createElement('i');
+      if (i % 3 === 0) p.className = 'is-round';
+      p.style.left = `${x0}px`; p.style.top = `${y0}px`;
+      p.style.background = CONFETTI_COLORS[i % CONFETTI_COLORS.length];
+      layer.appendChild(p);
+      // Vers le haut et sur les côtés, puis retombée
+      const a = (-90 + (Math.random() * 150 - 75)) * Math.PI / 180, d = 70 + Math.random() * 90;
+      const dx = Math.cos(a) * d, dy = Math.sin(a) * d, r = (Math.random() * 2 - 1) * 540;
+      p.animate([
+        { transform: 'translate(-50%,-50%) rotate(0) scale(.4)', opacity: 1 },
+        { transform: `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) rotate(${r * .6}deg) scale(1)`, opacity: 1, offset: .45 },
+        { transform: `translate(calc(-50% + ${dx * 1.25}px), calc(-50% + ${dy + 90}px)) rotate(${r}deg) scale(.9)`, opacity: 0 }
+      ], { duration: 1100 + Math.random() * 400, easing: 'cubic-bezier(.2,.7,.4,1)' }).finished.then(() => p.remove());
+    }
+  }
+
+  form.addEventListener('submit', async e => {
     e.preventDefault();
-    if (!email.value || !email.validity.valid) { setError(true); email.focus(); return; }
-    setError(false);
+    if (form.inert) return;
+    const cityOk = !!city.value.trim(), emailOk = !!email.value && email.validity.valid;
+    setCityError(!cityOk); setError(!emailOk);
+    if (!cityOk || !emailOk) { (cityOk ? email : city).focus(); return; }
     const h = promised();
-    add(h, 1);
+
+    // Textes de l'état final
+    const cityName = city.value.replace(/\s*\(.*\)\s*$/, '').trim();
+    const named = !/^\d+$/.test(cityName); // un code postal seul ne se lit pas « près de 69003 »
+    const place = named ? `près de ${cityName}` : 'près de chez vous';
     document.getElementById('promise-done-hours').textContent = plural(h);
     document.getElementById('promise-done-email').textContent = email.value;
-    form.hidden = true;
+    document.getElementById('promise-done-place').textContent = place;
+    document.getElementById('promise-done-cta-label').textContent = `Voir les missions ${place}`;
+    const ll = CITIES[cityName];
+    document.getElementById('promise-done-cta').href = 'https://www.jeveuxaider.gouv.fr/missions-benevolat'
+      + (ll ? `?aroundLatLng=${ll}` : '');
+
+    // Transition douce (hors prefers-reduced-motion) : le formulaire s'efface (200 ms), la carte
+    // prend la hauteur de l'état final (450 ms) pendant que la page remonte en douceur, l'état
+    // final apparaît en fondu ; la fête (« +12 h », compteur, confettis) ne part qu'ensuite.
+    form.inert = true; // pas de double envoi pendant la transition
     const done = document.getElementById('promise-done');
+    const card = done.closest('.promise'), section = done.closest('section');
+    const h0 = card.offsetHeight;
+    if (!reduceMotion) await form.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 200, easing: 'ease-out', fill: 'forwards' }).finished;
+    form.hidden = true;
     done.hidden = false;
-    done.focus();
+    const h1 = card.offsetHeight;
+    // On remonte au début de la section (titre du hero compris) si la carte y reste entière
+    // à l'écran, sinon au début de la carte.
+    const fits = section && card.getBoundingClientRect().bottom - section.getBoundingClientRect().top <= innerHeight;
+    const target = fits ? section : card;
+    if (target.getBoundingClientRect().top < 0) target.scrollIntoView({ block: 'start', behavior: reduceMotion ? 'auto' : 'smooth' });
+    done.focus({ preventScroll: true });
+    if (!reduceMotion) {
+      card.style.overflow = 'hidden';
+      done.animate([{ opacity: 0, transform: 'translateY(12px)' }, { opacity: 1, transform: 'none' }],
+        { duration: 400, delay: 200, easing: 'cubic-bezier(.2,.6,.3,1)', fill: 'backwards' });
+      await card.animate([{ height: `${h0}px` }, { height: `${h1}px` }], { duration: 450, easing: 'cubic-bezier(.4,0,.2,1)' }).finished;
+      card.style.overflow = '';
+      await new Promise(r => setTimeout(r, 150));
+    }
+
+    if (reduceMotion) { add(h, 1); return; }
+    // « +12 h » apparaît sur le compteur du hero, qui monte (1,4 s) avec les confettis, puis « +12 h » s'efface
+    const num = document.getElementById('hero-num'), gain = document.getElementById('hero-gain'); // compteur du hero
+    gain.textContent = `+${h} h`;
+    setTimeout(() => gain.classList.add('is-on'), 300);
+    setTimeout(() => { add(h, 1); burst(document.getElementById('confetti'), num); }, 700);
+    setTimeout(() => gain.classList.remove('is-on'), 700 + 1400 + 600);
   });
 
   /* ---------- De la promesse à l'action : un chiffre, une photo ----------
